@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dopamine Baseline Оношлогоо</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Syne+Mono&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060a;
+  --s1: #0d0d14;
+  --s2: #13131e;
+  --s3: #1a1a28;
+  --border: #1f1f32;
+  --border2: #2c2c44;
+  --gold: #e8b84b;
+  --gold2: #f5d07a;
+  --orange: #f06a3a;
+  --cyan: #3ecfbf;
+  --purple: #9b6dff;
+  --red: #ff3c52;
+  --green: #1fdb8a;
+  --blue: #4a9eff;
+  --text: #eeeef5;
+  --text2: #9090b8;
+  --text3: #44445a;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* GRAIN */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999;
+}
+
+/* BG ORBS */
+.bg-orbs {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+}
+.orb {
+  position: absolute; border-radius: 50%; filter: blur(100px);
+}
+.orb1 { width: 700px; height: 700px; background: radial-gradient(circle, rgba(232,184,75,0.055) 0%, transparent 70%); top: -200px; left: 50%; transform: translateX(-50%); }
+.orb2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(155,109,255,0.04) 0%, transparent 70%); bottom: 0; right: -150px; }
+.orb3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(62,207,191,0.035) 0%, transparent 70%); top: 40%; left: -100px; }
+
+/* WRAPPER */
+.app {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 20px;
+}
+
+/* ===== SCREENS ===== */
+.screen { display: none; width: 100%; max-width: 680px; }
+.screen.active { display: block; animation: screenIn 0.5s cubic-bezier(0.34,1.2,0.64,1); }
+
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ===== INTRO ===== */
+.intro-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px;
+  background: rgba(232,184,75,0.08);
+  border: 1px solid rgba(232,184,75,0.2);
+  border-radius: 100px;
+  font-family: 'Syne Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 28px;
+}
+.intro-badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--gold); border-radius: 50%;
+  animation: blink 2s ease infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.intro-title {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: clamp(44px, 10vw, 76px);
+  line-height: 0.95; letter-spacing: -3px;
+  margin-bottom: 12px;
+}
+.intro-title .t1 { color: var(--text); display: block; }
+.intro-title .t2 {
+  display: block;
+  background: linear-gradient(135deg, var(--gold2), var(--orange));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.intro-sub {
+  font-family: 'Syne Mono', monospace; font-size: 11px;
+  letter-spacing: 3px; color: var(--text3); margin-bottom: 32px;
+  text-transform: uppercase;
+}
+
+.intro-desc {
+  font-size: 16px; color: var(--text2); line-height: 1.8;
+  margin-bottom: 40px; font-weight: 300;
+}
+
+.intro-meta {
+  display: flex; gap: 24px; margin-bottom: 40px; flex-wrap: wrap;
+}
+.meta-item {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Syne Mono', monospace; font-size: 10px;
+  letter-spacing: 1px; color: var(--text3); text-transform: uppercase;
+}
+.meta-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold); opacity: 0.5;
+}
+
+.btn-start {
+  width: 100%; padding: 18px 32px;
+  background: linear-gradient(135deg, var(--gold), var(--orange));
+  color: var(--bg); border: none; border-radius: 14px;
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 16px; letter-spacing: -0.5px; cursor: pointer;
+  transition: all 0.3s; position: relative; overflow: hidden;
+}
+.btn-start::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+  transform: translateX(-100%); transition: transform 0.6s;
+}
+.btn-start:hover::after { transform: translateX(100%); }
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(232,184,75,0.35); }
+
+/* ===== QUIZ ===== */
+.progress-wrap {
+  margin-bottom: 36px;
+}
+.progress-top {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.progress-label {
+  font-family: 'Syne Mono', monospace; font-size: 10px;
+  letter-spacing: 2px; color: var(--text3); text-transform: uppercase;
+}
+.progress-count {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 20px; color: var(--gold); letter-spacing: -1px;
+}
+.progress-track {
+  height: 4px; background: var(--border);
+  border-radius: 2px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--orange));
+  transition: width 0.5s cubic-bezier(0.34,1.2,0.64,1);
+  box-shadow: 0 0 12px rgba(232,184,75,0.4);
+}
+
+.q-category {
+  font-family: 'Syne Mono', monospace; font-size: 9px;
+  letter-spacing: 3px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 100px;
+  display: inline-block; margin-bottom: 16px;
+}
+
+.q-text {
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: clamp(20px, 4vw, 28px);
+  line-height: 1.25; letter-spacing: -0.5px;
+  color: var(--text); margin-bottom: 8px;
+}
+
+.q-hint {
+  font-size: 13px; color: var(--text3); margin-bottom: 32px;
+  font-style: italic;
+}
+
+.options {
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.opt {
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 22px;
+  background: var(--s1);
+  border: 1.5px solid var(--border);
+  border-radius: 14px; cursor: pointer;
+  transition: all 0.25s; position: relative; overflow: hidden;
+}
+.opt::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(232,184,75,0.06), transparent);
+  opacity: 0; transition: opacity 0.25s;
+}
+.opt:hover { border-color: var(--border2); transform: translateX(4px); }
+.opt:hover::before { opacity: 1; }
+
+.opt.selected {
+  border-color: var(--gold);
+  background: rgba(232,184,75,0.07);
+  transform: translateX(6px);
+}
+.opt.selected::before { opacity: 1; }
+
+.opt-letter {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  background: var(--border); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne Mono', monospace; font-size: 11px;
+  color: var(--text3); transition: all 0.25s; font-weight: 700;
+}
+.opt.selected .opt-letter {
+  background: var(--gold); border-color: var(--gold);
+  color: var(--bg);
+}
+
+.opt-text {
+  font-size: 15px; color: var(--text2);
+  transition: color 0.25s; line-height: 1.4; flex: 1;
+}
+.opt.selected .opt-text { color: var(--text); }
+
+.opt-score {
+  font-family: 'Syne Mono', monospace; font-size: 10px;
+  color: var(--text3); flex-shrink: 0;
+}
+.opt.selected .opt-score { color: var(--gold); }
+
+.q-nav {
+  display: flex; gap: 12px; margin-top: 28px;
+}
+
+.btn-prev {
+  padding: 14px 24px;
+  background: var(--s1); border: 1px solid var(--border);
+  border-radius: 12px; color: var(--text2);
+  font-family: 'Syne', sans-serif; font-weight: 600;
+  font-size: 14px; cursor: pointer; transition: all 0.25s;
+}
+.btn-prev:hover { border-color: var(--border2); color: var(--text); }
+
+.btn-next {
+  flex: 1; padding: 14px 24px;
+  background: var(--s2); border: 1.5px solid var(--border2);
+  border-radius: 12px; color: var(--text);
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 14px; cursor: pointer; transition: all 0.3s;
+  opacity: 0.4; pointer-events: none;
+}
+.btn-next.ready {
+  opacity: 1; pointer-events: all;
+  background: var(--s3); border-color: rgba(232,184,75,0.3);
+  color: var(--gold);
+}
+.btn-next.ready:hover {
+  background: rgba(232,184,75,0.1);
+  transform: translateY(-1px);
+}
+
+/* ===== LOADING ===== */
+#screen-loading {
+  text-align: center; padding: 60px 0;
+}
+.loading-ring {
+  width: 80px; height: 80px; margin: 0 auto 32px;
+  position: relative;
+}
+.loading-ring::before, .loading-ring::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent;
+}
+.loading-ring::before {
+  border-top-color: var(--gold);
+  animation: spin 1s linear infinite;
+}
+.loading-ring::after {
+  border-bottom-color: rgba(232,184,75,0.2);
+  animation: spin 1.5s linear infinite reverse;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 20px; color: var(--text); margin-bottom: 8px;
+}
+.loading-sub {
+  font-family: 'Syne Mono', monospace; font-size: 10px;
+  letter-spacing: 3px; color: var(--text3); text-transform: uppercase;
+}
+.loading-dots span {
+  display: inline-block; width: 6px; height: 6px;
+  background: var(--gold); border-radius: 50%; margin: 0 3px;
+  animation: dot 1.4s ease infinite;
+}
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot { 0%,80%,100%{transform:scale(0.4);opacity:0.3} 40%{transform:scale(1);opacity:1} }
+
+/* ===== RESULTS ===== */
+.result-header { text-align: center; margin-bottom: 40px; }
+
+.result-score-ring {
+  width: 160px; height: 160px; margin: 0 auto 24px;
+  position: relative;
+}
+.result-score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: var(--border); stroke-width: 8; }
+.ring-fill {
+  fill: none; stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 408;
+  stroke-dashoffset: 408;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.34,1.2,0.64,1);
+}
+.ring-label {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.ring-num {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 40px; letter-spacing: -3px; line-height: 1;
+}
+.ring-max {
+  font-family: 'Syne Mono', monospace; font-size: 10px;
+  letter-spacing: 2px; color: var(--text3); text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.result-level {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 32px; letter-spacing: -1px; margin-bottom: 8px;
+}
+.result-tagline {
+  font-size: 15px; color: var(--text2); max-width: 440px; margin: 0 auto;
+  line-height: 1.7; font-weight: 300;
+}
+
+/* RESULT CARD */
+.result-card {
+  background: var(--s1); border: 1px solid var(--border);
+  border-radius: 20px; padding: 36px; margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.result-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+}
+
+.rc-label {
+  font-family: 'Syne Mono', monospace; font-size: 9px;
+  letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.rc-label::before {
+  content: ''; width: 16px; height: 1px; background: currentColor;
+}
+
+.rc-title {
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 22px; letter-spacing: -0.5px;
+  margin-bottom: 14px; color: var(--text);
+}
+
+.rc-body {
+  font-size: 14px; color: var(--text2); line-height: 1.8;
+}
+.rc-body strong { color: var(--text); font-weight: 500; }
+
+/* BREAKDOWN */
+.breakdown {
+  background: var(--s1); border: 1px solid var(--border);
+  border-radius: 20px; padding: 32px; margin-bottom: 20px;
+}
+.breakdown-title {
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 16px; margin-bottom: 20px; color: var(--text);
+}
+
+.bd-item {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 14px;
+}
+.bd-icon { width: 32px; text-align: center; font-size: 16px; flex-shrink: 0; }
+.bd-label {
+  font-size: 13px; color: var(--text2); flex: 1;
+  font-weight: 400;
+}
+.bd-bar-wrap { width: 120px; flex-shrink: 0; }
+.bd-track {
+  height: 5px; background: var(--border); border-radius: 3px; overflow: hidden;
+}
+.bd-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 1.2s cubic-bezier(0.34,1.2,0.64,1);
+}
+.bd-val {
+  font-family: 'Syne Mono', monospace; font-size: 10px;
+  color: var(--text3); width: 28px; text-align: right; flex-shrink: 0;
+}
+
+/* ACTION PLAN */
+.action-list {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.action-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 20px;
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.action-num {
+  width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 12px;
+  background: rgba(232,184,75,0.1); color: var(--gold);
+  border: 1px solid rgba(232,184,75,0.2);
+}
+.action-text { font-size: 14px; color: var(--text2); line-height: 1.6; }
+.action-text strong { color: var(--text); font-weight: 500; }
+
+/* SHARE / RETRY */
+.result-footer {
+  display: flex; gap: 12px; margin-top: 28px;
+}
+.btn-retry {
+  flex: 1; padding: 16px;
+  background: var(--s1); border: 1px solid var(--border2);
+  border-radius: 12px; color: var(--text2);
+  font-family: 'Syne', sans-serif; font-weight: 600;
+  font-size: 14px; cursor: pointer; transition: all 0.25s;
+}
+.btn-retry:hover { border-color: var(--gold); color: var(--gold); }
+
+.btn-share {
+  flex: 1; padding: 16px;
+  background: linear-gradient(135deg, var(--gold), var(--orange));
+  border: none; border-radius: 12px; color: var(--bg);
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 14px; cursor: pointer; transition: all 0.3s;
+}
+.btn-share:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,184,75,0.3); }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .app { padding: 24px 16px; }
+  .opt { padding: 14px 16px; }
+  .result-card { padding: 24px 20px; }
+  .breakdown { padding: 24px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div class="app">
+
+  <!-- INTRO -->
+  <div id="screen-intro" class="screen active">
+    <div class="intro-badge">Нейробиологийн оношлогоо</div>
+    <h1 class="intro-title">
+      <span class="t1">ЧИНИЙ DOPAMINE</span>
+      <span class="t2">BASELINE</span>
+    </h1>
+    <div class="intro-sub">C₈H₁₁NO₂ — Тархины шагнал систем</div>
+    <p class="intro-desc">
+      10 асуултын тусламжтайгаар чиний одоогийн dopamine baseline-ийн түвшинг тодорхойлж, <strong style="color:var(--text)">шинжлэх ухаанд суурилсан хувийн зөвлөгөө</strong> өгнө. Honest байгаарай — зөвхөн ингэснээр үр дүн нь үнэн байна.
+    </p>
+    <div class="intro-meta">
+      <div class="meta-item"><div class="meta-dot"></div>10 асуулт</div>
+      <div class="meta-item"><div class="meta-dot" style="background:var(--cyan)"></div>3 минут</div>
+      <div class="meta-item"><div class="meta-dot" style="background:var(--purple)"></div>Хувийн үр дүн</div>
+      <div class="meta-item"><div class="meta-dot" style="background:var(--green)"></div>Үнэгүй</div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Оношлогоо эхлүүлэх →</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="screen-quiz" class="screen">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span class="progress-label">Явц</span>
+        <span class="progress-count" id="qCount">1/10</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:10%"></div>
+      </div>
+    </div>
+
+    <div id="qCategory" class="q-category"></div>
+    <div id="qText" class="q-text"></div>
+    <div id="qHint" class="q-hint"></div>
+    <div id="optionsWrap" class="options"></div>
+
+    <div class="q-nav">
+      <button class="btn-prev" id="btnPrev" onclick="prevQ()" style="display:none">← Буцах</button>
+      <button class="btn-next" id="btnNext" onclick="nextQ()">Дараагийн асуулт →</button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="screen-loading" class="screen">
+    <div class="loading-ring"></div>
+    <div class="loading-text">Тархи шинжилж байна...</div>
+    <div class="loading-sub" style="margin-bottom:20px">Оношлогоо боловсруулж байна</div>
+    <div class="loading-dots">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="screen-result" class="screen">
+    <div class="result-header">
+      <div class="result-score-ring">
+        <svg viewBox="0 0 140 140">
+          <circle class="ring-bg" cx="70" cy="70" r="65"/>
+          <circle class="ring-fill" id="ringFill" cx="70" cy="70" r="65"/>
+        </svg>
+        <div class="ring-label">
+          <div class="ring-num" id="ringNum">0</div>
+          <div class="ring-max">/ 40 оноо</div>
+        </div>
+      </div>
+      <div class="result-level" id="resultLevel"></div>
+      <div class="result-tagline" id="resultTagline"></div>
+    </div>
+
+    <div id="resultContent"></div>
+
+    <div class="result-footer">
+      <button class="btn-retry" onclick="retryQuiz()">↺ Дахин хийх</button>
+      <button class="btn-share" onclick="copyResult()">📋 Үр дүн хуулах</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    id: 1,
+    category: "😴 Нойр & Эрчим хүч",
+    color: "var(--purple)",
+    text: "Өглөө сэрэхэд чиний байдал ямар байдаг вэ?",
+    hint: "Сүүлийн 2 долоо хоногийн дунджаар бод",
+    options: [
+      { text: "Сэргэлэн, урамтай — өдрийг хүлээдэг", score: 4 },
+      { text: "Тааруухан, аяндаа сэрдэг", score: 3 },
+      { text: "Залхуутай, нэлээд хугацааны дараа идэвхжидэг", score: 2 },
+      { text: "Маш хэцүү, биеийг босгохын тулд их хүчин чармайлт шаарддаг", score: 1 }
+    ]
+  },
+  {
+    id: 2,
+    category: "📱 Дижитал зуршил",
+    color: "var(--orange)",
+    text: "Утасны notification ирэхгүй үед хэдэн минутын дараа шалгадаг вэ?",
+    hint: "Өдрийн ажлын цагаар бод",
+    options: [
+      { text: "2–3 цаг тайван байж чаддаг — зориудаар шалгадаг", score: 4 },
+      { text: "30–60 минутад нэг удаа шалгадаг", score: 3 },
+      { text: "10–15 минут тутамд шалгамааргүй байж чаддаггүй", score: 2 },
+      { text: "Notification ирэхгүй ч байнга авч шалгадаг", score: 1 }
+    ]
+  },
+  {
+    id: 3,
+    category: "🎯 Урам зориг",
+    color: "var(--gold)",
+    text: "Ажил эхлүүлэх, task хийх урам чинь ямар байдаг вэ?",
+    hint: "Ажил, сурлага, бизнес — аль нэгийг бод",
+    options: [
+      { text: "Хялбар — ажил нь өөрөө татдаг, flow орддог", score: 4 },
+      { text: "Бага сэдэл хэрэгтэй ч ерөнхийдөө ажилладаг", score: 3 },
+      { text: "Эхлүүлэхэд их хүч зарцуулдаг, прокрастинаци байдаг", score: 2 },
+      { text: "Ямар ч зүйл хийх урам байхгүй, бүх зүйл хүнд санагддаг", score: 1 }
+    ]
+  },
+  {
+    id: 4,
+    category: "🍽️ Хоол & Нэмэрт бодис",
+    color: "var(--cyan)",
+    text: "Элсэн чихэр, caffeine, архи зэрэг stimulant хэрэглэлт чинь ямар байна?",
+    hint: "Өдөр тутмын хэрэглэлт",
+    options: [
+      { text: "Маш бага — амттан ч тийм их хүсдэггүй", score: 4 },
+      { text: "Дунд зэрэг — хааяа хэрэглэдэг ч хяналттай", score: 3 },
+      { text: "Өдөр бүр нэлээд хэрэглэдэг, зогсоох хэцүү", score: 2 },
+      { text: "Маш их — эдгүйгээр өдрийг эхлүүлэх, дуусгах боломжгүй", score: 1 }
+    ]
+  },
+  {
+    id: 5,
+    category: "😶 Таашаал & Хөгжил",
+    color: "var(--green)",
+    text: "Өмнө нь таалагддаг байсан зүйлс одоо ямар мэдрэмж өгдөг вэ?",
+    hint: "Хобби, нийгэмлэг, хоол, хөгжим гэх мэт",
+    options: [
+      { text: "Ихэнх зүйлс одоо ч баяр баясгалан өгдөг", score: 4 },
+      { text: "Зарим зүйлс сонирхолтой байдаг ч өмнийнхтэй адилгүй", score: 3 },
+      { text: "Ихэнх зүйлс хоосон, таашааллаа алдсан", score: 2 },
+      { text: "Юу ч сонирхолгүй, дотроо хоосон мэдрэмж байнга байдаг", score: 1 }
+    ]
+  },
+  {
+    id: 6,
+    category: "🧘 Тайван байдал",
+    color: "var(--purple)",
+    text: "Утасгүй, цахим орчингүй 30 минут ганцаараа чимээгүй байж чадах уу?",
+    hint: "Бясалгал, ном, эсвэл зүгээр суух",
+    options: [
+      { text: "Тийм — хэцүүгүй, тайван байдаг", score: 4 },
+      { text: "Бага зэрэг тааруухан ч чаддаг", score: 3 },
+      { text: "Хэцүү — санаа тэнэж, утас хэрэгтэй болдог", score: 2 },
+      { text: "Маш хэцүү — шууд утас хүрдэг, тэвчиж чаддаггүй", score: 1 }
+    ]
+  },
+  {
+    id: 7,
+    category: "💤 Нойр чанар",
+    color: "var(--blue)",
+    text: "Шөнийн нойр чинь ямар байдаг вэ?",
+    hint: "7–9 цагийн хангалттай нойр авч байна уу?",
+    options: [
+      { text: "Тогтмол 7–8 цаг, сэрэхэд сэргэлэн", score: 4 },
+      { text: "6–7 цаг, заримдаа сайн заримдаа муу", score: 3 },
+      { text: "5–6 цаг, утсаар хожуу байдаг нь нөлөөлдөг", score: 2 },
+      { text: "5 цагаас бага, нойр хэвийн бус", score: 1 }
+    ]
+  },
+  {
+    id: 8,
+    category: "🏃 Биеийн идэвхи",
+    color: "var(--orange)",
+    text: "7 хоногт хэдэн удаа биеийн тамирын дасгал хийдэг вэ?",
+    hint: "20 минутаас дээш зориудын дасгал",
+    options: [
+      { text: "4–7 удаа — тогтмол дадал болсон", score: 4 },
+      { text: "2–3 удаа — заримдаа тасалддаг", score: 3 },
+      { text: "Хааяа нэг — урам байхгүй", score: 2 },
+      { text: "Ерөнхийдөө хийдэггүй", score: 1 }
+    ]
+  },
+  {
+    id: 9,
+    category: "🎭 Нийгмийн мэдрэмж",
+    color: "var(--cyan)",
+    text: "Хүмүүстэй уулзах, харилцах мэдрэмж ямар байдаг вэ?",
+    hint: "Найз нөхөд, гэр бүл, хамт олон",
+    options: [
+      { text: "Таатай — нийгэмлэг урам өгдөг", score: 4 },
+      { text: "Ерөнхийдөө сайн ч заримдаа залхуудаг", score: 3 },
+      { text: "Хүн хаях хүсэл их — нийгэм ядарч байдаг", score: 2 },
+      { text: "Хэн нэгэнтэй уулзах нь маш их хүчин зүйл шаарддаг", score: 1 }
+    ]
+  },
+  {
+    id: 10,
+    category: "🧠 Ерөнхий байдал",
+    color: "var(--gold)",
+    text: "Амьдралдаа одоо ямар мэдрэмж нь давамгайлж байна вэ?",
+    hint: "Сүүлийн сарын байдлаар бод",
+    options: [
+      { text: "Урам дүүрэн, утгатай, өсч байгаа мэдрэмж", score: 4 },
+      { text: "Тааруухан ч гомдолгүй — хэвийн", score: 3 },
+      { text: "Хоосон, залхуу, урам хугарсан мэдрэмж давамгайлдаг", score: 2 },
+      { text: "Гунигтай, ядарсан, юу ч хийхгүй байж болвол...", score: 1 }
+    ]
+  }
+];
+
+const results = {
+  critical: {
+    min: 10, max: 17,
+    level: "⚠️ Dopamine Burnout",
+    color: "var(--red)",
+    ringColor: "#ff3c52",
+    tagline: "Чиний тархины dopamine систем ноцтой ачаалалд орсон байна. Яаралтай хэрэгжүүлэх алхамууд байна.",
+    diagnosis: "Чиний хариултуудаас харахад baseline маш доогуур буурсан байна. Анхедони (юунд ч сонирхолгүй байдал), байнгын ядаргаа, урам дорой байдал нь dopamine receptor downregulation-ийн шинж тэмдгүүд. Энэ нь биологийн нөхцөл байдал — хувийн сул тал биш.",
+    breakdown: [
+      { icon: "😴", label: "Нойр & Эрчим хүч", pct: 20, color: "var(--red)" },
+      { icon: "🎯", label: "Урам зориг", pct: 15, color: "var(--red)" },
+      { icon: "😶", label: "Таашаалын чадвар", pct: 18, color: "var(--red)" },
+      { icon: "🧘", label: "Тогтвортой байдал", pct: 12, color: "var(--red)" }
+    ],
+    actions: [
+      { text: "<strong>Яаралтай: 48 цагийн dopamine fast</strong> — Social media, амтат хоол, видео бүрэн тасла. Хэцүү байна — энэ нь хамааралт байдлыг харуулж байна." },
+      { text: "<strong>Өглөө бүр нарны гэрэл авах</strong> — Сэрсний дараа 10 минут гадаа гар. Энэ нь cortisol-dopamine ритмийг дахин тохируулдаг." },
+      { text: "<strong>Хүйтэн шүршүүр</strong> — 30 секундаас эхэл. Norep­inephrine 300%, dopamine 250% нэмэгдүүлдэг (Søberg et al. 2021)." },
+      { text: "<strong>Утасыг унтлагын өрөөнөөс гарга</strong> — Нойрны чанар нь dopamine сэргэлтийн нэг дэх тэргүүлэх зүйл." },
+      { text: "<strong>Эмчтэй зөвлөлдөх</strong> — Архаг анхедони нь мэргэжлийн тусламж шаарддаг тохиолдол байж болно." }
+    ]
+  },
+  low: {
+    min: 18, max: 24,
+    level: "📉 Доогуур Baseline",
+    color: "var(--orange)",
+    ringColor: "#f06a3a",
+    tagline: "Тархины dopamine систем дарамтад байна. Урт хугацааны стратегиар сэргэлт хийх цаг болсон.",
+    diagnosis: "Чиний тархи дунд зэргийн stimulation-д хэт дасчихсан байна. Ердийн зүйлс таашаалаа аажмаар алдаж, илүү хүчтэй stimulus хэрэгтэй болсон. Энэ нь dopamine tolerance-ийн классик шинж — өөрчлөх боломжтой.",
+    breakdown: [
+      { icon: "😴", label: "Нойр & Эрчим хүч", pct: 45, color: "var(--orange)" },
+      { icon: "🎯", label: "Урам зориг", pct: 35, color: "var(--orange)" },
+      { icon: "😶", label: "Таашаалын чадвар", pct: 40, color: "var(--orange)" },
+      { icon: "🧘", label: "Тогтвортой байдал", pct: 38, color: "var(--orange)" }
+    ],
+    actions: [
+      { text: "<strong>7 хоногийн dopamine reset</strong> — Social media-г 1 долоо хоног бүрэн тасла. Эхний 3 хоног хэцүү байна — энэ нь хэвийн." },
+      { text: "<strong>Өдөр бүр 20–30 минут дасгал</strong> — Гүйх, дугуй, сэлэх. Dopamine + serotonin + endorphin нэгэн зэрэг — crash байхгүй." },
+      { text: "<strong>Нойрны цагийг тогтмол болго</strong> — Унтах, сэрэх цагаа нэг болго. 7–8 цаг мөн. Утасыг унтлагаас гарга." },
+      { text: "<strong>Micro-goal систем</strong> — Томоос жижиг зорилгуудыг шатлуул. Жижиг амжилт бүрт байгалийн dopamine авна." },
+      { text: "<strong>Хоолны дэглэм</strong> — Элсэн чихэр, caffeine-ийг хязгаарла. Уургийн хоол (tyrosine) dopamine precursor болдог." }
+    ]
+  },
+  medium: {
+    min: 25, max: 31,
+    level: "📊 Дундаж Baseline",
+    color: "var(--gold)",
+    ringColor: "#e8b84b",
+    tagline: "Чиний dopamine систем тааруухан байна — сайн зуршлуудтай, гэхдээ оновчлох орон зай хангалттай бий.",
+    diagnosis: "Чиний тархи harааль зохистой байдалд байна. Зарим зуршлууд чинь сайн, зарим нь baseline-ийг буулгаж байна. Энэ нь хамгийн сайн цэг — жижиг өөрчлөлтүүдийн нөлөө маш хурдан мэдрэгдэнэ.",
+    breakdown: [
+      { icon: "😴", label: "Нойр & Эрчим хүч", pct: 65, color: "var(--gold)" },
+      { icon: "🎯", label: "Урам зориг", pct: 60, color: "var(--gold)" },
+      { icon: "😶", label: "Таашаалын чадвар", pct: 68, color: "var(--gold)" },
+      { icon: "🧘", label: "Тогтвортой байдал", pct: 62, color: "var(--gold)" }
+    ],
+    actions: [
+      { text: "<strong>Өглөөний протокол</strong> — Сэрсний дараа 60 минут утасгүй байх. Нарны гэрэл + хүйтэн шүршүүр. Энэ хоёр нь baseline-ийг 20–30% нэмдэг." },
+      { text: "<strong>Нойрыг оновчил</strong> — Унтахаас 1 цагийн өмнө гэрлийг бууруул, утас тавь. Нойрны чанар илүү чухал, хэмжээнээс." },
+      { text: "<strong>Social media schedule</strong> — Өдөрт 2 удаа, тус бүр 15 минутаас хэтрэхгүй байхаар тогтоо. Notification бүрэн унтраа." },
+      { text: "<strong>Долоо хоногт 1 удаа dopamine fast</strong> — Нэг өдрийг бүрэн дижитал орчингүй өнгөрүүл. Байгалиас урам авах." },
+      { text: "<strong>Зорилго + тогтмол дасгал</strong> — 90 хоногийн зорилготой + дасгал тогтмол болбол 3–4 долоо хоногт эрс сэргэлт мэдрэгдэнэ." }
+    ]
+  },
+  high: {
+    min: 32, max: 40,
+    level: "⚡ Өндөр Baseline",
+    color: "var(--green)",
+    ringColor: "#1fdb8a",
+    tagline: "Тархины dopamine систем хэвийн, сайн ажиллаж байна. Одоогийн зуршлуудаа хадгала.",
+    diagnosis: "Чиний тархи сайн тэнцвэртэй байна. Нойр, дасгал, нийгмийн харилцаа, ба дижитал зуршлуудын тэнцвэр сайн байна. Энэ байдлыг хадгалах нь хамгийн чухал зорилго.",
+    breakdown: [
+      { icon: "😴", label: "Нойр & Эрчим хүч", pct: 88, color: "var(--green)" },
+      { icon: "🎯", label: "Урам зориг", pct: 85, color: "var(--green)" },
+      { icon: "😶", label: "Таашаалын чадвар", pct: 90, color: "var(--green)" },
+      { icon: "🧘", label: "Тогтвортой байдал", pct: 87, color: "var(--green)" }
+    ],
+    actions: [
+      { text: "<strong>Байгаа зуршлуудаа хадгал</strong> — Тогтмол нойр, дасгал, нийгмийн харилцааг үргэлжлүүл. Эдгээр нь baseline-ийн суурь." },
+      { text: "<strong>Оновчлолын дараагийн шат</strong> — Meditation, бясалгал нэмж болно. Prefrontal cortex-ийн бат бэх байдлыг нэмэгдүүлнэ." },
+      { text: "<strong>Trigger-ийг анхаар</strong> — Стресс, амрал, урам хугарал зэрэг үед dopamine-ийн доройтол ирдэг. Тэр үед протоколоо хүч нэмэрлэ." },
+      { text: "<strong>Зорилготой холбоо</strong> — Урт хугацааны зорилго байнга шинэчил. Зорилгын явц нь тархинд хамгийн тогтвортой dopamine эх сурвалж." },
+      { text: "<strong>Бусдад хуваалц</strong> — Энэ оношлогоог найз нөхөдтөө илгээ. Нийгмийн baseline нэмэх нь хувийн baseline-ийг ч нэмдэг." }
+    ]
+  }
+};
+
+let current = 0;
+let answers = new Array(10).fill(null);
+let totalScore = 0;
+
+function startQuiz() {
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const letters = ['A','B','C','D'];
+
+  document.getElementById('qCount').textContent = `${current+1}/10`;
+  document.getElementById('progressFill').style.width = `${((current+1)/10)*100}%`;
+
+  const cat = document.getElementById('qCategory');
+  cat.textContent = q.category;
+  cat.style.background = `${q.color}18`;
+  cat.style.color = q.color;
+  cat.style.border = `1px solid ${q.color}30`;
+
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('qHint').textContent = q.hint;
+
+  const wrap = document.getElementById('optionsWrap');
+  wrap.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (answers[current] === i ? ' selected' : '');
+    div.onclick = () => selectOpt(i);
+    div.innerHTML = `
+      <div class="opt-letter">${letters[i]}</div>
+      <div class="opt-text">${opt.text}</div>
+      <div class="opt-score">${'●'.repeat(opt.score)}</div>
+    `;
+    wrap.appendChild(div);
+  });
+
+  document.getElementById('btnPrev').style.display = current > 0 ? 'block' : 'none';
+  updateNextBtn();
+}
+
+function selectOpt(i) {
+  answers[current] = i;
+  document.querySelectorAll('.opt').forEach((el, idx) => {
+    el.classList.toggle('selected', idx === i);
+  });
+  updateNextBtn();
+}
+
+function updateNextBtn() {
+  const btn = document.getElementById('btnNext');
+  const ready = answers[current] !== null;
+  btn.classList.toggle('ready', ready);
+  btn.textContent = current === 9 ? 'Үр дүн харах →' : 'Дараагийн асуулт →';
+}
+
+function nextQ() {
+  if (answers[current] === null) return;
+  if (current < 9) {
+    current++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function prevQ() {
+  if (current > 0) { current--; renderQuestion(); }
+}
+
+function showResults() {
+  showScreen('loading');
+  setTimeout(() => {
+    totalScore = answers.reduce((sum, a, i) => sum + (a !== null ? questions[i].options[a].score : 0), 0);
+    const res = Object.values(results).find(r => totalScore >= r.min && totalScore <= r.max) || results.medium;
+    renderResult(res);
+    showScreen('result');
+  }, 2200);
+}
+
+function renderResult(res) {
+  // Ring
+  const circumference = 2 * Math.PI * 65;
+  const pct = (totalScore - 10) / 30;
+  const offset = circumference - (pct * circumference);
+  const ring = document.getElementById('ringFill');
+  ring.style.stroke = res.ringColor;
+  setTimeout(() => { ring.style.strokeDashoffset = offset; }, 200);
+
+  const numEl = document.getElementById('ringNum');
+  let n = 0;
+  const interval = setInterval(() => {
+    n = Math.min(n + 1, totalScore);
+    numEl.textContent = n;
+    if (n >= totalScore) clearInterval(interval);
+  }, 60);
+  numEl.style.color = res.color;
+
+  document.getElementById('resultLevel').style.color = res.color;
+  document.getElementById('resultLevel').textContent = res.level;
+  document.getElementById('resultTagline').textContent = res.tagline;
+
+  const content = document.getElementById('resultContent');
+  content.innerHTML = `
+    <div class="result-card">
+      <div class="result-card::before" style="background: linear-gradient(90deg, ${res.color}, transparent);"></div>
+      <div class="rc-label" style="color: ${res.color}">Оношлогооны дүн</div>
+      <div class="rc-title">Чиний тархинд юу болж байна вэ?</div>
+      <div class="rc-body">${res.diagnosis}</div>
+    </div>
+
+    <div class="breakdown">
+      <div class="breakdown-title">📊 Хэсэгчилсэн дүн</div>
+      ${res.breakdown.map(b => `
+        <div class="bd-item">
+          <div class="bd-icon">${b.icon}</div>
+          <div class="bd-label">${b.label}</div>
+          <div class="bd-bar-wrap">
+            <div class="bd-track">
+              <div class="bd-fill" style="background:${b.color}; width: 0%;" data-w="${b.pct}%"></div>
+            </div>
+          </div>
+          <div class="bd-val">${b.pct}%</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="result-card">
+      <div class="rc-label" style="color: ${res.color}">Хувийн зөвлөгөө</div>
+      <div class="rc-title">Яаж сэргэх вэ — 5 алхам</div>
+      <div class="action-list">
+        ${res.actions.map((a, i) => `
+          <div class="action-item">
+            <div class="action-num">${i+1}</div>
+            <div class="action-text">${a.text}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  // Animate breakdown bars
+  setTimeout(() => {
+    content.querySelectorAll('.bd-fill').forEach(el => {
+      el.style.transition = 'width 1.2s cubic-bezier(0.34,1.2,0.64,1)';
+      el.style.width = el.dataset.w;
+    });
+  }, 400);
+
+  // Card top border
+  const cards = content.querySelectorAll('.result-card');
+  cards.forEach(c => {
+    const pseudo = document.createElement('div');
+    pseudo.style.cssText = `position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,${res.color},transparent);border-radius:20px 20px 0 0;`;
+    c.style.position = 'relative';
+    c.insertBefore(pseudo, c.firstChild);
+  });
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(`screen-${id}`).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function retryQuiz() {
+  current = 0;
+  answers = new Array(10).fill(null);
+  totalScore = 0;
+  document.getElementById('ringFill').style.strokeDashoffset = 408;
+  showScreen('intro');
+}
+
+function copyResult() {
+  const res = Object.values(results).find(r => totalScore >= r.min && totalScore <= r.max) || results.medium;
+  const text = `🧠 Dopamine Baseline Оношлогоо\n\nОноо: ${totalScore}/40\nТүвшин: ${res.level}\n\n${res.tagline}\n\nЭнэ оношлогоог өөрөө туршиж үз!`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-share');
+    btn.textContent = '✓ Хуулагдлаа!';
+    setTimeout(() => btn.textContent = '📋 Үр дүн хуулах', 2000);
+  });
+}
+</script>
+</body>
+</html>

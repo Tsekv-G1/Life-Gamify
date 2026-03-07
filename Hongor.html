@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Gamify — Цэвэгмид</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080809;--surface:#0f0f11;--surface2:#141418;--border:#1c1c21;--border2:#26262d;
+  --text:#e0e0ec;--muted:#52525e;--muted2:#8888a0;--white:#f4f4fc;
+  --deep:#5b9fff;--work:#f5a623;--train:#ff6b4a;--rest:#3ecf8e;
+  --food:#c9a96e;--sleep:#9b8df5;--transit:#64c8d4;
+  --xp:#ffd700;--streak:#ff6b4a;--lvl:#3ecf8e;
+  --r:8px;--font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;
+  --sidebar:240px;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.shell{display:grid;grid-template-columns:var(--sidebar) 1fr;height:100vh;overflow:hidden}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:none;height:100vh}
+.sidebar::-webkit-scrollbar{display:none}
+.main{display:flex;flex-direction:column;overflow:hidden;height:100vh}
+.brand{padding:20px 18px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.brand-name{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--white)}
+.brand-sub{font-size:10px;color:var(--muted2);letter-spacing:.06em;margin-top:2px;font-family:var(--mono)}
+.xp-block{padding:14px 18px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.xp-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.xp-level{font-size:11px;font-weight:700;color:var(--lvl);letter-spacing:.06em;font-family:var(--mono)}
+.xp-pts{font-size:10px;color:var(--muted2);font-family:var(--mono)}
+.xp-bar-bg{height:4px;background:var(--border2);border-radius:4px;overflow:hidden}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--lvl),#5fffb0);border-radius:4px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+.xp-row2{display:flex;justify-content:space-between;margin-top:7px}
+.streak-badge{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--streak);font-family:var(--mono);font-weight:700}
+.week-score{font-size:10px;color:var(--muted2);font-family:var(--mono)}
+.nav-section{padding:12px 0 4px;flex-shrink:0}
+.nav-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:0 18px 6px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 18px;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted2);letter-spacing:.02em;border-left:2px solid transparent;transition:all .12s;user-select:none;position:relative}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.025)}
+.nav-item.active{color:var(--white);border-left-color:var(--white);background:rgba(255,255,255,.04)}
+.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;opacity:.3;transition:opacity .12s}
+.nav-item.active .nav-dot{opacity:1}
+.nav-badge{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:20px;font-family:var(--mono);letter-spacing:.04em}
+.nav-check{margin-left:auto;font-size:9px;font-family:var(--mono);color:var(--lvl);opacity:0;transition:opacity .2s}
+.nav-item.day-done .nav-check{opacity:1}
+.nav-item.day-done .nav-dot{opacity:1}
+.sidebar-footer{margin-top:auto;padding:14px 18px;border-top:1px solid var(--border);flex-shrink:0}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted2);padding:2px 0}
+.legend-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 36px 14px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
+.topbar-left{display:flex;flex-direction:column;gap:2px}
+.page-title{font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--white);line-height:1}
+.page-title span{color:var(--muted2);font-weight:300}
+.page-meta{font-size:10px;color:var(--muted2);letter-spacing:.07em;font-family:var(--mono)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.day-xp-badge{background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);color:var(--xp);font-size:11px;font-family:var(--mono);font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.04em}
+.tabs{display:flex;gap:2px;padding:0 36px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
+.tab{padding:10px 16px;font-size:11px;font-weight:600;color:var(--muted2);cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;user-select:none}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--white);border-bottom-color:var(--white)}
+.scroll-area{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.scroll-area::-webkit-scrollbar{width:4px}
+.scroll-area::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.tab-panel{display:none;padding:24px 36px 60px}
+.tab-panel.active{display:block;animation:fadeSlide .2s ease both}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
+.stat{background:var(--surface);padding:10px 14px}
+.stat-label{font-size:9px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px}
+.stat-val{font-size:15px;font-weight:700;color:var(--white);font-family:var(--mono)}
+.tl{position:relative}
+.tl-row{display:grid;grid-template-columns:60px 1px 1fr;gap:0 18px;opacity:0;transform:translateY(6px);transition:opacity .3s ease,transform .3s ease}
+.tl-row.show{opacity:1;transform:none}
+.tl-time{padding-top:17px;text-align:right;font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1;letter-spacing:.04em}
+.tl-axis{display:flex;flex-direction:column;align-items:center}
+.tl-node{width:7px;height:7px;border-radius:50%;margin-top:20px;flex-shrink:0;position:relative;z-index:2;transition:transform .2s}
+.tl-row:hover .tl-node{transform:scale(1.6)}
+.tl-line{flex:1;width:1px;background:var(--border);margin-top:3px}
+.tl-row:last-child .tl-line{display:none}
+.tl-body{padding:12px 0 16px}
+.tl-cat{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+.tl-cat::before{content:'';width:14px;height:1.5px;border-radius:1px}
+.tl-title{font-size:15px;font-weight:600;color:var(--white);letter-spacing:-.01em;margin-bottom:4px;line-height:1.3}
+.tl-dur{font-size:11px;color:var(--muted2);font-family:var(--mono);font-weight:400}
+.tl-desc{font-size:13px;color:var(--muted2);line-height:1.7;margin-top:4px;max-width:560px}
+.tl-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.chip{font-size:11px;padding:3px 9px;border-radius:3px;background:var(--border2);color:var(--muted2);letter-spacing:.03em}
+.why-box{margin-top:8px;padding:10px 13px;border-radius:var(--r);background:rgba(255,255,255,.025);border-left:2px solid;font-size:12px;color:var(--muted2);line-height:1.7;max-width:520px}
+.why-box strong{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px;opacity:.6}
+.c-deep .tl-node{background:var(--deep)}.c-deep .tl-cat{color:var(--deep)}.c-deep .tl-cat::before,.c-deep .why-box{border-color:var(--deep)}
+.c-work .tl-node{background:var(--work)}.c-work .tl-cat{color:var(--work)}.c-work .tl-cat::before,.c-work .why-box{border-color:var(--work)}
+.c-train .tl-node{background:var(--train)}.c-train .tl-cat{color:var(--train)}.c-train .tl-cat::before,.c-train .why-box{border-color:var(--train)}
+.c-rest .tl-node{background:var(--rest)}.c-rest .tl-cat{color:var(--rest)}.c-rest .tl-cat::before,.c-rest .why-box{border-color:var(--rest)}
+.c-food .tl-node{background:var(--food)}.c-food .tl-cat{color:var(--food)}.c-food .tl-cat::before,.c-food .why-box{border-color:var(--food)}
+.c-sleep .tl-node{background:var(--sleep)}.c-sleep .tl-cat{color:var(--sleep)}.c-sleep .tl-cat::before,.c-sleep .why-box{border-color:var(--sleep)}
+.c-transit .tl-node{background:var(--transit)}.c-transit .tl-cat{color:var(--transit)}.c-transit .tl-cat::before,.c-transit .why-box{border-color:var(--transit)}
+.checklist-wrap{margin-top:4px}
+.checklist-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.checklist-title{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2)}
+.checklist-prog{font-size:10px;font-family:var(--mono);color:var(--muted2)}
+.prog-bar-wrap{height:3px;background:var(--border2);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--lvl),#5fffb0);border-radius:3px;transition:width .4s ease}
+.xp-popup{position:fixed;right:32px;bottom:80px;background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3);color:var(--xp);font-family:var(--mono);font-size:13px;font-weight:700;padding:8px 16px;border-radius:20px;pointer-events:none;opacity:0;transform:translateY(0);transition:opacity .3s,transform .6s;z-index:999;letter-spacing:.06em}
+.xp-popup.show{opacity:1;transform:translateY(-20px)}
+.combo-indicator{position:fixed;right:32px;bottom:120px;pointer-events:none;z-index:998;text-align:right;opacity:0;transition:opacity .3s}
+.combo-indicator.show{opacity:1}
+.combo-fire{font-size:22px;animation:comboPulse .4s ease infinite alternate}
+.combo-label{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--streak);letter-spacing:.06em}
+.combo-mult{font-family:var(--mono);font-size:20px;font-weight:700;background:linear-gradient(135deg,var(--streak),var(--xp));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+@keyframes comboPulse{from{transform:scale(1)}to{transform:scale(1.1)}}
+.lvlup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
+.lvlup-overlay.show{opacity:1;pointer-events:all}
+.lvlup-box{text-align:center;transform:scale(.7);transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.lvlup-overlay.show .lvlup-box{transform:scale(1)}
+.lvlup-icon{font-size:72px;display:block;animation:lvlSpin 1s ease both;margin-bottom:12px}
+@keyframes lvlSpin{from{transform:rotate(-20deg) scale(0)}to{transform:rotate(0) scale(1)}}
+.lvlup-title{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;font-family:var(--mono)}
+.lvlup-name{font-size:42px;font-weight:700;letter-spacing:-.03em;background:linear-gradient(135deg,var(--xp),var(--lvl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:16px}
+.lvlup-sub{font-size:14px;color:var(--muted2);margin-bottom:28px}
+.lvlup-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;width:6px;height:6px;border-radius:50%;animation:particleFly 1.2s ease forwards}
+@keyframes particleFly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
+.lvlup-btn{background:linear-gradient(135deg,var(--xp),#ffaa00);color:#000;font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.08em;padding:12px 32px;border:none;border-radius:8px;cursor:pointer;text-transform:uppercase;transition:transform .15s}
+.lvlup-btn:hover{transform:scale(1.05)}
+.boss-card{background:linear-gradient(135deg,rgba(255,107,74,.08),rgba(255,215,0,.05));border:1px solid rgba(255,107,74,.25);border-radius:var(--r);padding:14px 16px;margin-bottom:18px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.boss-card:hover{border-color:rgba(255,107,74,.5)}
+.boss-card::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,107,74,.03),transparent);animation:bossShimmer 3s ease infinite}
+@keyframes bossShimmer{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+.boss-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.boss-icon{font-size:20px}
+.boss-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--streak);font-family:var(--mono);font-weight:700}
+.boss-xp-badge{margin-left:auto;background:rgba(255,107,74,.15);color:var(--streak);font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px}
+.boss-title{font-size:14px;font-weight:700;color:var(--white);letter-spacing:-.01em;margin-bottom:4px}
+.boss-desc{font-size:12px;color:var(--muted2);line-height:1.6}
+.boss-done{position:absolute;inset:0;background:rgba(62,207,142,.08);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;border-radius:var(--r)}
+.boss-done.show{opacity:1}
+.boss-done-text{font-size:16px;font-weight:700;color:var(--lvl);font-family:var(--mono);letter-spacing:.1em}
+.achievements-bar{display:flex;gap:6px;padding:12px 18px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.achievements-bar::-webkit-scrollbar{display:none}
+.ach-badge{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:4px 10px;font-size:10px;font-family:var(--mono);color:var(--muted2);white-space:nowrap;cursor:pointer;transition:all .2s;flex-shrink:0}
+.ach-badge.unlocked{border-color:rgba(255,215,0,.3);color:var(--xp);background:rgba(255,215,0,.06)}
+.ach-icon{font-size:13px;filter:grayscale(1) opacity(.3);transition:filter .3s}
+.ach-badge.unlocked .ach-icon{filter:none}
+.ach-name{letter-spacing:.04em}
+.ach-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%) translateY(-80px);background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,215,0,.08));border:1px solid rgba(255,215,0,.4);color:var(--xp);font-family:var(--mono);font-size:12px;font-weight:700;padding:10px 20px;border-radius:24px;pointer-events:none;z-index:9998;transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;letter-spacing:.06em;display:flex;align-items:center;gap:8px}
+.ach-toast.show{transform:translateX(-50%) translateY(0)}
+.freeze-btn{display:flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);color:#64c8d4;cursor:pointer;background:rgba(100,200,212,.08);border:1px solid rgba(100,200,212,.2);border-radius:12px;padding:3px 8px;transition:all .2s;margin-top:5px}
+.freeze-btn:hover{background:rgba(100,200,212,.15)}
+.freeze-btn.used{color:var(--muted);border-color:var(--border);background:transparent;cursor:default}
+.missions-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:18px}
+.missions-title{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-family:var(--mono)}
+.mission-item{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)}
+.mission-item:last-child{border-bottom:none}
+.mission-icon{font-size:15px;flex-shrink:0}
+.mission-text{flex:1;font-size:12px;color:var(--text)}
+.mission-xp{font-family:var(--mono);font-size:10px;color:var(--xp);font-weight:700}
+.mission-bar-wrap{height:3px;background:var(--border2);border-radius:3px;overflow:hidden;margin-top:3px;width:80px}
+.mission-bar{height:100%;background:var(--xp);border-radius:3px;transition:width .4s ease}
+.mission-item.done .mission-text{color:var(--muted);text-decoration:line-through}
+.mission-check{font-size:12px;color:var(--lvl)}
+.cl-section{margin-bottom:18px}
+.cl-section-label{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.cl-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;cursor:pointer;border-radius:6px;transition:background .1s}
+.cl-item:hover{background:rgba(255,255,255,.02)}
+.cl-box{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s;background:transparent;position:relative;overflow:hidden}
+.cl-box::after{content:'✓';font-size:11px;font-weight:700;color:var(--bg);opacity:0;transition:opacity .15s}
+.cl-item.checked .cl-box{background:var(--lvl);border-color:var(--lvl)}
+.cl-item.checked .cl-box::after{opacity:1}
+.cl-text{flex:1}
+.cl-label{font-size:12.5px;color:var(--text);line-height:1.4;transition:color .2s}
+.cl-item.checked .cl-label{color:var(--muted);text-decoration:line-through}
+.cl-xp{font-size:9px;font-family:var(--mono);color:var(--xp);opacity:.6;margin-top:1px}
+.cl-item.checked .cl-xp{opacity:.3}
+.day-complete{display:none;align-items:center;gap:14px;background:rgba(62,207,142,.06);border:1px solid rgba(62,207,142,.2);border-radius:var(--r);padding:14px 18px;margin-bottom:20px}
+.day-complete.show{display:flex;animation:fadeSlide .3s ease both}
+.dc-icon{font-size:24px;flex-shrink:0}
+.dc-text{}
+.dc-title{font-size:13px;font-weight:700;color:var(--lvl)}
+.dc-sub{font-size:11px;color:var(--muted2);margin-top:1px}
+.dc-xp{margin-left:auto;font-family:var(--mono);font-size:14px;font-weight:700;color:var(--xp)}
+.section-title{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-top:28px}
+.section-title:first-child{margin-top:0}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-bottom:24px}
+.tip-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;transition:border-color .2s;position:relative;overflow:hidden}
+.tip-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r) var(--r) 0 0}
+.tip-card:hover{border-color:var(--border2)}
+.tip-card.tc-deep::before{background:var(--deep)}.tip-card.tc-train::before{background:var(--train)}.tip-card.tc-food::before{background:var(--food)}.tip-card.tc-rest::before{background:var(--rest)}.tip-card.tc-sleep::before{background:var(--sleep)}.tip-card.tc-work::before{background:var(--work)}
+.tip-icon{font-size:16px;margin-bottom:7px;display:block}
+.tip-title{font-size:12px;font-weight:700;color:var(--white);margin-bottom:4px;letter-spacing:-.01em}
+.tip-text{font-size:11px;color:var(--muted2);line-height:1.6}
+.improvements{margin-top:6px}
+.imp-item{display:grid;grid-template-columns:28px 1fr;gap:0 14px;padding:14px 0;border-bottom:1px solid var(--border);align-items:start}
+.imp-item:last-child{border-bottom:none}
+.imp-num{font-family:var(--mono);font-size:10px;color:var(--muted);padding-top:2px}
+.imp-title{font-size:12px;font-weight:600;color:var(--white);margin-bottom:3px}
+.imp-old{font-size:11px;color:var(--muted);text-decoration:line-through;margin-bottom:2px}
+.imp-new{font-size:11px;color:var(--lvl);margin-bottom:4px;font-weight:500}
+.imp-why{font-size:11px;color:var(--muted2);line-height:1.6}
+.day-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:6px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.day-num{font-size:42px;font-weight:700;color:var(--border2);line-height:1;letter-spacing:-.04em;flex-shrink:0;font-family:var(--mono)}
+.day-meta-inner{flex:1}
+.day-name{font-size:18px;font-weight:700;color:var(--white);letter-spacing:-.01em;margin-bottom:5px}
+.day-tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:10px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;padding:2px 8px;border-radius:3px;border:1px solid}
+.day-quote{font-size:11px;color:var(--muted2);font-style:italic;line-height:1.6;margin-top:7px;padding-top:7px;border-top:1px solid var(--border)}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:24px}
+.wk-cell{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s}
+.wk-cell:hover{border-color:var(--border2)}
+.wk-cell.wk-done{border-color:rgba(62,207,142,.3);background:rgba(62,207,142,.04)}
+.wk-day{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:4px}
+.wk-score{font-size:16px;font-weight:700;font-family:var(--mono);color:var(--white)}
+.wk-cell.wk-done .wk-score{color:var(--lvl)}
+.wk-xp{font-size:9px;font-family:var(--mono);color:var(--xp);margin-top:3px}
+.total-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
+.ts-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px}
+.ts-val{font-size:28px;font-weight:700;font-family:var(--mono);color:var(--white);line-height:1}
+.ts-label{font-size:10px;color:var(--muted2);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+.ts-sub{font-size:11px;color:var(--muted2);margin-top:6px}
+.mobile-nav{display:none}
+.mobile-xp-bar{display:none}
+@media(max-width:768px){
+  :root{--sidebar:0px}
+  .shell{grid-template-columns:1fr;height:100vh;overflow:hidden}
+  .sidebar{display:none}
+  .mobile-xp-bar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;position:sticky;top:0;z-index:50;}
+  .mobile-xp-bar .xp-level{font-size:11px;font-weight:700;color:var(--lvl);font-family:var(--mono);white-space:nowrap}
+  .mobile-xp-bar .xp-bar-bg{flex:1;height:5px;background:var(--border2);border-radius:5px;overflow:hidden}
+  .mobile-xp-bar .xp-bar-fill2{height:100%;background:linear-gradient(90deg,var(--lvl),#5fffb0);border-radius:5px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+  .mobile-xp-bar .streak-txt{font-size:11px;font-family:var(--mono);font-weight:700;color:var(--streak);white-space:nowrap}
+  .main{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding-bottom:64px;}
+  .topbar{padding:10px 16px 8px;flex-shrink:0;position:sticky;top:0;z-index:40;background:var(--bg);}
+  .page-title{font-size:18px}
+  .page-meta{font-size:9px}
+  .day-xp-badge{font-size:10px;padding:3px 8px}
+  .tabs{padding:0 12px;flex-shrink:0}
+  .tab{padding:9px 12px;font-size:10px}
+  .scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .tab-panel{padding:14px 14px 32px}
+  .tl-row{grid-template-columns:46px 1px 1fr;gap:0 12px}
+  .tl-time{font-size:10px;padding-top:16px}
+  .tl-node{margin-top:18px}
+  .tl-title{font-size:14px !important}
+  .tl-desc{font-size:13px !important;color:#9494aa !important;max-width:100% !important}
+  .tl-cat{font-size:9px !important}
+  .tl-dur{font-size:10px !important}
+  .why-box{font-size:11px !important;color:#8888a0 !important;max-width:100% !important;padding:8px 10px}
+  .why-box strong{font-size:9px !important}
+  .chip{font-size:10px !important;padding:2px 8px !important}
+  .tl-chips{gap:3px;margin-top:5px}
+  .cl-item{padding:11px 6px}
+  .cl-box{width:24px;height:24px;border-radius:5px;flex-shrink:0}
+  .cl-label{font-size:14px !important;line-height:1.4}
+  .cl-xp{font-size:11px !important}
+  .cl-section-label{font-size:9px !important;padding-bottom:7px}
+  .stats{grid-template-columns:repeat(2,1fr);margin-bottom:14px}
+  .stat{padding:8px 12px}
+  .stat-label{font-size:9px !important}
+  .stat-val{font-size:15px !important}
+  .day-head{margin-bottom:4px;padding-bottom:12px;gap:10px}
+  .day-name{font-size:16px}
+  .day-num{font-size:30px}
+  .day-quote{font-size:11px;margin-top:5px;padding-top:5px}
+  .tag{font-size:9px;padding:2px 6px}
+  .day-tags{gap:4px}
+  .week-grid{grid-template-columns:repeat(4,1fr);gap:5px}
+  .wk-cell{padding:8px 5px}
+  .wk-score{font-size:14px}
+  .tips-grid{grid-template-columns:1fr}
+  .tip-title{font-size:12px !important}
+  .tip-text{font-size:11px !important}
+  .total-stats{grid-template-columns:1fr 1fr}
+  .boss-card{padding:11px 13px;margin-bottom:14px}
+  .boss-title{font-size:13px}
+  .boss-desc{font-size:11px}
+  .day-complete{padding:12px 14px;margin-bottom:14px}
+  .dc-title{font-size:12px}
+  .dc-sub{font-size:10px}
+  .xp-popup{bottom:76px;right:16px;font-size:12px;padding:7px 14px}
+  .combo-indicator{bottom:116px;right:16px}
+  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border2);height:60px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  .mobile-nav::-webkit-scrollbar{display:none}
+  .mobile-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:56px;flex:1;padding:5px 3px;cursor:pointer;font-size:9px;font-weight:600;color:var(--muted2);letter-spacing:.02em;border-top:2px solid transparent;transition:all .15s;user-select:none;position:relative;gap:2px;}
+  .mobile-nav-item.active{color:var(--white);border-top-color:var(--white)}
+  .mobile-nav-item.day-done{color:var(--lvl)}
+  .mobile-nav-item.day-done.active{border-top-color:var(--lvl)}
+  .mobile-nav-dot{width:6px;height:6px;border-radius:50%;margin-bottom:1px}
+  .mobile-nav-done{position:absolute;top:5px;right:8px;font-size:8px;color:var(--lvl)}
+  .lvlup-name{font-size:32px}
+  .lvlup-icon{font-size:52px}
+  .lvlup-sub{font-size:12px}
+}
+@media(min-width:769px){
+  .tl-desc{color:#9090a8}
+  .tl-cat{color:inherit}
+  .why-box{color:#8080a0}
+  .cl-label{font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<div class="xp-popup" id="xpPopup">+0 XP</div>
+<div class="combo-indicator" id="comboIndicator">
+  <div class="combo-fire">🔥</div>
+  <div class="combo-label">COMBO</div>
+  <div class="combo-mult" id="comboMult">×1</div>
+</div>
+<div class="lvlup-overlay" id="lvlupOverlay">
+  <div class="lvlup-particles" id="lvlupParticles"></div>
+  <div class="lvlup-box">
+    <span class="lvlup-icon">⚡</span>
+    <div class="lvlup-title">LEVEL UP!</div>
+    <div class="lvlup-name" id="lvlupName">Тогтсон</div>
+    <div class="lvlup-sub" id="lvlupSub">Шинэ түвшинд гарлаа!</div>
+    <button class="lvlup-btn" onclick="closeLvlUp()">ҮРГЭЛЖЛҮҮЛЭХ →</button>
+  </div>
+</div>
+<div class="ach-toast" id="achToast"><span id="achToastIcon">🏆</span><span id="achToastText">Achievement!</span></div>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-name">⚡ Life Gamify</div>
+      <div class="brand-sub">Цэвэгмид · 2026</div>
+    </div>
+    <div class="xp-block">
+      <div class="xp-top">
+        <div class="xp-level" id="sideLevel">LVL 1 · Анхлагч</div>
+        <div class="xp-pts" id="sideXp">0 XP</div>
+      </div>
+      <div class="xp-bar-bg"><div class="xp-bar-fill" id="sideXpBar" style="width:0%"></div></div>
+      <div class="xp-row2">
+        <div class="streak-badge">🔥 <span id="streakNum">0</span> өдөр streak</div>
+        <div class="week-score" id="weekScoreEl">Долоо хоног: 0%</div>
+      </div>
+      <div id="freezeBtn" class="freeze-btn" onclick="useFreeze()">🧊 Streak Freeze ашиглах</div>
+    </div>
+    <!-- Achievements bar in sidebar -->
+    <div class="achievements-bar" id="achBar"></div>
+    <div class="nav-section">
+      <div class="nav-label">Ажлын өдрүүд</div>
+      <div class="nav-item active" onclick="showDay(0)"><div class="nav-dot" style="background:var(--deep)"></div>Даваа<span class="nav-check" id="nc0">✓</span></div>
+      <div class="nav-item" onclick="showDay(1)"><div class="nav-dot" style="background:var(--train)"></div>Мягмар<span class="nav-check" id="nc1">✓</span></div>
+      <div class="nav-item" onclick="showDay(2)"><div class="nav-dot" style="background:var(--rest)"></div>Лхагва<span class="nav-check" id="nc2">✓</span></div>
+      <div class="nav-item" onclick="showDay(3)"><div class="nav-dot" style="background:var(--deep)"></div>Пүрэв<span class="nav-check" id="nc3">✓</span></div>
+      <div class="nav-item" onclick="showDay(4)"><div class="nav-dot" style="background:var(--train)"></div>Баасан<span class="nav-check" id="nc4">✓</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Амралтын өдрүүд</div>
+      <div class="nav-item" onclick="showDay(5)"><div class="nav-dot" style="background:var(--xp)"></div>Бямба<span class="nav-check" id="nc5">✓</span></div>
+      <div class="nav-item" onclick="showDay(6)"><div class="nav-dot" style="background:var(--sleep)"></div>Ням<span class="nav-check" id="nc6">✓</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Системийн хэрэгсэл</div>
+      <div class="nav-item" onclick="showDay(7)"><div class="nav-dot" style="background:var(--muted2)"></div>Tips & Зөвлөмж</div>
+      <div class="nav-item" onclick="showDay(8)"><div class="nav-dot" style="background:var(--muted2)"></div>Сайжруулалт</div>
+      <div class="nav-item" onclick="showDay(9)"><div class="nav-dot" style="background:var(--xp)"></div>7н Тайлан</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--deep)"></div>Deep Work / Бизнес</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--work)"></div>Оффис ажил</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--train)"></div>Gym дасгал</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--rest)"></div>Амралт / Wind-down</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--food)"></div>Хоол</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--sleep)"></div>Нойр</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- Mobile XP bar -->
+    <div class="mobile-xp-bar">
+      <div class="xp-level" id="mLvl">LVL 1</div>
+      <div class="xp-bar-bg"><div class="xp-bar-fill2" id="mXpBar" style="width:0%"></div></div>
+      <div class="streak-txt">🔥 <span id="mStreak">0</span></div>
+    </div>
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="page-title" id="topTitle">Даваа <span>гараг</span></div>
+        <div class="page-meta" id="topMeta">ОӨ #1 — MON · ДАСГАЛ: МӨР & ГАР</div>
+      </div>
+      <div class="topbar-right">
+        <div class="day-xp-badge" id="dayXpBadge">+100 XP / өдөр</div>
+      </div>
+    </div>
+    <div class="tabs" id="tabBar">
+      <div class="tab active" onclick="showTab(0)">Хуваарь</div>
+      <div class="tab" onclick="showTab(1)">✓ Checklist</div>
+    </div>
+    <div class="scroll-area">
+
+<!-- ============ DAY 0: ДАВАА ============ -->
+<div class="day-panel" id="dp0">
+  <div class="tab-panel active" id="tp0-0">
+    <div class="day-head">
+      <div class="day-num">01</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Мөр & Гар — Эхлэл өдөр</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work ×2</span>
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Мөр & Гар</span>
+          <span class="tag" style="color:var(--muted2);border-color:var(--border2)">Ажлын өдөр</span>
+        </div>
+        <div class="day-quote">"Өглөөний 80 минут бол өдрийн хамгийн үнэтэй цаг — тархи шинэхэн, дэлхий чимээгүй. Энэ цагийг бизнестээ зориул."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">3ц</div></div>
+      <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">45мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">23:00</div></div>
+      <div class="stat"><div class="stat-label">Ажил</div><div class="stat-val">08–18:00</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Ус 500мл → 5 мин сунгалт → нүүр угаах → өдрийн нэг гол зорилт бичих.</div><div class="why-box"><strong>Яагаад ус шууд уух вэ</strong>Унтсаны дараа бие 7–8 цаг усгүй байна. Ус тархийг идэвхжүүлж, кортизолийн байгалийн оргилыг ашиглана.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #1 — Бизнес</div><div class="tl-title">Шинэ бизнесийн хамгийн чухал зорилт <span class="tl-dur">— 80 мин</span></div><div class="tl-desc">Утас нисгэлтэн горимд. Нэг л зорилтод голлоно. Бизнес төлөвлөгөө, судалгаа, стратеги боловсруулах.</div><div class="tl-chips"><span class="chip">Бизнес загвар</span><span class="chip">Зах зээлийн судалгаа</span><span class="chip">Action plan</span></div><div class="why-box"><strong>Яагаад өглөө 06:30</strong>Prefrontal cortex хамгийн идэвхтэй. Ажилдаа очсоны дараа таслалт байнга гарч энэ чанарын ажил хийгдэхгүй болно.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">07:50</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Өглөөний хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Гаднаас авсан хоол. Утасгүй, тайван идэнэ. Deep Work-ийн шагнал болно.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Шилжилт</div><div class="tl-title">Ажилдаа явах <span class="tl-dur">— явах хугацаа</span></div><div class="tl-desc">Podcast / audiobook — бизнестэй холбоотой контент сонс.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Оффис ажил</div><div class="tl-title">Ажил <span class="tl-dur">— 08:00–18:00</span></div><div class="tl-desc">90 мин тутамд 5 мин зогсоод нуруу, мөр сунгана. Завсарлагаанд 10 мин алхах.</div><div class="why-box"><strong>90 мин дүрэм</strong>Ultradian rhythm — тархи 90 мин дараа цэнэглэлт шаарддаг. Сунгалт нурууны өвдөлтөөс сэргийлнэ.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">18:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Дасгалын өмнөх хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Гаднаас авсан хоол. Өндөг/мах + нүүрс ус. Gym-д явахаас 45-60 мин өмнө идэх.</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Мөр & Гар</div><div class="tl-title">Мөр & Гар дасгал <span class="tl-dur">— 45–60 мин</span></div><div class="tl-desc">Overhead Press 3×10 → Lateral Raise 3×12 → Arnold Press 3×10 → Bicep Curl 3×12 → Hammer Curl 3×12 → Tricep Pushdown 3×12</div><div class="tl-chips"><span class="chip">Дулаацалт 5мин</span><span class="chip">Хөнгөн жингээс эхлэх</span><span class="chip">Form нь жингээс чухал</span></div><div class="why-box"><strong>Анхлагчийн зарчим</strong>Эхний 4 долоо хоногт хөнгөн жинтэй хөдөлгөөний хэлбэрийг сурна. Жин нэмэхгүй — хэлбэрийг сайжруулна.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">20:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #2 — Бизнес</div><div class="tl-title">Бизнес — Оройн блок <span class="tl-dur">— 2 цаг</span></div><div class="tl-desc">Дасгалын дараа BDNF оргилтоо — хамгийн сайн бүтээлч цаг. Бизнес загвар дуусгах, агуулга бэлдэх.</div><div class="tl-chips"><span class="chip">Бизнес план</span><span class="chip">Судалгаа</span><span class="chip">Маркетинг</span></div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">22:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Тайвшрах <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Дэлгэц зогсоох → ном/аудиобук → маргаашийн нэг зорилт бичих.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">23:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг — 4-5 нойрны цикл</div><div class="tl-desc">Тасалгааг сэрүүн (18–20°C), харанхуй. Утас өөр өрөөнд.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp0-1">
+    <div class="boss-card" id="boss0" onclick="toggleBoss(0)">
+      <div class="boss-done" id="bossDone0"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">💪</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">Ажил дээр 90 мин тутамд нэг удаа зогсоод 5 мин нуруу сунга — 3 удаа хий</div>
+      <div class="boss-desc">Ultradian rhythm-ийг ашиглана. 3+ удаа хийх = boss дарна. Нуруу хамгаалж, бүтээмжийг нэмнэ.</div>
+    </div>
+    <div class="day-complete" id="dc0"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Даваа бүрэн дууслаа!</div><div class="dc-sub">Deep Work + Gym + Бизнес блок. Хамгийн хүчтэй эхлэл!</div></div><div class="dc-xp" id="dc0xp">+100 XP</div></div>
+    <div class="checklist-wrap" id="cl0"></div>
+  </div>
+</div>
+
+<!-- ============ DAY 1: МЯГМАР ============ -->
+<div class="day-panel" id="dp1" style="display:none">
+  <div class="tab-panel active" id="tp1-0">
+    <div class="day-head">
+      <div class="day-num">02</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Нуруу & Хажуу өдөр</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work ×2</span>
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Нуруу & Хажуу</span>
+        </div>
+        <div class="day-quote">"10 цаг суусны нурууны булчин суларна. Татах дасгал тэнцвэрийг сэргээж өвдөлтгүй бие барина."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">3ц</div></div>
+      <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">45мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">23:00</div></div>
+      <div class="stat"><div class="stat-label">Хуваарь</div><div class="stat-val">Дааваатай адил</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл</div><div class="tl-desc">Ус → сунгалт → зорилт бичих.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #1</div><div class="tl-title">Бизнес — Үргэлжлэл <span class="tl-dur">— 80 мин</span></div><div class="tl-desc">Өчигдрийн бизнес ажлыг үргэлжлүүлэх. Нэг л зорилтод голлоно.</div><div class="tl-chips"><span class="chip">Бизнес загвар</span><span class="chip">Эрхлэгчийн судалгаа</span></div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">07:50</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Өглөөний хоол</div><div class="tl-desc">Гаднаас авсан хоол. Утасгүй идэнэ.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Оффис ажил</div><div class="tl-title">Ажил <span class="tl-dur">— 08:00–18:00</span></div><div class="tl-desc">Завсарлагаанд мөр арагшаа татаж нуруу сунгах. 10 мин алхах.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">18:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Дасгалын өмнөх хоол</div><div class="tl-desc">Гаднаас авсан хоол. Хөнгөн уургийн хоол.</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Нуруу & Хажуу</div><div class="tl-title">Нуруу & Хажуу дасгал <span class="tl-dur">— 45–60 мин</span></div><div class="tl-desc">Dumbbell Row 3×10 → Single Arm Row 3×10 → Lat Pulldown 3×12 → Upright Row 3×12 → Shrug 3×15 → Face Pull 3×15</div><div class="why-box"><strong>Яагаад нуруу дасгал чухал</strong>Оффист суух нурууны flexor булчинг хатуурна. Татах дасгал тэнцвэрийг сэргээж нурууны өвдөлтийг арилгана.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">20:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #2</div><div class="tl-title">Бизнес — Оройн блок <span class="tl-dur">— 2 цаг</span></div><div class="tl-desc">Захиалга, нийгмийн хэрэгсэл, бизнес дэлгэрэнгүй.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">22:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Тайвшрах</div><div class="tl-desc">Дэлгэц зогсоох → нуруу сунгах → маргаашийн зорилт.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">23:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг</div><div class="tl-desc">Нуруу, мөрний булчин унтаж байх үед сэргэнэ.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp1-1">
+    <div class="boss-card" id="boss1" onclick="toggleBoss(1)">
+      <div class="boss-done" id="bossDone1"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">🏋️</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">Нуруу дасгалын үед гар нуруун дагуу шулуун байлга — бүх сетэд!</div>
+      <div class="boss-desc">Form > Weight. Хэлбэр зөв байвал 2× үр дүн гарна. Анхлагчийн хамгийн чухал зарчим.</div>
+    </div>
+    <div class="day-complete" id="dc1"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Мягмар бүрэн дууслаа!</div><div class="dc-sub">Нуруу & Хажуу + Deep Work ×2. Гайхалтай.</div></div><div class="dc-xp" id="dc1xp">+100 XP</div></div>
+    <div class="checklist-wrap" id="cl1"></div>
+  </div>
+</div>
+
+<!-- ============ DAY 2: ЛХАГВА ============ -->
+<div class="day-panel" id="dp2" style="display:none">
+  <div class="tab-panel active" id="tp2-0">
+    <div class="day-head">
+      <div class="day-num">03</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Идэвхтэй сэргэлт + Урт Deep Work</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work 5ц+</span>
+          <span class="tag" style="color:var(--rest);border-color:rgba(62,207,142,.3)">Дасгалгүй — Сэргэлт</span>
+        </div>
+        <div class="day-quote">"Дасгалгүй өдөр бол сулрах өдөр биш — гүн бодлын өдөр. Булчин сэргэж, тархи нэгддэг."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">5ц+</div></div>
+      <div class="stat"><div class="stat-label">Алхалт</div><div class="stat-val">30мин+</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">23:00</div></div>
+      <div class="stat"><div class="stat-label">Онцлог</div><div class="stat-val">Mid-week</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл</div><div class="tl-desc">Ус → сунгалт → долоо хоногийн дундын шалгалт.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #1 — Mid-week Review</div><div class="tl-title">Долоо хоногийн дундын шалгалт <span class="tl-dur">— 80 мин</span></div><div class="tl-desc">Даваа-Мягмарын бизнес ахицыг шалгаж, хоёр дахь хагасын стратегийг тохируулна.</div><div class="tl-chips"><span class="chip">Бизнес ахиц шалгах</span><span class="chip">Стратеги тохируулах</span><span class="chip">Дараагийн алхам</span></div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">07:50</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Өглөөний хоол</div><div class="tl-desc">Гаднаас авсан хоол. Тайван идэнэ.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Оффис ажил</div><div class="tl-title">Ажил <span class="tl-dur">— 08:00–18:00</span></div><div class="tl-desc">Завсарлагаанд хөнгөн алхалт (active recovery). Булчин сэргэнэ.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">18:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Амралт</div><div class="tl-title">Оройн хоол + 30 мин алхалт</div><div class="tl-desc">Гаднаас авсан хоол. Орчим алхаж бие сэргээнэ. Ажлын дарамтаас тайлна.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #2 — Урт блок</div><div class="tl-title">Бизнес — Урт Deep Work <span class="tl-dur">— 2.5–3 цаг</span></div><div class="tl-desc">Gym-гүй өдөл иймд бизнесийн хамгийн том блок. 90 мин + 15 мин завсар + 60 мин.</div><div class="tl-chips"><span class="chip">Бизнес загвар дуусгах</span><span class="chip">Контент/маркетинг</span><span class="chip">Судалгаа гүнзгийрүүлэх</span></div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">22:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Тайвшрах</div><div class="tl-desc">Дэлгэц зогсоох → сунгах → ном.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">23:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг</div><div class="tl-desc">Дасгалгүй өдөр булчин сэргэж, тархи нэгддэг.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp2-1">
+    <div class="boss-card" id="boss2" onclick="toggleBoss(2)">
+      <div class="boss-done" id="bossDone2"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">🧠</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">Deep Work #2-д 90 мин завсаргүй ажиллаад хамгийн том бизнес асуудлаа шийдэ</div>
+      <div class="boss-desc">Лхагва = Долоо хоногийн хамгийн урт Deep Work блок. Цалин ажлын дарамтгүй, тархи сэргэсэн.</div>
+    </div>
+    <div class="day-complete" id="dc2"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Лхагва бүрэн дууслаа!</div><div class="dc-sub">Deep Work 5ц+. Долоо хоногийн дунд хамгийн бэлэн байдал.</div></div><div class="dc-xp" id="dc2xp">+110 XP</div></div>
+    <div class="checklist-wrap" id="cl2"></div>
+  </div>
+</div>
+
+<!-- ============ DAY 3: ПҮРЭВ ============ -->
+<div class="day-panel" id="dp3" style="display:none">
+  <div class="tab-panel active" id="tp3-0">
+    <div class="day-head">
+      <div class="day-num">04</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Хөл & Гөлөм өдөр</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work ×2</span>
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Хөл & Гөлөм</span>
+        </div>
+        <div class="day-quote">"Хөлний том булчин хамгийн их тестостерон, хамгийн их калори шатаана. Үр дүнтэй хамгийн чухал дасгал."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">3ц</div></div>
+      <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">55мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">23:00</div></div>
+      <div class="stat"><div class="stat-label">Нүүрс ус</div><div class="stat-val">+нэмэлт</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл</div><div class="tl-desc">Ус → сунгалт. Хөлний дасгал их энерги шаарддаг.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #1</div><div class="tl-title">Бизнес <span class="tl-dur">— 80 мин</span></div><div class="tl-desc">Долоо хоногийн 4 дэх өдөр — хамгийн чухал зорилтдоо л голлоно.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">07:50</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Өглөөний хоол</div><div class="tl-desc">Гаднаас авсан хоол.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Оффис ажил</div><div class="tl-title">Ажил <span class="tl-dur">— 08:00–18:00</span></div><div class="tl-desc">Завсарлагаанд хөл, гуя сунгана. Хөлний дасгалын бэлтгэл.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">18:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Дасгалын өмнөх хоол</div><div class="tl-desc">Гаднаас авсан хоол. Мах/тахиа + будаа. Хөлний дасгал урт тул хоолоо хангалттай идэнэ.</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Хөл & Гөлөм</div><div class="tl-title">Хөл & Гөлөм дасгал <span class="tl-dur">— 50–60 мин</span></div><div class="tl-desc">Goblet Squat 3×10 → Lunge 3×10 → Romanian Deadlift 3×10 → Sumo Squat 3×12 → Calf Raise 3×15 → Step Up 3×10</div><div class="why-box"><strong>Яагаад хөлний дасгал хамгийн чухал</strong>Quad, Glute, Hamstring — хамгийн том булчингийн группүүд. Testosterone + growth hormone хамгийн их ялгаруулдаг.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">20:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #2</div><div class="tl-title">Бизнес <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Маргааш баасан тул долоо хоногийн sprint. Бизнес дуусгах.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">22:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Тайвшрах + Хөл сунгах</div><div class="tl-desc">Хөлний дасгалын дараа 10 мин сунгах.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">23:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг</div><div class="tl-desc">Хөлний том булчин унтаж байх үед хамгийн хурдан сэргэнэ.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp3-1">
+    <div class="boss-card" id="boss3" onclick="toggleBoss(3)">
+      <div class="boss-done" id="bossDone3"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">🦵</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">Goblet Squat-ийн үед өвдөг хурууны дагуу — 4 сетийн бүгдэд хянана</div>
+      <div class="boss-desc">Хөлний хамгийн нийтлэг алдааг засна. Valgus collapse зогсоох = өвдөлтгүй хөл.</div>
+    </div>
+    <div class="day-complete" id="dc3"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Пүрэв бүрэн дууслаа!</div><div class="dc-sub">Хөл & Гөлөм — хамгийн хэцүү дасгал дууслаа. Мань!</div></div><div class="dc-xp" id="dc3xp">+100 XP</div></div>
+    <div class="checklist-wrap" id="cl3"></div>
+  </div>
+</div>
+
+<!-- ============ DAY 4: БААСАН ============ -->
+<div class="day-panel" id="dp4" style="display:none">
+  <div class="tab-panel active" id="tp4-0">
+    <div class="day-head">
+      <div class="day-num">05</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Гэдэс & Core + Бямбаны бэлтгэл</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work ×2</span>
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Core</span>
+          <span class="tag" style="color:var(--food);border-color:rgba(201,169,110,.3)">Бямбаны бэлтгэл</span>
+        </div>
+        <div class="day-quote">"Core дасгал зөвхөн гэдэс нимгэлдэггүй — нурууны тулгуурыг бэхжүүлж бүх дасгалын үр дүнг нэмнэ."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">3ц</div></div>
+      <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">45мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">23:00</div></div>
+      <div class="stat"><div class="stat-label">Нэмэлт</div><div class="stat-val">Бямбын бэлтгэл</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл</div><div class="tl-desc">Ус → сунгалт.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #1 — Долоо хоногийн Sprint</div><div class="tl-title">Бямба, Нямын том ажлыг бэлтгэх <span class="tl-dur">— 80 мин</span></div><div class="tl-desc">Бямба, Нямын том ажлаа бэлтгэх. Weekly analysis Нямд хийнэ.</div><div class="tl-chips"><span class="chip">Бямбаны бэлтгэл</span><span class="chip">Зорилт шалгах</span><span class="chip">Sprint дуусгах</span></div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">07:50</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Өглөөний хоол</div><div class="tl-desc">Гаднаас авсан хоол.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Оффис ажил</div><div class="tl-title">Ажил <span class="tl-dur">— 08:00–18:00</span></div><div class="tl-desc">Завсарлагаанд алхалт нэмнэ.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">18:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Хөнгөн хоол</div><div class="tl-desc">Core дасгалд хэвлий дүүрсэн байх хэрэггүй — тараг + өндөг.</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Гэдэс & Core</div><div class="tl-title">Core дасгал <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Plank 3×45сек → Side Plank 3×30сек → Crunch 3×15 → Leg Raise 3×12 → Russian Twist 3×20 → Mountain Climber 3×30сек</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">20:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #2 — Бямбаны бэлтгэл</div><div class="tl-title">Долоо хоногийн тойм + Бямбаны бэлтгэл <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">7 хоногийн тайлан, зорилтын ахиц, бямбаны том ажлыг бэлтгэнэ.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">22:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">7 хоногийн дараах тайвшрал</div><div class="tl-desc">Дэлгэц зогсоох, сунгах.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">23:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг</div><div class="tl-desc">Маргааш бямба — хамгийн урт Deep Work + Full Body.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp4-1">
+    <div class="boss-card" id="boss4" onclick="toggleBoss(4)">
+      <div class="boss-done" id="bossDone4"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">🎯</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">Баасны Deep Work #2-д маргаашийн Бямбаны 3 гол зорилтыг бичнэ</div>
+      <div class="boss-desc">Бямбад гарахаас нь өмнө тархи зорилтуудыг боловсруулна — 2× бүтээмжтэй болно.</div>
+    </div>
+    <div class="day-complete" id="dc4"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Баасан бүрэн дууслаа!</div><div class="dc-sub">5 ажлын өдөр давлаа. Маргааш бямба — хамгийн урт блок.</div></div><div class="dc-xp" id="dc4xp">+100 XP</div></div>
+    <div class="checklist-wrap" id="cl4"></div>
+  </div>
+</div>
+
+<!-- ============ DAY 5: БЯМБА ============ -->
+<div class="day-panel" id="dp5" style="display:none">
+  <div class="tab-panel active" id="tp5-0">
+    <div class="day-head">
+      <div class="day-num">06</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Full Body + Урт бүтээлч өдөр</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work 6ц+</span>
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Full Body 14:00</span>
+          <span class="tag" style="color:var(--rest);border-color:rgba(62,207,142,.3)">Амралтын өдөр</span>
+        </div>
+        <div class="day-quote">"Бямба бол долоо хоногийн хамгийн чөлөөтэй, хамгийн бүтээмжтэй өдөр. Хамгийн том бизнес зорилтдоо зориул."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">6ц+</div></div>
+      <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">55мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">23:30</div></div>
+      <div class="stat"><div class="stat-label">Чөлөөт цаг</div><div class="stat-val">Орой</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Бямба өглөө — тайван эхлэл</div><div class="tl-desc">Ус → 10-15 мин урт сунгалт → тухтай хоол авах.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work — Хамгийн том блок</div><div class="tl-title">Бизнесийн нэг том зорилт <span class="tl-dur">— 3.5 цаг</span></div><div class="tl-desc">Долоо хоногийн хамгийн том бизнес ажлыг хий. Байгуулах бизнес, загвар дуусгах.</div><div class="tl-chips"><span class="chip">Бизнес загвар</span><span class="chip">MVP бэлдэх</span><span class="chip">Контент batch</span></div><div class="why-box"><strong>Яагаад бымба 06:30 хамгийн үнэтэй</strong>Таслалт байхгүй, ажлын дарамт байхгүй, cognitive resource бүрэн.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">10:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Амралт</div><div class="tl-title">Цай + гадаа алхалт <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">3.5 цагийн гүн ажлаасаа сэтгэлийг тайлах.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">11:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #2</div><div class="tl-title">Бизнес — Дараагийн блок <span class="tl-dur">— 2.5 цаг</span></div><div class="tl-desc">Дараа долоо хоногийн бизнес зорилт, контент batch.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">13:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Амрах</div><div class="tl-title">Өдрийн хоол + 20 мин амрах</div><div class="tl-desc">Гаднаас авсан хоол. Power nap хийж болно.</div><div class="why-box"><strong>Power nap</strong>20 минутын унтах нь оройн бүтээмжийг 34% нэмэгдүүлдэг.</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">14:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Full Body</div><div class="tl-title">Full Body дасгал <span class="tl-dur">— 55 мин</span></div><div class="tl-desc">Deadlift 3×8 → Squat to Press 3×10 → Dumbbell Swing 3×12 → Push-up 3×15 → Rear Delt Fly 3×12 → Farmer Walk 3×30сек</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">16:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Бүтээлч sprint</div><div class="tl-title">Оройн бизнес sprint <span class="tl-dur">— 2 цаг</span></div><div class="tl-desc">Нийгмийн хэрэгсэл, маркетинг, дараа долоо хоногийн бэлтгэл.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Амралт</div><div class="tl-title">Оройн хоол + найз/гэр бүлтэй цаг</div><div class="tl-desc">Гаднаас авсан хоол. Нийгмийн харилцаа, тайвшрах.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">23:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">Бямба шөнө 30 мин л хожимдуулна</div><div class="tl-desc">Бямба шөнийн 23:30 хязгаар.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp5-1">
+    <div class="boss-card" id="boss5" onclick="toggleBoss(5)">
+      <div class="boss-done" id="bossDone5"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">🔥</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">Бямба 06:30-д Deep Work эхлүүлж 90 мин тасралтгүй хий</div>
+      <div class="boss-desc">Амралтын өдөр эрт эхлэх = хамгийн хэцүү boss. Энэ зуршлыг тогтоовол бизнес 2× хурдасна.</div>
+    </div>
+    <div class="day-complete" id="dc5"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Бямба бүрэн дууслаа!</div><div class="dc-sub">6ц+ Deep Work + Full Body. Долоо хоногийн оргил.</div></div><div class="dc-xp" id="dc5xp">+130 XP</div></div>
+    <div class="checklist-wrap" id="cl5"></div>
+  </div>
+</div>
+
+<!-- ============ DAY 6: НЯМ ============ -->
+<div class="day-panel" id="dp6" style="display:none">
+  <div class="tab-panel active" id="tp6-0">
+    <div class="day-head">
+      <div class="day-num">07</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Weekly Analysis + Дараа 7н бэлтгэл</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work 3ц</span>
+          <span class="tag" style="color:var(--rest);border-color:rgba(62,207,142,.3)">Weekly Analysis</span>
+          <span class="tag" style="color:var(--sleep);border-color:rgba(124,109,242,.3)">22:30 унтах</span>
+        </div>
+        <div class="day-quote">"Ням бол дараа долоо хоногийн гарааны нохой. Бие, тархи, бизнес — бүгдийг бэлтгэх өдөр."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">3ц</div></div>
+      <div class="stat"><div class="stat-label">Дасгал</div><div class="stat-val">Алхалт</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">22:30</div></div>
+      <div class="stat"><div class="stat-label">Weekly</div><div class="stat-val">Review</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">30 мин хожимдуулсан</div><div class="tl-desc">Ус → 10-15 мин сунгалт.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">07:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work</div><div class="tl-title">Бүтээлч гүн ажил <span class="tl-dur">— 3 цаг</span></div><div class="tl-desc">Судалгаа, стратеги, бизнес контент.</div><div class="tl-chips"><span class="chip">Бизнес стратеги</span><span class="chip">Судалгаа</span><span class="chip">7н төлөвлөгөө</span></div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">10:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Weekly Analysis</div><div class="tl-title">7 хоногийн тайлан + Дараа долоо хоногийн бэлтгэл <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Gym ахиц, бизнес зорилт, зуршил шалгах. Дараа долоо хоногийн 3 гол зорилт тавих.</div><div class="tl-chips"><span class="chip">Weekly review</span><span class="chip">Gym ахиц шалгах</span><span class="chip">Бизнес KPI</span></div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">11:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Амралт</div><div class="tl-title">Өдрийн хоол + гэр бүл <span class="tl-dur">— 2 цаг</span></div><div class="tl-desc">Гаднаас авсан хоол. Тайван цаг. Нийгмийн харилцаа.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">13:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Амралт + Алхалт</div><div class="tl-title">Гадаа алхалт + Чөлөөт цаг <span class="tl-dur">— 3.5 цаг</span></div><div class="tl-desc">Гадаа алхаж байгалийн гэрэл авна. Найз, гэр бүлтэй цаг. Ажил, утасгүй.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">18:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол — хөнгөн</div><div class="tl-desc">Гаднаас авсан хоол. Хөнгөн хоол — тараг/өндөг.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">21:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Ням шөнийн тайвшрал <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Дэлгэц зогсоох → ном → Даваагийн нэг гол зорилтыг дахин уншиж батлана.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">22:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">30 мин эрт — 7.5 цаг</div><div class="tl-desc">Ням шөнийн 22:30 унтах нь Даваа өглөөний Deep Work чанарыг шууд тодорхойлдог.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp6-1">
+    <div class="boss-card" id="boss6" onclick="toggleBoss(6)">
+      <div class="boss-done" id="bossDone6"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">📋</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">Weekly review-д өнгөрсөн долоо хоногийн 3 амжилт + дараагийн 3 зорилтыг бич</div>
+      <div class="boss-desc">Амжилтыг бататгаж, дараагийн долоо хоногийг чиглүүлнэ. Сахилга батны хамгийн чухал зуршил.</div>
+    </div>
+    <div class="day-complete" id="dc6"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Ням бүрэн дууслаа!</div><div class="dc-sub">7 хоног бүрэн дууслаа. Дараа долоо хоногт бэлэн!</div></div><div class="dc-xp" id="dc6xp">+130 XP</div></div>
+    <div class="checklist-wrap" id="cl6"></div>
+  </div>
+</div>
+
+<!-- ============ DAY 7: TIPS ============ -->
+<div class="day-panel" id="dp7" style="display:none">
+  <div class="tab-panel active" id="tp7-0">
+    <div class="page-title" style="font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;padding:0">Tips & <span style="color:var(--muted2);font-weight:300">Зөвлөмж</span></div>
+    <div style="font-size:10px;color:var(--muted2);letter-spacing:.07em;font-family:var(--mono);margin-bottom:24px">ПРАКТИК ЗӨВЛӨМЖҮҮД — БҮХ 7 ХОНОГТ ХАМААРНА</div>
+    <div class="section-title" style="margin-top:0">Deep Work — Бизнес</div>
+    <div class="tips-grid">
+      <div class="tip-card tc-deep"><span class="tip-icon">🧠</span><div class="tip-title">2 минутын эхлэл</div><div class="tip-text">Deep Work-д орохоос өмнө: юу хийх, яагаад чухал вэ гэдгийг бичих. Тархийг чиглүүлнэ.</div></div>
+      <div class="tip-card tc-deep"><span class="tip-icon">📵</span><div class="tip-title">Утас өөр өрөөнд</div><div class="tip-text">Нисгэлтэн горим хангалтгүй — харах л байсан ч анхаарал тасардаг. Өөр өрөөнд тав.</div></div>
+      <div class="tip-card tc-deep"><span class="tip-icon">⏱</span><div class="tip-title">90 мин блок</div><div class="tip-text">25 мин Pomodoro гүн ажилд хэт богино. 90 мин нэг блок → 10 мин амралт.</div></div>
+      <div class="tip-card tc-deep"><span class="tip-icon">✍️</span><div class="tip-title">Нэг зорилт дүрэм</div><div class="tip-text">Өглөөний Deep Work-т зөвхөн нэг л зорилт. Хоёр зорилт тавих нь аль алийг дундаас хийж дуусгадаг.</div></div>
+    </div>
+    <div class="section-title">Gym — Анхлагчийн зарчим</div>
+    <div class="tips-grid">
+      <div class="tip-card tc-train"><span class="tip-icon">💪</span><div class="tip-title">Form > Weight (Хэлбэр > Жин)</div><div class="tip-text">Эхний 4 долоо хоногт хэлбэрийг сур. Хөнгөн жинтэй зөв хэлбэр нь хүнд жинтэй буруу хэлбэрээс 3× үр дүнтэй.</div></div>
+      <div class="tip-card tc-train"><span class="tip-icon">📈</span><div class="tip-title">Progressive Overload</div><div class="tip-text">2 долоо хоног тутамд нэг дасгалын жинг 1-2.5кг нэм. Тасралтгүй хугацааг нэм, жингийг нэм.</div></div>
+      <div class="tip-card tc-train"><span class="tip-icon">😴</span><div class="tip-title">Унтах = Дасгалын үр дүн</div><div class="tip-text">Булчин дасгалд өссөнгүй — унтаж байх үед өснө. 7 цагаас доош унтах нь дасгалыг бүтэлгүйтүүлнэ.</div></div>
+      <div class="tip-card tc-train"><span class="tip-icon">🔥</span><div class="tip-title">Never miss twice</div><div class="tip-text">Нэг өдөр gym-д очихгүй байх нь зөвшөөрнө. Хоёр дахин алдахаас зайл — энэ бол хамгийн чухал дүрэм.</div></div>
+    </div>
+    <div class="section-title">Сэтгэл зүй & Сахилга бат</div>
+    <div class="tips-grid">
+      <div class="tip-card tc-rest"><span class="tip-icon">📊</span><div class="tip-title">Систем > Зорилт</div><div class="tip-text">Систем нь зорилтыг дагуулна. Өдөр бүр Deep Work + Gym хийх систем бүтээ — үр дүн автоматаар гарна.</div></div>
+      <div class="tip-card tc-rest"><span class="tip-icon">🎯</span><div class="tip-title">Identity-based habits</div><div class="tip-text">"Бизнесмен ингэж хийдэг" гэж боддог болох. Зуршлын өөрчлөлт identity-ээс эхэлдэг.</div></div>
+      <div class="tip-card tc-sleep"><span class="tip-icon">📅</span><div class="tip-title">Sunday planning</div><div class="tip-text">Ням орой 20 минутын weekly planning нь 7 хоногийн стресс болон тодорхойгүй байдлыг 60% бууруулдаг.</div></div>
+      <div class="tip-card tc-sleep"><span class="tip-icon">⚡</span><div class="tip-title">2 минутын дүрэм</div><div class="tip-text">Хийхэд 2 минутаас бага зарцуулдаг зүйлийг шууд хий. Gym-д явах нь "хувцас өмсөх" гэж эхлэнэ.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DAY 8: IMPROVEMENTS ============ -->
+<div class="day-panel" id="dp8" style="display:none">
+  <div class="tab-panel active" id="tp8-0">
+    <div class="page-title" style="font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;padding:0">Сайжруулалт <span style="color:var(--muted2);font-weight:300">&amp; Тайлбар</span></div>
+    <div style="font-size:10px;color:var(--muted2);letter-spacing:.07em;font-family:var(--mono);margin-bottom:24px">ЦЭВЭГМИДИЙН ROUTINE-ИЙН ШИЙДВЭРҮҮД</div>
+    <div class="improvements">
+      <div class="imp-item"><div class="imp-num">01</div><div><div class="imp-title">Deep Work → Өглөө 06:30</div><div class="imp-old">Ажлаасаа ирсний дараа бизнес хийх</div><div class="imp-new">06:30–07:50 Deep Work → 08:00 ажил явах</div><div class="imp-why">Оффист 10 цаг хийсний дараа тархи ядарсан байна. Өглөөний цаг cognitive resource хамгийн өндөр.</div></div></div>
+      <div class="imp-item"><div class="imp-num">02</div><div><div class="imp-title">Gym цагийн байршил</div><div class="imp-old">Ажлын өмнө gym (06:00 бол хэт эрт)</div><div class="imp-new">Ажлаасаа ирсний дараа 19:00 gym</div><div class="imp-why">Ажлын дараах gym нь биеийн температур, нейромышечний бэлэн байдал оргилтоо — 5-10% илүү хүч гаргана.</div></div></div>
+      <div class="imp-item"><div class="imp-num">03</div><div><div class="imp-title">Deep Work #2 — Gym-ийн дараа</div><div class="imp-old">Gym хийгээд шууд унтах</div><div class="imp-new">Gym → 10 мин → Deep Work #2 (BDNF оргил)</div><div class="imp-why">Дасгалын дараа BDNF нэмэгдэж суралцах болон бүтээлч сэтгэлгээ дээд цэгтээ хүрнэ. Хамгийн сайн бизнес цаг.</div></div></div>
+      <div class="imp-item"><div class="imp-num">04</div><div><div class="imp-title">Ням шөнийн унтах цаг</div><div class="imp-old">23:00 унтах</div><div class="imp-new">22:30 — 30 мин эрт</div><div class="imp-why">Social jet lag: ням шөнө хожимдон унтаж Даваа өглөө хүндлэн сэрэх нь хамгийн нийтлэг зуршлын таслалт.</div></div></div>
+      <div class="imp-item"><div class="imp-num">05</div><div><div class="imp-title">Лхагва — Gym-гүй = Урт Deep Work</div><div class="imp-old">Дасгалгүй өдөл ямар нэг зүйл хий</div><div class="imp-new">Gym-гүй өдрийг 5ц+ Deep Work болгоно</div><div class="imp-why">Gym-гүй өдөл 1.5-2 цаг чөлөөлдөг. Энэ цагийг бизнест зориулах нь долоо хоногийн бизнес цагийг 30% нэмнэ.</div></div></div>
+      <div class="imp-item"><div class="imp-num">06</div><div><div class="imp-title">Wind-down 22:15 эхлэх</div><div class="imp-old">Deep Work → шууд унтах</div><div class="imp-new">22:15-аас дэлгэц зогсоож wind-down</div><div class="imp-why">Дэлгэцний цэнхэр гэрэл мелатониныг 90 мин хойшлуулдаг. Wind-down нойрны чанарыг 40% сайжруулна.</div></div></div>
+      <div class="imp-item"><div class="imp-num">07</div><div><div class="imp-title">Анхлагчийн gym програм</div><div class="imp-old">Огт хийдэггүй → нэн даруй хүнд дасгал</div><div class="imp-new">4 булчингийн бүлэг × 5 өдөр + Бямба Full Body</div><div class="imp-why">Анхлагчдад 5 өдөр gym нь 3 өдрөөс 30% илүү үр дүнтэй. Булчин бүр 72 цаг амрах боломжтой.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DAY 9: WEEK OVERVIEW ============ -->
+<div class="day-panel" id="dp9" style="display:none">
+  <div class="tab-panel active" id="tp9-0">
+    <div class="page-title" style="font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;padding:0">7н <span style="color:var(--muted2);font-weight:300">Тайлан</span></div>
+    <div style="font-size:10px;color:var(--muted2);letter-spacing:.07em;font-family:var(--mono);margin-bottom:20px">ДОЛОО ХОНОГИЙН АХИЦ — ОНОО & СТАТИСТИК</div>
+    <div class="total-stats" id="totalStats">
+      <div class="ts-card">
+        <div class="ts-val" id="totalXpVal">0</div>
+        <div class="ts-label">Нийт XP</div>
+        <div class="ts-sub" id="totalXpSub">Энэ долоо хоногт цуглуулсан</div>
+      </div>
+      <div class="ts-card">
+        <div class="ts-val" id="totalDoneVal">0/7</div>
+        <div class="ts-label">Дууссан өдрүүд</div>
+        <div class="ts-sub" id="totalDoneSub">Бүрэн гүйцэтгэсэн</div>
+      </div>
+      <div class="ts-card">
+        <div class="ts-val" id="totalStreakVal">0</div>
+        <div class="ts-label">🔥 Streak</div>
+        <div class="ts-sub">Дараалсан өдрүүд</div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px">Өдөр тус бүрийн оноо</div>
+    <div class="week-grid" id="weekGrid"></div>
+    <div style="font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;margin-top:20px">Дахин эхлэх</div>
+    <button onclick="resetWeek()" style="background:rgba(255,107,74,.08);border:1px solid rgba(255,107,74,.25);color:var(--train);font-family:var(--font);font-size:12px;font-weight:600;padding:10px 20px;border-radius:6px;cursor:pointer;letter-spacing:.04em;transition:all .15s" onmouseover="this.style.background='rgba(255,107,74,.14)'" onmouseout="this.style.background='rgba(255,107,74,.08)'">
+      🔄 Шинэ долоо хоног эхлэх
+    </button>
+  </div>
+</div>
+
+    </div><!-- end scroll-area -->
+  </div><!-- end main -->
+</div><!-- end shell -->
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-item active" id="mnav0" onclick="showDay(0)"><div class="mobile-nav-dot" style="background:var(--deep)"></div><span>Да</span><span class="mobile-nav-done" id="mnd0"></span></div>
+  <div class="mobile-nav-item" id="mnav1" onclick="showDay(1)"><div class="mobile-nav-dot" style="background:var(--train)"></div><span>Мя</span><span class="mobile-nav-done" id="mnd1"></span></div>
+  <div class="mobile-nav-item" id="mnav2" onclick="showDay(2)"><div class="mobile-nav-dot" style="background:var(--rest)"></div><span>Лха</span><span class="mobile-nav-done" id="mnd2"></span></div>
+  <div class="mobile-nav-item" id="mnav3" onclick="showDay(3)"><div class="mobile-nav-dot" style="background:var(--deep)"></div><span>Пүр</span><span class="mobile-nav-done" id="mnd3"></span></div>
+  <div class="mobile-nav-item" id="mnav4" onclick="showDay(4)"><div class="mobile-nav-dot" style="background:var(--train)"></div><span>Баа</span><span class="mobile-nav-done" id="mnd4"></span></div>
+  <div class="mobile-nav-item" id="mnav5" onclick="showDay(5)"><div class="mobile-nav-dot" style="background:var(--xp)"></div><span>Бям</span><span class="mobile-nav-done" id="mnd5"></span></div>
+  <div class="mobile-nav-item" id="mnav6" onclick="showDay(6)"><div class="mobile-nav-dot" style="background:var(--sleep)"></div><span>Ням</span><span class="mobile-nav-done" id="mnd6"></span></div>
+  <div class="mobile-nav-item" id="mnav9" onclick="showDay(9)" style="border-left:1px solid var(--border)"><div class="mobile-nav-dot" style="background:var(--xp)"></div><span>Тайлан</span></div>
+</nav>
+
+<script>
+// ===================== DATA =====================
+const DAYS = [
+  { name:'Даваа', meta:'ОӨ #1 — MON · GYM: МӨР & ГАР', xp:100, badge:'+100 XP / өдөр' },
+  { name:'Мягмар', meta:'ОӨ #2 — TUE · GYM: НУРУУ & ХАЖУУ', xp:100, badge:'+100 XP / өдөр' },
+  { name:'Лхагва', meta:'ОӨ #3 — WED · GYMГҮЙ · УРТ DEEP WORK', xp:110, badge:'+110 XP / өдөр' },
+  { name:'Пүрэв', meta:'ОӨ #4 — THU · GYM: ХӨЛ & ГӨЛӨМ', xp:100, badge:'+100 XP / өдөр' },
+  { name:'Баасан', meta:'ОӨ #5 — FRI · GYM: CORE', xp:100, badge:'+100 XP / өдөр' },
+  { name:'Бямба', meta:'АӨ #1 — SAT · FULL BODY · УРТ DEEP WORK', xp:130, badge:'+130 XP / өдөр' },
+  { name:'Ням', meta:'АӨ #2 — SUN · WEEKLY ANALYSIS · БЭЛТГЭЛ', xp:130, badge:'+130 XP / өдөр' },
+];
+
+const CHECKLISTS = [
+  // Day 0: Даваа
+  [
+    ['🌅 06:00 сэрсэн',5,'Өглөө'],
+    ['💧 Ус 500мл уусан',5,'Өглөө'],
+    ['🧠 Deep Work #1 — 80 мин (Бизнес)',20,'Өглөө'],
+    ['🍳 Өглөөний хоол',5,'Өглөө'],
+    ['💼 Ажил 08:00–18:00',15,'Ажил'],
+    ['⏱ 90 мин тутамд сунгасан',5,'Ажил'],
+    ['🥗 Дасгалын өмнөх хоол',5,'Орой'],
+    ['💪 Gym — Мөр & Гар (45–60 мин)',20,'Орой'],
+    ['🧠 Deep Work #2 — 2 цаг (Бизнес)',15,'Орой'],
+    ['📵 22:15-д дэлгэц зогссон',5,'Орой'],
+    ['😴 23:00 унтсан',5,'Орой'],
+  ],
+  // Day 1: Мягмар
+  [
+    ['🌅 06:00 сэрсэн',5,'Өглөө'],
+    ['💧 Ус 500мл уусан',5,'Өглөө'],
+    ['🧠 Deep Work #1 — 80 мин (Бизнес)',20,'Өглөө'],
+    ['🍳 Өглөөний хоол',5,'Өглөө'],
+    ['💼 Ажил 08:00–18:00',15,'Ажил'],
+    ['⏱ 90 мин тутамд сунгасан',5,'Ажил'],
+    ['🥗 Хөнгөн хоол',5,'Орой'],
+    ['💪 Gym — Нуруу & Хажуу (45–60 мин)',20,'Орой'],
+    ['🧠 Deep Work #2 — 2 цаг (Бизнес)',15,'Орой'],
+    ['📵 22:15-д дэлгэц зогссон',5,'Орой'],
+    ['😴 23:00 унтсан',5,'Орой'],
+  ],
+  // Day 2: Лхагва
+  [
+    ['🌅 06:00 сэрсэн',5,'Өглөө'],
+    ['💧 Ус 500мл уусан',5,'Өглөө'],
+    ['🧠 Deep Work #1 — 80 мин (Mid-week review)',20,'Өглөө'],
+    ['💼 Ажил 08:00–18:00',15,'Ажил'],
+    ['🚶 Завсарлагаанд алхалт (30 мин)',5,'Ажил'],
+    ['🧠 Deep Work #2 — 2.5–3 цаг (Бизнес)',25,'Орой'],
+    ['📵 22:00-д дэлгэц зогссон',5,'Орой'],
+    ['😴 23:00 унтсан',5,'Орой'],
+  ],
+  // Day 3: Пүрэв
+  [
+    ['🌅 06:00 сэрсэн',5,'Өглөө'],
+    ['💧 Ус 500мл уусан',5,'Өглөө'],
+    ['🧠 Deep Work #1 — 80 мин (Бизнес)',20,'Өглөө'],
+    ['💼 Ажил 08:00–18:00',15,'Ажил'],
+    ['⏱ 90 мин тутамд сунгасан',5,'Ажил'],
+    ['🥗 Дасгалын өмнөх хоол',5,'Орой'],
+    ['💪 Gym — Хөл & Гөлөм (50–60 мин)',20,'Орой'],
+    ['🧠 Deep Work #2 — 90 мин (Бизнес)',15,'Орой'],
+    ['🦵 Хөл сунгасан (10 мин)',5,'Орой'],
+    ['😴 23:00 унтсан',5,'Орой'],
+  ],
+  // Day 4: Баасан
+  [
+    ['🌅 06:00 сэрсэн',5,'Өглөө'],
+    ['💧 Ус 500мл уусан',5,'Өглөө'],
+    ['🧠 Deep Work #1 — 80 мин (Sprint бэлтгэл)',20,'Өглөө'],
+    ['💼 Ажил 08:00–18:00',15,'Ажил'],
+    ['🥗 Хөнгөн хоол',5,'Орой'],
+    ['💪 Gym — Core (45 мин)',20,'Орой'],
+    ['🧠 Deep Work #2 — 90 мин (Бямбаны бэлтгэл)',15,'Орой'],
+    ['📵 22:15-д дэлгэц зогссон',5,'Орой'],
+    ['😴 23:00 унтсан',5,'Орой'],
+  ],
+  // Day 5: Бямба
+  [
+    ['🌅 06:00 сэрсэн — Тайван эхлэл',5,'Өглөө'],
+    ['💧 Ус 500мл уусан',5,'Өглөө'],
+    ['🧠 Deep Work #1 — 3.5 цаг (Бизнес том зорилт)',30,'Өглөө'],
+    ['🚶 Гадаа алхалт — 60 мин',10,'Өдөр'],
+    ['🧠 Deep Work #2 — 2.5 цаг (Бизнес)',25,'Өдөр'],
+    ['💪 Gym — Full Body (55 мин)',25,'Өдөр'],
+    ['🧠 Оройн бизнес sprint — 2 цаг',15,'Орой'],
+    ['👥 Найз/гэр бүлтэй цаг',5,'Орой'],
+    ['😴 23:30 унтсан',5,'Орой'],
+  ],
+  // Day 6: Ням
+  [
+    ['🌅 06:30 сэрсэн',5,'Өглөө'],
+    ['💧 Ус 500мл уусан',5,'Өглөө'],
+    ['🧠 Deep Work — 3 цаг (Бизнес)',25,'Өглөө'],
+    ['📊 Weekly Analysis — 60 мин',20,'Өглөө'],
+    ['👥 Гэр бүлтэй цаг',5,'Өдөр'],
+    ['🚶 Гадаа алхалт',10,'Өдөр'],
+    ['📵 21:00-д дэлгэц зогссон',5,'Орой'],
+    ['📅 Даваагийн нэг зорилт батлан бичсэн',10,'Орой'],
+    ['😴 22:30 унтсан',5,'Орой'],
+  ],
+];
+
+const LEVELS = [
+  {lvl:1,min:0,max:700,name:'Анхлагч'},
+  {lvl:2,min:700,max:1400,name:'Тогтсон'},
+  {lvl:3,min:1400,max:2500,name:'Хүчтэй'},
+  {lvl:4,min:2500,max:4000,name:'Мастер'},
+  {lvl:5,min:4000,max:9999,name:'Легенд'},
+];
+
+const ACHIEVEMENTS = [
+  {id:'first_check',icon:'⚡',name:'Эхлэл',desc:'Анхны зорилтоо биелүүлсэн',check:s=>Object.keys(s.checks).length>=1},
+  {id:'day_complete',icon:'🏆',name:'Өдрийн баатар',desc:'Нэг өдрийг бүрэн дуусгасан',check:s=>s.daysDone>=1},
+  {id:'streak3',icon:'🔥',name:'3 өдрийн гал',desc:'3 өдрийн streak',check:s=>s.streak>=3},
+  {id:'streak7',icon:'🌟',name:'7 өдрийн дайчин',desc:'7 өдрийн streak',check:s=>s.streak>=7},
+  {id:'xp500',icon:'💎',name:'500 XP',desc:'500 XP цуглуулсан',check:s=>s.totalXp>=500},
+  {id:'xp1000',icon:'👑',name:'1000 XP',desc:'1000 XP давсан',check:s=>s.totalXp>=1000},
+  {id:'gym5',icon:'💪',name:'Gym хаан',desc:'5 gym checkmark',check:s=>{const g=['d0_i7','d1_i7','d3_i6','d4_i5','d5_i5'];return g.filter(k=>s.checks[k]).length>=4}},
+  {id:'deep10',icon:'🧠',name:'Deep Thinker',desc:'10 Deep Work блок',check:s=>{const dw=Object.keys(s.checks).filter(k=>k.includes('d')&&s.checks[k]);return dw.length>=10}},
+];
+
+const BOSSES = [
+  {id:0,title:'Ажил дээр 90 мин тутамд нуруу сунга',xp:50},
+  {id:1,title:'Form зөвтгөн нуруу дасгал хий',xp:50},
+  {id:2,title:'90 мин завсаргүй Deep Work',xp:50},
+  {id:3,title:'Goblet Squat form шалгах',xp:50},
+  {id:4,title:'Бямбаны 3 зорилт бичих',xp:50},
+  {id:5,title:'06:30 Deep Work эхлүүлэх',xp:50},
+  {id:6,title:'Weekly review + 3 амжилт бичих',xp:50},
+];
+
+// ===================== STATE =====================
+let state = loadState();
+let currentDay = 0;
+let currentTab = 0;
+let comboCount = 0;
+let comboTimer = null;
+let prevLevel = 1;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('lifeGamify_tsevegmid_v1');
+    if (raw) return JSON.parse(raw);
+  } catch(e){}
+  return { checks:{}, totalXp:0, streak:0, lastDate:null, bossesCleared:{}, achievementsUnlocked:[], freezeUsed:false };
+}
+
+function saveState() {
+  try { localStorage.setItem('lifeGamify_tsevegmid_v1', JSON.stringify(state)); } catch(e){}
+}
+
+// ===================== CHECKLISTS =====================
+function buildChecklists() {
+  CHECKLISTS.forEach((items, di) => {
+    const wrap = document.getElementById('cl'+di);
+    if (!wrap) return;
+    const sections = {};
+    items.forEach((item,ii) => {
+      const [label,xp,sec] = item;
+      if (!sections[sec]) sections[sec] = [];
+      sections[sec].push({label,xp,ii});
+    });
+    let html = '';
+    Object.keys(sections).forEach(sec => {
+      html += `<div class="cl-section"><div class="cl-section-label">${sec}</div>`;
+      sections[sec].forEach(({label,xp,ii}) => {
+        const key = `d${di}_i${ii}`;
+        const checked = state.checks[key] ? 'checked' : '';
+        html += `<div class="cl-item ${checked}" id="ci_${di}_${ii}" onclick="toggleCheck(${di},${ii})"><div class="cl-box"></div><div class="cl-text"><div class="cl-label">${label}</div><div class="cl-xp">+${xp} XP</div></div></div>`;
+      });
+      html += `</div>`;
+    });
+    const done = items.filter((_,ii) => state.checks[`d${di}_i${ii}`]).length;
+    const total = items.length;
+    const pct = Math.round(done/total*100);
+    const dayXp = calcDayXp(di);
+    const header = `<div class="checklist-header"><div class="checklist-title">Өдрийн зорилтууд</div><div class="checklist-prog">${done}/${total} · ${dayXp} XP</div></div><div class="prog-bar-wrap"><div class="prog-bar" id="pb${di}" style="width:${pct}%"></div></div>`;
+    wrap.innerHTML = header + html;
+    updateDayComplete(di);
+  });
+}
+
+function calcDayXp(di) {
+  return CHECKLISTS[di].reduce((sum,item,ii) => sum + (state.checks[`d${di}_i${ii}`] ? item[1] : 0), 0);
+}
+
+function calcDayMaxXp(di) {
+  return CHECKLISTS[di].reduce((sum,item) => sum + item[1], 0);
+}
+
+function toggleCheck(di, ii) {
+  const key = `d${di}_i${ii}`;
+  const item = CHECKLISTS[di][ii];
+  const wasChecked = !!state.checks[key];
+  state.checks[key] = !wasChecked;
+  const el = document.getElementById(`ci_${di}_${ii}`);
+  if (el) el.classList.toggle('checked', state.checks[key]);
+  const xp = item[1];
+  if (!wasChecked) {
+    const mult = getComboMult();
+    const earned = Math.round(xp * mult);
+    state.totalXp = (state.totalXp || 0) + earned;
+    showXpPopup(earned, mult);
+    comboCount++;
+    resetComboTimer();
+  } else {
+    state.totalXp = Math.max(0, (state.totalXp || 0) - xp);
+    comboCount = 0;
+    document.getElementById('comboIndicator').classList.remove('show');
+  }
+  updateProgBar(di);
+  updateDayComplete(di);
+  updateNavDone(di);
+  updateXpBar();
+  updateWeekScore();
+  checkAchievements();
+  updateStreak();
+  saveState();
+}
+
+function getComboMult() {
+  if (comboCount < 3) return 1;
+  if (comboCount < 6) return 1.5;
+  if (comboCount < 10) return 2;
+  return 3;
+}
+
+function resetComboTimer() {
+  if (comboTimer) clearTimeout(comboTimer);
+  if (comboCount >= 3) {
+    const mult = getComboMult();
+    const ci = document.getElementById('comboIndicator');
+    document.getElementById('comboMult').textContent = `×${mult}`;
+    ci.classList.add('show');
+    comboTimer = setTimeout(() => { comboCount = 0; ci.classList.remove('show'); }, 8000);
+  }
+}
+
+function showXpPopup(xp, mult) {
+  const el = document.getElementById('xpPopup');
+  el.textContent = mult > 1 ? `+${xp} XP ×${mult} COMBO!` : `+${xp} XP`;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1400);
+}
+
+function updateProgBar(di) {
+  const items = CHECKLISTS[di];
+  const done = items.filter((_,ii) => state.checks[`d${di}_i${ii}`]).length;
+  const total = items.length;
+  const pct = Math.round(done/total*100);
+  const pb = document.getElementById('pb'+di);
+  if (pb) pb.style.width = pct + '%';
+  const hdr = document.querySelector(`#cl${di} .checklist-prog`);
+  if (hdr) hdr.textContent = `${done}/${total} · ${calcDayXp(di)} XP`;
+}
+
+function updateDayComplete(di) {
+  const items = CHECKLISTS[di];
+  const done = items.filter((_,ii) => state.checks[`d${di}_i${ii}`]).length;
+  const el = document.getElementById('dc'+di);
+  if (el) {
+    if (done === items.length) {
+      el.classList.add('show');
+      const xpEl = document.getElementById('dc'+di+'xp');
+      if (xpEl) xpEl.textContent = '+' + calcDayXp(di) + ' XP';
+    } else {
+      el.classList.remove('show');
+    }
+  }
+}
+
+function updateNavDone(di) {
+  const items = CHECKLISTS[di];
+  const done = items.filter((_,ii) => state.checks[`d${di}_i${ii}`]).length;
+  const isDone = done === items.length;
+  const navItem = document.querySelectorAll('.nav-item')[di];
+  if (navItem) navItem.classList.toggle('day-done', isDone);
+  const nc = document.getElementById('nc'+di);
+  if (nc) nc.style.opacity = isDone ? '1' : '0';
+  const mnavItem = document.getElementById('mnav'+di);
+  if (mnavItem) mnavItem.classList.toggle('day-done', isDone);
+  const mnd = document.getElementById('mnd'+di);
+  if (mnd) mnd.textContent = isDone ? '✓' : '';
+}
+
+function updateXpBar() {
+  const xp = state.totalXp || 0;
+  const lvlData = LEVELS.find(l => xp >= l.min && xp < l.max) || LEVELS[LEVELS.length-1];
+  const pct = Math.round((xp - lvlData.min) / (lvlData.max - lvlData.min) * 100);
+  document.getElementById('sideLevel').textContent = `LVL ${lvlData.lvl} · ${lvlData.name}`;
+  document.getElementById('sideXp').textContent = `${xp} XP`;
+  document.getElementById('sideXpBar').style.width = pct + '%';
+  const mLvl = document.getElementById('mLvl');
+  if (mLvl) mLvl.textContent = `LVL ${lvlData.lvl}`;
+  const mXpBar = document.getElementById('mXpBar');
+  if (mXpBar) mXpBar.style.width = pct + '%';
+  if (lvlData.lvl > prevLevel) {
+    showLevelUp(lvlData);
+    prevLevel = lvlData.lvl;
+  }
+}
+
+function showLevelUp(lvlData) {
+  document.getElementById('lvlupName').textContent = lvlData.name;
+  document.getElementById('lvlupSub').textContent = `LVL ${lvlData.lvl} · ${lvlData.name} — Шинэ түвшинд гарлаа!`;
+  const overlay = document.getElementById('lvlupOverlay');
+  overlay.classList.add('show');
+  const particles = document.getElementById('lvlupParticles');
+  particles.innerHTML = '';
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const colors = ['var(--xp)','var(--lvl)','var(--deep)','var(--train)'];
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.left = (20 + Math.random()*60) + '%';
+    p.style.top = (20 + Math.random()*60) + '%';
+    p.style.setProperty('--tx', (Math.random()*400-200) + 'px');
+    p.style.setProperty('--ty', (Math.random()*400-200) + 'px');
+    particles.appendChild(p);
+  }
+}
+
+function closeLvlUp() {
+  document.getElementById('lvlupOverlay').classList.remove('show');
+}
+
+function updateWeekScore() {
+  const totalDone = CHECKLISTS.reduce((s,items,di) => {
+    return s + items.filter((_,ii) => state.checks[`d${di}_i${ii}`]).length;
+  }, 0);
+  const totalItems = CHECKLISTS.reduce((s,items) => s + items.length, 0);
+  const pct = Math.round(totalDone/totalItems*100);
+  const el = document.getElementById('weekScoreEl');
+  if (el) el.textContent = `Долоо хоног: ${pct}%`;
+}
+
+function updateStreak() {
+  const today = new Date().toDateString();
+  if (state.lastDate !== today) {
+    const yesterday = new Date(Date.now()-86400000).toDateString();
+    if (state.lastDate === yesterday) {
+      state.streak = (state.streak||0) + 1;
+    } else if (state.lastDate && state.lastDate !== today) {
+      if (!state.freezeUsed) state.streak = 0;
+      else state.freezeUsed = false;
+    }
+    state.lastDate = today;
+  }
+  document.getElementById('streakNum').textContent = state.streak||0;
+  const mStreak = document.getElementById('mStreak');
+  if (mStreak) mStreak.textContent = state.streak||0;
+}
+
+// ===================== ACHIEVEMENTS =====================
+function checkAchievements() {
+  ACHIEVEMENTS.forEach(ach => {
+    if (!state.achievementsUnlocked.includes(ach.id) && ach.check(state)) {
+      state.achievementsUnlocked.push(ach.id);
+      showAchToast(ach);
+      renderAchievements();
+    }
+  });
+}
+
+function renderAchievements() {
+  const bar = document.getElementById('achBar');
+  if (!bar) return;
+  bar.innerHTML = ACHIEVEMENTS.map(ach => {
+    const unlocked = state.achievementsUnlocked.includes(ach.id);
+    return `<div class="ach-badge ${unlocked?'unlocked':''}" title="${ach.desc}"><span class="ach-icon">${ach.icon}</span><span class="ach-name">${ach.name}</span></div>`;
+  }).join('');
+}
+
+function showAchToast(ach) {
+  const toast = document.getElementById('achToast');
+  document.getElementById('achToastIcon').textContent = ach.icon;
+  document.getElementById('achToastText').textContent = `Achievement: ${ach.name}!`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ===================== BOSS =====================
+function initBosses() {
+  Object.keys(state.bossesCleared||{}).forEach(id => {
+    if (state.bossesCleared[id]) {
+      const doneEl = document.getElementById('bossDone'+id);
+      if (doneEl) doneEl.classList.add('show');
+    }
+  });
+}
+
+function toggleBoss(id) {
+  if (!state.bossesCleared) state.bossesCleared = {};
+  state.bossesCleared[id] = !state.bossesCleared[id];
+  const doneEl = document.getElementById('bossDone'+id);
+  if (doneEl) doneEl.classList.toggle('show', state.bossesCleared[id]);
+  if (state.bossesCleared[id]) {
+    state.totalXp = (state.totalXp||0) + 50;
+    showXpPopup(50, 1);
+    updateXpBar();
+    checkAchievements();
+  } else {
+    state.totalXp = Math.max(0, (state.totalXp||0) - 50);
+    updateXpBar();
+  }
+  saveState();
+}
+
+// ===================== STREAK FREEZE =====================
+function initFreeze() {
+  if (state.freezeUsed) {
+    const btn = document.getElementById('freezeBtn');
+    if (btn) { btn.innerHTML = '🧊 Streak Freeze ашигласан'; btn.classList.add('used'); }
+  }
+}
+
+function useFreeze() {
+  if (state.freezeUsed) return;
+  state.freezeUsed = true;
+  const btn = document.getElementById('freezeBtn');
+  if (btn) { btn.innerHTML = '🧊 Streak Freeze ашигласан'; btn.classList.add('used'); }
+  saveState();
+}
+
+// ===================== NAVIGATION =====================
+function showDay(i) {
+  document.querySelectorAll('.day-panel').forEach(p => p.style.display='none');
+  document.querySelectorAll('.nav-item').forEach((n,j) => n.classList.toggle('active', j===i));
+  document.querySelectorAll('.mobile-nav-item').forEach(el => el.classList.remove('active'));
+  const mnavEl = document.getElementById('mnav' + (i < 7 ? i : i===9 ? 9 : ''));
+  if (mnavEl) mnavEl.classList.add('active');
+  const panel = document.getElementById('dp'+i);
+  if (!panel) return;
+  panel.style.display = 'block';
+  panel.style.animation = 'none';
+  void panel.offsetWidth;
+  panel.style.animation = '';
+  currentDay = i;
+  currentTab = 0;
+  if (i < 7) {
+    document.getElementById('topTitle').innerHTML = DAYS[i].name + ' <span>гараг</span>';
+    document.getElementById('topMeta').textContent = DAYS[i].meta;
+    document.getElementById('dayXpBadge').textContent = DAYS[i].badge;
+    document.getElementById('tabBar').style.display = 'flex';
+  } else {
+    const titles = ['','','','Tips','Сайжруулалт','7н Тайлан'];
+    document.getElementById('topTitle').innerHTML = (titles[i-4]||'') + ' <span></span>';
+    document.getElementById('topMeta').textContent = '';
+    document.getElementById('dayXpBadge').textContent = '';
+    document.getElementById('tabBar').style.display = 'none';
+  }
+  showTab(0);
+  panel.querySelectorAll('.tl-row').forEach((r,k) => {
+    r.classList.remove('show');
+    setTimeout(() => r.classList.add('show'), k*40+60);
+  });
+  document.querySelector('.scroll-area').scrollTop = 0;
+  if (i === 9) renderWeekOverview();
+}
+
+function showTab(t) {
+  currentTab = t;
+  document.querySelectorAll('.tab').forEach((el,j) => el.classList.toggle('active', j===t));
+  if (currentDay < 9) {
+    const p0 = document.getElementById(`tp${currentDay}-0`);
+    const p1 = document.getElementById(`tp${currentDay}-1`);
+    if (p0) { p0.classList.toggle('active', t===0); p0.style.display = t===0 ? 'block' : 'none'; }
+    if (p1) { p1.classList.toggle('active', t===1); p1.style.display = t===1 ? 'block' : 'none'; }
+  }
+}
+
+function renderWeekOverview() {
+  const grid = document.getElementById('weekGrid');
+  const dayNames = ['Да','Мя','Лха','Пүр','Баа','Бям','Ням'];
+  let html = '';
+  let doneCount = 0;
+  CHECKLISTS.forEach((_,di) => {
+    const items = CHECKLISTS[di];
+    const done = items.filter((_,ii) => state.checks[`d${di}_i${ii}`]).length;
+    const total = items.length;
+    const dayXp = calcDayXp(di);
+    const pct = Math.round(done/total*100);
+    const isDone = done === total;
+    if (isDone) doneCount++;
+    html += `<div class="wk-cell ${isDone?'wk-done':''}" onclick="showDay(${di})"><div class="wk-day">${dayNames[di]}</div><div class="wk-score">${pct}%</div><div class="wk-xp">+${dayXp} XP</div></div>`;
+  });
+  grid.innerHTML = html;
+  const weekXp = CHECKLISTS.reduce((s,_,di) => s + calcDayXp(di), 0);
+  document.getElementById('totalXpVal').textContent = weekXp;
+  document.getElementById('totalDoneVal').textContent = `${doneCount}/7`;
+  document.getElementById('totalStreakVal').textContent = state.streak||0;
+}
+
+function resetWeek() {
+  if (!confirm('Энэ долоо хоногийн бүх checklistийг дахин эхлүүлэх үү?')) return;
+  CHECKLISTS.forEach((_,di) => { CHECKLISTS[di].forEach((_,ii) => { delete state.checks[`d${di}_i${ii}`]; }); });
+  saveState();
+  buildChecklists();
+  CHECKLISTS.forEach((_,di) => updateNavDone(di));
+  updateXpBar();
+  updateWeekScore();
+  renderWeekOverview();
+}
+
+// ===================== INIT =====================
+window.addEventListener('DOMContentLoaded', () => {
+  buildChecklists();
+  CHECKLISTS.forEach((_,di) => updateNavDone(di));
+  updateXpBar();
+  updateWeekScore();
+  document.getElementById('streakNum').textContent = state.streak||0;
+  const xp = state.totalXp||0;
+  const lvlData = LEVELS.find(l => xp >= l.min && xp < l.max) || LEVELS[LEVELS.length-1];
+  prevLevel = lvlData.lvl;
+  renderAchievements();
+  initBosses();
+  initFreeze();
+  updateStreak();
+  showDay(0);
+  for (let di=0; di<7; di++) {
+    const p1 = document.getElementById(`tp${di}-1`);
+    if (p1) p1.style.display = 'none';
+  }
+});
+</script>
+</body>
+</html>

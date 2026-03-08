@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ad Metric Шинжилгээ</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050507;
+    --surface: #0c0c10;
+    --border: #1c1c24;
+    --accent: #b0ff00;
+    --accent-dim: rgba(176,255,0,0.1);
+    --accent-glow: 0 0 18px rgba(176,255,0,0.35);
+    --warn: #ffb800;
+    --bad: #ff3d5a;
+    --blue: #00d4ff;
+    --text: #ddeedd;
+    --muted: #485848;
+    --card: #0a0a0d;
+    --r: 14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { background:var(--bg); color:var(--text); font-family:'Syne',sans-serif; min-height:100vh; width:100%; }
+
+  .page { width:100%; max-width:720px; margin:0 auto; padding:28px 20px 80px; }
+
+  /* HEADER */
+  .header { margin-bottom:32px; padding-top:4px; }
+  .header-label { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:3px; text-transform:uppercase; margin-bottom:6px; }
+  .header h1 { font-size:28px; font-weight:800; line-height:1.1; letter-spacing:-0.5px; }
+  .header h1 span { color:var(--accent); text-shadow:var(--accent-glow); }
+
+  /* SECTION TITLE */
+  .stitle { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:14px; }
+
+  /* CARD */
+  .card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:20px; margin-bottom:14px; }
+
+  /* AD TYPE */
+  .ad-type-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
+  @media(max-width:420px){ .ad-type-grid { grid-template-columns:repeat(2,1fr); } }
+  .at-btn {
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:12px 6px; cursor:pointer; text-align:center; transition:all 0.18s; user-select:none;
+  }
+  .at-btn:hover { border-color:rgba(176,255,0,0.4); }
+  .at-btn.active { background:rgba(176,255,0,0.07); border-color:var(--accent); box-shadow:0 0 14px rgba(176,255,0,0.15); }
+  .at-icon { font-size:20px; display:block; margin-bottom:5px; }
+  .at-label { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:0.5px; }
+  .at-btn.active .at-label { color:var(--accent); }
+
+  /* INPUTS */
+  input { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:11px 13px; color:var(--text); font-family:'Space Mono',monospace; font-size:14px; width:100%; outline:none; transition:border-color 0.2s,box-shadow 0.2s; -webkit-appearance:none; }
+  input:focus { border-color:var(--accent); box-shadow:0 0 0 2px rgba(176,255,0,0.1); }
+  input::placeholder { color:var(--muted); }
+  .igrid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media(max-width:360px){ .igrid { grid-template-columns:1fr; } }
+  .igroup { display:flex; flex-direction:column; gap:6px; }
+  .igroup label { font-size:11px; color:var(--muted); font-family:'Space Mono',monospace; }
+
+  /* BUTTONS */
+  .btn-row { display:flex; gap:10px; margin-bottom:16px; }
+  .btn-go { flex:1; background:var(--accent); color:#050507; border:none; border-radius:12px; padding:15px; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:opacity 0.2s,transform 0.1s,box-shadow 0.2s; box-shadow:var(--accent-glow); }
+  .btn-go:hover { box-shadow:0 0 30px rgba(176,255,0,0.5); }
+  .btn-go:active { transform:scale(0.98); opacity:0.9; }
+  .btn-clr { background:var(--surface); color:var(--muted); border:1px solid var(--border); border-radius:12px; padding:15px 18px; font-family:'Space Mono',monospace; font-size:11px; cursor:pointer; transition:all 0.2s; }
+  .btn-clr:hover { border-color:var(--bad); color:var(--bad); }
+
+  /* WARNING */
+  .warn-box { background:rgba(255,184,0,0.06); border:1px solid rgba(255,184,0,0.3); border-radius:10px; padding:13px 16px; font-size:12px; color:var(--warn); line-height:1.6; margin-bottom:14px; display:none; }
+  .warn-box.on { display:block; }
+
+  /* RESULTS */
+  .results { display:none; }
+  .results.on { display:block; }
+
+  /* SCORE */
+  .score-card { border-radius:var(--r); padding:26px; margin-bottom:14px; text-align:center; border:1px solid var(--border); position:relative; overflow:hidden; }
+  .score-card.good { background:#071207; border-color:rgba(176,255,0,0.25); }
+  .score-card.warn { background:#141000; border-color:rgba(255,184,0,0.25); }
+  .score-card.bad  { background:#140608; border-color:rgba(255,61,90,0.25); }
+  .sc-meta { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; margin-bottom:5px; text-transform:uppercase; }
+  .sc-lbl  { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:3px; text-transform:uppercase; margin-bottom:5px; opacity:0.5; }
+  .sc-val  { font-size:60px; font-weight:800; line-height:1; margin-bottom:6px; }
+  .score-card.good .sc-val { color:var(--accent); text-shadow:var(--accent-glow); }
+  .score-card.warn .sc-val { color:var(--warn); }
+  .score-card.bad  .sc-val { color:var(--bad); }
+  .sc-desc { font-size:13px; opacity:0.65; }
+
+  /* METRIC CARDS */
+  .mgrid { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+  .mc { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:16px; display:grid; grid-template-columns:1fr auto; gap:8px; align-items:start; position:relative; overflow:hidden; }
+  .mc::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
+  .mc.good { border-color:rgba(176,255,0,0.15); }
+  .mc.good::before { background:var(--accent); box-shadow:0 0 8px rgba(176,255,0,0.7); }
+  .mc.warn::before { background:var(--warn); }
+  .mc.bad::before  { background:var(--bad); }
+  .mn { font-size:11px; color:var(--muted); font-family:'Space Mono',monospace; letter-spacing:1px; margin-bottom:4px; }
+  .mv { font-size:22px; font-weight:800; line-height:1; margin-bottom:5px; }
+  .mc.good .mv { color:var(--accent); }
+  .mc.warn .mv { color:var(--warn); }
+  .mc.bad  .mv { color:var(--bad); }
+  .me { font-size:12px; color:var(--muted); line-height:1.55; }
+  .mbadge { font-family:'Space Mono',monospace; font-size:10px; padding:4px 9px; border-radius:6px; font-weight:700; white-space:nowrap; align-self:start; }
+  .mbadge.good { background:rgba(176,255,0,0.1); color:var(--accent); }
+  .mbadge.warn { background:rgba(255,184,0,0.1); color:var(--warn); }
+  .mbadge.bad  { background:rgba(255,61,90,0.1); color:var(--bad); }
+
+  /* BAR */
+  .bbar-wrap { margin-top:12px; grid-column:span 2; }
+  .bbar-lbs { display:flex; justify-content:space-between; font-family:'Space Mono',monospace; font-size:9px; color:var(--muted); margin-bottom:5px; }
+  .bbar-bg { background:var(--border); border-radius:4px; height:5px; position:relative; overflow:visible; }
+  .bbar-fill { height:100%; border-radius:4px; transition:width 0.9s cubic-bezier(0.4,0,0.2,1); max-width:100%; }
+  .bbar-mark { position:absolute; top:-4px; width:2px; height:13px; background:rgba(255,255,255,0.25); border-radius:1px; }
+
+  /* ACTIONS */
+  .act-title { font-size:14px; font-weight:700; margin-bottom:14px; color:var(--text); }
+  .act-item { display:flex; gap:11px; align-items:flex-start; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+  .act-item:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+  .act-dot { width:6px; height:6px; border-radius:50%; margin-top:6px; flex-shrink:0; }
+  .dot-good { background:var(--accent); box-shadow:0 0 6px rgba(176,255,0,0.8); }
+  .dot-warn { background:var(--warn); }
+  .dot-bad  { background:var(--bad); }
+  .act-txt { font-size:13px; line-height:1.65; color:var(--muted); }
+  .act-txt strong { color:var(--text); }
+
+  /* AI */
+  .ai-hdr { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .ai-dot { width:9px; height:9px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px rgba(176,255,0,0.9); animation:pulse 2s infinite; flex-shrink:0; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.85);} }
+  .ai-title { font-size:13px; font-weight:700; color:var(--text); }
+  .ai-sub { font-family:'Space Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:2px; }
+  .ai-qbtns { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:13px; }
+  .ai-q { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:7px 11px; font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); cursor:pointer; transition:all 0.15s; }
+  .ai-q:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
+  .ai-irow { display:flex; gap:8px; }
+  .ai-inp { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:11px 13px; color:var(--text); font-family:'Syne',sans-serif; font-size:13px; outline:none; transition:border-color 0.2s; }
+  .ai-inp:focus { border-color:var(--accent); }
+  .ai-inp::placeholder { color:var(--muted); }
+  .ai-send { background:var(--accent); color:#050507; border:none; border-radius:10px; width:42px; height:42px; font-size:18px; font-weight:700; cursor:pointer; transition:opacity 0.2s; flex-shrink:0; box-shadow:var(--accent-glow); }
+  .ai-send:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; }
+  .ai-msgs { margin-top:14px; display:flex; flex-direction:column; gap:10px; max-height:340px; overflow-y:auto; }
+  .ai-msg { border-radius:10px; padding:12px 14px; font-size:13px; line-height:1.65; }
+  .ai-msg.user { background:rgba(176,255,0,0.07); border:1px solid rgba(176,255,0,0.2); color:var(--accent); align-self:flex-end; max-width:88%; }
+  .ai-msg.bot  { background:var(--surface); border:1px solid var(--border); color:var(--text); }
+  .ai-msg.load { color:var(--muted); font-style:italic; }
+
+  /* HISTORY */
+  .hist-sec { margin-bottom:24px; }
+  .hist-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .hist-ttl { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; }
+  .hist-clr { font-family:'Space Mono',monospace; font-size:9px; color:var(--muted); background:none; border:1px solid var(--border); border-radius:6px; padding:3px 9px; cursor:pointer; transition:all 0.15s; }
+  .hist-clr:hover { color:var(--bad); border-color:var(--bad); }
+  .hist-list { display:flex; flex-direction:column; gap:8px; }
+  .hist-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:13px 16px; cursor:pointer; transition:border-color 0.15s; display:flex; justify-content:space-between; align-items:center; }
+  .hist-card:hover { border-color:rgba(176,255,0,0.4); }
+  .hist-name { font-size:13px; font-weight:700; color:var(--text); margin-bottom:3px; }
+  .hist-meta { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); }
+  .hist-score { font-size:20px; font-weight:800; }
+  .hist-score.good { color:var(--accent); text-shadow:var(--accent-glow); }
+  .hist-score.warn { color:var(--warn); }
+  .hist-score.bad  { color:var(--bad); }
+
+  /* DIVIDER */
+  .divider { height:1px; background:var(--border); margin:28px 0; }
+
+  /* INFO */
+  .info-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:18px; margin-bottom:12px; transition:border-color 0.2s; }
+  .info-card:hover { border-color:rgba(176,255,0,0.2); }
+  .ic-hdr { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  .ic-name { font-size:14px; font-weight:700; color:var(--text); }
+  .ic-target { font-family:'Space Mono',monospace; font-size:10px; color:var(--accent); background:rgba(176,255,0,0.08); border:1px solid rgba(176,255,0,0.2); padding:3px 9px; border-radius:6px; white-space:nowrap; }
+  .ic-desc { font-size:12.5px; color:var(--muted); line-height:1.65; margin-bottom:10px; }
+  .ic-formula { font-family:'Space Mono',monospace; font-size:11px; color:var(--blue); background:rgba(0,212,255,0.06); border:1px solid rgba(0,212,255,0.15); padding:8px 11px; border-radius:8px; margin-bottom:12px; }
+
+  /* RANGE TABLE */
+  .rtable { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:10px; }
+  @media(max-width:380px){ .rtable { grid-template-columns:1fr; } }
+  .rcell { border-radius:8px; padding:10px; text-align:center; }
+  .rcell.rb { background:rgba(255,61,90,0.07); border:1px solid rgba(255,61,90,0.2); }
+  .rcell.rw { background:rgba(255,184,0,0.07); border:1px solid rgba(255,184,0,0.2); }
+  .rcell.rg { background:rgba(176,255,0,0.06); border:1px solid rgba(176,255,0,0.2); }
+  .rlabel { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; margin-bottom:5px; }
+  .rcell.rb .rlabel { color:var(--bad); }
+  .rcell.rw .rlabel { color:var(--warn); }
+  .rcell.rg .rlabel { color:var(--accent); }
+  .rval { font-family:'Space Mono',monospace; font-size:12px; color:var(--text); font-weight:700; line-height:1.4; margin-bottom:3px; }
+  .rdesc { font-size:10px; color:var(--muted); line-height:1.4; }
+
+  .ic-tip { font-size:11.5px; color:var(--muted); background:rgba(176,255,0,0.04); border-left:2px solid rgba(176,255,0,0.4); padding:9px 11px; border-radius:0 8px 8px 0; line-height:1.55; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="header-label">Meta Ads · Шинжилгээ</div>
+    <h1>Ad Metric <span>Analyzer</span></h1>
+  </div>
+</div>
+
+<!-- AD TYPE -->
+<div class="card">
+  <div class="stitle">Ad төрөл сонгох</div>
+  <div class="ad-type-grid">
+    <div class="at-btn active" data-type="engagement" onclick="selType('engagement',this)"><span class="at-icon">❤️</span><span class="at-label">Engagement</span></div>
+    <div class="at-btn" data-type="sales" onclick="selType('sales',this)"><span class="at-icon">🛒</span><span class="at-label">Sales / ROAS</span></div>
+    <div class="at-btn" data-type="traffic" onclick="selType('traffic',this)"><span class="at-icon">🔗</span><span class="at-label">Traffic</span></div>
+    <div class="at-btn" data-type="leads" onclick="selType('leads',this)"><span class="at-icon">📋</span><span class="at-label">Lead Gen</span></div>
+    <div class="at-btn" data-type="awareness" onclick="selType('awareness',this)"><span class="at-icon">👁️</span><span class="at-label">Awareness</span></div>
+    <div class="at-btn" data-type="app" onclick="selType('app',this)"><span class="at-icon">📱</span><span class="at-label">App Install</span></div>
+  </div>
+  <div class="igroup">
+    <label>Ad нэр / Тэмдэглэл</label>
+    <input type="text" id="ad-name" placeholder="Жиш: Summer Sale — Video 01">
+  </div>
+</div>
+
+<!-- INPUTS -->
+<div class="card">
+  <div class="stitle">Өгөгдөл оруулах</div>
+  <div class="igrid">
+    <div class="igroup"><label>Impressions</label><input type="number" id="impressions" placeholder="215"></div>
+    <div class="igroup"><label>Reach</label><input type="number" id="reach" placeholder="198"></div>
+    <div class="igroup"><label>Amount Spent ($)</label><input type="number" id="spent" placeholder="0.21" step="0.01"></div>
+    <div class="igroup"><label>Link Clicks</label><input type="number" id="clicks" placeholder="0"></div>
+    <div class="igroup"><label>3-sec Video Plays</label><input type="number" id="plays3" placeholder="0"></div>
+    <div class="igroup"><label>ThruPlay</label><input type="number" id="thruplay" placeholder="0"></div>
+    <div class="igroup"><label>Post Engagement</label><input type="number" id="engagement" placeholder="0"></div>
+    <div class="igroup f-sales" style="display:none"><label>Purchases</label><input type="number" id="purchases" placeholder="0"></div>
+    <div class="igroup f-sales" style="display:none"><label>Revenue ($)</label><input type="number" id="revenue" placeholder="0" step="0.01"></div>
+    <div class="igroup f-leads" style="display:none"><label>Leads</label><input type="number" id="leads" placeholder="0"></div>
+    <div class="igroup f-app" style="display:none"><label>App Installs</label><input type="number" id="installs" placeholder="0"></div>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button class="btn-go" onclick="analyze()">⚡ ДҮГНЭЛТ ГАРГАХ</button>
+  <button class="btn-clr" onclick="clearForm()">↺ Цэвэрлэх</button>
+</div>
+
+<div class="warn-box" id="warnbox">⚠️ <strong>Анхааруулга:</strong> Impression тоо хэт бага (&lt;500). $1–2 зарцуулсны дараа шийдвэр гар.</div>
+
+<!-- RESULTS -->
+<div class="results" id="results">
+
+  <div class="score-card" id="scard">
+    <div class="sc-meta" id="sc-meta"></div>
+    <div class="sc-lbl">НИЙТ ҮНЭЛГЭЭ</div>
+    <div class="sc-val" id="sc-val">—</div>
+    <div class="sc-desc" id="sc-desc"></div>
+  </div>
+
+  <div class="mgrid" id="mgrid"></div>
+
+  <div class="card"><div class="act-title">🎯 Юу хийх вэ?</div><div id="actlist"></div></div>
+
+  <div class="card">
+    <div class="ai-hdr">
+      <div class="ai-dot"></div>
+      <div><div class="ai-title">Таны AI ухаалаг туслах</div><div class="ai-sub">МЕТРИК ТАЙЛБАР · ЗӨВЛӨГӨӨ</div></div>
+    </div>
+    <div class="ai-qbtns">
+      <button class="ai-q" onclick="askQ('Энэ метрикүүдийг задлан тайлбарла')">📊 Задлан тайлбар</button>
+      <button class="ai-q" onclick="askQ('Scaling хийх ёстой юу? Яагаад?')">📈 Scale хийх үү?</button>
+      <button class="ai-q" onclick="askQ('Хамгийн муу метрикийг яаж засах вэ?')">🔧 Яаж засах?</button>
+      <button class="ai-q" onclick="askQ('Энэ ad-ийн зардал зохистой юу?')">💰 Зардал шалга</button>
+    </div>
+    <div class="ai-irow">
+      <input class="ai-inp" id="ai-inp" placeholder="Асуулт асуух..." onkeydown="if(event.key==='Enter')sendAI()">
+      <button class="ai-send" id="ai-btn" onclick="sendAI()">↑</button>
+    </div>
+    <div class="ai-msgs" id="ai-msgs"></div>
+  </div>
+
+</div>
+
+<!-- HISTORY — always visible, outside results -->
+<div class="hist-sec" id="histsec" style="display:none">
+  <div class="hist-hdr">
+    <div class="hist-ttl">Сүүлийн 10 шинжилгээ</div>
+    <button class="hist-clr" onclick="clearHist()">Устгах</button>
+  </div>
+  <div class="hist-list" id="histlist"></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INFO -->
+<div>
+  <div class="stitle">Metric тайлбар — Дэлгэрэнгүй</div>
+
+  <div class="info-card">
+    <div class="ic-hdr"><span class="ic-name">Hook Rate</span><span class="ic-target">Зорилт: &gt;30%</span></div>
+    <div class="ic-desc">Видеоны эхний 3 секунд хүмүүсийг татаж байна уу гэдгийг хэмждэг. Бага байвал эхлэл (hook) сул — хүмүүс хурдан scrolll хийж өнгөрч байна.</div>
+    <div class="ic-formula">3-sec plays ÷ Impressions × 100</div>
+    <div class="rtable">
+      <div class="rcell rb"><div class="rlabel">✗ Муу</div><div class="rval">&lt;15%</div><div class="rdesc">Hook огт ажиллахгүй. Яаралтай солих</div></div>
+      <div class="rcell rw"><div class="rlabel">△ Дундаж</div><div class="rval">15–30%</div><div class="rdesc">Хэвийн. Сайжруулах боломжтой</div></div>
+      <div class="rcell rg"><div class="rlabel">✓ Хамгийн сайн</div><div class="rval">&gt;30%</div><div class="rdesc">Хүмүүс татагдаж байна. Маш сайн</div></div>
+    </div>
+    <div class="ic-tip">💡 "Энэ нэг зүйлийг мэдэхгүй бол..." гэсэн эхлэлтэй туршиж үз. Эхний фрэймд гайхшруулсан дүрс эсвэл тод текст тавь.</div>
+  </div>
+
+  <div class="info-card">
+    <div class="ic-hdr"><span class="ic-name">Hold Rate (ThruPlay Rate)</span><span class="ic-target">Зорилт: &gt;50%</span></div>
+    <div class="ic-desc">Харагчид видеог дуустал үзэж байна уу? Өндөр байвал алгоритм энэ видеог автоматаар илүү олон хүнд харуулдаг — органик reach нэмэгддэг.</div>
+    <div class="ic-formula">ThruPlay ÷ Impressions × 100</div>
+    <div class="rtable">
+      <div class="rcell rb"><div class="rlabel">✗ Муу</div><div class="rval">&lt;30%</div><div class="rdesc">Хурдан орхиж байна. Контент богиносгох</div></div>
+      <div class="rcell rw"><div class="rlabel">△ Дундаж</div><div class="rval">30–50%</div><div class="rdesc">Хэвийн. Дунд хэсгийг сайжруулах</div></div>
+      <div class="rcell rg"><div class="rlabel">✓ Хамгийн сайн</div><div class="rval">&gt;50%</div><div class="rdesc">Алгоритм дэмжинэ. Маш сайн</div></div>
+    </div>
+    <div class="ic-tip">💡 Видеог 15–30 секундад багтаа. Дунд хэсэгт "Яагаад энэ чухал вэ?" гэдгийг тайлбарла.</div>
+  </div>
+
+  <div class="info-card">
+    <div class="ic-hdr"><span class="ic-name">CTR (Click-Through Rate)</span><span class="ic-target">Зорилт: &gt;2%</span></div>
+    <div class="ic-desc">Видео харсан хүмүүсийн хэдэн хувь нь таны линк дарж байна? Бага байвал CTA сул, эсвэл offer тодорхойгүй байна.</div>
+    <div class="ic-formula">Link Clicks ÷ Impressions × 100</div>
+    <div class="rtable">
+      <div class="rcell rb"><div class="rlabel">✗ Муу</div><div class="rval">&lt;1%</div><div class="rdesc">CTA огт ажиллахгүй. Яаралтай засах</div></div>
+      <div class="rcell rw"><div class="rlabel">△ Дундаж</div><div class="rval">1–2%</div><div class="rdesc">Хэвийн. CTA тодорхойлох</div></div>
+      <div class="rcell rg"><div class="rlabel">✓ Хамгийн сайн</div><div class="rval">&gt;2%</div><div class="rdesc">Линк дарч байна. Сайн</div></div>
+    </div>
+    <div class="ic-tip">💡 "Form бөглөө 👇", "Дэлгэрэнгүй →" гэсэн шууд дуудлага нэм. Caption-д offer-оо тодорхой бич.</div>
+  </div>
+
+  <div class="info-card">
+    <div class="ic-hdr"><span class="ic-name">CPM (Cost per 1000 Impressions)</span><span class="ic-target">Зорилт: &lt;$2</span></div>
+    <div class="ic-desc">1000 хүнд хүрэхэд хэдэн доллар зарцуулж байна? Өндөр байвал targeting буруу тохируулагдсан, эсвэл тухайн audience дотор өрсөлдөөн их байна.</div>
+    <div class="ic-formula">Spent ÷ Impressions × 1000</div>
+    <div class="rtable">
+      <div class="rcell rg"><div class="rlabel">✓ Хамгийн сайн</div><div class="rval">&lt;$2</div><div class="rdesc">Targeting маш зөв. Scale хий</div></div>
+      <div class="rcell rw"><div class="rlabel">△ Дундаж</div><div class="rval">$2–$4</div><div class="rdesc">Хэвийн. Targeting шалга</div></div>
+      <div class="rcell rb"><div class="rlabel">✗ Муу</div><div class="rval">&gt;$4</div><div class="rdesc">Targeting буруу. Яаралтай засах</div></div>
+    </div>
+    <div class="ic-tip">💡 Audience нарийсга. Broad targeting туршиж үз. Шинэ lookalike audience үүсгэ.</div>
+  </div>
+
+  <div class="info-card">
+    <div class="ic-hdr"><span class="ic-name">CPC (Cost per Click)</span><span class="ic-target">Зорилт: &lt;$0.15</span></div>
+    <div class="ic-desc">Нэг линк click авахад хэдэн доллар гарч байна? CTR сайжрахад CPC автоматаар буурна — шууд холбоотой метрикүүд.</div>
+    <div class="ic-formula">Spent ÷ Link Clicks</div>
+    <div class="rtable">
+      <div class="rcell rg"><div class="rlabel">✓ Хамгийн сайн</div><div class="rval">&lt;$0.15</div><div class="rdesc">Click зардал маш хямд</div></div>
+      <div class="rcell rw"><div class="rlabel">△ Дундаж</div><div class="rval">$0.15–$0.30</div><div class="rdesc">Хэвийн. CTR нэмэх</div></div>
+      <div class="rcell rb"><div class="rlabel">✗ Муу</div><div class="rval">&gt;$0.30</div><div class="rdesc">Click үнэтэй. CTA засах</div></div>
+    </div>
+    <div class="ic-tip">💡 CTR нэмэгдэхэд CPC автоматаар буурна. CTA-аа шууд, тодорхой болго.</div>
+  </div>
+
+  <div class="info-card">
+    <div class="ic-hdr"><span class="ic-name">Frequency</span><span class="ic-target">Зорилт: 1–2.5x</span></div>
+    <div class="ic-desc">Нэг хүн таны зарыг дунджаар хэдэн удаа харсан? 3-аас дээш болвол "ad fatigue" үүсч — хүмүүс уйдаж CTR буурч, CPM өснө.</div>
+    <div class="ic-formula">Impressions ÷ Reach</div>
+    <div class="rtable">
+      <div class="rcell rg"><div class="rlabel">✓ Хамгийн сайн</div><div class="rval">1–2.5x</div><div class="rdesc">Шинэ хүмүүст хүрч байна</div></div>
+      <div class="rcell rw"><div class="rlabel">△ Анхаар</div><div class="rval">2.5–3.5x</div><div class="rdesc">Fatigue эхэлж байна</div></div>
+      <div class="rcell rb"><div class="rlabel">✗ Муу</div><div class="rval">&gt;3.5x</div><div class="rdesc">Ad fatigue. Creative солих</div></div>
+    </div>
+    <div class="ic-tip">💡 Шинэ creative нэм. Audience тэлэ. Frequency cap тохируул.</div>
+  </div>
+
+  <div class="info-card">
+    <div class="ic-hdr"><span class="ic-name">Post Engagement Rate</span><span class="ic-target">Зорилт: &gt;3%</span></div>
+    <div class="ic-desc">Like, comment, share нийлсэн харьцаа. Өндөр байвал алгоритм organic reach нэмдэг — нийтлэл "social proof" авч байна гэсэн дохио.</div>
+    <div class="ic-formula">Post Engagement ÷ Reach × 100</div>
+    <div class="rtable">
+      <div class="rcell rb"><div class="rlabel">✗ Муу</div><div class="rval">&lt;1.5%</div><div class="rdesc">Engagement байхгүй. CTA нэмэх</div></div>
+      <div class="rcell rw"><div class="rlabel">△ Дундаж</div><div class="rval">1.5–3%</div><div class="rdesc">Хэвийн. Дуудлага нэмэх</div></div>
+      <div class="rcell rg"><div class="rlabel">✓ Хамгийн сайн</div><div class="rval">&gt;3%</div><div class="rdesc">Алгоритм дэмжинэ. Маш сайн</div></div>
+    </div>
+    <div class="ic-tip">💡 "Comment дор санаагаа бич", "Найздаа tag хий" гэсэн дуудлага нэм.</div>
+  </div>
+
+  <div class="info-card">
+    <div class="ic-hdr"><span class="ic-name">ROAS (Return on Ad Spend)</span><span class="ic-target">Зорилт: &gt;3x</span></div>
+    <div class="ic-desc">Нэг доллар зарцуулахад хэдэн доллар орлого авч байна? Sales campaign-д хамгийн чухал метрик. 1x = зөрүүгүй, 3x+ = ашигтай.</div>
+    <div class="ic-formula">Revenue ÷ Spent</div>
+    <div class="rtable">
+      <div class="rcell rb"><div class="rlabel">✗ Алдагдалтай</div><div class="rval">&lt;1.5x</div><div class="rdesc">Зарцуулсанаас бага орлого. Унтраа</div></div>
+      <div class="rcell rw"><div class="rlabel">△ Break-even</div><div class="rval">1.5–3x</div><div class="rdesc">Ашиг бага. Сайжруулах хэрэгтэй</div></div>
+      <div class="rcell rg"><div class="rlabel">✓ Ашигтай</div><div class="rval">&gt;3x</div><div class="rdesc">Scale хийх боломжтой</div></div>
+    </div>
+    <div class="ic-tip">💡 Landing page conversion rate шалга. Retargeting нэм. AOV нэмэгдүүл.</div>
+  </div>
+
+  <div class="info-card">
+    <div class="ic-hdr"><span class="ic-name">CPL (Cost per Lead)</span><span class="ic-target">Зорилт: &lt;$2</span></div>
+    <div class="ic-desc">Нэг lead авахад хэдэн доллар зарцуулж байна? Lead generation campaign-д хамгийн чухал метрик.</div>
+    <div class="ic-formula">Spent ÷ Leads</div>
+    <div class="rtable">
+      <div class="rcell rg"><div class="rlabel">✓ Хамгийн сайн</div><div class="rval">&lt;$2</div><div class="rdesc">Lead зардал маш хямд. Scale хий</div></div>
+      <div class="rcell rw"><div class="rlabel">△ Дундаж</div><div class="rval">$2–$5</div><div class="rdesc">Хэвийн. Form сайжруулах</div></div>
+      <div class="rcell rb"><div class="rlabel">✗ Муу</div><div class="rval">&gt;$5</div><div class="rdesc">Хэт үнэтэй. Form хялбарчил</div></div>
+    </div>
+    <div class="ic-tip">💡 Lead form-ын талбаруудыг багасга — зөвхөн нэр + утас 2 талбар хангалттай.</div>
+  </div>
+
+</div>
+</div><!-- /page -->
+
+<script>
+const TYPES = {
+  engagement:{label:'Engagement',icon:'❤️'},
+  sales:{label:'Sales / ROAS',icon:'🛒'},
+  traffic:{label:'Traffic',icon:'🔗'},
+  leads:{label:'Lead Gen',icon:'📋'},
+  awareness:{label:'Awareness',icon:'👁️'},
+  app:{label:'App Install',icon:'📱'}
+};
+let curType = 'engagement', aiCtx = '';
+
+// STORAGE
+function save() {
+  try {
+    localStorage.setItem('amf', JSON.stringify({
+      t:curType, n:v('ad-name'), i:v('impressions'), r:v('reach'),
+      s:v('spent'), c:v('clicks'), p:v('plays3'), tp:v('thruplay'),
+      e:v('engagement'), pu:v('purchases'), rv:v('revenue'),
+      l:v('leads'), ins:v('installs')
+    }));
+  } catch(e){}
+}
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem('amf'));
+    if (!d) return;
+    selType(d.t||'engagement', document.querySelector(`.at-btn[data-type="${d.t||'engagement'}"]`));
+    const m = {n:'ad-name',i:'impressions',r:'reach',s:'spent',c:'clicks',p:'plays3',tp:'thruplay',e:'engagement',pu:'purchases',rv:'revenue',l:'leads',ins:'installs'};
+    Object.entries(m).forEach(([k,id]) => { if(d[k]) document.getElementById(id).value = d[k]; });
+  } catch(e){}
+}
+function v(id) { return document.getElementById(id)?.value || ''; }
+
+// HISTORY
+function gh() { try { return JSON.parse(localStorage.getItem('amh')||'[]'); } catch(e){ return []; } }
+function sh(e) { let h=gh(); h.unshift(e); if(h.length>10) h=h.slice(0,10); try{localStorage.setItem('amh',JSON.stringify(h));}catch(e){} }
+function clearHist() { try{localStorage.removeItem('amh');}catch(e){} renderHist(); }
+function renderHist() {
+  const h=gh(), sec=document.getElementById('histsec'), lst=document.getElementById('histlist');
+  if(!h.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  lst.innerHTML=h.map((e,i)=>`<div class="hist-card" onclick="loadH(${i})">
+    <div><div class="hist-name">${e.n||'Нэргүй ad'}</div>
+    <div class="hist-meta">${TYPES[e.t]?.icon||''} ${TYPES[e.t]?.label||''} · ${e.d} · $${e.s}</div></div>
+    <div class="hist-score ${e.sc}">${e.pct}%</div></div>`).join('');
+}
+function loadH(i) {
+  const e=gh()[i]; if(!e) return;
+  selType(e.t||'engagement', document.querySelector(`.at-btn[data-type="${e.t||'engagement'}"]`));
+  document.getElementById('ad-name').value=e.n||'';
+  const m={impressions:'imp',reach:'rch',spent:'spn',clicks:'clk',plays3:'p3',thruplay:'tp',engagement:'eng',purchases:'pur',revenue:'rev',leads:'lds',installs:'ins2'};
+  // use stored raw keys
+  ['impressions','reach','spent','clicks','plays3','thruplay','engagement','purchases','revenue','leads','installs'].forEach(k=>{
+    const el=document.getElementById(k); if(el&&e[k]!==undefined) el.value=e[k]||'';
+  });
+  analyze(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// AD TYPE
+function selType(t, el) {
+  curType=t;
+  document.querySelectorAll('.at-btn').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.f-sales').forEach(f=>f.style.display=t==='sales'?'':'none');
+  document.querySelectorAll('.f-leads').forEach(f=>f.style.display=t==='leads'?'':'none');
+  document.querySelectorAll('.f-app').forEach(f=>f.style.display=t==='app'?'':'none');
+  save();
+}
+function clearForm() {
+  ['impressions','reach','spent','clicks','plays3','thruplay','engagement','purchases','revenue','leads','installs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('ad-name').value='';
+  document.getElementById('results').className='results';
+  document.getElementById('warnbox').className='warn-box';
+  document.getElementById('ai-msgs').innerHTML='';
+  save();
+}
+
+// ANALYZE
+function analyze() {
+  const imp=pf('impressions'), rch=pf('reach'), spn=pf('spent'), clk=pf('clicks'),
+        p3=pf('plays3'), tp=pf('thruplay'), eng=pf('engagement'),
+        pur=pf('purchases'), rev=pf('revenue'), lds=pf('leads'), ins=pf('installs');
+  const name=document.getElementById('ad-name').value||'Нэргүй ad';
+  if(!imp||!spn){alert('Impressions болон Amount Spent заавал оруулна уу');return;}
+  save();
+
+  document.getElementById('warnbox').className = imp<500?'warn-box on':'warn-box';
+
+  const cpm=(spn/imp)*1000, ctr=clk>0?(clk/imp)*100:0, cpc=clk>0?spn/clk:0,
+        hr=p3>0?(p3/imp)*100:0, hold=tp>0?(tp/imp)*100:0,
+        freq=rch>0?imp/rch:0, er=rch>0?(eng/rch)*100:0,
+        roas=rev>0?rev/spn:0, cpl=lds>0?spn/lds:0,
+        cpi=ins>0?spn/ins:0, cpa=pur>0?spn/pur:0;
+
+  let sc=0,tot=0;
+  const sm=(v,g,o)=>{tot++;if(v>=g)sc+=2;else if(v>=o)sc+=1;};
+  const sl=(v,g,o)=>{tot++;if(v<=g)sc+=2;else if(v<=o)sc+=1;};
+  sl(cpm,2,4);
+  if(clk>0) sm(ctr,2,1);
+  if(p3>0)  sm(hr,30,15);
+  if(tp>0)  sm(hold,50,30);
+  if(rch>0) sl(freq,2.5,3.5);
+  if(eng>0) sm(er,3,1.5);
+  if(roas>0) sm(roas,3,1.5);
+  if(cpl>0) sl(cpl,2,5);
+  if(cpi>0) sl(cpi,1,3);
+
+  const pct=tot>0?Math.round((sc/(tot*2))*100):0;
+  const cls=pct>=70?'good':pct>=40?'warn':'bad';
+
+  document.getElementById('scard').className='score-card '+cls;
+  document.getElementById('sc-meta').textContent=(TYPES[curType]?.icon||'')+' '+(TYPES[curType]?.label||'')+' · '+name;
+  document.getElementById('sc-val').textContent=pct+'%';
+  document.getElementById('sc-desc').textContent=pct>=70?'Сайн явж байна — scaling бодоорой':pct>=40?'Дундаж — 1–2 метрик сайжруулах хэрэгтэй':'Сул — creative эсвэл targeting шинэчлэх';
+
+  const g=document.getElementById('mgrid');
+  g.innerHTML='';
+  const card=(nm,val,u,st,ex,mn,mx,tg)=>{
+    const pb=Math.min(100,Math.max(0,((val-mn)/(mx-mn))*100));
+    const tp2=Math.min(100,Math.max(0,((tg-mn)/(mx-mn))*100));
+    const fc=st==='good'?'#b0ff00':st==='warn'?'#ffb800':'#ff3d5a';
+    const bt=st==='good'?'✓ САЙН':st==='warn'?'△ ДУНДАЖ':'✗ СУЛ';
+    const fv=typeof val==='number'?(Number.isInteger(val)?val:val.toFixed(2)):val;
+    g.innerHTML+=`<div class="mc ${st}">
+      <div><div class="mn">${nm}</div>
+      <div class="mv">${fv}${u}</div>
+      <div class="me">${ex}</div>
+      <div class="bbar-wrap">
+        <div class="bbar-lbs"><span>${mn}${u}</span><span>Зорилт: ${tg}${u}</span><span>${mx}${u}</span></div>
+        <div class="bbar-bg"><div class="bbar-fill" style="width:${pb}%;background:${fc}"></div><div class="bbar-mark" style="left:${tp2}%"></div></div>
+      </div></div>
+      <span class="mbadge ${st}">${bt}</span></div>`;
+  };
+
+  card('CPM',cpm,'$',cpm<=2?'good':cpm<=4?'warn':'bad',
+    cpm<=2?'Audience зөв, targeting маш сайн':cpm<=4?'Хэвийн, targeting шалгаарай':'Targeting буруу эсвэл competition их',0,8,2);
+  if(clk>0){
+    card('CTR',ctr,'%',ctr>=2?'good':ctr>=1?'warn':'bad',
+      ctr>=2?'Link дарж байна — CTA ажиллаж байна':ctr>=1?'Дундаж — CTA тодорхойлох':'CTA сул эсвэл offer тодорхойгүй',0,5,2);
+    card('CPC',cpc,'$',cpc<=0.15?'good':cpc<=0.3?'warn':'bad',
+      cpc<=0.15?'Click авах зардал маш хямд':'Click үнэтэй — CTR сайжруулах',0,0.5,0.15);
+  }
+  if(p3>0)  card('Hook Rate',hr,'%',hr>=30?'good':hr>=15?'warn':'bad',
+    hr>=30?'Эхний 3 сек татаж байна — hook сайн':hr>=15?'Дундаж — hook шинэчлэх':'Эхлэл сул — hook яаралтай солих',0,60,30);
+  if(tp>0)  card('Hold Rate',hold,'%',hold>=50?'good':hold>=30?'warn':'bad',
+    hold>=50?'Дуустал үзэж байна — контент сонирхолтой':hold>=30?'Дундаж — дунд хэсгийг сайжруулах':'Хурдан орхиж байна — богиносгох',0,80,50);
+  if(rch>0) card('Frequency',freq,'x',freq<=2.5?'good':freq<=3.5?'warn':'bad',
+    freq<=2.5?'Шинэ хүмүүст хүрч байна':freq<=3.5?'Анхаар — audience шинэчлэх':'Ad fatigue — creative яаралтай солих',1,5,2.5);
+  if(eng>0) card('Engagement Rate',er,'%',er>=3?'good':er>=1.5?'warn':'bad',
+    er>=3?'Social proof үүсч байна — алгоритм дэмжинэ':'Engagement бага — CTA нэмэх',0,8,3);
+  if(roas>0) card('ROAS',roas,'x',roas>=3?'good':roas>=1.5?'warn':'bad',
+    roas>=3?'Ашигтай — scale хийх боломжтой':roas>=1.5?'Break-even орчим':'Алдагдалтай — landing page шалга',0,6,3);
+  if(cpl>0) card('CPL',cpl,'$',cpl<=2?'good':cpl<=5?'warn':'bad',
+    cpl<=2?'Lead авах зардал маш хямд':cpl<=5?'Хэвийн':'Хэт үнэтэй — form хялбарчил',0,10,2);
+  if(cpi>0) card('CPI',cpi,'$',cpi<=1?'good':cpi<=3?'warn':'bad',
+    cpi<=1?'Install зардал маш сайн':cpi<=3?'Дундаж':'App install үнэтэй',0,6,1);
+  if(cpa>0) card('CPA',cpa,'$',cpa<=10?'good':cpa<=25?'warn':'bad',
+    cpa<=10?'Худалдан авалтын зардал хямд':cpa<=25?'Дундаж':'CPA өндөр — funnel шалга',0,50,10);
+
+  const acts=[];
+  if(cpm>4) acts.push({d:'bad',t:'<strong>Targeting шалга</strong> — CPM өндөр байна. Audience нарийсгах эсвэл шинэ segment туршиж үз.'});
+  if(p3>0&&hr<15) acts.push({d:'bad',t:'<strong>Hook солих</strong> — эхний 3 секунд сул. Гайхшруулсан эхлэлтэй туршиж үз.'});
+  if(tp>0&&hold<30) acts.push({d:'warn',t:'<strong>Видео богиносгох</strong> — хүмүүс дунд хэсэгт орхиж байна. 15–30 секундад багтаахыг хичээ.'});
+  if(clk>0&&ctr<1) acts.push({d:'bad',t:'<strong>CTA тодорхойлох</strong> — "Form бөглөө 👇" гэсэн шууд заавар нэм.'});
+  if(rch>0&&freq>3) acts.push({d:'warn',t:'<strong>Creative шинэчлэх</strong> — нэг хүн 3+ удаа харсан. Шинэ видео эсвэл audience нэм.'});
+  if(roas>0&&roas<1.5) acts.push({d:'bad',t:'<strong>Landing page шалга</strong> — ROAS хэт бага. Conversion rate сайжруулахгүй бол ad унтраа.'});
+  if(cpl>0&&cpl>5) acts.push({d:'warn',t:'<strong>Lead form хялбарчил</strong> — Нэр + утас 2 талбар хангалттай.'});
+  if(pct>=70) acts.push({d:'good',t:'<strong>Budget нэмэх</strong> — метрикүүд сайн байна. Өдөрт $1–2 нэмж scale хий.'});
+  if(imp<500) acts.push({d:'warn',t:'<strong>Хүлээ</strong> — impression хангалтгүй. 500+ болтол дүгнэлт гаргахад эрт.'});
+  if(!acts.length) acts.push({d:'good',t:'Өгөгдөл хангалттай биш — бүх талбарыг бөглөөрэй.'});
+
+  document.getElementById('actlist').innerHTML=acts.map(a=>
+    `<div class="act-item"><div class="act-dot dot-${a.d}"></div><div class="act-txt">${a.t}</div></div>`
+  ).join('');
+
+  aiCtx=`Ad: ${name}, Төрөл: ${TYPES[curType]?.label}, Үнэлгээ: ${pct}%
+Imp=${imp}, Reach=${rch||'N/A'}, Spent=$${spn}, CPM=$${cpm.toFixed(2)}, Freq=${rch>0?freq.toFixed(2):'N/A'}x
+${clk>0?`CTR=${ctr.toFixed(2)}%, CPC=$${cpc.toFixed(2)}`:''}
+${p3>0?`Hook=${hr.toFixed(1)}%`:''}
+${tp>0?`Hold=${hold.toFixed(1)}%`:''}
+${eng>0?`EngRate=${er.toFixed(2)}%`:''}
+${roas>0?`ROAS=${roas.toFixed(2)}x`:''}
+${cpl>0?`CPL=$${cpl.toFixed(2)}`:''}
+${cpa>0?`CPA=$${cpa.toFixed(2)}`:''}`;
+
+  const now=new Date();
+  sh({n:name,t:curType,pct,sc:cls,s:spn.toFixed(2),
+    d:`${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`,
+    impressions:imp,reach:rch,clicks:clk,plays3:p3,thruplay:tp,engagement:eng,
+    purchases:pur,revenue:rev,leads:lds,installs:ins});
+
+  document.getElementById('results').className='results on';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+  renderHist();
+}
+
+function pf(id){ return parseFloat(document.getElementById(id)?.value)||0; }
+
+// AI
+async function sendAI(){
+  const inp=document.getElementById('ai-inp');
+  const q=inp.value.trim(); if(!q) return;
+  inp.value=''; addM(q,'user'); await callAI(q);
+}
+function askQ(q){ addM(q,'user'); callAI(q); }
+function addM(txt,role){
+  const m=document.getElementById('ai-msgs');
+  const d=document.createElement('div');
+  d.className='ai-msg '+role; d.textContent=txt;
+  m.appendChild(d); m.scrollTop=m.scrollHeight; return d;
+}
+async function callAI(q){
+  const btn=document.getElementById('ai-btn'); btn.disabled=true;
+  const ld=addM('Бодож байна...','load');
+  
+  const payload = {
+    model:'claude-sonnet-4-20250514',
+    max_tokens:1000,
+    system:`Та Meta Ads-ийн мэргэжилтэн туслах юм. Монгол хэлээр хариулна уу. Богино, тодорхой, практик зөвлөгөө өг.\nОдоогийн өгөгдөл:\n${aiCtx||'Өгөгдөл байхгүй — эхлээд дүгнэлт гаргаарай гэж хэл.'}`,
+    messages:[{role:'user',content:q}]
+  };
+
+  // Try direct first, fallback to CORS proxy
+  const endpoints = [
+    { url: 'https://api.anthropic.com/v1/messages', direct: true },
+    { url: 'https://corsproxy.io/?https://api.anthropic.com/v1/messages', direct: false },
+  ];
+
+  let success = false;
+  for (const ep of endpoints) {
+    try {
+      const r = await fetch(ep.url, {
+        method:'POST',
+        headers:{'Content-Type':'application/json', 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify(payload)
+      });
+      if (!r.ok) { const err=await r.json(); throw new Error(err?.error?.message||r.status); }
+      const data = await r.json();
+      const txt = data.content?.map(b=>b.text||'').join('') || 'Хариу байхгүй.';
+      ld.className='ai-msg bot'; ld.textContent=txt;
+      success = true;
+      break;
+    } catch(e) {
+      console.warn('Endpoint failed:', ep.url, e.message);
+    }
+  }
+  if (!success) {
+    ld.className='ai-msg bot';
+    ld.textContent='⚠️ AI холболт амжилтгүй боллоо. Файлыг вэб сервер дээр ажиллуулна уу (Chrome-д localhost шаардлагатай).';
+  }
+  btn.disabled=false;
+  document.getElementById('ai-msgs').scrollTop=9999;
+}
+
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',save));
+load(); renderHist();
+</script>
+</body>
+</html>

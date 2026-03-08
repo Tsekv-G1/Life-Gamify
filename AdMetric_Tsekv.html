@@ -97,6 +97,8 @@
   .mc.good::before { background:var(--accent); box-shadow:0 0 8px rgba(176,255,0,0.7); }
   .mc.warn::before { background:var(--warn); }
   .mc.bad::before  { background:var(--bad); }
+  .mc.neutral::before { background:var(--muted); }
+  .mc.neutral .mv { color:var(--muted); }
   .mn { font-size:11px; color:var(--muted); font-family:'Space Mono',monospace; letter-spacing:1px; margin-bottom:4px; }
   .mv { font-size:22px; font-weight:800; line-height:1; margin-bottom:5px; }
   .mc.good .mv { color:var(--accent); }
@@ -107,6 +109,7 @@
   .mbadge.good { background:rgba(176,255,0,0.1); color:var(--accent); }
   .mbadge.warn { background:rgba(255,184,0,0.1); color:var(--warn); }
   .mbadge.bad  { background:rgba(255,61,90,0.1); color:var(--bad); }
+  .mbadge.neutral { background:rgba(255,255,255,0.05); color:var(--muted); }
 
   /* BAR */
   .bbar-wrap { margin-top:12px; grid-column:span 2; }
@@ -530,7 +533,7 @@ function analyze() {
     const pb=Math.min(100,Math.max(0,((val-mn)/(mx-mn))*100));
     const tp2=Math.min(100,Math.max(0,((tg-mn)/(mx-mn))*100));
     const fc=st==='good'?'#b0ff00':st==='warn'?'#ffb800':'#ff3d5a';
-    const bt=st==='good'?'✓ САЙН':st==='warn'?'△ ДУНДАЖ':'✗ СУЛ';
+    const bt=st==='good'?'✓ САЙН':st==='warn'?'△ ДУНДАЖ':st==='neutral'?'— ӨГӨГДӨЛГҮЙ':'✗ СУЛ';
     const fv=typeof val==='number'?(Number.isInteger(val)?val:val.toFixed(2)):val;
     g.innerHTML+=`<div class="mc ${st}">
       <div><div class="mn">${nm}</div>
@@ -551,10 +554,10 @@ function analyze() {
     card('CPC',cpc,'$',cpc<=0.15?'good':cpc<=0.3?'warn':'bad',
       cpc<=0.15?'Click авах зардал маш хямд':'Click үнэтэй — CTR сайжруулах',0,0.5,0.15);
   }
-  if(p3>0)  card('Hook Rate',hr,'%',hr>=30?'good':hr>=15?'warn':'bad',
-    hr>=30?'Эхний 3 сек татаж байна — hook сайн':hr>=15?'Дундаж — hook шинэчлэх':'Эхлэл сул — hook яаралтай солих',0,60,30);
-  if(tp>0)  card('Hold Rate',hold,'%',hold>=50?'good':hold>=30?'warn':'bad',
-    hold>=50?'Дуустал үзэж байна — контент сонирхолтой':hold>=30?'Дундаж — дунд хэсгийг сайжруулах':'Хурдан орхиж байна — богиносгох',0,80,50);
+  card('Hook Rate',hr,'%',hr>=30?'good':hr>=15?'warn':hr===0?'neutral':'bad',
+    hr===0?'3-sec Video Plays оруулаагүй байна':hr>=30?'Эхний 3 сек татаж байна — hook сайн':hr>=15?'Дундаж — hook шинэчлэх':'Эхлэл сул — hook яаралтай солих',0,60,30);
+  card('Hold Rate',hold,'%',hold>=50?'good':hold>=30?'warn':hold===0?'neutral':'bad',
+    hold===0?'ThruPlay оруулаагүй байна':hold>=50?'Дуустал үзэж байна — контент сонирхолтой':hold>=30?'Дундаж — дунд хэсгийг сайжруулах':'Хурдан орхиж байна — богиносгох',0,80,50);
   if(rch>0) card('Frequency',freq,'x',freq<=2.5?'good':freq<=3.5?'warn':'bad',
     freq<=2.5?'Шинэ хүмүүст хүрч байна':freq<=3.5?'Анхаар — audience шинэчлэх':'Ad fatigue — creative яаралтай солих',1,5,2.5);
   if(eng>0) card('Engagement Rate',er,'%',er>=3?'good':er>=1.5?'warn':'bad',

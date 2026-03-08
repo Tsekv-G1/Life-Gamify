@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Gamify — KazuMi · Урьдчилан харах</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080809;--surface:#0f0f11;--surface2:#141418;--border:#1c1c21;--border2:#26262d;
+  --text:#e0e0ec;--muted:#52525e;--muted2:#8888a0;--white:#f4f4fc;
+  --deep:#5b9fff;--work:#f5a623;--train:#ff6b4a;--rest:#3ecf8e;
+  --food:#c9a96e;--sleep:#9b8df5;--transit:#64c8d4;
+  --xp:#ffd700;--streak:#ff6b4a;--lvl:#3ecf8e;
+  --r:8px;--font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;
+  --sidebar:240px;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.shell{display:grid;grid-template-columns:var(--sidebar) 1fr;height:100vh;overflow:hidden}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:none;height:100vh}
+.sidebar::-webkit-scrollbar{display:none}
+.main{display:flex;flex-direction:column;overflow:hidden;height:100vh;position:relative}
+.brand{padding:20px 18px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.brand-name{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--white)}
+.brand-sub{font-size:10px;color:var(--muted2);letter-spacing:.06em;margin-top:2px;font-family:var(--mono)}
+.xp-block{padding:14px 18px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.xp-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.xp-level{font-size:11px;font-weight:700;color:var(--lvl);letter-spacing:.06em;font-family:var(--mono)}
+.xp-pts{font-size:10px;color:var(--muted2);font-family:var(--mono)}
+.xp-bar-bg{height:4px;background:var(--border2);border-radius:4px;overflow:hidden}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--lvl),#5fffb0);border-radius:4px}
+.xp-row2{display:flex;justify-content:space-between;margin-top:7px}
+.streak-badge{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--streak);font-family:var(--mono);font-weight:700}
+.week-score{font-size:10px;color:var(--muted2);font-family:var(--mono)}
+.nav-section{padding:12px 0 4px;flex-shrink:0}
+.nav-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:0 18px 6px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 18px;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted2);letter-spacing:.02em;border-left:2px solid transparent;transition:all .12s;user-select:none}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.025)}
+.nav-item.active{color:var(--white);border-left-color:var(--white);background:rgba(255,255,255,.04)}
+.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;opacity:.3}
+.nav-item.active .nav-dot{opacity:1}
+.nav-badge{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:20px;font-family:var(--mono)}
+.sidebar-footer{margin-top:auto;padding:14px 18px;border-top:1px solid var(--border);flex-shrink:0}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted2);padding:2px 0}
+.legend-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 36px 12px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
+.topbar-left{display:flex;flex-direction:column;gap:3px}
+.user-name-badge{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--xp);font-family:var(--mono);display:flex;align-items:center;gap:6px}
+.user-name-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--xp);display:inline-block;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.page-title{font-size:24px;font-weight:700;letter-spacing:-.02em;color:var(--white);line-height:1}
+.page-title span{color:var(--muted2);font-weight:300}
+.page-meta{font-size:10px;color:var(--muted2);letter-spacing:.07em;font-family:var(--mono)}
+.day-xp-badge{background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);color:var(--xp);font-size:11px;font-family:var(--mono);font-weight:700;padding:4px 10px;border-radius:20px}
+.tabs{display:flex;gap:2px;padding:0 36px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
+.tab{padding:10px 16px;font-size:11px;font-weight:600;color:var(--muted2);cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.04em;text-transform:uppercase}
+.tab.active{color:var(--white);border-bottom-color:var(--white)}
+.scroll-area{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;position:relative}
+.scroll-area::-webkit-scrollbar{width:4px}
+.scroll-area::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.content-visible{padding:24px 36px 0}
+.content-blur{padding:0 36px 0;filter:blur(6px);pointer-events:none;user-select:none;opacity:.5}
+/* PAYWALL OVERLAY */
+.paywall{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(to top, var(--bg) 0%, var(--bg) 50%, rgba(8,8,9,0.95) 68%, transparent 100%);
+  z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  padding-bottom:60px;min-height:400px;pointer-events:all;
+}
+.paywall-inner{text-align:center;max-width:460px;padding:0 20px;width:100%}
+.paywall-user{font-size:28px;font-weight:700;letter-spacing:-.02em;color:var(--white);margin-bottom:6px;line-height:1.1}
+.paywall-user span{background:linear-gradient(135deg,var(--xp),#ffaa00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.paywall-icon{font-size:36px;margin-bottom:10px;display:block;animation:iconFloat 3s ease-in-out infinite}
+@keyframes iconFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.paywall-subtitle{font-size:13px;font-weight:600;color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;font-family:var(--mono);margin-bottom:6px}
+.paywall-desc{font-size:13px;color:var(--muted2);line-height:1.7;margin-bottom:16px}
+.paywall-features{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:20px}
+.pf-chip{font-size:11px;padding:4px 11px;border-radius:20px;border:1px solid var(--border2);color:var(--muted2);font-family:var(--mono);background:var(--surface)}
+.pf-chip.active{border-color:rgba(255,215,0,.3);color:var(--xp);background:rgba(255,215,0,.06)}
+.paywall-btn{background:linear-gradient(135deg,var(--xp),#ffaa00);color:#000;font-family:var(--mono);font-weight:700;font-size:15px;letter-spacing:.06em;padding:15px 36px;border:none;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:transform .15s,box-shadow .15s;box-shadow:0 0 32px rgba(255,215,0,.25);display:block;width:100%;margin-bottom:10px}
+.paywall-btn:hover{transform:scale(1.03);box-shadow:0 0 44px rgba(255,215,0,.4)}
+.paywall-sub{font-size:11px;color:var(--muted);font-family:var(--mono)}
+/* PAYMENT MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:28px 24px;max-width:400px;width:100%;transform:scale(.92);transition:transform .35s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.modal-overlay.show .modal-box{transform:scale(1)}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--xp),var(--lvl),var(--deep))}
+.modal-close{position:absolute;top:14px;right:16px;font-size:18px;color:var(--muted2);cursor:pointer;background:none;border:none;line-height:1;transition:color .15s}
+.modal-close:hover{color:var(--white)}
+.modal-header{text-align:center;margin-bottom:20px}
+.modal-bank-icon{font-size:40px;margin-bottom:8px;display:block}
+.modal-title{font-size:17px;font-weight:700;color:var(--white);margin-bottom:4px}
+.modal-subtitle{font-size:11px;color:var(--muted2);font-family:var(--mono);letter-spacing:.06em}
+.bank-card{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(255,215,0,.15);border-radius:12px;padding:16px 18px;margin-bottom:16px;position:relative;overflow:hidden}
+.bank-card::after{content:'Хаанбанк';position:absolute;top:12px;right:14px;font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(255,215,0,.5);font-family:var(--mono)}
+.bank-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.bank-row:last-child{border-bottom:none}
+.bank-label{font-size:10px;color:var(--muted2);letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono)}
+.bank-value{font-size:13px;font-weight:700;color:var(--white);font-family:var(--mono);display:flex;align-items:center;gap:6px;cursor:pointer;transition:color .15s}
+.bank-value:hover{color:var(--xp)}
+.copy-icon{font-size:12px;opacity:.5}
+.price-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);border-radius:8px;padding:12px 16px;margin-bottom:16px}
+.price-label{font-size:12px;color:var(--muted2)}
+.price-value{font-size:22px;font-weight:700;color:var(--xp);font-family:var(--mono)}
+.note-box{background:rgba(62,207,142,.05);border:1px solid rgba(62,207,142,.2);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--muted2);line-height:1.7}
+.note-box strong{color:var(--lvl);display:block;margin-bottom:4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.toast-copied{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(62,207,142,.15);border:1px solid rgba(62,207,142,.3);color:var(--lvl);font-family:var(--mono);font-size:12px;font-weight:700;padding:8px 20px;border-radius:20px;pointer-events:none;opacity:0;transition:all .3s;z-index:10000}
+.toast-copied.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
+.stat{background:var(--surface);padding:10px 14px}
+.stat-label{font-size:9px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px}
+.stat-val{font-size:15px;font-weight:700;color:var(--white);font-family:var(--mono)}
+/* TIMELINE */
+.tl-row{display:grid;grid-template-columns:60px 1px 1fr;gap:0 18px;animation:fadeSlide .3s ease both}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.tl-time{padding-top:17px;text-align:right;font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1;letter-spacing:.04em}
+.tl-axis{display:flex;flex-direction:column;align-items:center}
+.tl-node{width:7px;height:7px;border-radius:50%;margin-top:20px;flex-shrink:0}
+.tl-line{flex:1;width:1px;background:var(--border);margin-top:3px}
+.tl-row:last-child .tl-line{display:none}
+.tl-body{padding:12px 0 16px}
+.tl-cat{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+.tl-cat::before{content:'';width:14px;height:1.5px;border-radius:1px}
+.tl-title{font-size:15px;font-weight:600;color:var(--white);letter-spacing:-.01em;margin-bottom:4px;line-height:1.3}
+.tl-dur{font-size:11px;color:var(--muted2);font-family:var(--mono)}
+.tl-desc{font-size:13px;color:#9090a8;line-height:1.7;margin-top:4px;max-width:560px}
+.chip{font-size:11px;padding:3px 9px;border-radius:3px;background:var(--border2);color:var(--muted2)}
+.tl-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.why-box{margin-top:8px;padding:10px 13px;border-radius:var(--r);background:rgba(255,255,255,.025);border-left:2px solid;font-size:12px;color:#8080a0;line-height:1.7;max-width:520px}
+.why-box strong{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px;opacity:.6}
+.c-deep .tl-node{background:var(--deep)}.c-deep .tl-cat{color:var(--deep)}.c-deep .tl-cat::before,.c-deep .why-box{border-color:var(--deep)}
+.c-work .tl-node{background:var(--work)}.c-work .tl-cat{color:var(--work)}.c-work .tl-cat::before,.c-work .why-box{border-color:var(--work)}
+.c-train .tl-node{background:var(--train)}.c-train .tl-cat{color:var(--train)}.c-train .tl-cat::before,.c-train .why-box{border-color:var(--train)}
+.c-rest .tl-node{background:var(--rest)}.c-rest .tl-cat{color:var(--rest)}.c-rest .tl-cat::before,.c-rest .why-box{border-color:var(--rest)}
+.c-food .tl-node{background:var(--food)}.c-food .tl-cat{color:var(--food)}.c-food .tl-cat::before,.c-food .why-box{border-color:var(--food)}
+.c-sleep .tl-node{background:var(--sleep)}.c-sleep .tl-cat{color:var(--sleep)}.c-sleep .tl-cat::before,.c-sleep .why-box{border-color:var(--sleep)}
+.c-transit .tl-node{background:var(--transit)}.c-transit .tl-cat{color:var(--transit)}.c-transit .tl-cat::before,.c-transit .why-box{border-color:var(--transit)}
+/* DAY HEAD */
+.day-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:6px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.day-num{font-size:42px;font-weight:700;color:var(--border2);line-height:1;letter-spacing:-.04em;flex-shrink:0;font-family:var(--mono)}
+.day-meta-inner{flex:1}
+.day-name{font-size:18px;font-weight:700;color:var(--white);letter-spacing:-.01em;margin-bottom:5px}
+.day-tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:10px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;padding:2px 8px;border-radius:3px;border:1px solid}
+.day-quote{font-size:11px;color:var(--muted2);font-style:italic;line-height:1.6;margin-top:7px;padding-top:7px;border-top:1px solid var(--border)}
+/* MOBILE */
+.mobile-nav{display:none}
+.mobile-xp-bar{display:none}
+@media(max-width:768px){
+  :root{--sidebar:0px}
+  .shell{grid-template-columns:1fr;height:100vh;overflow:hidden}
+  .sidebar{display:none}
+  .mobile-xp-bar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+  .mobile-xp-bar .xp-level{font-size:11px;font-weight:700;color:var(--lvl);font-family:var(--mono);white-space:nowrap}
+  .mobile-xp-bar .xp-bar-bg{flex:1;height:5px;background:var(--border2);border-radius:5px;overflow:hidden}
+  .mobile-xp-bar .xp-bar-fill2{height:100%;background:linear-gradient(90deg,var(--lvl),#5fffb0);border-radius:5px;width:0%}
+  .mobile-xp-bar .streak-txt{font-size:11px;font-family:var(--mono);font-weight:700;color:var(--streak);white-space:nowrap}
+  .main{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding-bottom:64px}
+  .topbar{padding:10px 16px 8px;flex-shrink:0;background:var(--bg)}
+  .page-title{font-size:18px}
+  .page-meta{font-size:9px}
+  .user-name-badge{font-size:10px}
+  .day-xp-badge{font-size:10px;padding:3px 8px}
+  .tabs{padding:0 12px;flex-shrink:0}
+  .tab{padding:9px 12px;font-size:10px}
+  .scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .content-visible{padding:14px 14px 0}
+  .content-blur{padding:0 14px 0}
+  .stats{grid-template-columns:repeat(2,1fr);margin-bottom:14px}
+  .stat{padding:8px 12px}
+  .stat-label{font-size:9px}
+  .stat-val{font-size:15px}
+  .day-head{margin-bottom:4px;padding-bottom:12px;gap:10px}
+  .day-name{font-size:16px}
+  .day-num{font-size:30px}
+  .day-quote{font-size:11px}
+  .tag{font-size:9px;padding:2px 6px}
+  .tl-row{grid-template-columns:46px 1px 1fr;gap:0 12px}
+  .tl-time{font-size:10px;padding-top:16px}
+  .tl-node{margin-top:18px}
+  .tl-title{font-size:14px !important}
+  .tl-desc{font-size:12px !important;max-width:100% !important}
+  .tl-cat{font-size:9px !important}
+  .tl-dur{font-size:10px !important}
+  .why-box{font-size:11px !important;max-width:100% !important;padding:8px 10px}
+  .why-box strong{font-size:9px !important}
+  .chip{font-size:10px !important;padding:2px 8px !important}
+  .paywall{padding-bottom:80px;min-height:340px}
+  .paywall-user{font-size:22px}
+  .paywall-desc{font-size:12px}
+  .modal-box{padding:22px 18px}
+  .modal-title{font-size:15px}
+  .price-value{font-size:20px}
+  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border2);height:60px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .mobile-nav::-webkit-scrollbar{display:none}
+  .mobile-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:48px;flex:1;padding:5px 2px;cursor:pointer;font-size:9px;font-weight:600;color:var(--muted2);border-top:2px solid transparent;transition:all .15s;user-select:none;gap:2px}
+  .mobile-nav-item.active{color:var(--white);border-top-color:var(--white)}
+  .mobile-nav-dot{width:6px;height:6px;border-radius:50%;margin-bottom:1px}
+}
+</style>
+</head>
+<body>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-header">
+      <span class="modal-bank-icon">💳</span>
+      <div class="modal-title">Төлбөр шилжүүлэх</div>
+      <div class="modal-subtitle">Хаанбанк · Шилжүүлэг</div>
+    </div>
+    <div class="bank-card">
+      <div class="bank-row">
+        <div class="bank-label">Дансны дугаар</div>
+        <div class="bank-value" onclick="copyText('5018953118','Дансны дугаар хуулагдлаа')">5018953118 <span class="copy-icon">📋</span></div>
+      </div>
+      <div class="bank-row">
+        <div class="bank-label">Хүлээн авагч</div>
+        <div class="bank-value">Ганбаяр Цэвэгмид</div>
+      </div>
+      <div class="bank-row">
+        <div class="bank-label">Гүйлгээний утга</div>
+        <div class="bank-value" style="font-size:11px;color:var(--muted2)">Өөрийн нэр + утасны дугаар</div>
+      </div>
+    </div>
+    <div class="price-row">
+      <div class="price-label">Төлбөрийн дүн</div>
+      <div class="price-value">9,900₮</div>
+    </div>
+    <div class="note-box">
+      <strong>⏱ Хүргэлтийн хугацаа</strong>
+      Төлбөр шилжсэнээс хойш <strong style="color:var(--white)">3–5 минутын дотор</strong> таны бүтэн хувийн загвар утасны дугаар руу илгээгдэнэ. Гүйлгээний утганд <strong style="color:var(--white)">нэрээ болон утасны дугаараа</strong> заавал бичнэ үү.
+    </div>
+    <button onclick="copyText('5018953118','Дансны дугаар хуулагдлаа')" style="background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);color:var(--xp);font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.06em;padding:12px;border-radius:8px;cursor:pointer;width:100%;text-transform:uppercase;transition:background .15s" onmouseover="this.style.background='rgba(255,215,0,.14)'" onmouseout="this.style.background='rgba(255,215,0,.08)'">
+      📋 Дансны дугаар хуулах
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-copied" id="toastCopied">✓ Хуулагдлаа</div>
+
+<!-- MOBILE XP BAR -->
+<div class="mobile-xp-bar">
+  <div class="xp-level">ТВ 1 · Анхлагч</div>
+  <div class="xp-bar-bg"><div class="xp-bar-fill2"></div></div>
+  <div class="streak-txt">🔥 0</div>
+</div>
+
+<div class="shell">
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-name">Life Gamify</div>
+    <div class="brand-sub">KazuMi · 2026</div>
+  </div>
+  <div class="xp-block">
+    <div class="xp-top">
+      <div class="xp-level">ТВ 1 · Анхлагч</div>
+      <div class="xp-pts">0 / 700 ОН</div>
+    </div>
+    <div class="xp-bar-bg"><div class="xp-bar-fill" style="width:0%"></div></div>
+    <div class="xp-row2">
+      <div class="streak-badge">🔥 0 өдөр</div>
+      <div class="week-score">7н: 0 / 750 ОН</div>
+    </div>
+  </div>
+  <div style="padding:10px 18px 10px;border-bottom:1px solid var(--border);flex-shrink:0">
+    <div style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace">Амжилтууд</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;opacity:.3;filter:blur(2px)">
+      <div style="font-size:20px">🌱</div><div style="font-size:20px">⭐</div><div style="font-size:20px">🔥</div><div style="font-size:20px">💎</div>
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Ажлын өдрүүд</div>
+    <div class="nav-item active"><div class="nav-dot" style="background:var(--train)"></div>Даваа<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Дасгал</span></div>
+    <div class="nav-item" style="opacity:.45"><div class="nav-dot" style="background:var(--train)"></div>Мягмар<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Дасгал</span></div>
+    <div class="nav-item" style="opacity:.45"><div class="nav-dot" style="background:var(--rest)"></div>Лхагва<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Амралт</span></div>
+    <div class="nav-item" style="opacity:.45"><div class="nav-dot" style="background:var(--train)"></div>Пүрэв<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Дасгал</span></div>
+    <div class="nav-item" style="opacity:.45"><div class="nav-dot" style="background:var(--train)"></div>Баасан<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Дасгал</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Амралтын өдрүүд</div>
+    <div class="nav-item" style="opacity:.45"><div class="nav-dot" style="background:var(--deep)"></div>Бямба<span class="nav-badge" style="background:rgba(91,159,255,.08);color:var(--deep)">Deep Work</span></div>
+    <div class="nav-item" style="opacity:.45"><div class="nav-dot" style="background:var(--rest)"></div>Ням<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Амралт</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label" style="opacity:.4">Нэмэлт</div>
+    <div class="nav-item" style="opacity:.25"><div class="nav-dot" style="background:var(--food)"></div>Зөвлөмжүүд</div>
+    <div class="nav-item" style="opacity:.25"><div class="nav-dot" style="background:var(--muted2)"></div>Сайжруулалтууд</div>
+    <div class="nav-item" style="opacity:.25"><div class="nav-dot" style="background:var(--xp)"></div>7 хоногийн тайлан</div>
+  </div>
+  <div class="sidebar-footer">
+    <div style="font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Өнгөний код</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--deep)"></div>Амьдралын хэмнэл / Deep Work</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--work)"></div>Ажил</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--train)"></div>Биеийн дасгал</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--food)"></div>Хоол</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--rest)"></div>Амралт</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--sleep)"></div>Унтах</div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="user-name-badge">✦ KazuMi · Таны хувийн загвар</div>
+      <div class="page-title">Даваа <span>гараг</span></div>
+      <div class="page-meta">ОӨ #1 — ДАВ · ДАСГАЛ: ЭХЛЭГЧ ГҮЙЛТ & ХӨДӨЛГӨӨН</div>
+    </div>
+    <div class="day-xp-badge">+100 ОН / өдөр</div>
+  </div>
+  <div class="tabs">
+    <div class="tab active">Хуваарь</div>
+    <div class="tab">✓ Зорилтууд</div>
+  </div>
+
+  <div class="scroll-area">
+    <!-- VISIBLE CONTENT -->
+    <div class="content-visible">
+      <div class="day-head">
+        <div class="day-num">01</div>
+        <div class="day-meta-inner">
+          <div class="day-name">Амьдралын хэмнэл — Эхлэл</div>
+          <div class="day-tags">
+            <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Амьдралын хэмнэл</span>
+            <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Эхлэгч дасгал — 30 мин</span>
+            <span class="tag" style="color:var(--muted2);border-color:var(--border2)">Ажлын өдөр</span>
+          </div>
+          <div class="day-quote">"07:30 цагт босоод өдрийг эзэмдэнэ — ажлын өмнөх 1.5 цаг чиний хамгийн үнэтэй цаг."</div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Босох цаг</div><div class="stat-val">07:30</div></div>
+        <div class="stat"><div class="stat-label">Дасгал</div><div class="stat-val">30мин</div></div>
+        <div class="stat"><div class="stat-label">Унтах цаг</div><div class="stat-val">00:00</div></div>
+        <div class="stat"><div class="stat-label">Ажил</div><div class="stat-val">10–19:00</div></div>
+      </div>
+      <div>
+        <div class="tl-row c-sleep"><div class="tl-time">07:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний эхлэл <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">500 мл ус уух → нүүр угаах → хурдан хувцасла. Утсаа шалгахгүй — эхний 20 минут өөрийнхөө.</div><div class="why-box"><strong>Яагаад 07:30 цагт</strong>Унтах дэглэм засах зорилгын эхний алхам. Тогтмол цагт сэрэх нь биологийн цагийг тогтворжуулна.</div></div></div>
+        <div class="tl-row c-food"><div class="tl-time">07:50</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Өглөөний хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">2 өндөг + тараг + талх. Эрчим хүч тогтмол байлгах уургийн хоол. Ажлын өмнө заавал идэнэ.</div></div></div>
+        <div class="tl-row c-train"><div class="tl-time">08:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Биеийн дасгал</div><div class="tl-title">Эхлэгч хөдөлгөөн <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">10 мин дулаацуулалт → 15 мин хялбар дасгал (суулт×10, гараа тулах×10, хажуу нугалалт) → 5 мин сунгалт. Яаж эхлэхээ мэдэхгүй байгаа тул аажмаар эхлэх нь зөв.</div><div class="why-box"><strong>Яагаад өглөө дасгал</strong>Ажлын дараа эрч хүч буурдаг тул өглөөний дасгал хамгийн тогтмол болдог. 30 хоноод л дасгал таны routine болно.</div></div></div>
+        <div class="tl-row c-deep"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work — Амьдралын хэмнэл</div><div class="tl-title">Хувийн зорилгын цаг <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Амьдралын хэмнэлийн судалгаа, төлөвлөлт, эсвэл side project-ийн ажил. Утсаа нисгэгч горимд тавь.</div></div></div>
+      </div>
+    </div>
+
+    <!-- BLURRED -->
+    <div class="content-blur">
+      <div class="tl-row c-work"><div class="tl-time">10:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Ажил</div><div class="tl-title">Ажлын цаг <span class="tl-dur">10:00–19:00</span></div><div class="tl-desc">90 минут тутамд 5 минут завсарлага авна. Нэг аяга ус тутам босоод сунгалт хийнэ. Хоолны завсарлагаанд гадаа гарна.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">13:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Өдрийн хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Урьдчилан бэлдсэн хоол. Тос багатай, уургийн хоол. Зулзагатай хоол зайлсхий. Хоолны дараа 10 мин алхалт.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Гэртээ харих</div><div class="tl-title">Тайвшрах цаг <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Подкаст сонс. Ажлын яриаг хаа. Оройн цагт шилжих ritual болго.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Хоол өөрөө бэлдэх — аль болох хялбар жор. Мах + ногоо + будаа. Унтахаас 2 цагийн өмнө идэх нь зөв.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">20:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work — Амьдралын хэмнэл</div><div class="tl-title">Оройн хувийн цаг <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Амьдралын хэмнэлийн side project-ийн 2 дахь блок. Судалгаа, агуулга бүтээлт, эсвэл төлөвлөлт.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">22:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Тайвшрах</div><div class="tl-title">Унтахын өмнөх ritual <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Дэлгэц унтраах → сунгалт → ном → маргаашийн 3 зорилтоо бичих. Унтах дэглэм засах алхам.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">23:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">Зорилтот унтах цаг — 00:00 хүртэл шилжүүлэх</div><div class="tl-desc">Одоо 00:00 цагт унтаж байгаа бол аажмаар 23:30 → 23:00 → 22:30 болгоно. Өрөөг харанхуй байлга. Утсаа өөр өрөөнд тавь.</div></div></div>
+    </div>
+
+    <!-- PAYWALL -->
+    <div class="paywall">
+      <div class="paywall-inner">
+        <div class="paywall-user">✦ <span>KazuMi</span> ✦</div>
+        <div class="paywall-subtitle">Таны хувийн 7 хоногийн хөтөлбөр бэлэн</div>
+        <span class="paywall-icon">🔒</span>
+        <div class="paywall-desc">
+          Дасгалын хуваарь, хоол хяналт, унтах дэглэм, амьдралын хэмнэл — таны мэдээлэлд тулгуурлан бүтэн загвар нь бэлэн байна.
+        </div>
+        <div class="paywall-features">
+          <div class="pf-chip active">⚔️ Аюулт даалгавар ×7</div>
+          <div class="pf-chip active">✓ Зорилтын жагсаалт + Оноо</div>
+          <div class="pf-chip active">🔥 Тасралтгүй байдлын систем</div>
+          <div class="pf-chip active">🏋️ Эхлэгч дасгалын 7 хоногийн хуваарь</div>
+          <div class="pf-chip active">🍳 Хоол урьдчилан бэлтгэх (Лха, Ням)</div>
+          <div class="pf-chip active">🏅 12 Амжилтын тэмдэг</div>
+          <div class="pf-chip">⚡ Дараалсан үржүүлэгч</div>
+          <div class="pf-chip">📊 7 хоногийн тайлан</div>
+          <div class="pf-chip">💡 Зөвлөмж & Сайжруулалт</div>
+        </div>
+        <button class="paywall-btn" onclick="openModal()">
+          ⚡ Бүтэн Potential Нээх
+        </button>
+        <div class="paywall-sub">KazuMi · 2026 · Life Gamify хувийн загвар</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-item active"><div class="mobile-nav-dot" style="background:var(--train)"></div><span>Да</span></div>
+  <div class="mobile-nav-item" style="opacity:.4"><div class="mobile-nav-dot" style="background:var(--train)"></div><span>Мя</span></div>
+  <div class="mobile-nav-item" style="opacity:.4"><div class="mobile-nav-dot" style="background:var(--rest)"></div><span>Лха</span></div>
+  <div class="mobile-nav-item" style="opacity:.4"><div class="mobile-nav-dot" style="background:var(--train)"></div><span>Пүр</span></div>
+  <div class="mobile-nav-item" style="opacity:.4"><div class="mobile-nav-dot" style="background:var(--train)"></div><span>Баа</span></div>
+  <div class="mobile-nav-item" style="opacity:.4"><div class="mobile-nav-dot" style="background:var(--deep)"></div><span>Бям</span></div>
+  <div class="mobile-nav-item" style="opacity:.4"><div class="mobile-nav-dot" style="background:var(--rest)"></div><span>Ням</span></div>
+  <div class="mobile-nav-item" style="opacity:.4;border-left:1px solid var(--border)"><div class="mobile-nav-dot" style="background:var(--xp)"></div><span>Тайлан</span></div>
+</nav>
+
+<script>
+function openModal(){document.getElementById('payModal').classList.add('show');}
+function closeModal(){document.getElementById('payModal').classList.remove('show');}
+document.getElementById('payModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+function copyText(text,msg){
+  navigator.clipboard.writeText(text).catch(()=>{
+    const el=document.createElement('textarea');el.value=text;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);
+  });
+  const t=document.getElementById('toastCopied');
+  t.textContent='✓ '+msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+</script>
+</body>
+</html>

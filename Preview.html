@@ -505,7 +505,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
 <!-- PREVIEW PAYWALL OVERLAY -->
 <div id="previewPaywall">
   <div class="pw-inner">
-    <div class="pw-name">✦ <span>Ийм систем</span> чамд байна уу? ✦</div>
+    <div class="pw-name">✦ Та ч гэсэн яг өөрийн <span>ийм системтэй</span> болмоор байна уу? ✦</div>
     <div class="pw-sub">Яг өөрийн амьдралдаа тохирсон хувийн загвар</div>
     <span class="pw-icon">🎯</span>
     <div class="pw-desc">Та дөнгөж Даваагийн хуваарийг харлаа — Deep Work, дасгал, хоол, унтах бүгд нарийн тооцоологдсон. Хэрэв та яг үүн шиг <strong style="color:var(--white)">өөрийн гэсэн 7 хоногийн системтэй болмоор байвал</strong> — таны мэдээлэлд тулгуурлан бүтэн загвар бэлэн болно.</div>
@@ -602,21 +602,21 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
   <div class="nav-section">
     <div class="nav-label">Ажлын өдрүүд</div>
     <div class="nav-item active" onclick="showDay(0)" id="nav0"><div class="nav-dot" style="background:var(--deep)"></div>Даваа<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Мөр&Гар</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(1)" id="nav1"><div class="nav-dot" style="background:var(--deep)"></div>Мягмар<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Нуруу</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(2)" id="nav2"><div class="nav-dot" style="background:var(--rest)"></div>Лхагва<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Batch</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(3)" id="nav3"><div class="nav-dot" style="background:var(--deep)"></div>Пүрэв<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Хөл</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(4)" id="nav4"><div class="nav-dot" style="background:var(--deep)"></div>Баасан<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Core</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="openDayLocked()" id="nav1"><div class="nav-dot" style="background:var(--deep);opacity:.3"></div>Мягмар<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Нуруу</span><span style="margin-left:auto;font-size:10px;opacity:.4">🔒</span></div>
+    <div class="nav-item" onclick="openDayLocked()" id="nav2"><div class="nav-dot" style="background:var(--rest);opacity:.3"></div>Лхагва<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Batch</span><span style="margin-left:auto;font-size:10px;opacity:.4">🔒</span></div>
+    <div class="nav-item" onclick="openDayLocked()" id="nav3"><div class="nav-dot" style="background:var(--deep);opacity:.3"></div>Пүрэв<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Хөл</span><span style="margin-left:auto;font-size:10px;opacity:.4">🔒</span></div>
+    <div class="nav-item" onclick="openDayLocked()" id="nav4"><div class="nav-dot" style="background:var(--deep);opacity:.3"></div>Баасан<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Core</span><span style="margin-left:auto;font-size:10px;opacity:.4">🔒</span></div>
   </div>
   <div class="nav-section">
     <div class="nav-label">Амралтын өдрүүд</div>
-    <div class="nav-item" onclick="showDay(5)" id="nav5"><div class="nav-dot" style="background:var(--train)"></div>Бямба<span class="nav-badge" style="background:rgba(255,107,74,.08);color:var(--train)">Full Body</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(6)" id="nav6"><div class="nav-dot" style="background:var(--rest)"></div>Ням<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Batch+Plan</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="openDayLocked()" id="nav5"><div class="nav-dot" style="background:var(--train);opacity:.3"></div>Бямба<span class="nav-badge" style="background:rgba(255,107,74,.08);color:var(--train)">Full Body</span><span style="margin-left:auto;font-size:10px;opacity:.4">🔒</span></div>
+    <div class="nav-item" onclick="openDayLocked()" id="nav6"><div class="nav-dot" style="background:var(--rest);opacity:.3"></div>Ням<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Batch+Plan</span><span style="margin-left:auto;font-size:10px;opacity:.4">🔒</span></div>
   </div>
   <div class="nav-section">
     <div class="nav-label">Нэмэлт</div>
-    <div class="nav-item" onclick="showDay(7)"><div class="nav-dot" style="background:var(--food)"></div>Tips & Зөвлөмж</div>
-    <div class="nav-item" onclick="showDay(8)"><div class="nav-dot" style="background:var(--muted2)"></div>Сайжруулалтууд</div>
-    <div class="nav-item" onclick="showDay(9)"><div class="nav-dot" style="background:var(--xp)"></div>7н Тайлан</div>
+    <div class="nav-item" onclick="openDayLocked()"><div class="nav-dot" style="background:var(--food);opacity:.3"></div>Tips & Зөвлөмж<span style="margin-left:auto;font-size:10px;opacity:.4">🔒</span></div>
+    <div class="nav-item" onclick="openDayLocked()"><div class="nav-dot" style="background:var(--muted2);opacity:.3"></div>Сайжруулалтууд<span style="margin-left:auto;font-size:10px;opacity:.4">🔒</span></div>
+    <div class="nav-item" onclick="openDayLocked()"><div class="nav-dot" style="background:var(--xp);opacity:.3"></div>7н Тайлан<span style="margin-left:auto;font-size:10px;opacity:.4">🔒</span></div>
   </div>
   <div class="sidebar-footer">
     <div style="font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Өнгөний код</div>
@@ -1077,35 +1077,35 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div class="mobile-nav-dot" style="background:var(--deep)"></div>
     <span>Да</span><span class="mobile-nav-done" id="mnd0"></span>
   </div>
-  <div class="mobile-nav-item" id="mnav1" onclick="showDay(1)">
+  <div class="mobile-nav-item" id="mnav1" onclick="openDayLocked()" style="opacity:.45">
     <div class="mobile-nav-dot" style="background:var(--deep)"></div>
-    <span>Мя</span><span class="mobile-nav-done" id="mnd1"></span>
+    <span>Мя</span><span style="font-size:8px;opacity:.5">🔒</span>
   </div>
-  <div class="mobile-nav-item" id="mnav2" onclick="showDay(2)">
+  <div class="mobile-nav-item" id="mnav2" onclick="openDayLocked()" style="opacity:.45">
     <div class="mobile-nav-dot" style="background:var(--rest)"></div>
-    <span>Лха</span><span class="mobile-nav-done" id="mnd2"></span>
+    <span>Лха</span><span style="font-size:8px;opacity:.5">🔒</span>
   </div>
-  <div class="mobile-nav-item" id="mnav3" onclick="showDay(3)">
+  <div class="mobile-nav-item" id="mnav3" onclick="openDayLocked()" style="opacity:.45">
     <div class="mobile-nav-dot" style="background:var(--deep)"></div>
-    <span>Пүр</span><span class="mobile-nav-done" id="mnd3"></span>
+    <span>Пүр</span><span style="font-size:8px;opacity:.5">🔒</span>
   </div>
-  <div class="mobile-nav-item" id="mnav4" onclick="showDay(4)">
+  <div class="mobile-nav-item" id="mnav4" onclick="openDayLocked()" style="opacity:.45">
     <div class="mobile-nav-dot" style="background:var(--deep)"></div>
-    <span>Баа</span><span class="mobile-nav-done" id="mnd4"></span>
+    <span>Баа</span><span style="font-size:8px;opacity:.5">🔒</span>
   </div>
-  <div class="mobile-nav-item" id="mnav5" onclick="showDay(5)">
+  <div class="mobile-nav-item" id="mnav5" onclick="openDayLocked()" style="opacity:.45">
     <div class="mobile-nav-dot" style="background:var(--train)"></div>
-    <span>Бям</span><span class="mobile-nav-done" id="mnd5"></span>
+    <span>Бям</span><span style="font-size:8px;opacity:.5">🔒</span>
   </div>
-  <div class="mobile-nav-item" id="mnav6" onclick="showDay(6)">
+  <div class="mobile-nav-item" id="mnav6" onclick="openDayLocked()" style="opacity:.45">
     <div class="mobile-nav-dot" style="background:var(--rest)"></div>
-    <span>Ням</span><span class="mobile-nav-done" id="mnd6"></span>
+    <span>Ням</span><span style="font-size:8px;opacity:.5">🔒</span>
   </div>
-  <div class="mobile-nav-item" id="mnav9" onclick="showDay(9)" style="border-left:1px solid var(--border)">
+  <div class="mobile-nav-item" id="mnav9" onclick="openDayLocked()" style="border-left:1px solid var(--border);opacity:.45">
     <div class="mobile-nav-dot" style="background:var(--xp)"></div>
     <span>Тайлан</span>
   </div>
-  <div class="mobile-nav-item" id="mnavAch" onclick="showMobileAch()" style="border-left:1px solid var(--border)">
+  <div class="mobile-nav-item" id="mnavAch" onclick="openDayLocked()" style="border-left:1px solid var(--border);opacity:.45">
     <span style="font-size:16px;line-height:1">🏅</span>
     <span>Амжилт</span>
   </div>

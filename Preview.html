@@ -2489,26 +2489,68 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <script>
 (function(){
-  const SYS=`Та LifeOS-ийн Монгол хэлт AI sales funnel chatbot. LifeOS бол 9,900₮-ийн gamified 7 хоногийн хувийн дэглэмийн HTML файл.
-Таны зорилго: Хэрэглэгчийг алхам алхмаар худалдан авалт руу чиглүүлэх.
-Funnel:
-1. ТАНИЛЦАХ — Дулаан мэндчилгээ, "Та өдрийн дэглэмтэй юу?" гэж асуу.
-2. ӨВДӨЛТ — Тэдний асуудлыг ойлгож empathy илэрхийл.
-3. ШИЙДЭЛ — LifeOS танилц. XP, level, streak тайлбарла.
-4. ИТГЭЛ — "Зөвхөн танд зориулсан", "2-3 минутад хүргэнэ", "9,900₮ нэг удаа".
-5. ХААХ — Нэр аск. Хаанбанк данс: 5018953118.
-Дүрэм: Монгол хэлээр, богино (2-3 өгүүлбэр), friendly тон, emoji, "Хувийн төлөвлөгч" гэнэ.
-Худалдан авахад бэлэн болсон үед мессежийн төгсгөлд тусдаа мөрт "PAYMENT_READY" гэж нэм.`;
+  // ── STATIC FUNNEL FLOW ──
+  // Step 1: дэглэм байна уу?
+  // Step 2: өвдөлт
+  // Step 3: LifeOS танилцуулга
+  // Step 4: итгэл + үнэ
+  // Step 5: төлбөр
 
-  const QRS=[
-    ['Байдаг, гэхдээ дагадаггүй','Байхгүй','Сайн дагадаг'],
-    ['Хэтэрхий уйтгартай','Цаг гардаггүй','Мартдаг'],
-    ['Gamify гэж юу вэ?','Сонирхолтой байна','Жишээ харуул'],
-    ['Preview харах','Авъя!','9,900₮ зөвхөн үү?'],
-    [],
+  const FLOW = [
+    // step 1 — танилцах
+    {
+      bot: 'Сайн байна уу! 👋 Би LifeOS-ийн туслах.\n\nТанд өдрийн тогтмол дэглэм байдаг уу?',
+      replies: {
+        'Байдаг, гэхдээ дагадаггүй': 'Ойлгомжтой 😔 Мэддэг байхдаа дагадаггүй бол хамгийн хэцүү.\n\nЯмар хэсэгт хамгийн их бүдэрдэг вэ?',
+        'Байхгүй': 'Зүгээр дээ 😊 Ихэнх хүн байхгүй.\n\nЭхлэх гэхдээ яаж эхлэхээ мэдэхгүй байдаг — тийм үү?',
+        'Сайн дагадаг': 'Гайхалтай! 🔥 Тэгвэл LifeOS таны дэглэмийг gamify хийж, XP, level, streak нэмнэ.\n\nДараагийн level рүү гарах мэт болдог!',
+        'default': 'Ойлголоо 😊 Тогтмол байх хэцүү шүү.\n\nЮу хийхийг хүсдэг ч цаг, эрч хүч гарахгүй байдаг уу?',
+      },
+      qr: ['Байдаг, гэхдээ дагадаггүй', 'Байхгүй', 'Сайн дагадаг'],
+    },
+    // step 2 — өвдөлт
+    {
+      replies: {
+        'Хэтэрхий уйтгартай': '⚡ LifeOS яг үүнийг шийддэг!\n\nДэглэм бүрийг дуусгахад XP оноо авна, level ахина, streak тоолно. Тоглоом мэт болдог 🎮',
+        'Цаг гардаггүй': '⏰ 7 хоногийн бүтэн дэглэм — өглөөнөөс оройн цаг хүртэл.\n\nЦагийг чи тодорхойлсон байна, систем нь бэлэн байна!',
+        'Мартдаг': '🔔 LifeOS-д streak систем бий — нэг өдөр алгасахад streak тасарна.\n\nЭнэ нэг зүйл л хангалттай мартахгүй болгодог 😄',
+        'default': '⚡ LifeOS бол 7 хоногийн gamified хувийн дэглэм.\n\nXP оноо, level, streak — дэглэмийг тоглоом мэт болгодог! 🎮',
+      },
+      qr: ['Хэтэрхий уйтгартай', 'Цаг гардаггүй', 'Мартдаг'],
+    },
+    // step 3 — шийдэл
+    {
+      replies: {
+        'Жишээ харуулаач': '👆 Дээр харагдаж байгаа бүхэл систем — энэ таны хувийн төлөвлөгч!\n\nDay 1 бүрэн харагдана, бусад нь танд customized байна. Зөвхөн 9,900₮ 💜',
+        'Үнэ хэд вэ?': '💜 Зөвхөн 9,900₮ — нэг удаагийн төлбөр.\n\nТөлбөр хийсний дараа 2-3 минутад таны хувийн төлөвлөгч бэлэн болно ✅',
+        'Авъя!': '🎉 Гайхалтай сонголт!\n\nТөлбөр хийхэд л таны хувийн төлөвлөгч 2-3 минутад бэлэн болно ✅',
+        'default': '💜 9,900₮ — нэг удаагийн төлбөр.\n\nЗөвхөн танд зориулж хийгдэнэ, 2-3 минутад хүргэнэ ✅',
+      },
+      qr: ['Жишээ харуулаач', 'Үнэ хэд вэ?', 'Авъя!'],
+    },
+    // step 4 — итгэл + үнэ
+    {
+      replies: {
+        'Жишээ харуулаач': '👆 Дээр харагдаж байгаа бүхэл систем — энэ таны хувийн төлөвлөгч!\n\nDay 1 бүрэн харагдана, бусад нь танд customized байна. Зөвхөн 9,900₮ 💜',
+        'Үнэ хэд вэ?': '💜 Зөвхөн 9,900₮ — нэг удаагийн төлбөр.\n\nТөлбөр хийсний дараа 2-3 минутад таны хувийн төлөвлөгч бэлэн болно ✅',
+        'Авъя!': '🎉 Гайхалтай сонголт!\n\nДоорх товчийг дарж төлбөрөө хийгээрэй — 2-3 минутад хүргэнэ 🚀',
+        'Яаж төлөх вэ?': '💳 Маш энгийн!\n\nДоорх "Одоо авах" товчийг дарна → Google Form нээгдэнэ → утасны дугаар болон нэрээ бичнэ → QPay/хүссэн аргаар 9,900₮ шилжүүлнэ ✅',
+        'default': '💜 9,900₮ — нэг удаагийн төлбөр.\n\nДоорх товчийг дарж аваарай! 🚀',
+      },
+      qr: ['Авъя!', 'Яаж төлөх вэ?'],
+      cta: true,
+    },
+    // step 5 — төлбөр
+    {
+      replies: {
+        'default': '✅ Доорх товчийг дарж төлбөрөө хийгээрэй!\n\nТөлбөр орсны дараа таны хувийн төлөвлөгч 2-3 минутад бэлэн болно 🚀',
+      },
+      qr: [],
+      cta: true,
+    },
   ];
 
-  let hist=[],loading=false,ctaDone=false,inited=false,opened=false;
+  let step = 0, inited = false, opened = false, ctaDone = false;
 
   function gt(){ return new Date().toLocaleTimeString('mn-MN',{hour:'2-digit',minute:'2-digit'}); }
   function sc(){ const m=document.getElementById('_cwMsgs'); setTimeout(()=>{m.scrollTop=m.scrollHeight;},50); }
@@ -2527,20 +2569,19 @@ Funnel:
     const col=document.createElement('div');
     const bbl=document.createElement('div'); bbl.className='_cw-bbl b _cw-cursor';
     col.appendChild(bbl);
-    if(cta){ const c=document.createElement('div'); c.innerHTML=buildCTA(); col.appendChild(c.firstChild); }
+    if(cta && !ctaDone){ ctaDone=true; const c=document.createElement('div'); c.innerHTML=buildCTA(); col.appendChild(c.firstChild); setTimeout(confetti,600); }
     const ts=document.createElement('div'); ts.className='_cw-t'; ts.textContent=gt();
     col.appendChild(ts);
     wrap.appendChild(ico); wrap.appendChild(col);
     m.appendChild(wrap); sc();
-    // typewriter
     const plain=html.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]*>/g,'');
     let i=0;
     const iv=setInterval(()=>{
-      i+=2; // 2 chars per tick for speed
+      i+=3;
       bbl.textContent=plain.slice(0,i);
       sc();
-      if(i>=plain.length){ clearInterval(iv); bbl.classList.remove('_cw-cursor'); bbl.innerHTML=html; sc(); }
-    },18);
+      if(i>=plain.length){ clearInterval(iv); bbl.classList.remove('_cw-cursor'); bbl.innerHTML=html.replace(/\n/g,'<br>'); sc(); }
+    },16);
   }
 
   function buildCTA(){
@@ -2564,43 +2605,38 @@ Funnel:
     }
   }
 
-  function setQR(s){
+  function setQR(qrs){
     const a=document.getElementById('_cwQr');
-    const rs=QRS[Math.min(s-1,4)];
-    a.innerHTML=rs.map(r=>`<button class="_cw-qr-btn" onclick="_cwQR('${r.replace(/'/g,"\\'")}') ">${r}</button>`).join('');
+    a.innerHTML=(qrs||[]).map(r=>`<button class="_cw-qr-btn" onclick="_cwQR('${r.replace(/'/g,"\\'")}') ">${r}</button>`).join('');
   }
 
-  window._cwQR=function(t){ document.getElementById('_cwQr').innerHTML=''; _cwSendMsg(t); };
+  function respond(userText){
+    const s = FLOW[Math.min(step, FLOW.length-1)];
+    let reply = '';
+    if(s.replies){
+      reply = s.replies[userText] || s.replies['default'] || '';
+    }
+    step = Math.min(step+1, FLOW.length-1);
+    const next = FLOW[step];
+    showTyping();
+    setTimeout(()=>{
+      rmTyping();
+      addB(reply, s.cta || false);
+      setSteps(step+1);
+      setQR(next.qr || []);
+    }, 700 + Math.random()*300);
+  }
+
+  window._cwQR=function(t){ document.getElementById('_cwQr').innerHTML=''; addU(t); respond(t); };
   window._cwHandleSend=function(){
     const inp=document.getElementById('_cwInp'); const t=inp.value.trim();
-    if(!t||loading)return; inp.value=''; document.getElementById('_cwQr').innerHTML=''; _cwSendMsg(t);
+    if(!t)return; inp.value=''; document.getElementById('_cwQr').innerHTML=''; addU(t); respond(t);
   };
-  window._cwPayment=function(){ document.getElementById('_cwQr').innerHTML=''; _cwSendMsg('Авъя! Яаж төлөх вэ?'); };
+  window._cwPayment=function(){
+    window.open('https://forms.gle/CFQWMzkWdNztkZ917','_blank');
+  };
 
   document.getElementById('_cwInp').addEventListener('keydown',e=>{ if(e.key==='Enter') _cwHandleSend(); });
-
-  window._cwSendMsg=async function(txt){
-    if(loading)return; loading=true;
-    addU(txt); hist.push({role:'user',content:txt});
-    showTyping(); document.getElementById('_cwSend').disabled=true;
-    try{
-      const res=await fetch('https://lifeos-proxy.contentmarketing976.workers.dev/',{
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1000,messages:[{role:'system',content:SYS},...hist]})
-      });
-      const data=await res.json();
-      let reply=data.choices?.[0]?.message?.content||'Уучлаарай, алдаа гарлаа.';
-      const showCTA=reply.includes('PAYMENT_READY')&&!ctaDone;
-      if(showCTA) ctaDone=true;
-      reply=reply.replace(/PAYMENT_READY/g,'').trim();
-      hist.push({role:'assistant',content:reply});
-      rmTyping(); addB(reply,showCTA);
-      const ns=Math.min(Math.ceil(hist.length/2)+1,5);
-      setSteps(ns); setQR(ns);
-      if(showCTA) setTimeout(confetti,600);
-    }catch(err){ rmTyping(); addB('Холболтын алдаа. Дахин оролдоно уу.'); }
-    loading=false; document.getElementById('_cwSend').disabled=false;
-  };
 
   function confetti(){
     const w=document.getElementById('_cwConf'); w.innerHTML='';
@@ -2629,15 +2665,16 @@ Funnel:
           showTyping();
           setTimeout(()=>{
             rmTyping();
-            addB('Сайн байна уу! 👋 Би LifeOS-ийн AI туслах.<br><br>Танд өдрийн тогтмол дэглэм байдаг уу?');
-            setQR(1);
+            const s0 = FLOW[0];
+            addB(s0.bot);
+            setSteps(1);
+            setQR(s0.qr);
           },900);
         },250);
       }
     }
   };
 
-  // Show tooltip after 2s, auto-hide after 7s
   setTimeout(()=>{
     const tip=document.getElementById('_cwTooltip');
     tip.classList.add('show');

@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Routine OS — ChongWoo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080809;--surface:#0f0f11;--surface2:#141418;--border:#1c1c21;--border2:#26262d;
+  --text:#e0e0ec;--muted:#52525e;--muted2:#8888a0;--white:#f4f4fc;
+  --deep:#5b9fff;--work:#f5a623;--train:#ff6b4a;--rest:#3ecf8e;
+  --food:#c9a96e;--sleep:#9b8df5;--transit:#64c8d4;
+  --xp:#ffd700;--streak:#ff6b4a;--lvl:#3ecf8e;
+  --r:8px;--font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;
+  --sidebar:240px;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.shell{display:grid;grid-template-columns:var(--sidebar) 1fr;height:100vh;overflow:hidden}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:none;height:100vh}
+.sidebar::-webkit-scrollbar{display:none}
+.main{display:flex;flex-direction:column;overflow:hidden;height:100vh}
+.brand{padding:20px 18px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.brand-name{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--white)}
+.brand-sub{font-size:10px;color:var(--muted2);letter-spacing:.06em;margin-top:2px;font-family:var(--mono)}
+.xp-block{padding:14px 18px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.xp-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.xp-level{font-size:11px;font-weight:700;color:var(--lvl);letter-spacing:.06em;font-family:var(--mono)}
+.xp-pts{font-size:10px;color:var(--muted2);font-family:var(--mono)}
+.xp-bar-bg{height:4px;background:var(--border2);border-radius:4px;overflow:hidden}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--lvl),#5fffb0);border-radius:4px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+.xp-row2{display:flex;justify-content:space-between;margin-top:7px}
+.streak-badge{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--streak);font-family:var(--mono);font-weight:700}
+.week-score{font-size:10px;color:var(--muted2);font-family:var(--mono)}
+.nav-section{padding:12px 0 4px;flex-shrink:0}
+.nav-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:0 18px 6px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 18px;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted2);letter-spacing:.02em;border-left:2px solid transparent;transition:all .12s;user-select:none;position:relative}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.025)}
+.nav-item.active{color:var(--white);border-left-color:var(--white);background:rgba(255,255,255,.04)}
+.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;opacity:.3;transition:opacity .12s}
+.nav-item.active .nav-dot{opacity:1}
+.nav-badge{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:20px;font-family:var(--mono);letter-spacing:.04em}
+.nav-check{margin-left:auto;font-size:9px;font-family:var(--mono);color:var(--lvl);opacity:0;transition:opacity .2s}
+.nav-item.day-done .nav-check{opacity:1}
+.nav-item.day-done .nav-dot{opacity:1}
+.sidebar-footer{margin-top:auto;padding:14px 18px;border-top:1px solid var(--border);flex-shrink:0}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted2);padding:2px 0}
+.legend-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 36px 14px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
+.topbar-left{display:flex;flex-direction:column;gap:2px}
+.page-title{font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--white);line-height:1}
+.page-title span{color:var(--muted2);font-weight:300}
+.page-meta{font-size:10px;color:var(--muted2);letter-spacing:.07em;font-family:var(--mono)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.day-xp-badge{background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);color:var(--xp);font-size:11px;font-family:var(--mono);font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.04em}
+.tabs{display:flex;gap:2px;padding:0 36px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
+.tab{padding:10px 16px;font-size:11px;font-weight:600;color:var(--muted2);cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;user-select:none}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--white);border-bottom-color:var(--white)}
+.scroll-area{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.scroll-area::-webkit-scrollbar{width:4px}
+.scroll-area::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.tab-panel{display:none;padding:24px 36px 60px}
+.tab-panel.active{display:block;animation:fadeSlide .2s ease both}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
+.stat{background:var(--surface);padding:10px 14px}
+.stat-label{font-size:9px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px}
+.stat-val{font-size:15px;font-weight:700;color:var(--white);font-family:var(--mono)}
+.tl{position:relative}
+.tl-row{display:grid;grid-template-columns:60px 1px 1fr;gap:0 18px;opacity:0;transform:translateY(6px);transition:opacity .3s ease,transform .3s ease}
+.tl-row.show{opacity:1;transform:none}
+.tl-time{padding-top:17px;text-align:right;font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1;letter-spacing:.04em}
+.tl-axis{display:flex;flex-direction:column;align-items:center}
+.tl-node{width:7px;height:7px;border-radius:50%;margin-top:20px;flex-shrink:0;position:relative;z-index:2;transition:transform .2s}
+.tl-row:hover .tl-node{transform:scale(1.6)}
+.tl-line{flex:1;width:1px;background:var(--border);margin-top:3px}
+.tl-row:last-child .tl-line{display:none}
+.tl-body{padding:12px 0 16px}
+.tl-cat{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+.tl-cat::before{content:'';width:14px;height:1.5px;border-radius:1px}
+.tl-title{font-size:15px;font-weight:600;color:var(--white);letter-spacing:-.01em;margin-bottom:4px;line-height:1.3}
+.tl-dur{font-size:11px;color:var(--muted2);font-family:var(--mono);font-weight:400}
+.tl-desc{font-size:13px;color:var(--muted2);line-height:1.7;margin-top:4px;max-width:560px}
+.tl-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.chip{font-size:11px;padding:3px 9px;border-radius:3px;background:var(--border2);color:var(--muted2);letter-spacing:.03em}
+.why-box{margin-top:8px;padding:10px 13px;border-radius:var(--r);background:rgba(255,255,255,.025);border-left:2px solid;font-size:12px;color:var(--muted2);line-height:1.7;max-width:520px}
+.why-box strong{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px;opacity:.6}
+.c-deep .tl-node{background:var(--deep)}.c-deep .tl-cat{color:var(--deep)}.c-deep .tl-cat::before,.c-deep .why-box{border-color:var(--deep)}
+.c-work .tl-node{background:var(--work)}.c-work .tl-cat{color:var(--work)}.c-work .tl-cat::before,.c-work .why-box{border-color:var(--work)}
+.c-train .tl-node{background:var(--train)}.c-train .tl-cat{color:var(--train)}.c-train .tl-cat::before,.c-train .why-box{border-color:var(--train)}
+.c-rest .tl-node{background:var(--rest)}.c-rest .tl-cat{color:var(--rest)}.c-rest .tl-cat::before,.c-rest .why-box{border-color:var(--rest)}
+.c-food .tl-node{background:var(--food)}.c-food .tl-cat{color:var(--food)}.c-food .tl-cat::before,.c-food .why-box{border-color:var(--food)}
+.c-sleep .tl-node{background:var(--sleep)}.c-sleep .tl-cat{color:var(--sleep)}.c-sleep .tl-cat::before,.c-sleep .why-box{border-color:var(--sleep)}
+.c-transit .tl-node{background:var(--transit)}.c-transit .tl-cat{color:var(--transit)}.c-transit .tl-cat::before,.c-transit .why-box{border-color:var(--transit)}
+.checklist-wrap{margin-top:4px}
+.checklist-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.checklist-title{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2)}
+.checklist-prog{font-size:10px;font-family:var(--mono);color:var(--muted2)}
+.prog-bar-wrap{height:3px;background:var(--border2);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--lvl),#5fffb0);border-radius:3px;transition:width .4s ease}
+.xp-popup{position:fixed;right:32px;bottom:80px;background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3);color:var(--xp);font-family:var(--mono);font-size:13px;font-weight:700;padding:8px 16px;border-radius:20px;pointer-events:none;opacity:0;transform:translateY(0);transition:opacity .3s,transform .6s;z-index:999;letter-spacing:.06em}
+.xp-popup.show{opacity:1;transform:translateY(-20px)}
+.combo-indicator{position:fixed;right:32px;bottom:120px;pointer-events:none;z-index:998;text-align:right;opacity:0;transition:opacity .3s}
+.combo-indicator.show{opacity:1}
+.combo-fire{font-size:22px;animation:comboPulse .4s ease infinite alternate}
+.combo-label{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--streak);letter-spacing:.06em}
+.combo-mult{font-family:var(--mono);font-size:20px;font-weight:700;background:linear-gradient(135deg,var(--streak),var(--xp));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+@keyframes comboPulse{from{transform:scale(1)}to{transform:scale(1.1)}}
+.lvlup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
+.lvlup-overlay.show{opacity:1;pointer-events:all}
+.lvlup-box{text-align:center;transform:scale(.7);transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.lvlup-overlay.show .lvlup-box{transform:scale(1)}
+.lvlup-icon{font-size:72px;display:block;animation:lvlSpin 1s ease both;margin-bottom:12px}
+@keyframes lvlSpin{from{transform:rotate(-20deg) scale(0)}to{transform:rotate(0) scale(1)}}
+.lvlup-title{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;font-family:var(--mono)}
+.lvlup-name{font-size:42px;font-weight:700;letter-spacing:-.03em;background:linear-gradient(135deg,var(--xp),var(--lvl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:16px}
+.lvlup-sub{font-size:14px;color:var(--muted2);margin-bottom:28px}
+.lvlup-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;width:6px;height:6px;border-radius:50%;animation:particleFly 1.2s ease forwards}
+@keyframes particleFly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
+.lvlup-btn{background:linear-gradient(135deg,var(--xp),#ffaa00);color:#000;font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.08em;padding:12px 32px;border:none;border-radius:8px;cursor:pointer;text-transform:uppercase;transition:transform .15s}
+.lvlup-btn:hover{transform:scale(1.05)}
+.boss-card{background:linear-gradient(135deg,rgba(255,107,74,.08),rgba(255,215,0,.05));border:1px solid rgba(255,107,74,.25);border-radius:var(--r);padding:14px 16px;margin-bottom:18px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.boss-card:hover{border-color:rgba(255,107,74,.5)}
+.boss-card::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,107,74,.03),transparent);animation:bossShimmer 3s ease infinite}
+@keyframes bossShimmer{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+.boss-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.boss-icon{font-size:20px}
+.boss-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--streak);font-family:var(--mono);font-weight:700}
+.boss-xp-badge{margin-left:auto;background:rgba(255,107,74,.15);color:var(--streak);font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px}
+.boss-title{font-size:14px;font-weight:700;color:var(--white);letter-spacing:-.01em;margin-bottom:4px}
+.boss-desc{font-size:12px;color:var(--muted2);line-height:1.6}
+.boss-done{position:absolute;inset:0;background:rgba(62,207,142,.08);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;border-radius:var(--r)}
+.boss-done.show{opacity:1}
+.boss-done-text{font-size:16px;font-weight:700;color:var(--lvl);font-family:var(--mono);letter-spacing:.1em}
+.ach-badge{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:4px 10px;font-size:10px;font-family:var(--mono);color:var(--muted2);white-space:nowrap;cursor:pointer;transition:all .2s;flex-shrink:0}
+.ach-badge.unlocked{border-color:rgba(255,215,0,.3);color:var(--xp);background:rgba(255,215,0,.06)}
+.ach-icon{font-size:13px;filter:grayscale(1) opacity(.3);transition:filter .3s}
+.ach-badge.unlocked .ach-icon{filter:none}
+.ach-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%) translateY(-80px);background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,215,0,.08));border:1px solid rgba(255,215,0,.4);color:var(--xp);font-family:var(--mono);font-size:12px;font-weight:700;padding:10px 20px;border-radius:24px;pointer-events:none;z-index:9998;transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;letter-spacing:.06em;display:flex;align-items:center;gap:8px}
+.ach-toast.show{transform:translateX(-50%) translateY(0)}
+.freeze-btn{display:flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);color:#64c8d4;cursor:pointer;background:rgba(100,200,212,.08);border:1px solid rgba(100,200,212,.2);border-radius:12px;padding:3px 8px;transition:all .2s;margin-top:5px}
+.freeze-btn:hover{background:rgba(100,200,212,.15)}
+.freeze-btn.used{color:var(--muted);border-color:var(--border);background:transparent;cursor:default}
+.cl-section{margin-bottom:18px}
+.cl-section-label{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.cl-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;cursor:pointer;border-radius:6px;transition:background .1s}
+.cl-item:hover{background:rgba(255,255,255,.02)}
+.cl-box{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s;background:transparent;position:relative;overflow:hidden}
+.cl-box::after{content:'✓';font-size:11px;font-weight:700;color:var(--bg);opacity:0;transition:opacity .15s}
+.cl-item.checked .cl-box{background:var(--lvl);border-color:var(--lvl)}
+.cl-item.checked .cl-box::after{opacity:1}
+.cl-text{flex:1}
+.cl-label{font-size:12.5px;color:var(--text);line-height:1.4;transition:color .2s}
+.cl-item.checked .cl-label{color:var(--muted);text-decoration:line-through}
+.cl-xp{font-size:9px;font-family:var(--mono);color:var(--xp);opacity:.6;margin-top:1px}
+.cl-item.checked .cl-xp{opacity:.3}
+.day-complete{display:none;align-items:center;gap:14px;background:rgba(62,207,142,.06);border:1px solid rgba(62,207,142,.2);border-radius:var(--r);padding:14px 18px;margin-bottom:20px}
+.day-complete.show{display:flex;animation:fadeSlide .3s ease both}
+.dc-icon{font-size:24px;flex-shrink:0}
+.dc-title{font-size:13px;font-weight:700;color:var(--lvl)}
+.dc-sub{font-size:11px;color:var(--muted2);margin-top:1px}
+.dc-xp{margin-left:auto;font-family:var(--mono);font-size:14px;font-weight:700;color:var(--xp)}
+.section-title{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-top:28px}
+.section-title:first-child{margin-top:0}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-bottom:24px}
+.tip-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;transition:border-color .2s;position:relative;overflow:hidden}
+.tip-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r) var(--r) 0 0}
+.tip-card:hover{border-color:var(--border2)}
+.tip-card.tc-deep::before{background:var(--deep)}.tip-card.tc-train::before{background:var(--train)}.tip-card.tc-food::before{background:var(--food)}.tip-card.tc-rest::before{background:var(--rest)}.tip-card.tc-sleep::before{background:var(--sleep)}.tip-card.tc-work::before{background:var(--work)}
+.tip-icon{font-size:16px;margin-bottom:7px;display:block}
+.tip-title{font-size:12px;font-weight:700;color:var(--white);margin-bottom:4px;letter-spacing:-.01em}
+.tip-text{font-size:11px;color:var(--muted2);line-height:1.6}
+.improvements{margin-top:6px}
+.imp-item{display:grid;grid-template-columns:28px 1fr;gap:0 14px;padding:14px 0;border-bottom:1px solid var(--border);align-items:start}
+.imp-item:last-child{border-bottom:none}
+.imp-num{font-family:var(--mono);font-size:10px;color:var(--muted);padding-top:2px}
+.imp-title{font-size:12px;font-weight:600;color:var(--white);margin-bottom:3px}
+.imp-old{font-size:11px;color:var(--muted);text-decoration:line-through;margin-bottom:2px}
+.imp-new{font-size:11px;color:var(--lvl);margin-bottom:4px;font-weight:500}
+.imp-why{font-size:11px;color:var(--muted2);line-height:1.6}
+.day-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:6px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.day-num{font-size:42px;font-weight:700;color:var(--border2);line-height:1;letter-spacing:-.04em;flex-shrink:0;font-family:var(--mono)}
+.day-meta-inner{flex:1}
+.day-name{font-size:18px;font-weight:700;color:var(--white);letter-spacing:-.01em;margin-bottom:5px}
+.day-tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:10px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;padding:2px 8px;border-radius:3px;border:1px solid}
+.day-quote{font-size:11px;color:var(--muted2);font-style:italic;line-height:1.6;margin-top:7px;padding-top:7px;border-top:1px solid var(--border)}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:24px}
+.wk-cell{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s}
+.wk-cell:hover{border-color:var(--border2)}
+.wk-cell.wk-done{border-color:rgba(62,207,142,.3);background:rgba(62,207,142,.04)}
+.wk-day{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:4px}
+.wk-score{font-size:16px;font-weight:700;font-family:var(--mono);color:var(--white)}
+.wk-cell.wk-done .wk-score{color:var(--lvl)}
+.wk-xp{font-size:9px;font-family:var(--mono);color:var(--xp);margin-top:3px}
+.total-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
+.ts-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px}
+.ts-val{font-size:28px;font-weight:700;font-family:var(--mono);color:var(--white);line-height:1}
+.ts-label{font-size:10px;color:var(--muted2);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+.ts-sub{font-size:11px;color:var(--muted2);margin-top:6px}
+.mobile-nav{display:none}
+.mobile-xp-bar{display:none}
+@media(max-width:768px){
+  :root{--sidebar:0px}
+  .shell{grid-template-columns:1fr;height:100vh;overflow:hidden}
+  .sidebar{display:none}
+  .mobile-xp-bar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;position:sticky;top:0;z-index:50}
+  .mobile-xp-bar .xp-level{font-size:11px;font-weight:700;color:var(--lvl);font-family:var(--mono);white-space:nowrap}
+  .mobile-xp-bar .xp-bar-bg{flex:1;height:5px;background:var(--border2);border-radius:5px;overflow:hidden}
+  .mobile-xp-bar .xp-bar-fill2{height:100%;background:linear-gradient(90deg,var(--lvl),#5fffb0);border-radius:5px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+  .mobile-xp-bar .streak-txt{font-size:11px;font-family:var(--mono);font-weight:700;color:var(--streak);white-space:nowrap}
+  .main{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding-bottom:64px}
+  .topbar{padding:10px 16px 8px;flex-shrink:0;position:sticky;top:0;z-index:40;background:var(--bg)}
+  .page-title{font-size:18px}
+  .page-meta{font-size:9px}
+  .day-xp-badge{font-size:10px;padding:3px 8px}
+  .tabs{padding:0 12px;flex-shrink:0}
+  .tab{padding:9px 12px;font-size:10px}
+  .scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .tab-panel{padding:14px 14px 32px}
+  .tl-row{grid-template-columns:46px 1px 1fr;gap:0 12px}
+  .tl-time{font-size:10px;padding-top:16px}
+  .tl-node{margin-top:18px}
+  .tl-title{font-size:14px !important}
+  .tl-desc{font-size:13px !important;color:#9494aa !important;max-width:100% !important}
+  .tl-cat{font-size:9px !important}
+  .tl-dur{font-size:10px !important}
+  .why-box{font-size:11px !important;color:#8888a0 !important;max-width:100% !important;padding:8px 10px}
+  .chip{font-size:10px !important;padding:2px 8px !important}
+  .cl-item{padding:11px 6px}
+  .cl-box{width:24px;height:24px;border-radius:5px;flex-shrink:0}
+  .cl-label{font-size:14px !important;line-height:1.4}
+  .stats{grid-template-columns:repeat(2,1fr);margin-bottom:14px}
+  .stat{padding:8px 12px}
+  .day-head{margin-bottom:4px;padding-bottom:12px;gap:10px}
+  .day-name{font-size:16px}
+  .day-num{font-size:30px}
+  .week-grid{grid-template-columns:repeat(4,1fr);gap:5px}
+  .tips-grid{grid-template-columns:1fr}
+  .total-stats{grid-template-columns:1fr 1fr}
+  .xp-popup{bottom:76px;right:16px}
+  .combo-indicator{bottom:116px;right:16px}
+  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border2);height:60px;overflow-x:auto;scrollbar-width:none}
+  .mobile-nav::-webkit-scrollbar{display:none}
+  .mobile-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:48px;flex:1;padding:5px 2px;cursor:pointer;font-size:9px;font-weight:600;color:var(--muted2);letter-spacing:.02em;border-top:2px solid transparent;transition:all .15s;user-select:none;position:relative;gap:2px}
+  .mobile-nav-item.active{color:var(--white);border-top-color:var(--white)}
+  .mobile-nav-item.day-done{color:var(--lvl)}
+  .mobile-nav-done{position:absolute;top:5px;right:8px;font-size:8px;color:var(--lvl)}
+  .mobile-nav-dot{width:6px;height:6px;border-radius:50%;margin-bottom:1px}
+}
+@media(min-width:769px){
+  .tl-desc{color:#9090a8}
+  .why-box{color:#8080a0}
+  .cl-label{font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<div class="xp-popup" id="xpPopup">+0 XP</div>
+<div class="combo-indicator" id="comboIndicator">
+  <div class="combo-fire">🔥</div>
+  <div class="combo-label">COMBO</div>
+  <div class="combo-mult" id="comboMult">×2</div>
+</div>
+<div class="lvlup-overlay" id="lvlupOverlay">
+  <div class="lvlup-particles" id="lvlupParticles"></div>
+  <div class="lvlup-box">
+    <span class="lvlup-icon">⚡</span>
+    <div class="lvlup-title">Level Up!</div>
+    <div class="lvlup-name" id="lvlupName">Тогтсон</div>
+    <div class="lvlup-sub" id="lvlupSub">Та шинэ түвшинд хүрлээ</div>
+    <button class="lvlup-btn" onclick="closeLvlUp()">Үргэлжлүүлэх →</button>
+  </div>
+</div>
+<div class="ach-toast" id="achToast">🏅 <span id="achToastText">Achievement!</span></div>
+
+<div class="mobile-xp-bar" id="mobileXpBar">
+  <div class="xp-level" id="mLvlLabel">LVL 1</div>
+  <div class="xp-bar-bg"><div class="xp-bar-fill2" id="mXpBar" style="width:0%"></div></div>
+  <div class="streak-txt">🔥 <span id="mStreakNum">0</span></div>
+</div>
+
+<div class="shell">
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-name">Routine OS</div>
+    <div class="brand-sub">ChongWoo · 2026</div>
+  </div>
+  <div class="xp-block">
+    <div class="xp-top">
+      <div class="xp-level" id="lvlLabel">LVL 1</div>
+      <div class="xp-pts" id="xpLabel">0 / 700 XP</div>
+    </div>
+    <div class="xp-bar-bg"><div class="xp-bar-fill" id="xpBar" style="width:0%"></div></div>
+    <div class="xp-row2">
+      <div class="streak-badge">🔥 <span id="streakNum">0</span> өдөр</div>
+      <div class="week-score" id="weekScore">7н: 0 / 700 XP</div>
+    </div>
+    <div class="freeze-btn" id="freezeBtn" onclick="useStreakFreeze()">🧊 Streak хамгаалалт <span id="freezeCount">(1)</span></div>
+  </div>
+  <div style="padding:10px 18px 10px;border-bottom:1px solid var(--border);flex-shrink:0">
+    <div style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace">Амжилтууд</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px" id="achGrid"></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Ажлын өдрүүд (Да–Баа)</div>
+    <div class="nav-item active" onclick="showDay(0)" id="nav0"><div class="nav-dot" style="background:var(--train)"></div>Даваа<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Gym + YouTube</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(1)" id="nav1"><div class="nav-dot" style="background:var(--rest)"></div>Мягмар<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Амрах + Контент</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(2)" id="nav2"><div class="nav-dot" style="background:var(--train)"></div>Лхагва<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Gym + YouTube</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(3)" id="nav3"><div class="nav-dot" style="background:var(--rest)"></div>Пүрэв<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Амрах + Бэлтгэл</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(4)" id="nav4"><div class="nav-dot" style="background:var(--train)"></div>Баасан<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Gym + Спринт</span><span class="nav-check">✓</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Амралтын өдрүүд</div>
+    <div class="nav-item" onclick="showDay(5)" id="nav5"><div class="nav-dot" style="background:var(--deep)"></div>Бямба<span class="nav-badge" style="background:rgba(91,159,255,.1);color:var(--deep)">YouTube спринт</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(6)" id="nav6"><div class="nav-dot" style="background:var(--rest)"></div>Ням<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Амрах + Тайлан</span><span class="nav-check">✓</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Нэмэлт</div>
+    <div class="nav-item" onclick="showDay(7)"><div class="nav-dot" style="background:var(--food)"></div>Tips & Зөвлөмж</div>
+    <div class="nav-item" onclick="showDay(8)"><div class="nav-dot" style="background:var(--muted2)"></div>Сайжруулалтууд</div>
+    <div class="nav-item" onclick="showDay(9)"><div class="nav-dot" style="background:var(--xp)"></div>7н Тайлан</div>
+  </div>
+  <div class="sidebar-footer">
+    <div style="font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Өнгөний код</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--deep)"></div>YouTube / Deep Work</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--work)"></div>Barista ажил</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--train)"></div>Gym дасгал</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--food)"></div>Хоол</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--rest)"></div>Амралт</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--sleep)"></div>Унтах</div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title" id="topTitle">Даваа <span>гараг</span></div>
+      <div class="page-meta" id="topMeta">ӨД #1 — MON · GYM + YOUTUBE</div>
+    </div>
+    <div class="topbar-right">
+      <div class="day-xp-badge" id="dayXpBadge">+110 XP / өдөр</div>
+    </div>
+  </div>
+  <div class="tabs" id="tabBar">
+    <div class="tab active" onclick="showTab(0)">Хуваарь</div>
+    <div class="tab" onclick="showTab(1)">✓ Checklist</div>
+  </div>
+  <div class="scroll-area">
+
+<!-- ====== DAY 0: ДАВАА ====== -->
+<div class="day-panel" id="dp0">
+  <div class="tab-panel active" id="tp0-0">
+    <div class="day-head">
+      <div class="day-num">01</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Gym + YouTube эхлэл</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Дээд бие</span>
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">YouTube</span>
+          <span class="tag" style="color:var(--work);border-color:rgba(245,166,35,.3)">Barista</span>
+        </div>
+        <div class="day-quote">"Shift work-ийн хүн тогтмол байдлыг цагаар биш, дасгалыг хийсэн эсэхээр хэмждэг."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">06:15</div></div>
+      <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">60+ мин</div></div>
+      <div class="stat"><div class="stat-label">YouTube</div><div class="stat-val">45 мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">00:30</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус 500мл → нүүр угаах → өдрийн YouTube зорилтоо нэг өгүүлбэрт бич. Утасыг унтлагаас гарга — өглөө scroll хориотой.</div><div class="why-box"><strong>Яагаад 06:15?</strong>Barista shift-ийн өмнө gym хийх цаг байна. Shift дараа ядарч gym тасалдаг. Өглөө хийвэл тогтмол болно.</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Chest + Tricep</div><div class="tl-title">Chest & Tricep Day <span class="tl-dur">— 60–70 мин</span></div><div class="tl-desc">Дулаацуулалт 10 мин → Bench Press 4×8 → Incline DB Press 3×10 → Cable Fly 3×12 → Tricep Pushdown 3×12 → Overhead Ext 3×12 → Сунгалт 10 мин.</div><div class="tl-chips"><span class="chip">Bench Press</span><span class="chip">Incline Press</span><span class="chip">Cable Fly</span><span class="chip">Tricep</span></div><div class="why-box"><strong>Gym = тогтвортой байдлын гол зүйл</strong>Чи 3-4x/7 хоногт gym хийдэг — энэ маш сайн. Хуваарьлаж цэгцлэхэд л хангалттай. Да/Лх/Ба gym, Мя/Пү амрах.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Бэлтгэл</div><div class="tl-title">Өглөөний хоол + Shift бэлтгэл <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Уураг ихтэй хоол: өндөг, тараг, эсвэл protein shake. Gym-ийн дараа уураг зайлшгүй. Хувцсаа солиод ажилдаа бэлд.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Ажлын shift <span class="tl-dur">— shift цагаар</span></div><div class="tl-desc">Ажлын завсарлагаанд утас харахгүй — оронд нь 5 мин алхалт эсвэл YouTube видеоны дараагийн санааг тэмдэглэ. Ажил бол эрч хүч цуглуулах цаг.</div><div class="tl-chips"><span class="chip">Завсарт тэмдэглэл</span><span class="chip">Утас хориотой</span></div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">17:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Гэртээ харих</div><div class="tl-title">Тайвшрах — Transit <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Podcast сонс: YouTube creators, content strategy, биеийн тамир. Scroll хийхийн оронд чихэвч тавь. Энэ цаг сурах хамгийн хялбар үе.</div><div class="tl-chips"><span class="chip">YouTube podcast</span><span class="chip">Content ideas</span><span class="chip">Scroll хориотой</span></div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, утасгүй идэнэ. Хоол идэхдээ дараа хийх YouTube ажлаа бодно — mental prep.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Deep Work</div><div class="tl-title">Контент бүтээх — Хамгийн чухал блок <span class="tl-dur">— 45–60 мин</span></div><div class="tl-desc">Утас нисгэлтэн горим. Нэг л зүйлд голло: Script бичих, эсвэл зурах, эсвэл засварлах. "Бүгдийг нэгэн зэрэг" хийхгүй.</div><div class="tl-chips"><span class="chip">Script бичих</span><span class="chip">Зураглал</span><span class="chip">Edit хийх</span><span class="chip">Нэг зорилт</span></div><div class="why-box"><strong>45 мин хангалттай</strong>Тогтмол 45 мин × 7 хоног = 5.25 цаг/долоо хоног. Жилд 273 цаг — YouTube channel хөгжихөд хангалттай. Тогтмол байдал > нэг удаа их хийх.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">20:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Тайвшрах + Чөлөөт цаг <span class="tl-dur">— 3.5 цаг</span></div><div class="tl-desc">Чи Barista ажилтай — энэ орой чинийх. Найз нөхөд, кино, тоглоом. Гэхдээ 00:00-д утас хаа.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">00:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">6–7 цаг нойр <span class="tl-dur">→ 06:15 босно</span></div><div class="tl-desc">Утасыг унтлагаас гарга. 00:30 унтвал 06:15 босоход 5.75 цаг — хангалттай. Нойрны чанар чухал.</div><div class="why-box"><strong>Shift worker-ийн нойр</strong>Shift work-д 7-8 цаг хэцүү байж болно. Гол нь тогтмол унтах, босох цагтай байх. Тасалтгүй 6 цаг > тасалдсан 8 цаг.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp0-1">
+    <div class="boss-card" id="boss0" onclick="toggleBoss(0)">
+      <div class="boss-done" id="bossDone0"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">🎬</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">YouTube Deep Work 45 минутыг утасгүй, таслалтгүй дуусга</div>
+      <div class="boss-desc">Нислэгийн горим + нэг л зорилт = жинхэнэ контент хийх. Нэг удаа мэдэрвэл давтах хүсэл төрнө.</div>
+    </div>
+    <div class="day-complete" id="dc0"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Даваа бүрэн дууслаа!</div><div class="dc-sub">Gym + YouTube + Shift. Тогтмол байдлын эхлэл.</div></div><div class="dc-xp" id="dc0xp">+110 XP</div></div>
+    <div class="checklist-wrap" id="cl0"></div>
+  </div>
+</div>
+
+<!-- ====== DAY 1: МЯГМАР ====== -->
+<div class="day-panel" id="dp1" style="display:none">
+  <div class="tab-panel active" id="tp1-0">
+    <div class="day-head">
+      <div class="day-num">02</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Идэвхтэй амралт + Контент бодол</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--rest);border-color:rgba(62,207,142,.3)">Gym амрах</span>
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Хөнгөн YouTube</span>
+        </div>
+        <div class="day-quote">"Мягмар бол булчин сэргэх өдөр. Дасгалгүй = булчин хүчтэй болно. Хөнгөн YouTube = тархи контентоос салахгүй."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">06:30</div></div>
+      <div class="stat"><div class="stat-label">Алхалт</div><div class="stat-val">20 мин</div></div>
+      <div class="stat"><div class="stat-label">YouTube</div><div class="stat-val">30 мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">00:30</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Аажмаар сэрэх + Сунгалт <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус → 10 мин хөнгөн сунгалт → зорилт бичих. Gym-гүй өдөр ч сунгалтыг орхих хэрэггүй.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">Podcast — YouTube & Fitness контент <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Top creator-уудыг сонс. Ali Abdaal, mkbhd, эсвэл фитнесс channel-уудыг судал. Scroll хийхийн оронд сур.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— shift цагаар</span></div><div class="tl-desc">Завсарлагаанд YouTube видеоны дараагийн санааг нэг өгүүлбэрт бичиж ав. 2 минут л хангалттай.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, утасгүй идэнэ.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хөнгөн YouTube</div><div class="tl-title">Санаа цуглуулах + Судалгаа <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Өчигдрийн контентийн тэмдэглэлийг харах. Дараагийн видеоны сэдэв, thumbnail санаа боловсруулах. Өрсөлдөгч суваг-уудыг шинжил.</div><div class="tl-chips"><span class="chip">Topic судлах</span><span class="chip">Thumbnail санаа</span><span class="chip">Конкурент харах</span></div><div class="why-box"><strong>Яагаад 30 минут?</strong>Амралтын өдөр ч тогтмол байдлыг тасалдуулахгүй. 30 мин = тархи YouTube горимоос гарахгүй.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Бүрэн чөлөөт цаг <span class="tl-dur">— 4 цаг</span></div><div class="tl-desc">Найз нөхдтэй байх, кино, тоглоом — энэ бол шагнал. Gym-гүй өдрийн хамгийн чухал зүйл: амрах.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">00:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг нойр</div><div class="tl-desc">Маргааш Лхагва gym байна. Сайн унт — булчин унтах үед сэргэдэг.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp1-1">
+    <div class="boss-card" id="boss1" onclick="toggleBoss(1)">
+      <div class="boss-done" id="bossDone1"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">📝</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">Shift-ийн завсарлагаанд дараагийн YouTube видеоны гол санааг бичиж ав</div>
+      <div class="boss-desc">2 минут + нэг өгүүлбэр = дараагийн видеоны үр — энэ бол системтэй creator-ийн арга.</div>
+    </div>
+    <div class="day-complete" id="dc1"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Мягмар бүрэн дууслаа!</div><div class="dc-sub">Идэвхтэй амралт + YouTube тогтмол байдал хадгаллаа.</div></div><div class="dc-xp" id="dc1xp">+90 XP</div></div>
+    <div class="checklist-wrap" id="cl1"></div>
+  </div>
+</div>
+
+<!-- ====== DAY 2: ЛХАГВА ====== -->
+<div class="day-panel" id="dp2" style="display:none">
+  <div class="tab-panel active" id="tp2-0">
+    <div class="day-head">
+      <div class="day-num">03</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Gym + YouTube дундын шалгалт</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Нуруу+Bicep</span>
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">YouTube</span>
+        </div>
+        <div class="day-quote">"7 хоногийн дунд — чи хоёр gym хийлээ, нэг YouTube хийлээ. Яг зөв зам дээр явж байна."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">06:15</div></div>
+      <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">60+ мин</div></div>
+      <div class="stat"><div class="stat-label">YouTube</div><div class="stat-val">45 мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">00:30</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус 500мл → 7 хоногийн дундын шалгалт хийх: YouTube ажил урагшилж байна уу? Gym тогтмол байна уу?</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Back + Bicep</div><div class="tl-title">Back & Bicep Day <span class="tl-dur">— 60–70 мин</span></div><div class="tl-desc">Дулаацуулалт 10 мин → Deadlift 4×6 → Bent Over Row 3×10 → Lat Pulldown 3×12 → Face Pull 3×15 → Barbell Curl 3×10 → Hammer Curl 3×12 → Сунгалт.</div><div class="tl-chips"><span class="chip">Deadlift</span><span class="chip">Bent Row</span><span class="chip">Lat Pulldown</span><span class="chip">Bicep</span></div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Shift бэлтгэл</div><div class="tl-title">Уураг ихтэй хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Protein shake эсвэл өндөг + тараг. Gym-ийн дараа 30 минутын дотор уураг ид.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— shift цагаар</span></div><div class="tl-desc">Завсарт YouTube-н нэг жижиг зорилтыг тэмдэглэ: "Өнөөдөр X хийнэ" гэж.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">17:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">Podcast — Creator тактик <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Content creation, editing tips, эсвэл YouTube algorithm сонс. Мэдлэг хуримтлуулах цаг.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, утасгүй идэнэ.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Deep Work</div><div class="tl-title">Нэг жижиг зүйлийг бодит болгох <span class="tl-dur">— 45–60 мин</span></div><div class="tl-desc">Script-ийн нэг хэсгийг дуусга, эсвэл зургийн нэг raw footage засварла, эсвэл thumbnail дуусга. "Нэг л зүйл дуусгах" горим.</div><div class="tl-chips"><span class="chip">Нэг зүйл дуусгах</span><span class="chip">Утасгүй</span><span class="chip">Тогтмол</span></div><div class="why-box"><strong>Дундын шалгалт</strong>Да+Мя+Лх = 3 өдөр дуусгасан бол чи 3/7 замдаа байна. Хэрвээ нэг өдөр алдсан бол яг одоо нөхөж болно.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">20:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Тайвшрах <span class="tl-dur">— 4 цаг</span></div><div class="tl-desc">Хоёр gym, хоёр YouTube хийлээ. Энэ орой бүрэн чинийх.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">00:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг нойр</div><div class="tl-desc">Маргааш Пүрэв — gym амрах. Сайн унт.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp2-1">
+    <div class="boss-card" id="boss2" onclick="toggleBoss(2)">
+      <div class="boss-done" id="bossDone2"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">✅</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">YouTube-н нэг жижиг зүйлийг бодит болгоод хэн нэгэнд үзүүл эсвэл нийтэл</div>
+      <div class="boss-desc">Ганцаараа хийгээд хадгалсан контент = хэнд ч үгүй. Нийтэлсэн → feedback → сайжрана.</div>
+    </div>
+    <div class="day-complete" id="dc2"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Лхагва бүрэн дууслаа!</div><div class="dc-sub">Back+Bicep gym + YouTube дундын шалгалт. Хагас долоо хоног давлаа.</div></div><div class="dc-xp" id="dc2xp">+110 XP</div></div>
+    <div class="checklist-wrap" id="cl2"></div>
+  </div>
+</div>
+
+<!-- ====== DAY 3: ПҮРЭВ ====== -->
+<div class="day-panel" id="dp3" style="display:none">
+  <div class="tab-panel active" id="tp3-0">
+    <div class="day-head">
+      <div class="day-num">04</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Идэвхтэй амралт + YouTube стратеги</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--rest);border-color:rgba(62,207,142,.3)">Gym амрах</span>
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">YouTube стратеги</span>
+        </div>
+        <div class="day-quote">"Пүрэв бол тархин амрах өдөр. Дасгалгүй = булчин нэгтгэнэ. YouTube стратеги = ухаалаг creator болно."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">06:30</div></div>
+      <div class="stat"><div class="stat-label">Алхалт</div><div class="stat-val">20 мин</div></div>
+      <div class="stat"><div class="stat-label">YouTube</div><div class="stat-val">45 мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">00:30</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Аажмаар сэрэх + Сунгалт <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус → сунгалт → Өнөөдрийн YouTube зорилтыг тодорхойлох. "Баасан нэг ажил дуусгана" гэж бэлтгэ.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">YouTube analytics & стратеги судлах <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Хэрхэн YouTube-н алгоритм ажилладаг, retention rate, CTR-г podcast-аар сур. Мэдлэг = дасгал.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— shift цагаар</span></div><div class="tl-desc">Завсарт алхалт + хэрэв санаа ирвэл тэмдэглэ. Баасанд ямар YouTube зорилт хийх вэ гэдгийг ажлын завсарт бодоод ав.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван идэнэ.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Стратеги</div><div class="tl-title">Дараагийн видеоны бүтэн план <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Topic + Hook + Script outline + Thumbnail concept → нэг хуудсанд дуусга. Маргааш Баасанд энэ планаар хийнэ.</div><div class="tl-chips"><span class="chip">Topic тодорхойлох</span><span class="chip">Hook бичих</span><span class="chip">Script outline</span><span class="chip">Thumbnail санаа</span></div><div class="why-box"><strong>Тогтвортой байдал яаж үүсдэг</strong>Хуваарь бус систем. Пүрэв план хийвэл Баасан execute хийх. Бямба нийтэлнэ. Тогтмол цикл = YouTube-н хамгийн чухал зүйл.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">20:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Бүрэн амрах <span class="tl-dur">— 4 цаг</span></div><div class="tl-desc">Маргааш Баасан gym + YouTube спринт байна. Сайтар амар.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">00:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг нойр</div><div class="tl-desc">Маргааш Баасан — gym + YouTube. Сайн унт.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp3-1">
+    <div class="boss-card" id="boss3" onclick="toggleBoss(3)">
+      <div class="boss-done" id="bossDone3"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">📋</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">Дараагийн видеоны бүтэн планыг нэг хуудсанд бичиж дуусга</div>
+      <div class="boss-desc">Бичсэн план = 80% хийгдсэн. Планнгүй creator = байнга blank screen-тэй тэмцдэг.</div>
+    </div>
+    <div class="day-complete" id="dc3"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Пүрэв бүрэн дууслаа!</div><div class="dc-sub">Идэвхтэй амралт + YouTube стратеги бэлэн болсон.</div></div><div class="dc-xp" id="dc3xp">+90 XP</div></div>
+    <div class="checklist-wrap" id="cl3"></div>
+  </div>
+</div>
+
+<!-- ====== DAY 4: БААСАН ====== -->
+<div class="day-panel" id="dp4" style="display:none">
+  <div class="tab-panel active" id="tp4-0">
+    <div class="day-head">
+      <div class="day-num">05</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Gym + YouTube спринт өдөр</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Хөл+Shoulder</span>
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">YouTube спринт</span>
+        </div>
+        <div class="day-quote">"Баасан = долоо хоногийн хамгийн хүчтэй хоёр хосолдог өдөр. Gym + YouTube хоёулаа дуусгана."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">06:15</div></div>
+      <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">60+ мин</div></div>
+      <div class="stat"><div class="stat-label">YouTube</div><div class="stat-val">60 мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">01:00</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">06:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл + 7н зорилт шалгах <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус → 7 хоногийн зорилт шалгах: Gym 3x хийсэн үү? YouTube 3x хийсэн үү? Өнөөдөр хоёулаа дуусга.</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Legs + Shoulders</div><div class="tl-title">Legs & Shoulders Day <span class="tl-dur">— 70–80 мин</span></div><div class="tl-desc">Дулаацуулалт 10 мин → Squat 4×8 → Leg Press 3×12 → Romanian Deadlift 3×10 → Shoulder Press 3×10 → Lateral Raise 3×15 → Calf Raise 4×15 → Сунгалт.</div><div class="tl-chips"><span class="chip">Squat</span><span class="chip">Leg Press</span><span class="chip">RDL</span><span class="chip">Shoulder Press</span></div><div class="why-box"><strong>Баасан = тарчлаалын өдөр</strong>Legs day хамгийн хэцүү, хамгийн их үр дүнтэй. Энэ дуусгасан л бол бусад бүх зүйл амархан.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Shift бэлтгэл</div><div class="tl-title">Уураг ихтэй хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Protein + carb тэнцвэртэй. Legs day-ийн дараа их хоол хэрэгтэй.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— shift цагаар</span></div><div class="tl-desc">Баасан shift-д хөгжилтэй байгаарай. Оройн YouTube sprint-д mental бэлтгэлтэй байна уу гэдгийг бодоод яв.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">17:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">Podcast + YouTube sprint бэлтгэл <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Өнөөдрийн YouTube sprint-д юу хийх вэ гэдгийг transit-д шийдэж ав. Гэрт ирэхдээ шууд эхлэнэ.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, бэлэн. YouTube sprint-д бэлдэж хоолоо ид.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Sprint</div><div class="tl-title">Нэг гаралтыг нийтэлж эсвэл бэлэн болгох <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Пүрэвний планаар — өнөөдөр execute хий. Script дуусга, эсвэл зурж дуусга, эсвэл edit дуусга. Нэг зүйл бодитой болгох.</div><div class="tl-chips"><span class="chip">Execute горим</span><span class="chip">Нэг зүйл дуусга</span><span class="chip">Нийтэлж эсвэл хадгалж дуусга</span></div><div class="why-box"><strong>Баасан Sprint = тогтвортой байдлын мөн чанар</strong>Да+Лх+Ба = 3 gym. Да+Лх+Ба = 3 YouTube. Энэ л систем. Бямба нийтлэл/upload хийнэ.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">20:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Баасны орой — чинийх <span class="tl-dur">— бүхэл орой</span></div><div class="tl-desc">Gym + YouTube хоёулаа хийлээ. Энэ орой бүрэн шагнал. Найз нөхдийн хамт байгаарай.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">01:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">Баасны орой — 1:00 хүртэл хүлцэнгүй</div><div class="tl-desc">Маргааш Бямба YouTube их спринт. Оройтож унтсан ч 08:00 д бос.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp4-1">
+    <div class="boss-card" id="boss4" onclick="toggleBoss(4)">
+      <div class="boss-done" id="bossDone4"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">🚀</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">YouTube контентийн нэг бодит гаралтыг дуусга — нийтэлж эсвэл хэн нэгэнд үзүүл</div>
+      <div class="boss-desc">Хадгалсан контент = тэг. Нийтэлсэн контент = feedback → сайжрах → өсөх.</div>
+    </div>
+    <div class="day-complete" id="dc4"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Баасан бүрэн дууслаа!</div><div class="dc-sub">Legs gym + YouTube sprint. Хамгийн хүчтэй өдрийг давлаа.</div></div><div class="dc-xp" id="dc4xp">+120 XP</div></div>
+    <div class="checklist-wrap" id="cl4"></div>
+  </div>
+</div>
+
+<!-- ====== DAY 5: БЯМБА ====== -->
+<div class="day-panel" id="dp5" style="display:none">
+  <div class="tab-panel active" id="tp5-0">
+    <div class="day-head">
+      <div class="day-num">06</div>
+      <div class="day-meta-inner">
+        <div class="day-name">YouTube Их Спринт + Gym Full Body</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">YouTube спринт</span>
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Full Body Gym</span>
+          <span class="tag" style="color:var(--xp);border-color:rgba(255,215,0,.3)">Golden Day</span>
+        </div>
+        <div class="day-quote">"Бямба = shift-гүй, чөлөөтэй. Энэ бол чиний YouTube channel-ийн хамгийн том өдөр."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">08:00</div></div>
+      <div class="stat"><div class="stat-label">YouTube</div><div class="stat-val">3+ цаг</div></div>
+      <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">60 мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">01:00</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Тайван сэрэх + Бэлтгэл <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Ус → тайван → Өдрийн нэг гол YouTube зорилт бичих. Бямба = shift-гүй = YouTube-н golden time.</div><div class="why-box"><strong>Бямба = ChongWoo-гийн YouTube өдөр</strong>Shift-гүй, тархи шинэхэн, цаг чөлөөтэй. YouTube channel-д зориулах хамгийн тохиромжтой өдөр.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">08:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Блок #1</div><div class="tl-title">Урт Deep Work — 2 цаг <span class="tl-dur">— 120 мин</span></div><div class="tl-desc">90 мин + 15 мин завсар + 30 мин. Script бичих, зураглал хийх, эсвэл edit хийх. Утас нисгэлтэн, хаалт хаасан.</div><div class="tl-chips"><span class="chip">Script</span><span class="chip">Recording</span><span class="chip">Editing</span><span class="chip">Thumbnail</span></div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">10:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Амрах</div><div class="tl-title">Өглөөний хоол + 30 мин амрах <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Хоол идэж 30 мин бүрэн тасалт. Алхалт эсвэл гаднаа гар. Тархийг цэнэглэ.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">12:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Блок #2</div><div class="tl-title">Upload бэлтгэл + Thumbnail + Тайлбар <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Видео edit дуусга → thumbnail хий → гарчиг, тайлбар, tag бичих → upload. Мөн дараагийн долоо хоногийн видеоны сэдэв сонго.</div><div class="tl-chips"><span class="chip">Final edit</span><span class="chip">Thumbnail</span><span class="chip">Upload</span><span class="chip">Metadata</span></div><div class="why-box"><strong>Бямба upload = амжилтын тэмдэг</strong>Тогтмол upload schedule = YouTube алгоритм + subscriber retention. Бямба бүр upload = жилд 52 видео.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">14:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Амрах</div><div class="tl-title">Өдрийн хоол + Богино амрах <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Тайван хоол. 2.5 цаг YouTube хийлээ — сайн ажилласан. Энэ завсарт scroll хориотой.</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">15:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Full Body</div><div class="tl-title">Full Body Circuit <span class="tl-dur">— 60–70 мин</span></div><div class="tl-desc">Squat 3×10 → Bench Press 3×10 → Bent Row 3×10 → Shoulder Press 3×10 → Deadlift 3×8 → Core: Plank, Crunch. Хөнгөн жинтэй, тогтмол байдлыг хадгалах.</div><div class="tl-chips"><span class="chip">Full Body</span><span class="chip">Хөнгөн жин</span><span class="chip">4-р gym өдөр</span></div><div class="why-box"><strong>Бямба Gym = 4x/7 хоног</strong>Да+Лх+Ба+Бм = 4 удаа. Энэ хамгийн сайн frequency gym-д. Та 3-4x хийдэг гэсэн — яг зөв байна.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">17:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Найз нөхөд / Амрах <span class="tl-dur">— бүхэл орой</span></div><div class="tl-desc">Та 3+ цаг YouTube хийлээ, gym хийлээ. Одоо энэ орой бүрэн чинийх. Хэрэв хүссэл байвал community-тэй engage хий.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">01:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7+ цаг нойр</div><div class="tl-desc">Маргааш Ням амрах бол сайн унт.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp5-1">
+    <div class="boss-card" id="boss5" onclick="toggleBoss(5)">
+      <div class="boss-done" id="bossDone5"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">🎬</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">Бямбагийн YouTube видеог upload хий эсвэл дараагийн 3 видеоны планыг бичиж дуусга</div>
+      <div class="boss-desc">Upload = дэлхийтэй холбогдсон. 3 видеоны план = 3 долоо хоногийн тогтмол байдал.</div>
+    </div>
+    <div class="day-complete" id="dc5"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Бямба бүрэн дууслаа!</div><div class="dc-sub">3+ цаг YouTube + Full Body gym. Хамгийн хүчтэй өдөр.</div></div><div class="dc-xp" id="dc5xp">+140 XP</div></div>
+    <div class="checklist-wrap" id="cl5"></div>
+  </div>
+</div>
+
+<!-- ====== DAY 6: НЯМ ====== -->
+<div class="day-panel" id="dp6" style="display:none">
+  <div class="tab-panel active" id="tp6-0">
+    <div class="day-head">
+      <div class="day-num">07</div>
+      <div class="day-meta-inner">
+        <div class="day-name">Бүрэн амрах + 7 хоногийн тайлан</div>
+        <div class="day-tags">
+          <span class="tag" style="color:var(--rest);border-color:rgba(62,207,142,.3)">Амрах</span>
+          <span class="tag" style="color:var(--xp);border-color:rgba(255,215,0,.3)">Weekly Review</span>
+        </div>
+        <div class="day-quote">"Амрах = сулрах биш. Чи 6 өдөр тэмцлээ — gym, YouTube, shift. Маргааш дахин тэмцэхийн тулд өнөөдөр амар."</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">08:00</div></div>
+      <div class="stat"><div class="stat-label">Review</div><div class="stat-val">45 мин</div></div>
+      <div class="stat"><div class="stat-label">Алхалт</div><div class="stat-val">30 мин</div></div>
+      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">00:00</div></div>
+    </div>
+    <div class="tl">
+      <div class="tl-row c-sleep"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Аажмаар сэрэх <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Яарахгүй. Ус → тайван сунгалт. Утасгүй нэг цаг. Shift-гүй Ням — бүрэн амрах.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">09:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Weekly Review</div><div class="tl-title">7 хоногийн дүн шинжилгээ <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">✅ Gym хэдэн удаа хийлээ? ✅ YouTube хэдэн контент хийлээ? ❌ Юуг алдлаа? 📱 Тогтвортой байдал сайжирч байна уу? → Ирэх 7 хоногийн 3 гол зорилт.</div><div class="tl-chips"><span class="chip">Gym тоо</span><span class="chip">YouTube тоо</span><span class="chip">Алдаа шинжлэх</span></div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">10:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Алхалт</div><div class="tl-title">Гаднаа тайван алхалт <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Утасгүй. Байгалиас допамин ав. Тархийг цэвэрлэ. Gym-ийн биеийг тайвшруул.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">11:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Бүрэн амрах</div><div class="tl-title">Чөлөөт өдөр <span class="tl-dur">— бүхэл өдөр</span></div><div class="tl-desc">Гэр бүл, найз нөхөд, хоол, хөгжим, кино — бүрэн чинийх. YouTube-н comment-д хариу өгч, community-тэй холбогд.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Маргаашийн бэлтгэл</div><div class="tl-title">Даваагийн нэг YouTube зорилт батлах <span class="tl-dur">— 10 мин</span></div><div class="tl-desc">Маргааш Даваанд хийх нэг хамгийн чухал YouTube зорилтыг бичих. Тархи унтах үед боловсруулна.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">00:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг нойр — Даваанд бэлэн</div><div class="tl-desc">Ням орой нэлээд эрт унт. Даваа gym + YouTube байна — бэлэн байгаарай.</div></div></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tp6-1">
+    <div class="boss-card" id="boss6" onclick="toggleBoss(6)">
+      <div class="boss-done" id="bossDone6"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
+      <div class="boss-header"><span class="boss-icon">📊</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
+      <div class="boss-title">7 хоногийн YouTube + Gym дэвшлийг нэг хуудсанд бич — юу хийлээ, юу сурлаа, маргааш юу хийх</div>
+      <div class="boss-desc">Тайлан бичих нь ирэх долоо хоногийн чиглэлийг тодруулна. Бичсэн creator хожино.</div>
+    </div>
+    <div class="day-complete" id="dc6"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">7 хоног бүрэн дуусгалаа!</div><div class="dc-sub">ChongWoo, чи бүтэн долоо хоногийг давлаа. Маш сайн!</div></div><div class="dc-xp" id="dc6xp">+130 XP</div></div>
+    <div class="checklist-wrap" id="cl6"></div>
+  </div>
+</div>
+
+<!-- ====== DAY 7: TIPS ====== -->
+<div class="day-panel" id="dp7" style="display:none">
+  <div class="tab-panel active" id="tp7-0">
+    <div style="padding:24px 36px 60px">
+      <div class="section-title">Shift Worker + YouTube Creator-ийн практик зөвлөмж</div>
+      <div class="tips-grid">
+        <div class="tip-card tc-deep"><span class="tip-icon">🎬</span><div class="tip-title">Нэг зорилт горим</div><div class="tip-text">45 мин YouTube хийхэд "нэг л зүйл хий" — script эсвэл edit эсвэл thumbnail. Гурвыг нэгэн зэрэг хийвэл бүгд дутуу үлдэнэ.</div></div>
+        <div class="tip-card tc-train"><span class="tip-icon">🏋️</span><div class="tip-title">Shift-ийн өмнө gym</div><div class="tip-text">Shift дараа ядарч gym тасалдаг. Shift-ийн өмнө gym хийх = тогтмол 4x/7 хоног. Shift-ийн үед gym-ийн эрч хүч ч бий болдог.</div></div>
+        <div class="tip-card tc-deep"><span class="tip-icon">🎧</span><div class="tip-title">Transit = YouTube боловсрол</div><div class="tip-text">1-2 цагийн transit = тогтмол YouTube стратеги сонсох цаг. Top creator-уудын podcast, interview сонс. Жилд 500+ цаг сурах боломж.</div></div>
+        <div class="tip-card tc-rest"><span class="tip-icon">📱</span><div class="tip-title">Тогтвортой байдал яаж үүсдэг</div><div class="tip-text">Их биш, тогтмол байх. 45 мин × 7 өдөр = 5.25 цаг/7хн. Жилд 273 цаг — channel хөгжихөд хангалттай. Нэг удаа 3 цаг > 7 удаа 45 мин биш.</div></div>
+        <div class="tip-card tc-sleep"><span class="tip-icon">😴</span><div class="tip-title">Shift worker-ийн нойр</div><div class="tip-text">00:30 унт, 06:15 бос = 5.75 цаг. Хангалттай бол тасалтгүй байх нь чухал. Утасыг унтлагаас гарга — нойрны чанар нэмэгдэнэ.</div></div>
+        <div class="tip-card tc-work"><span class="tip-icon">☕</span><div class="tip-title">Barista эрч хүч</div><div class="tip-text">Shift-д хэт их кофе ууснаас болж оройн нойр муудах тохиолдол бий. 14:00-с хойш кофе зогсоо — энэ нойрны чанарыг сайжруулна.</div></div>
+      </div>
+      <div class="section-title" style="margin-top:20px">Gym Split — Да/Лх/Ба + Бм Full Body</div>
+      <div class="tips-grid">
+        <div class="tip-card tc-train"><span class="tip-icon">📅</span><div class="tip-title">Да: Chest + Tricep</div><div class="tip-text">Bench Press, Incline Press, Cable Fly, Tricep Pushdown, Overhead Ext. Push day.</div></div>
+        <div class="tip-card tc-train"><span class="tip-icon">📅</span><div class="tip-title">Лх: Back + Bicep</div><div class="tip-text">Deadlift, Bent Row, Lat Pulldown, Face Pull, Barbell Curl, Hammer Curl. Pull day.</div></div>
+        <div class="tip-card tc-train"><span class="tip-icon">📅</span><div class="tip-title">Ба: Legs + Shoulders</div><div class="tip-text">Squat, Leg Press, RDL, Shoulder Press, Lateral Raise, Calf Raise. Leg day.</div></div>
+        <div class="tip-card tc-train"><span class="tip-icon">📅</span><div class="tip-title">Бм: Full Body</div><div class="tip-text">Squat + Bench + Row + Shoulder Press + Deadlift. Тогтмол байдлыг хадгалах 4-р өдөр.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== DAY 8: САЙЖРУУЛАЛТ ====== -->
+<div class="day-panel" id="dp8" style="display:none">
+  <div class="tab-panel active" id="tp8-0">
+    <div style="padding:24px 36px 60px">
+      <div class="section-title">ChongWoo-гийн хуваарийн сайжруулалтууд</div>
+      <div class="improvements">
+        <div class="imp-item">
+          <div class="imp-num">01</div>
+          <div>
+            <div class="imp-title">Тогтвортой байдлыг системийн аргаар бий болгох</div>
+            <div class="imp-old">Хүсэл зоригоор тогтмол байхыг оролдох</div>
+            <div class="imp-new">→ Gym: Shift-ийн өмнө 06:30. YouTube: Орой 19:30. Цаг тогтмол = аяндаа болдог.</div>
+            <div class="imp-why">Тогтмол цаг = шийдвэр гаргах шаардлагагүй болдог. "Одоо хийх уу?" гэсэн асуулт алга болно.</div>
+          </div>
+        </div>
+        <div class="imp-item">
+          <div class="imp-num">02</div>
+          <div>
+            <div class="imp-title">Gym-ийг shift-ийн өмнө зөөх</div>
+            <div class="imp-old">Shift-ийн дараа gym хийхийг оролдох — ядарч тасалдах</div>
+            <div class="imp-new">→ 06:15 бос, 06:30 gym эхлэ, 08:00 хоол, 09:00 shift.</div>
+            <div class="imp-why">Shift дараа ядрал gym-ийг алддаг. Өглөөний gym = хэзээ ч тасалдахгүй. Энэ shift worker-ийн хамгийн чухал тактик.</div>
+          </div>
+        </div>
+        <div class="imp-item">
+          <div class="imp-num">03</div>
+          <div>
+            <div class="imp-title">YouTube-д "нэг зорилт горим" хэрэглэх</div>
+            <div class="imp-old">"YouTube хийх" гэсэн ерөнхий зорилттой байх — blank screen</div>
+            <div class="imp-new">→ "Өнөөдөр script-ийн intro хийнэ" гэх мэт НЭГ тодорхой зорилт тавих.</div>
+            <div class="imp-why">Ерөнхий зорилт тархийг хаашаа ч явуулдаг. Тодорхой зорилт = тархи шууд ажилладаг. 45 мин 10 дахин үр дүнтэй болно.</div>
+          </div>
+        </div>
+        <div class="imp-item">
+          <div class="imp-num">04</div>
+          <div>
+            <div class="imp-title">Нойрны чанар сайжруулах</div>
+            <div class="imp-old">00:00-с хойш унтах + утас харж унтах</div>
+            <div class="imp-new">→ 00:30 хэвтэх, утасыг унтлагаас гарга, 06:15 тогтмол бос.</div>
+            <div class="imp-why">Shift worker хувьд нойрны чанар нийт гүйцэтгэлийг тодорхойлдог. Утас унтлагаас гаргах нь нойрны чанарыг 30-40% сайжруулдаг.</div>
+          </div>
+        </div>
+        <div class="imp-item">
+          <div class="imp-num">05</div>
+          <div>
+            <div class="imp-title">Бямбагийн цагийг YouTube-д зориулах</div>
+            <div class="imp-old">Бямба бүрэн амрах эсвэл санамсаргүй YouTube хийх</div>
+            <div class="imp-new">→ Бямба 08:30–13:30 = YouTube-н их спринт. 14:00 gym. Орой бүрэн амарна.</div>
+            <div class="imp-why">Shift-гүй, тархи шинэхэн, цаг чөлөөтэй = YouTube-н golden time. Shift worker байж channel хөгжүүлэх боломж — зөв ашиглавал хэн нэгнийхтэй адил.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== DAY 9: ТАЙЛАН ====== -->
+<div class="day-panel" id="dp9" style="display:none">
+  <div class="tab-panel active" id="tp9-0">
+    <div style="padding:24px 36px 60px">
+      <div class="section-title">7 хоногийн ерөнхий тайлан</div>
+      <div class="total-stats">
+        <div class="ts-card"><div class="ts-val" id="totalXpVal">0</div><div class="ts-label">Нийт XP</div><div class="ts-sub">Цуглуулсан XP</div></div>
+        <div class="ts-card"><div class="ts-val" id="totalDoneVal">0/7</div><div class="ts-label">Бүрэн өдрүүд</div><div class="ts-sub">Бүх task дууссан өдөр</div></div>
+        <div class="ts-card"><div class="ts-val" id="totalStreakVal">0</div><div class="ts-label">Streak</div><div class="ts-sub">Дараалсан идэвхтэй өдрүүд</div></div>
+      </div>
+      <div class="section-title">Өдөр тус бүрийн тайлан</div>
+      <div class="week-grid" id="weekGrid"></div>
+      <div style="margin-top:18px;display:flex;justify-content:flex-end">
+        <div onclick="resetWeek()" style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);cursor:pointer;padding:6px 12px;border:1px solid var(--border);border-radius:6px;transition:all .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">↺ Шинэ долоо хоног эхлэх</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
+</div>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-item active" id="mnav0" onclick="showDay(0)"><div class="mobile-nav-dot" style="background:var(--train)"></div>Да<div class="mobile-nav-done" id="mnd0"></div></div>
+  <div class="mobile-nav-item" id="mnav1" onclick="showDay(1)"><div class="mobile-nav-dot" style="background:var(--rest)"></div>Мя<div class="mobile-nav-done" id="mnd1"></div></div>
+  <div class="mobile-nav-item" id="mnav2" onclick="showDay(2)"><div class="mobile-nav-dot" style="background:var(--train)"></div>Лх<div class="mobile-nav-done" id="mnd2"></div></div>
+  <div class="mobile-nav-item" id="mnav3" onclick="showDay(3)"><div class="mobile-nav-dot" style="background:var(--rest)"></div>Пү<div class="mobile-nav-done" id="mnd3"></div></div>
+  <div class="mobile-nav-item" id="mnav4" onclick="showDay(4)"><div class="mobile-nav-dot" style="background:var(--train)"></div>Ба<div class="mobile-nav-done" id="mnd4"></div></div>
+  <div class="mobile-nav-item" id="mnav5" onclick="showDay(5)"><div class="mobile-nav-dot" style="background:var(--deep)"></div>Бм<div class="mobile-nav-done" id="mnd5"></div></div>
+  <div class="mobile-nav-item" id="mnav6" onclick="showDay(6)"><div class="mobile-nav-dot" style="background:var(--rest)"></div>Ня<div class="mobile-nav-done" id="mnd6"></div></div>
+  <div class="mobile-nav-item" id="mnavAch" onclick="showMobileAch()"><div style="font-size:16px">🏅</div>Амжилт</div>
+</nav>
+
+<div id="mobileAchPanel" style="display:none;position:fixed;inset:0;z-index:200;background:var(--bg);overflow-y:auto;padding-bottom:80px">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:10">
+    <div style="font-size:16px;font-weight:700;color:var(--white)">🏅 Амжилтууд</div>
+    <div onclick="hideMobileAch()" style="font-size:13px;color:var(--muted2);cursor:pointer;padding:6px 12px;background:var(--surface);border-radius:8px;border:1px solid var(--border)">✕ Хаах</div>
+  </div>
+  <div style="padding:16px">
+    <div id="mobileAchGrid" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+</div>
+
+<script>
+const DAYS = [
+  { name:'Даваа', meta:'ӨД #1 — MON · GYM: CHEST+TRI + YOUTUBE', xp:110, badge:'+110 XP / өдөр' },
+  { name:'Мягмар', meta:'ӨД #2 — TUE · ИДЭВХТЭЙ АМРАЛТ + КОНТЕНТ', xp:90, badge:'+90 XP / өдөр' },
+  { name:'Лхагва', meta:'ӨД #3 — WED · GYM: BACK+BI + YOUTUBE', xp:110, badge:'+110 XP / өдөр' },
+  { name:'Пүрэв', meta:'ӨД #4 — THU · АМРАЛТ + YOUTUBE СТРАТЕГИ', xp:90, badge:'+90 XP / өдөр' },
+  { name:'Баасан', meta:'ӨД #5 — FRI · GYM: LEGS+SHO + СПРИНТ', xp:120, badge:'+120 XP / өдөр' },
+  { name:'Бямба', meta:'АӨ #1 — SAT · YOUTUBE ИХ СПРИНТ + FULL BODY GYM', xp:140, badge:'+140 XP / өдөр' },
+  { name:'Ням', meta:'АӨ #2 — SUN · БҮРЭН АМРАХ + WEEKLY REVIEW', xp:120, badge:'+120 XP / өдөр' },
+];
+
+const CHECKLISTS = [
+  // Day 0: Даваа
+  [
+    ['🌅 06:15 босох + ус 500мл',5,'Өглөө'],
+    ['📝 Өдрийн YouTube зорилт нэг өгүүлбэрт бичих',5,'Өглөө'],
+    ['💪 Gym — Chest+Tricep (60+ мин)',25,'Gym'],
+    ['✅ Gym-д утасгүй байсан',5,'Gym'],
+    ['🍳 Shift-ийн өмнө уураг ихтэй хоол',5,'Хоол'],
+    ['☕ Barista shift',15,'Shift'],
+    ['🎧 Transit-д podcast/YouTube сонссон',5,'Transit'],
+    ['🍽️ Оройн хоол — утасгүй идсэн',5,'Орой'],
+    ['🎬 YouTube Deep Work — 45+ мин',20,'Орой'],
+    ['😴 00:30 унтсан',5,'Орой'],
+  ],
+  // Day 1: Мягмар
+  [
+    ['🌅 06:30 босох + ус',5,'Өглөө'],
+    ['🤸 10 мин хөнгөн сунгалт',5,'Өглөө'],
+    ['🎧 Transit-д podcast сонссон',5,'Shift'],
+    ['☕ Barista shift',15,'Shift'],
+    ['📝 Shift завсарт YouTube санаа тэмдэглэсэн',10,'Shift'],
+    ['🎬 YouTube санаа цуглуулах — 30 мин',15,'Орой'],
+    ['😴 00:30 унтсан',5,'Орой'],
+  ],
+  // Day 2: Лхагва
+  [
+    ['🌅 06:15 босох + ус 500мл',5,'Өглөө'],
+    ['📊 7н дундын шалгалт хийсэн',5,'Өглөө'],
+    ['💪 Gym — Back+Bicep (60+ мин)',25,'Gym'],
+    ['✅ Deadlift + Bent Row хийсэн',5,'Gym'],
+    ['☕ Barista shift',15,'Shift'],
+    ['🎧 Transit-д podcast сонссон',5,'Transit'],
+    ['🎬 YouTube Deep Work — нэг зүйл бодит болгосон',20,'Орой'],
+    ['😴 00:30 унтсан',5,'Орой'],
+  ],
+  // Day 3: Пүрэв
+  [
+    ['🌅 06:30 босох + ус',5,'Өглөө'],
+    ['🤸 10 мин сунгалт',5,'Өглөө'],
+    ['☕ Barista shift',15,'Shift'],
+    ['📝 Shift завсарт Баасны YouTube зорилт тодорхойлсон',5,'Shift'],
+    ['🎬 YouTube стратеги — дараагийн видеоны план',20,'Орой'],
+    ['✍️ Topic+Hook+Script outline+Thumbnail бичсэн',15,'Орой'],
+    ['😴 00:30 унтсан',5,'Орой'],
+  ],
+  // Day 4: Баасан
+  [
+    ['🌅 06:15 босох + ус 500мл',5,'Өглөө'],
+    ['📝 7н зорилт шалгасан',5,'Өглөө'],
+    ['💪 Gym — Legs+Shoulders (70+ мин)',25,'Gym'],
+    ['✅ Squat + RDL + Shoulder Press хийсэн',5,'Gym'],
+    ['☕ Barista shift',15,'Shift'],
+    ['🎧 Transit-д YouTube sprint бэлтгэл',5,'Transit'],
+    ['🎬 YouTube Sprint — нэг гаралт дуусгасан',20,'Орой'],
+    ['😴 01:00 унтсан',5,'Орой'],
+  ],
+  // Day 5: Бямба
+  [
+    ['🌅 08:00 тайван сэрэх',5,'Өглөө'],
+    ['💧 Ус 500мл',5,'Өглөө'],
+    ['📝 Өдрийн 1 гол YouTube зорилт бичсэн',5,'Өглөө'],
+    ['🎬 YouTube Блок #1 — 2 цаг утасгүй',30,'YouTube'],
+    ['🎬 YouTube Блок #2 — Upload/дуусгах 90 мин',25,'YouTube'],
+    ['💪 Full Body Gym — 60+ мин',20,'Gym'],
+    ['😴 01:00 унтсан',5,'Орой'],
+  ],
+  // Day 6: Ням
+  [
+    ['🌅 08:00 тайван сэрэх',5,'Өглөө'],
+    ['💧 Ус 500мл',5,'Өглөө'],
+    ['📊 Weekly Review — 45 мин',20,'Өглөө'],
+    ['✅ Gym тоо шалгасан (зорилт: 4x)',5,'Өглөө'],
+    ['✅ YouTube тоо шалгасан (зорилт: 3x+)',5,'Өглөө'],
+    ['🚶 Гаднаа утасгүй алхалт — 30 мин',10,'Өдөр'],
+    ['📅 Даваагийн нэг YouTube зорилт батлан бичсэн',10,'Орой'],
+    ['😴 00:00 унтсан',5,'Орой'],
+  ],
+];
+
+const LEVELS = [
+  {lvl:1,min:0,max:700,name:'Анхлагч'},
+  {lvl:2,min:700,max:1400,name:'Тогтсон'},
+  {lvl:3,min:1400,max:2500,name:'Хүчтэй'},
+  {lvl:4,min:2500,max:4000,name:'Мастер'},
+  {lvl:5,min:4000,max:9999,name:'Легенд'},
+];
+
+const ACHIEVEMENTS = [
+  {id:'first_gym',icon:'🏋️',name:'Анхны Gym',desc:'Анх удаа gym хийлээ',check:s=>Object.keys(s.checks).some(k=>k.startsWith('d') && s.checks[k])},
+  {id:'first_yt',icon:'🎬',name:'Анхны YouTube',desc:'Анх удаа YouTube хийлээ',check:s=>s.checks['d0_i8']||s.checks['d2_i6']||s.checks['d4_i6']},
+  {id:'gym3',icon:'💪',name:'Gym 3x',desc:'Нэг долоо хоногт 3 gym',check:s=>[0,2,4].filter(d=>s.checks[`d${d}_i2`]).length>=3},
+  {id:'streak3',icon:'🔥',name:'3 өдөр streak',desc:'3 дараалсан өдөр',check:s=>(s.streak||0)>=3},
+  {id:'bymba',icon:'⭐',name:'Бямба спринт',desc:'Бямбагийн YouTube блок хоёулаа хийсэн',check:s=>s.checks['d5_i3']&&s.checks['d5_i4']},
+  {id:'fullweek',icon:'🏆',name:'Бүтэн 7 хоног',desc:'7 өдрийн checklist бүрэн дуусгасан',check:s=>CHECKLISTS.every((_,di)=>CHECKLISTS[di].every((_,ii)=>s.checks[`d${di}_i${ii}`]))},
+  {id:'yt_plan',icon:'📋',name:'YouTube Планнер',desc:'Пүрэвний YouTube план дуусгасан',check:s=>s.checks['d3_i4']&&s.checks['d3_i5']},
+  {id:'transit',icon:'🎧',name:'Transit Master',desc:'5 өдрийн transit-д podcast сонссон',check:s=>[0,1,2,3,4].filter(d=>s.checks[`d${d}_i${d===0?6:d===1?2:d===2?7:d===3?2:7}`]).length>=3},
+];
+
+let state = loadState();
+let currentDay = 0;
+let currentTab = 0;
+let comboCount = 0;
+let comboTimer = null;
+let prevLevel = 1;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('routineOS_chongwoo_v1');
+    if (raw) return JSON.parse(raw);
+  } catch(e){}
+  return { checks:{}, totalXp:0, streak:0, lastDate:null, bosses:{}, freezeUsed:false };
+}
+function saveState() {
+  try { localStorage.setItem('routineOS_chongwoo_v1', JSON.stringify(state)); } catch(e){}
+}
+
+function calcDayXp(di) {
+  return CHECKLISTS[di].reduce((s,item,ii) => s + (state.checks[`d${di}_i${ii}`] ? item[1] : 0), 0);
+}
+
+function updateXpBar() {
+  const xp = state.totalXp || 0;
+  const lvlData = LEVELS.find(l => xp >= l.min && xp < l.max) || LEVELS[LEVELS.length-1];
+  const pct = lvlData.max === 9999 ? 100 : Math.round((xp - lvlData.min) / (lvlData.max - lvlData.min) * 100);
+  document.getElementById('lvlLabel').textContent = `LVL ${lvlData.lvl}`;
+  document.getElementById('xpLabel').textContent = `${xp} / ${lvlData.max === 9999 ? '∞' : lvlData.max} XP`;
+  document.getElementById('xpBar').style.width = pct + '%';
+  document.getElementById('mLvlLabel').textContent = `LVL ${lvlData.lvl}`;
+  document.getElementById('mXpBar').style.width = pct + '%';
+  if (lvlData.lvl > prevLevel) { showLvlUp(lvlData); prevLevel = lvlData.lvl; }
+}
+function updateWeekScore() {
+  const weekXp = CHECKLISTS.reduce((s,_,di) => s + calcDayXp(di), 0);
+  const maxXp = CHECKLISTS.reduce((s,items) => s + items.reduce((a,i) => a+i[1], 0), 0);
+  document.getElementById('weekScore').textContent = `7н: ${weekXp} / ${maxXp} XP`;
+}
+function updateNavDone(di) {
+  const items = CHECKLISTS[di];
+  const done = items.filter((_,ii) => state.checks[`d${di}_i${ii}`]).length;
+  const isDone = done === items.length;
+  const nav = document.getElementById(`nav${di}`);
+  if (nav) { nav.classList.toggle('day-done', isDone); }
+  const mnav = document.getElementById(`mnav${di}`);
+  const mnd = document.getElementById(`mnd${di}`);
+  if (mnav) mnav.classList.toggle('day-done', isDone);
+  if (mnd) mnd.textContent = isDone ? '✓' : '';
+}
+function buildChecklists() {
+  CHECKLISTS.forEach((items, di) => {
+    const wrap = document.getElementById(`cl${di}`);
+    if (!wrap) return;
+    const groups = {};
+    items.forEach((item, ii) => { const g = item[2]; if (!groups[g]) groups[g] = []; groups[g].push({item, ii}); });
+    let html = '';
+    const prog = items.filter((_,ii) => state.checks[`d${di}_i${ii}`]).length;
+    const total = items.length;
+    const pct = Math.round(prog/total*100);
+    html += `<div class="checklist-header"><div class="checklist-title">Өдрийн даалгаврууд</div><div class="checklist-prog" id="prog${di}">${prog}/${total}</div></div>`;
+    html += `<div class="prog-bar-wrap"><div class="prog-bar" id="pb${di}" style="width:${pct}%"></div></div>`;
+    if (state.checks && items.every((_,ii) => state.checks[`d${di}_i${ii}`])) {
+      html += `<div class="day-complete show" id="dc${di}"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Өдөр бүрэн дууслаа!</div><div class="dc-sub">Бүх даалгавар дуусгасан.</div></div><div class="dc-xp" id="dc${di}xp">+${calcDayXp(di)} XP</div></div>`;
+    } else {
+      html += `<div class="day-complete" id="dc${di}"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Өдөр бүрэн дууслаа!</div><div class="dc-sub">Бүх даалгавар дуусгасан.</div></div><div class="dc-xp" id="dc${di}xp">+${DAYS[di].xp} XP</div></div>`;
+    }
+    Object.keys(groups).forEach(g => {
+      html += `<div class="cl-section"><div class="cl-section-label">${g}</div>`;
+      groups[g].forEach(({item, ii}) => {
+        const key = `d${di}_i${ii}`;
+        const checked = state.checks[key];
+        html += `<div class="cl-item${checked?' checked':''}" onclick="toggleCheck(${di},${ii})" id="cli${di}_${ii}">
+          <div class="cl-box"></div>
+          <div class="cl-text"><div class="cl-label">${item[0]}</div><div class="cl-xp">+${item[1]} XP</div></div>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+    wrap.innerHTML = html;
+  });
+}
+function toggleCheck(di, ii) {
+  const key = `d${di}_i${ii}`;
+  const wasChecked = state.checks[key];
+  const xpVal = CHECKLISTS[di][ii][1];
+  state.checks[key] = !wasChecked;
+  if (!wasChecked) {
+    state.totalXp = (state.totalXp || 0) + xpVal;
+    comboCount++;
+    clearTimeout(comboTimer);
+    comboTimer = setTimeout(() => { comboCount = 0; document.getElementById('comboIndicator').classList.remove('show'); }, 3000);
+    if (comboCount >= 3) {
+      const mult = Math.min(Math.floor(comboCount/3)+1, 4);
+      document.getElementById('comboMult').textContent = `×${mult}`;
+      document.getElementById('comboIndicator').classList.add('show');
+    }
+    showXpPopup(xpVal);
+  } else {
+    state.totalXp = Math.max(0, (state.totalXp || 0) - xpVal);
+    comboCount = 0;
+    document.getElementById('comboIndicator').classList.remove('show');
+  }
+  saveState();
+  const el = document.getElementById(`cli${di}_${ii}`);
+  if (el) el.classList.toggle('checked', !wasChecked);
+  const prog = CHECKLISTS[di].filter((_,i) => state.checks[`d${di}_i${i}`]).length;
+  const total = CHECKLISTS[di].length;
+  const pb = document.getElementById(`pb${di}`);
+  if (pb) pb.style.width = Math.round(prog/total*100) + '%';
+  const pr = document.getElementById(`prog${di}`);
+  if (pr) pr.textContent = `${prog}/${total}`;
+  const dc = document.getElementById(`dc${di}`);
+  if (dc) {
+    if (prog === total) { dc.classList.add('show'); const dxp = document.getElementById(`dc${di}xp`); if (dxp) dxp.textContent = `+${calcDayXp(di)} XP`; }
+    else dc.classList.remove('show');
+  }
+  updateNavDone(di);
+  updateXpBar();
+  updateWeekScore();
+  checkStreak();
+  renderAchievements();
+}
+function showXpPopup(val) {
+  const el = document.getElementById('xpPopup');
+  el.textContent = `+${val} XP`;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1200);
+}
+function checkStreak() {
+  const today = new Date().toDateString();
+  if (state.lastDate !== today) {
+    const yesterday = new Date(Date.now()-86400000).toDateString();
+    if (state.lastDate === yesterday) state.streak = (state.streak||0)+1;
+    else if (state.lastDate !== today) state.streak = 1;
+    state.lastDate = today;
+    saveState();
+  }
+  document.getElementById('streakNum').textContent = state.streak||0;
+  document.getElementById('mStreakNum').textContent = state.streak||0;
+}
+function showLvlUp(lvlData) {
+  document.getElementById('lvlupName').textContent = lvlData.name;
+  document.getElementById('lvlupSub').textContent = `LVL ${lvlData.lvl} — ${lvlData.name} боллоо!`;
+  const overlay = document.getElementById('lvlupOverlay');
+  overlay.classList.add('show');
+  const parts = document.getElementById('lvlupParticles');
+  parts.innerHTML = '';
+  const colors = ['var(--xp)','var(--lvl)','var(--deep)','var(--train)'];
+  for (let i=0;i<20;i++) {
+    const p = document.createElement('div');
+    p.className='particle';
+    p.style.cssText=`left:50%;top:50%;background:${colors[i%4]};--tx:${(Math.random()-0.5)*400}px;--ty:${(Math.random()-0.5)*400}px;animation-delay:${Math.random()*0.3}s`;
+    parts.appendChild(p);
+  }
+}
+function closeLvlUp() { document.getElementById('lvlupOverlay').classList.remove('show'); }
+function renderAchievements() {
+  const grid = document.getElementById('achGrid');
+  const mgrid = document.getElementById('mobileAchGrid');
+  let html = '';
+  let mhtml = '';
+  ACHIEVEMENTS.forEach(ach => {
+    const unlocked = ach.check(state);
+    if (unlocked && !state[`ach_${ach.id}`]) {
+      state[`ach_${ach.id}`] = true;
+      saveState();
+      showAchToast(ach);
+    }
+    const cls = unlocked ? 'ach-badge unlocked' : 'ach-badge';
+    html += `<div class="${cls}" title="${ach.desc}"><span class="ach-icon">${ach.icon}</span><span class="ach-name">${ach.name}</span></div>`;
+    mhtml += `<div class="${cls}"><span class="ach-icon" style="font-size:18px">${ach.icon}</span><div style="flex:1"><div style="font-size:12px;font-weight:700;color:${unlocked?'var(--xp)':'var(--muted2)'}">${ach.name}</div><div style="font-size:11px;color:var(--muted2);margin-top:2px">${ach.desc}</div></div>${unlocked?'<div style="color:var(--lvl);font-family:var(--mono);font-size:11px">✓</div>':''}</div>`;
+  });
+  if (grid) grid.innerHTML = html;
+  if (mgrid) mgrid.innerHTML = mhtml;
+}
+function showAchToast(ach) {
+  const toast = document.getElementById('achToast');
+  document.getElementById('achToastText').textContent = `${ach.icon} ${ach.name} — ${ach.desc}`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+function toggleBoss(di) {
+  if (!state.bosses) state.bosses = {};
+  state.bosses[di] = !state.bosses[di];
+  if (state.bosses[di]) { state.totalXp = (state.totalXp||0)+50; showXpPopup(50); }
+  else state.totalXp = Math.max(0,(state.totalXp||0)-50);
+  saveState();
+  const done = document.getElementById('bossDone'+di);
+  if (done) done.classList.toggle('show', !!state.bosses[di]);
+  updateXpBar();
+  updateWeekScore();
+}
+function initBosses() {
+  if (!state.bosses) return;
+  Object.keys(state.bosses).forEach(di => {
+    const done = document.getElementById('bossDone'+di);
+    if (done) done.classList.add('show');
+  });
+}
+function useStreakFreeze() {
+  if (state.freezeUsed) return;
+  state.freezeUsed = true;
+  saveState();
+  const btn = document.getElementById('freezeBtn');
+  if (btn) { btn.innerHTML = '🧊 Streak Freeze ашигласан'; btn.classList.add('used'); }
+}
+function initFreeze() {
+  if (state.freezeUsed) {
+    const btn = document.getElementById('freezeBtn');
+    if (btn) { btn.innerHTML = '🧊 Streak Freeze ашигласан'; btn.classList.add('used'); }
+  }
+}
+function showDay(i) {
+  document.querySelectorAll('.day-panel').forEach(p => p.style.display='none');
+  document.querySelectorAll('.nav-item').forEach((n,j) => n.classList.toggle('active', j===i));
+  document.querySelectorAll('.mobile-nav-item').forEach(el => el.classList.remove('active'));
+  const mnavEl = document.getElementById('mnav'+i);
+  if (mnavEl) mnavEl.classList.add('active');
+  const panel = document.getElementById('dp'+i);
+  if (!panel) return;
+  panel.style.display = 'block';
+  panel.style.animation = 'none';
+  void panel.offsetWidth;
+  panel.style.animation = '';
+  currentDay = i;
+  currentTab = 0;
+  if (i < 7) {
+    document.getElementById('topTitle').innerHTML = DAYS[i].name + ' <span>гараг</span>';
+    document.getElementById('topMeta').textContent = DAYS[i].meta;
+    document.getElementById('dayXpBadge').textContent = DAYS[i].badge;
+    document.getElementById('tabBar').style.display = 'flex';
+  } else {
+    const titles = {7:'Tips',8:'Сайжруулалт',9:'7н Тайлан'};
+    document.getElementById('topTitle').innerHTML = (titles[i]||'') + ' <span></span>';
+    document.getElementById('topMeta').textContent = '';
+    document.getElementById('dayXpBadge').textContent = '';
+    document.getElementById('tabBar').style.display = 'none';
+  }
+  showTab(0);
+  panel.querySelectorAll('.tl-row').forEach((r,k) => {
+    r.classList.remove('show');
+    setTimeout(() => r.classList.add('show'), k*40+60);
+  });
+  document.querySelector('.scroll-area').scrollTop = 0;
+  if (i === 9) renderWeekOverview();
+}
+function showTab(t) {
+  currentTab = t;
+  document.querySelectorAll('.tab').forEach((el,j) => el.classList.toggle('active', j===t));
+  if (currentDay < 9) {
+    const p0 = document.getElementById(`tp${currentDay}-0`);
+    const p1 = document.getElementById(`tp${currentDay}-1`);
+    if (p0) { p0.classList.toggle('active', t===0); p0.style.display = t===0 ? 'block' : 'none'; }
+    if (p1) { p1.classList.toggle('active', t===1); p1.style.display = t===1 ? 'block' : 'none'; }
+  }
+}
+function renderWeekOverview() {
+  const grid = document.getElementById('weekGrid');
+  const dayNames = ['Да','Мя','Лх','Пү','Ба','Бм','Ня'];
+  let html = ''; let doneCount = 0;
+  CHECKLISTS.forEach((_,di) => {
+    const items = CHECKLISTS[di];
+    const done = items.filter((_,ii) => state.checks[`d${di}_i${ii}`]).length;
+    const total = items.length;
+    const dayXp = calcDayXp(di);
+    const pct = Math.round(done/total*100);
+    const isDone = done === total;
+    if (isDone) doneCount++;
+    html += `<div class="wk-cell ${isDone?'wk-done':''}" onclick="showDay(${di})">
+      <div class="wk-day">${dayNames[di]}</div>
+      <div class="wk-score">${pct}%</div>
+      <div class="wk-xp">+${dayXp} XP</div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+  const weekXp = CHECKLISTS.reduce((s,_,di) => s + calcDayXp(di), 0);
+  document.getElementById('totalXpVal').textContent = weekXp;
+  document.getElementById('totalDoneVal').textContent = `${doneCount}/7`;
+  document.getElementById('totalStreakVal').textContent = state.streak || 0;
+}
+function resetWeek() {
+  if (!confirm('Энэ долоо хоногийн бүх checklistийг дахин эхлүүлэх үү?')) return;
+  CHECKLISTS.forEach((_,di) => CHECKLISTS[di].forEach((_,ii) => delete state.checks[`d${di}_i${ii}`]));
+  saveState();
+  buildChecklists();
+  CHECKLISTS.forEach((_,di) => updateNavDone(di));
+  updateXpBar();
+  updateWeekScore();
+  renderWeekOverview();
+}
+function showMobileAch() {
+  document.getElementById('mobileAchPanel').style.display='block';
+}
+function hideMobileAch() {
+  document.getElementById('mobileAchPanel').style.display='none';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  buildChecklists();
+  CHECKLISTS.forEach((_,di) => updateNavDone(di));
+  updateXpBar();
+  updateWeekScore();
+  document.getElementById('streakNum').textContent = state.streak || 0;
+  document.getElementById('mStreakNum').textContent = state.streak || 0;
+  const xp = state.totalXp || 0;
+  const lvlData = LEVELS.find(l => xp >= l.min && xp < l.max) || LEVELS[LEVELS.length-1];
+  prevLevel = lvlData.lvl;
+  renderAchievements();
+  initBosses();
+  initFreeze();
+  checkStreak();
+  showDay(0);
+  for (let di=0; di<7; di++) {
+    const p1 = document.getElementById(`tp${di}-1`);
+    if (p1) p1.style.display = 'none';
+  }
+});
+</script>
+</body>
+</html>

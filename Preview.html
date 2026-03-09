@@ -2140,5 +2140,511 @@ window.addEventListener('DOMContentLoaded', () => {
   startPreviewTimer();
 });
 </script>
+
+<!-- ══ LIFEOS CHATBOT WIDGET ══ -->
+<style>
+/* ── WRAPPER: fixed anchor, no transform conflicts ── */
+#_cwWrap {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+}
+#_cwWrap > * { pointer-events: all; }
+
+/* ── TOOLTIP ── */
+#_cwTooltip {
+  background: linear-gradient(135deg,#180a2a,#0a0e1a);
+  border: 1px solid rgba(192,132,252,0.45);
+  border-radius: 10px 10px 2px 10px;
+  padding: 7px 13px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.63rem; color: #ddd8ff; white-space: nowrap;
+  box-shadow: 0 6px 24px rgba(124,58,237,0.35);
+  opacity: 0;
+  transform: translateY(8px) scale(0.92);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+}
+#_cwTooltip.show { opacity: 1; transform: translateY(0) scale(1); }
+#_cwTooltip em { color:#c084fc; font-style:normal; font-weight:700; }
+#_cwTooltip::after {
+  content:''; position:absolute; bottom:9px; right:-6px;
+  width:10px; height:10px;
+  background:#180a2a;
+  border-right:1px solid rgba(192,132,252,0.45);
+  border-bottom:1px solid rgba(192,132,252,0.45);
+  transform:rotate(-45deg);
+}
+
+/* ── RIPPLE RINGS (purely decorative, no layout impact) ── */
+#_cwRings {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+#_cwRings span {
+  position: absolute;
+  inset: 0; border-radius: 50%;
+  border: 2px solid rgba(192,132,252,0.5);
+  animation: _cwRipple 2.4s ease-out infinite;
+}
+#_cwRings span:nth-child(2) { animation-delay: 0.8s; }
+#_cwRings span:nth-child(3) { animation-delay: 1.6s; }
+@keyframes _cwRipple {
+  0%   { transform:scale(1);   opacity:0.7; }
+  100% { transform:scale(2.4); opacity:0;   }
+}
+
+/* ── BUTTON ── */
+#_cwBtn {
+  position: relative;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, #c084fc, #7c3aed);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: #0a0a14;
+  box-shadow: 0 4px 20px rgba(192,132,252,0.5);
+  transition: box-shadow 0.25s ease, background 0.25s ease;
+  /* bounce animation on button itself — no layout conflict since wrapper is fixed */
+  animation: _cwBounceBtn 5s ease-in-out 2s infinite;
+}
+#_cwBtn:hover { box-shadow: 0 8px 32px rgba(192,132,252,0.75); }
+#_cwBtn.open {
+  background: #16162a;
+  box-shadow: 0 4px 16px rgba(192,132,252,0.2);
+  animation: none;
+}
+/* green online dot */
+#_cwBtn::after {
+  content: '';
+  position: absolute; top: 3px; right: 3px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: #34d399; border: 2px solid #080809;
+  animation: _cwDotPulse 2s ease-in-out infinite;
+}
+#_cwBtn.open::after { display: none; }
+
+/* button icon */
+#_cwBtnIcon {
+  display: block;
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s;
+}
+#_cwBtn.open #_cwBtnIcon { transform: rotate(45deg) scale(1.1); color: #c084fc; }
+
+@keyframes _cwBounceBtn {
+  0%,100%{ transform: translateY(0);  }
+  8%      { transform: translateY(-8px); }
+  16%     { transform: translateY(0);  }
+  24%     { transform: translateY(-4px); }
+  32%     { transform: translateY(0);  }
+}
+@keyframes _cwDotPulse {
+  0%,100%{ transform:scale(1);   opacity:1;   }
+  50%    { transform:scale(1.45); opacity:0.55;}
+}
+
+/* ── PANEL ── */
+#_cwPanel {
+  position: fixed;
+  bottom: 90px; right: 24px;
+  width: 340px; height: 490px;
+  background: #070709;
+  border: 1px solid #1e1e2a;
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.75), 0 0 0 1px rgba(192,132,252,0.07);
+  display: flex; flex-direction: column; overflow: hidden;
+  z-index: 99998;
+  font-family: 'JetBrains Mono', monospace;
+  opacity: 0;
+  transform: scale(0.9) translateY(12px);
+  transform-origin: bottom right;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+#_cwPanel.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: all;
+}
+
+/* ── HEADER ── */
+._cw-header {
+  padding: 11px 13px 9px;
+  background: #0d0d15;
+  border-bottom: 1px solid #1e1e2a;
+  display: flex; align-items: center; gap: 9px; flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+/* sweeping shimmer across header */
+._cw-header::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(192,132,252,0.07) 50%, transparent 100%);
+  transform: translateX(-100%);
+  animation: _cwHeaderSweep 4s ease-in-out infinite;
+}
+@keyframes _cwHeaderSweep {
+  0%   { transform: translateX(-100%); }
+  40%  { transform: translateX(300%);  }
+  100% { transform: translateX(300%);  }
+}
+._cw-logo {
+  width: 30px; height: 30px; border-radius: 7px;
+  border: 1px solid #c084fc; background: #100f1f;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0; position: relative; z-index: 1;
+  box-shadow: 0 0 12px rgba(124,58,237,0.35);
+  animation: _cwLogoGlow 3s ease-in-out infinite;
+}
+@keyframes _cwLogoGlow {
+  0%,100% { box-shadow: 0 0 10px rgba(124,58,237,0.3); }
+  50%     { box-shadow: 0 0 20px rgba(192,132,252,0.55); }
+}
+._cw-hinfo { flex: 1; position: relative; z-index: 1; }
+._cw-htitle { font-size: 0.85rem; letter-spacing: 3px; color: #c084fc; line-height: 1; font-weight: 700; text-transform: uppercase; }
+._cw-hsub { font-size: 0.5rem; color: #5c5c7a; letter-spacing: 1.5px; margin-top: 2px; }
+._cw-hstatus { display: flex; align-items: center; gap: 4px; font-size: 0.5rem; color: #34d399; letter-spacing: 1px; position: relative; z-index: 1; }
+._cw-hdot { width: 5px; height: 5px; border-radius: 50%; background: #34d399; animation: _cwDotPulse 2s infinite; }
+
+/* ── FUNNEL PROGRESS ── */
+._cw-prog { padding: 5px 13px; background: #0d0d15; border-bottom: 1px solid #1e1e2a; flex-shrink: 0; }
+._cw-steps { display: flex; gap: 3px; }
+._cw-step { flex: 1; height: 2px; background: #242436; border-radius: 2px; transition: background 0.5s; position: relative; overflow: hidden; }
+._cw-step.active::after { content: ''; position: absolute; inset: 0; background: #c084fc; animation: _cwFill 0.45s ease forwards; }
+._cw-step.done { background: #34d399; }
+@keyframes _cwFill { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+/* ── MESSAGES ── */
+._cw-msgs {
+  flex: 1; overflow-y: auto; padding: 12px 10px;
+  display: flex; flex-direction: column; gap: 9px; scroll-behavior: smooth;
+}
+._cw-msgs::-webkit-scrollbar { width: 2px; }
+._cw-msgs::-webkit-scrollbar-thumb { background: #242436; border-radius: 1px; }
+
+._cw-row { display: flex; gap: 7px; align-items: flex-end; }
+._cw-row.u { flex-direction: row-reverse; }
+._cw-ico {
+  width: 22px; height: 22px; border-radius: 5px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; border: 1px solid #242436;
+}
+._cw-ico.b { background: #0f0f1e; border-color: rgba(192,132,252,0.5); color: #c084fc; }
+._cw-ico.u { background: #12122a; }
+
+._cw-bbl {
+  max-width: 82%; padding: 8px 11px;
+  font-size: 0.67rem; line-height: 1.65; border-radius: 9px;
+  animation: _cwPop 0.22s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes _cwPop { from { opacity:0; transform:scale(0.88) translateY(5px); } to { opacity:1; transform:none; } }
+._cw-bbl.b { background: #0f0f1e; border: 1px solid #242436; border-bottom-left-radius: 2px; color: #ece8ff; }
+._cw-bbl.u { background: #14123a; border: 1px solid #242436; border-bottom-right-radius: 2px; color: #ece8ff; text-align: right; }
+._cw-bbl strong { color: #c084fc; }
+._cw-t { font-size: 0.48rem; color: #5c5c7a; margin-top: 3px; padding: 0 2px; }
+
+/* ── TYPING INDICATOR ── */
+._cw-typing-row { display: flex; gap: 7px; align-items: flex-end; }
+._cw-typing {
+  background: #0f0f1e; border: 1px solid #242436;
+  border-radius: 9px; border-bottom-left-radius: 2px;
+  padding: 10px 14px; display: flex; gap: 5px; align-items: center;
+}
+._cw-td { width: 4px; height: 4px; border-radius: 50%; background: #c084fc; animation: _cwDots 1.2s infinite; }
+._cw-td:nth-child(2) { animation-delay: 0.18s; }
+._cw-td:nth-child(3) { animation-delay: 0.36s; }
+@keyframes _cwDots {
+  0%,100% { transform: translateY(0);   opacity: 0.4; }
+  50%     { transform: translateY(-4px); opacity: 1;   }
+}
+
+/* ── QUICK REPLIES ── */
+._cw-qr { padding: 5px 10px 4px; display: flex; flex-wrap: wrap; gap: 4px; flex-shrink: 0; min-height: 30px; }
+._cw-qr-btn {
+  padding: 4px 11px; border: 1px solid #242436; background: transparent;
+  color: #ccc8f0; font-family: 'JetBrains Mono', monospace; font-size: 0.59rem;
+  cursor: pointer; border-radius: 20px; white-space: nowrap;
+  transition: border-color 0.18s, color 0.18s, background 0.18s, transform 0.18s;
+}
+._cw-qr-btn:hover {
+  border-color: #c084fc; color: #c084fc; background: rgba(124,58,237,0.12);
+  transform: translateY(-1px);
+}
+
+/* ── INPUT ROW ── */
+._cw-inp-area {
+  padding: 7px 10px 11px; background: #0d0d15;
+  border-top: 1px solid #1e1e2a; display: flex; gap: 6px; flex-shrink: 0;
+}
+._cw-inp {
+  flex: 1; background: #070709; border: 1px solid #242436; color: #ece8ff;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+  padding: 7px 10px; border-radius: 7px; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+._cw-inp:focus { border-color: #c084fc; box-shadow: 0 0 0 2px rgba(192,132,252,0.12); }
+._cw-inp::placeholder { color: #5c5c7a; }
+._cw-send {
+  width: 33px; height: 33px; background: #c084fc; border: none; border-radius: 7px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: #0a0a14;
+  transition: background 0.2s, transform 0.18s;
+  flex-shrink: 0;
+}
+._cw-send:hover { background: #a855f7; transform: scale(1.06); }
+._cw-send:disabled { opacity: 0.38; cursor: not-allowed; transform: none; }
+
+/* ── CTA CARD ── */
+._cw-cta {
+  margin-top: 8px; padding: 11px 12px;
+  background: linear-gradient(135deg, #18082e 0%, #081a10 100%);
+  border: 1px solid rgba(192,132,252,0.6);
+  border-radius: 9px;
+  animation: _cwCtaPulse 2.8s ease-in-out infinite;
+}
+@keyframes _cwCtaPulse {
+  0%,100% { box-shadow: 0 0 16px rgba(124,58,237,0.3), 0 0 32px rgba(124,58,237,0.1); }
+  50%     { box-shadow: 0 0 28px rgba(192,132,252,0.45), 0 0 56px rgba(192,132,252,0.15); }
+}
+._cw-cta-title { font-size: 0.7rem; letter-spacing: 2px; color: #c084fc; margin-bottom: 2px; font-weight: 700; text-transform: uppercase; }
+._cw-cta-price { font-size: 1.5rem; font-weight: 700; color: #34d399; line-height: 1; letter-spacing: 1px; animation: _cwPop 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+._cw-cta-sub { font-size: 0.5rem; color: #5c5c7a; margin: 3px 0 9px; }
+._cw-cta-btn {
+  display: block; width: 100%; padding: 9px;
+  background: linear-gradient(90deg, #c084fc, #9333ea, #c084fc);
+  background-size: 220% 100%;
+  border: none; color: #0a0a14;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 2.5px; border-radius: 6px; cursor: pointer;
+  animation: _cwShimmer 2.2s linear infinite;
+  transition: transform 0.18s, box-shadow 0.18s;
+  text-transform: uppercase;
+}
+._cw-cta-btn:hover { transform: scale(1.02); box-shadow: 0 5px 20px rgba(192,132,252,0.45); }
+@keyframes _cwShimmer { 0% { background-position: 220% 0; } 100% { background-position: -220% 0; } }
+
+/* ── CONFETTI ── */
+._cw-confetti { position: fixed; inset: 0; pointer-events: none; z-index: 100000; overflow: hidden; }
+._cw-cp { position: absolute; width: 7px; height: 7px; border-radius: 2px; animation: _cwFall 2.2s ease-in forwards; }
+@keyframes _cwFall {
+  0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ── TYPEWRITER CURSOR ── */
+._cw-cursor::after { content: '▌'; color: #c084fc; animation: _cwBlink 0.65s steps(1) infinite; }
+@keyframes _cwBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── MOBILE ── */
+@media(max-width:420px){
+  #_cwWrap { bottom:16px; right:8px; }
+  #_cwPanel { width:calc(100vw - 16px); right:8px; bottom:82px; height:74vh; }
+}
+</style>
+
+<!-- Widget markup -->
+<div id="_cwWrap">
+  <div id="_cwTooltip">⚡ <em>LifeOS</em> — надтай ярилцаарай!</div>
+  <div style="position:relative;width:56px;height:56px">
+    <div id="_cwRings"><span></span><span></span><span></span></div>
+    <button id="_cwBtn" onclick="_cwToggle()">
+      <span id="_cwBtnIcon">⚡</span>
+    </button>
+  </div>
+</div>
+
+<div id="_cwPanel">
+  <div class="_cw-header">
+    <div class="_cw-logo">⚡</div>
+    <div class="_cw-hinfo">
+      <div class="_cw-htitle">LifeOS</div>
+      <div class="_cw-hsub">ХУВИЙН ТӨЛӨВЛӨГЧ · AI ТУСЛАХ</div>
+    </div>
+    <div class="_cw-hstatus"><div class="_cw-hdot"></div>ОНЛАЙН</div>
+  </div>
+  <div class="_cw-prog">
+    <div class="_cw-steps">
+      <div class="_cw-step active" id="_cs1"></div>
+      <div class="_cw-step" id="_cs2"></div>
+      <div class="_cw-step" id="_cs3"></div>
+      <div class="_cw-step" id="_cs4"></div>
+      <div class="_cw-step" id="_cs5"></div>
+    </div>
+  </div>
+  <div class="_cw-msgs" id="_cwMsgs"></div>
+  <div class="_cw-qr" id="_cwQr"></div>
+  <div class="_cw-inp-area">
+    <input class="_cw-inp" id="_cwInp" placeholder="Хариулт бичнэ үү..." autocomplete="off">
+    <button class="_cw-send" id="_cwSend" onclick="_cwHandleSend()">➤</button>
+  </div>
+</div>
+<div class="_cw-confetti" id="_cwConf"></div>
+
+<script>
+(function(){
+  const SYS=`Та LifeOS-ийн Монгол хэлт AI sales funnel chatbot. LifeOS бол 9,900₮-ийн gamified 7 хоногийн хувийн дэглэмийн HTML файл.
+Таны зорилго: Хэрэглэгчийг алхам алхмаар худалдан авалт руу чиглүүлэх.
+Funnel:
+1. ТАНИЛЦАХ — Дулаан мэндчилгээ, "Та өдрийн дэглэмтэй юу?" гэж асуу.
+2. ӨВДӨЛТ — Тэдний асуудлыг ойлгож empathy илэрхийл.
+3. ШИЙДЭЛ — LifeOS танилц. XP, level, streak тайлбарла.
+4. ИТГЭЛ — "Зөвхөн танд зориулсан", "2-3 минутад хүргэнэ", "9,900₮ нэг удаа".
+5. ХААХ — Нэр аск. Хаанбанк данс: 5018953118.
+Дүрэм: Монгол хэлээр, богино (2-3 өгүүлбэр), friendly тон, emoji, "Хувийн төлөвлөгч" гэнэ.
+Худалдан авахад бэлэн болсон үед мессежийн төгсгөлд тусдаа мөрт "PAYMENT_READY" гэж нэм.`;
+
+  const QRS=[
+    ['Байдаг, гэхдээ дагадаггүй','Байхгүй','Сайн дагадаг'],
+    ['Хэтэрхий уйтгартай','Цаг гардаггүй','Мартдаг'],
+    ['Gamify гэж юу вэ?','Сонирхолтой байна','Жишээ харуул'],
+    ['Preview харах','Авъя!','9,900₮ зөвхөн үү?'],
+    [],
+  ];
+
+  let hist=[],loading=false,ctaDone=false,inited=false,opened=false;
+
+  function gt(){ return new Date().toLocaleTimeString('mn-MN',{hour:'2-digit',minute:'2-digit'}); }
+  function sc(){ const m=document.getElementById('_cwMsgs'); setTimeout(()=>{m.scrollTop=m.scrollHeight;},50); }
+
+  function addU(t){
+    const m=document.getElementById('_cwMsgs');
+    const d=document.createElement('div'); d.className='_cw-row u';
+    d.innerHTML=`<div><div class="_cw-bbl u">${t}</div><div class="_cw-t" style="text-align:right">${gt()}</div></div><div class="_cw-ico u">👤</div>`;
+    m.appendChild(d); sc();
+  }
+
+  function addB(html, cta=false){
+    const m=document.getElementById('_cwMsgs');
+    const wrap=document.createElement('div'); wrap.className='_cw-row';
+    const ico=document.createElement('div'); ico.className='_cw-ico b'; ico.textContent='⚡';
+    const col=document.createElement('div');
+    const bbl=document.createElement('div'); bbl.className='_cw-bbl b _cw-cursor';
+    col.appendChild(bbl);
+    if(cta){ const c=document.createElement('div'); c.innerHTML=buildCTA(); col.appendChild(c.firstChild); }
+    const ts=document.createElement('div'); ts.className='_cw-t'; ts.textContent=gt();
+    col.appendChild(ts);
+    wrap.appendChild(ico); wrap.appendChild(col);
+    m.appendChild(wrap); sc();
+    // typewriter
+    const plain=html.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]*>/g,'');
+    let i=0;
+    const iv=setInterval(()=>{
+      i+=2; // 2 chars per tick for speed
+      bbl.textContent=plain.slice(0,i);
+      sc();
+      if(i>=plain.length){ clearInterval(iv); bbl.classList.remove('_cw-cursor'); bbl.innerHTML=html; sc(); }
+    },18);
+  }
+
+  function buildCTA(){
+    return`<div class="_cw-cta"><div class="_cw-cta-title">LifeOS — Хувийн Төлөвлөгч</div><div class="_cw-cta-price">9,900₮</div><div class="_cw-cta-sub">Нэг удаагийн · 2-3 минутад хүргэнэ · Зөвхөн танд</div><button class="_cw-cta-btn" onclick="_cwPayment()">⚡ Одоо авах</button></div>`;
+  }
+
+  function showTyping(){
+    const m=document.getElementById('_cwMsgs');
+    const d=document.createElement('div'); d.className='_cw-typing-row'; d.id='_cwTyp';
+    d.innerHTML=`<div class="_cw-ico b">⚡</div><div class="_cw-typing"><div class="_cw-td"></div><div class="_cw-td"></div><div class="_cw-td"></div></div>`;
+    m.appendChild(d); sc();
+  }
+  function rmTyping(){ const t=document.getElementById('_cwTyp'); if(t) t.remove(); }
+
+  function setSteps(s){
+    for(let i=1;i<=5;i++){
+      const el=document.getElementById('_cs'+i);
+      el.className='_cw-step';
+      if(i<s) el.classList.add('done');
+      else if(i===s) el.classList.add('active');
+    }
+  }
+
+  function setQR(s){
+    const a=document.getElementById('_cwQr');
+    const rs=QRS[Math.min(s-1,4)];
+    a.innerHTML=rs.map(r=>`<button class="_cw-qr-btn" onclick="_cwQR('${r.replace(/'/g,"\\'")}') ">${r}</button>`).join('');
+  }
+
+  window._cwQR=function(t){ document.getElementById('_cwQr').innerHTML=''; _cwSendMsg(t); };
+  window._cwHandleSend=function(){
+    const inp=document.getElementById('_cwInp'); const t=inp.value.trim();
+    if(!t||loading)return; inp.value=''; document.getElementById('_cwQr').innerHTML=''; _cwSendMsg(t);
+  };
+  window._cwPayment=function(){ document.getElementById('_cwQr').innerHTML=''; _cwSendMsg('Авъя! Яаж төлөх вэ?'); };
+
+  document.getElementById('_cwInp').addEventListener('keydown',e=>{ if(e.key==='Enter') _cwHandleSend(); });
+
+  window._cwSendMsg=async function(txt){
+    if(loading)return; loading=true;
+    addU(txt); hist.push({role:'user',content:txt});
+    showTyping(); document.getElementById('_cwSend').disabled=true;
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS,messages:hist})
+      });
+      const data=await res.json();
+      let reply=data.content?.[0]?.text||'Уучлаарай, алдаа гарлаа.';
+      const showCTA=reply.includes('PAYMENT_READY')&&!ctaDone;
+      if(showCTA) ctaDone=true;
+      reply=reply.replace(/PAYMENT_READY/g,'').trim();
+      hist.push({role:'assistant',content:reply});
+      rmTyping(); addB(reply,showCTA);
+      const ns=Math.min(Math.ceil(hist.length/2)+1,5);
+      setSteps(ns); setQR(ns);
+      if(showCTA) setTimeout(confetti,600);
+    }catch(err){ rmTyping(); addB('Холболтын алдаа. Дахин оролдоно уу.'); }
+    loading=false; document.getElementById('_cwSend').disabled=false;
+  };
+
+  function confetti(){
+    const w=document.getElementById('_cwConf'); w.innerHTML='';
+    const cols=['#c084fc','#34d399','#fb923c','#60a5fa','#f472b6','#fbbf24'];
+    for(let i=0;i<40;i++){
+      const p=document.createElement('div'); p.className='_cw-cp';
+      p.style.cssText=`left:${Math.random()*100}%;top:-10px;background:${cols[i%cols.length]};animation-delay:${Math.random()*1}s;animation-duration:${1.6+Math.random()*0.8}s;width:${5+Math.random()*6}px;height:${5+Math.random()*6}px;`;
+      w.appendChild(p);
+    }
+    setTimeout(()=>{ w.innerHTML=''; },4000);
+  }
+
+  window._cwToggle=function(){
+    opened=!opened;
+    const panel=document.getElementById('_cwPanel');
+    const btn=document.getElementById('_cwBtn');
+    const tip=document.getElementById('_cwTooltip');
+    panel.classList.toggle('visible',opened);
+    btn.classList.toggle('open',opened);
+    document.getElementById('_cwBtnIcon').textContent=opened?'✕':'⚡';
+    if(opened){
+      tip.classList.remove('show');
+      if(!inited){
+        inited=true;
+        setTimeout(()=>{
+          showTyping();
+          setTimeout(()=>{
+            rmTyping();
+            addB('Сайн байна уу! 👋 Би LifeOS-ийн AI туслах.<br><br>Танд өдрийн тогтмол дэглэм байдаг уу?');
+            setQR(1);
+          },900);
+        },250);
+      }
+    }
+  };
+
+  // Show tooltip after 2s, auto-hide after 7s
+  setTimeout(()=>{
+    const tip=document.getElementById('_cwTooltip');
+    tip.classList.add('show');
+    setTimeout(()=>{ tip.classList.remove('show'); }, 5500);
+  }, 2000);
+})();
+</script>
+<!-- ══ END CHATBOT WIDGET ══ -->
 </body>
 </html>

@@ -310,11 +310,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
   </div>
   <div class="nav-section">
     <div class="nav-label">Ажлын өдрүүд (Да–Баа)</div>
-    <div class="nav-item active" onclick="showDay(0)" id="nav0"><div class="nav-dot" style="background:var(--train)"></div>Даваа<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Gym + YouTube</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(1)" id="nav1"><div class="nav-dot" style="background:var(--rest)"></div>Мягмар<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Амрах + Контент</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(2)" id="nav2"><div class="nav-dot" style="background:var(--train)"></div>Лхагва<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Gym + YouTube</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(3)" id="nav3"><div class="nav-dot" style="background:var(--rest)"></div>Пүрэв<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Амрах + Бэлтгэл</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(4)" id="nav4"><div class="nav-dot" style="background:var(--train)"></div>Баасан<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Gym + Спринт</span><span class="nav-check">✓</span></div>
+    <div class="nav-item active" onclick="showDay(0)" id="nav0"><div class="nav-dot" style="background:var(--train)"></div>Даваа<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Gym + Хичээл + YT</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(1)" id="nav1"><div class="nav-dot" style="background:#a78bfa"></div>Мягмар<span class="nav-badge" style="background:rgba(167,139,250,.1);color:#a78bfa">Хичээл + YouTube</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(2)" id="nav2"><div class="nav-dot" style="background:var(--train)"></div>Лхагва<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Gym + Хичээл + YT</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(3)" id="nav3"><div class="nav-dot" style="background:#a78bfa"></div>Пүрэв<span class="nav-badge" style="background:rgba(167,139,250,.1);color:#a78bfa">Хичээл + YouTube</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(4)" id="nav4"><div class="nav-dot" style="background:var(--train)"></div>Баасан<span class="nav-badge" style="background:rgba(255,107,74,.1);color:var(--train)">Gym + Хичээл + YT</span><span class="nav-check">✓</span></div>
   </div>
   <div class="nav-section">
     <div class="nav-label">Амралтын өдрүүд</div>
@@ -331,6 +331,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div style="font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Өнгөний код</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--deep)"></div>YouTube / Deep Work</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--work)"></div>Barista ажил</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>Хэлний хичээл</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--train)"></div>Gym дасгал</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--food)"></div>Хоол</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--rest)"></div>Амралт</div>
@@ -360,31 +361,33 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div class="day-head">
       <div class="day-num">01</div>
       <div class="day-meta-inner">
-        <div class="day-name">Gym + YouTube эхлэл</div>
+        <div class="day-name">Gym + Хичээл + YouTube эхлэл</div>
         <div class="day-tags">
-          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Дээд бие</span>
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Chest+Tri</span>
+          <span class="tag" style="color:var(--work);border-color:rgba(245,166,35,.3)">Barista + Хичээл</span>
           <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">YouTube</span>
-          <span class="tag" style="color:var(--work);border-color:rgba(245,166,35,.3)">Barista</span>
         </div>
-        <div class="day-quote">"Shift work-ийн хүн тогтмол байдлыг цагаар биш, дасгалыг хийсэн эсэхээр хэмждэг."</div>
+        <div class="day-quote">"Ажил + хичээл + gym + YouTube — дүүрэн өдөр. Гэхдээ систем байвал бүгд багтана."</div>
       </div>
     </div>
     <div class="stats">
       <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">06:15</div></div>
       <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">60+ мин</div></div>
+      <div class="stat"><div class="stat-label">Хичээл</div><div class="stat-val">13:00–18:00</div></div>
       <div class="stat"><div class="stat-label">YouTube</div><div class="stat-val">45 мин</div></div>
-      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">00:30</div></div>
     </div>
     <div class="tl">
-      <div class="tl-row c-sleep"><div class="tl-time">06:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус 500мл → нүүр угаах → өдрийн YouTube зорилтоо нэг өгүүлбэрт бич. Утасыг унтлагаас гарга — өглөө scroll хориотой.</div><div class="why-box"><strong>Яагаад 06:15?</strong>Barista shift-ийн өмнө gym хийх цаг байна. Shift дараа ядарч gym тасалдаг. Өглөө хийвэл тогтмол болно.</div></div></div>
-      <div class="tl-row c-train"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Chest + Tricep</div><div class="tl-title">Chest & Tricep Day <span class="tl-dur">— 60–70 мин</span></div><div class="tl-desc">Дулаацуулалт 10 мин → Bench Press 4×8 → Incline DB Press 3×10 → Cable Fly 3×12 → Tricep Pushdown 3×12 → Overhead Ext 3×12 → Сунгалт 10 мин.</div><div class="tl-chips"><span class="chip">Bench Press</span><span class="chip">Incline Press</span><span class="chip">Cable Fly</span><span class="chip">Tricep</span></div><div class="why-box"><strong>Gym = тогтвортой байдлын гол зүйл</strong>Чи 3-4x/7 хоногт gym хийдэг — энэ маш сайн. Хуваарьлаж цэгцлэхэд л хангалттай. Да/Лх/Ба gym, Мя/Пү амрах.</div></div></div>
-      <div class="tl-row c-food"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Бэлтгэл</div><div class="tl-title">Өглөөний хоол + Shift бэлтгэл <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Уураг ихтэй хоол: өндөг, тараг, эсвэл protein shake. Gym-ийн дараа уураг зайлшгүй. Хувцсаа солиод ажилдаа бэлд.</div></div></div>
-      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Ажлын shift <span class="tl-dur">— shift цагаар</span></div><div class="tl-desc">Ажлын завсарлагаанд утас харахгүй — оронд нь 5 мин алхалт эсвэл YouTube видеоны дараагийн санааг тэмдэглэ. Ажил бол эрч хүч цуглуулах цаг.</div><div class="tl-chips"><span class="chip">Завсарт тэмдэглэл</span><span class="chip">Утас хориотой</span></div></div></div>
-      <div class="tl-row c-transit"><div class="tl-time">17:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Гэртээ харих</div><div class="tl-title">Тайвшрах — Transit <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Podcast сонс: YouTube creators, content strategy, биеийн тамир. Scroll хийхийн оронд чихэвч тавь. Энэ цаг сурах хамгийн хялбар үе.</div><div class="tl-chips"><span class="chip">YouTube podcast</span><span class="chip">Content ideas</span><span class="chip">Scroll хориотой</span></div></div></div>
-      <div class="tl-row c-food"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, утасгүй идэнэ. Хоол идэхдээ дараа хийх YouTube ажлаа бодно — mental prep.</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Deep Work</div><div class="tl-title">Контент бүтээх — Хамгийн чухал блок <span class="tl-dur">— 45–60 мин</span></div><div class="tl-desc">Утас нисгэлтэн горим. Нэг л зүйлд голло: Script бичих, эсвэл зурах, эсвэл засварлах. "Бүгдийг нэгэн зэрэг" хийхгүй.</div><div class="tl-chips"><span class="chip">Script бичих</span><span class="chip">Зураглал</span><span class="chip">Edit хийх</span><span class="chip">Нэг зорилт</span></div><div class="why-box"><strong>45 мин хангалттай</strong>Тогтмол 45 мин × 7 хоног = 5.25 цаг/долоо хоног. Жилд 273 цаг — YouTube channel хөгжихөд хангалттай. Тогтмол байдал > нэг удаа их хийх.</div></div></div>
-      <div class="tl-row c-rest"><div class="tl-time">20:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Тайвшрах + Чөлөөт цаг <span class="tl-dur">— 3.5 цаг</span></div><div class="tl-desc">Чи Barista ажилтай — энэ орой чинийх. Найз нөхөд, кино, тоглоом. Гэхдээ 00:00-д утас хаа.</div></div></div>
-      <div class="tl-row c-sleep"><div class="tl-time">00:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">6–7 цаг нойр <span class="tl-dur">→ 06:15 босно</span></div><div class="tl-desc">Утасыг унтлагаас гарга. 00:30 унтвал 06:15 босоход 5.75 цаг — хангалттай. Нойрны чанар чухал.</div><div class="why-box"><strong>Shift worker-ийн нойр</strong>Shift work-д 7-8 цаг хэцүү байж болно. Гол нь тогтмол унтах, босох цагтай байх. Тасалтгүй 6 цаг > тасалдсан 8 цаг.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">06:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус 500мл → нүүр угаах → өдрийн YouTube зорилтоо нэг өгүүлбэрт бич. Утасыг унтлагаас гарга — өглөө scroll хориотой.</div><div class="why-box"><strong>Яагаад 06:15?</strong>Өдөрт Barista shift + хичээл 2 үүрэг бий. Gym-г эхлээд хийхгүй бол оройтож тасалдана. Өглөөний gym = тогтмол баталгаа.</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Chest + Tricep</div><div class="tl-title">Chest & Tricep Day <span class="tl-dur">— 60–70 мин</span></div><div class="tl-desc">Дулаацуулалт 10 мин → Bench Press 4×8 → Incline DB Press 3×10 → Cable Fly 3×12 → Tricep Pushdown 3×12 → Overhead Ext 3×12 → Сунгалт 10 мин.</div><div class="tl-chips"><span class="chip">Bench Press</span><span class="chip">Incline Press</span><span class="chip">Cable Fly</span><span class="chip">Tricep</span></div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Бэлтгэл</div><div class="tl-title">Өглөөний хоол + Shift бэлтгэл <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Уураг ихтэй хоол: өндөг, тараг, protein shake. Gym-ийн дараа уураг зайлшгүй. Хувцсаа солиод ажилдаа бэлд.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Ажлын shift <span class="tl-dur">— ~09:00–12:30</span></div><div class="tl-desc">Shift завсарт утас харахгүй — оронд нь 5 мин алхалт эсвэл YouTube-н дараагийн санааг тэмдэглэ.</div><div class="tl-chips"><span class="chip">Завсарт тэмдэглэл</span><span class="chip">Утас хориотой</span></div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">12:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Хичээлийн бэлтгэл</div><div class="tl-title">Өдрийн хоол + Тайван амрах <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Хурдан хоол → хичээлдээ бэлд. Хичээлийн тэмдэглэлийн дэвтэр, ном бэлд. Shift-ийн ядралыг тайл.</div></div></div>
+      <div class="tl-row c-work" style="--work:#a78bfa"><div class="tl-time">13:00</div><div class="tl-axis"><div class="tl-node" style="background:#a78bfa"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat" style="color:#a78bfa">Хэлний Бэлтгэл Хичээл</div><div class="tl-title">Хэлний бэлтгэл <span class="tl-dur">— 13:00–18:00 (5 цаг)</span></div><div class="tl-desc">Хичээлд бүрэн анхаарал тавь. Завсарлагаанд 5 мин алхалт хий — тархи цэнэглэнэ. Хичээлийн тэмдэглэлийг сайтар хий — давтах цаг хэмнэнэ.</div><div class="tl-chips"><span class="chip">Тэмдэглэл хий</span><span class="chip">Завсарт алхалт</span><span class="chip">Бүрэн анхаарал</span></div><div class="why-box"><strong>Хичээл + ажил + gym нэг өдөрт</strong>Хэцүү мэт боловч систем байвал бүгд багтана. Gym → shift → хичээл → YouTube = бүтэн өдрийн систем.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Гэртээ харих</div><div class="tl-title">Transit — Podcast сонсох <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">YouTube creators, content strategy podcast. Хичээлийн стрессийг тайлж, YouTube deep work-д сэтгэлзүйгээр бэлд. Scroll хориотой.</div><div class="tl-chips"><span class="chip">YouTube podcast</span><span class="chip">Content ideas</span><span class="chip">Scroll хориотой</span></div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, утасгүй идэнэ. Хоол идэхдээ YouTube ажлаа бодно — mental prep.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Deep Work</div><div class="tl-title">Контент бүтээх — Нэг зорилт горим <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Утас нисгэлтэн горим. Script бичих, эсвэл зурах, эсвэл edit хийх — нэг л зүйл. Хичээлийн дараа ядарч байвал ч 45 мин л хангалттай.</div><div class="tl-chips"><span class="chip">Script бичих</span><span class="chip">Зураглал</span><span class="chip">Edit хийх</span><span class="chip">Нэг зорилт</span></div><div class="why-box"><strong>Ядарсан үед YouTube яаж хийх вэ?</strong>Хичээл дуусчихаад ирэхэд тархи ядарна. Гэхдээ 45 мин = хамгийн бага зорилт. "Зөвхөн нэг өгүүлбэр бич" гэж эхлэ — 45 мин аяндаа болно.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">20:45</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Тайвшрах + Чөлөөт цаг <span class="tl-dur">— 3 цаг</span></div><div class="tl-desc">Gym + shift + хичээл + YouTube — бүгдийг хийлээ. Энэ орой бүрэн чинийх. 00:00-д утас хаа.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">00:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">6–7 цаг нойр <span class="tl-dur">→ 06:15 босно</span></div><div class="tl-desc">Утасыг унтлагаас гарга. Маргааш мөн gym + хичээл байна — сайн унт.</div></div></div>
     </div>
   </div>
   <div class="tab-panel" id="tp0-1">
@@ -392,9 +395,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
       <div class="boss-done" id="bossDone0"><div class="boss-done-text">⚡ BOSS DEFEATED +50 XP</div></div>
       <div class="boss-header"><span class="boss-icon">🎬</span><span class="boss-label">Өдрийн Boss Challenge</span><span class="boss-xp-badge">+50 XP</span></div>
       <div class="boss-title">YouTube Deep Work 45 минутыг утасгүй, таслалтгүй дуусга</div>
-      <div class="boss-desc">Нислэгийн горим + нэг л зорилт = жинхэнэ контент хийх. Нэг удаа мэдэрвэл давтах хүсэл төрнө.</div>
+      <div class="boss-desc">Нисгэлтэн горим + нэг л зорилт = жинхэнэ контент хийх. Нэг удаа мэдэрвэл давтах хүсэл төрнө.</div>
     </div>
-    <div class="day-complete" id="dc0"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Даваа бүрэн дууслаа!</div><div class="dc-sub">Gym + YouTube + Shift. Тогтмол байдлын эхлэл.</div></div><div class="dc-xp" id="dc0xp">+110 XP</div></div>
+    <div class="day-complete" id="dc0"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Даваа бүрэн дууслаа!</div><div class="dc-sub">Gym + Хичээл + YouTube + Shift. Хамгийн дүүрэн өдрийг давлаа.</div></div><div class="dc-xp" id="dc0xp">+120 XP</div></div>
     <div class="checklist-wrap" id="cl0"></div>
   </div>
 </div>
@@ -405,27 +408,31 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div class="day-head">
       <div class="day-num">02</div>
       <div class="day-meta-inner">
-        <div class="day-name">Идэвхтэй амралт + Контент бодол</div>
+        <div class="day-name">Gym амрах + Хичээл + Хөнгөн YouTube</div>
         <div class="day-tags">
           <span class="tag" style="color:var(--rest);border-color:rgba(62,207,142,.3)">Gym амрах</span>
+          <span class="tag" style="color:#a78bfa;border-color:rgba(167,139,250,.3)">Хэлний хичээл</span>
           <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Хөнгөн YouTube</span>
         </div>
-        <div class="day-quote">"Мягмар бол булчин сэргэх өдөр. Дасгалгүй = булчин хүчтэй болно. Хөнгөн YouTube = тархи контентоос салахгүй."</div>
+        <div class="day-quote">"Мягмар gym-гүй. Гэхдээ хичээл + YouTube — тогтвортой байдлаа тасалдуулахгүй."</div>
       </div>
     </div>
     <div class="stats">
       <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">06:30</div></div>
-      <div class="stat"><div class="stat-label">Алхалт</div><div class="stat-val">20 мин</div></div>
+      <div class="stat"><div class="stat-label">Shift+Хичээл</div><div class="stat-val">09–18:00</div></div>
       <div class="stat"><div class="stat-label">YouTube</div><div class="stat-val">30 мин</div></div>
       <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">00:30</div></div>
     </div>
     <div class="tl">
       <div class="tl-row c-sleep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Аажмаар сэрэх + Сунгалт <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус → 10 мин хөнгөн сунгалт → зорилт бичих. Gym-гүй өдөр ч сунгалтыг орхих хэрэггүй.</div></div></div>
-      <div class="tl-row c-transit"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">Podcast — YouTube & Fitness контент <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Top creator-уудыг сонс. Ali Abdaal, mkbhd, эсвэл фитнесс channel-уудыг судал. Scroll хийхийн оронд сур.</div></div></div>
-      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— shift цагаар</span></div><div class="tl-desc">Завсарлагаанд YouTube видеоны дараагийн санааг нэг өгүүлбэрт бичиж ав. 2 минут л хангалттай.</div></div></div>
-      <div class="tl-row c-food"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, утасгүй идэнэ.</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хөнгөн YouTube</div><div class="tl-title">Санаа цуглуулах + Судалгаа <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Өчигдрийн контентийн тэмдэглэлийг харах. Дараагийн видеоны сэдэв, thumbnail санаа боловсруулах. Өрсөлдөгч суваг-уудыг шинжил.</div><div class="tl-chips"><span class="chip">Topic судлах</span><span class="chip">Thumbnail санаа</span><span class="chip">Конкурент харах</span></div><div class="why-box"><strong>Яагаад 30 минут?</strong>Амралтын өдөр ч тогтмол байдлыг тасалдуулахгүй. 30 мин = тархи YouTube горимоос гарахгүй.</div></div></div>
-      <div class="tl-row c-rest"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Бүрэн чөлөөт цаг <span class="tl-dur">— 4 цаг</span></div><div class="tl-desc">Найз нөхдтэй байх, кино, тоглоом — энэ бол шагнал. Gym-гүй өдрийн хамгийн чухал зүйл: амрах.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">Podcast — YouTube & хэлний контент <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Хэлний хичээлтэй холбоотой podcast эсвэл YouTube creator-уудыг сонс. Мэдлэг 2 чиглэлд нэгэн зэрэг.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— ~09:00–12:30</span></div><div class="tl-desc">Shift завсарт YouTube-н нэг санааг тэмдэглэ. 2 минут л хангалттай.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">12:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Хичээлийн бэлтгэл</div><div class="tl-title">Өдрийн хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Хурдан хоол → хичээлд бэлд. Өчигдрийн хичээлийн тэмдэглэлийг 5 мин давт.</div></div></div>
+      <div class="tl-row" style="display:grid;grid-template-columns:60px 1px 1fr;gap:0 18px"><div class="tl-time">13:00</div><div class="tl-axis"><div class="tl-node" style="background:#a78bfa;margin-top:20px;width:7px;height:7px;border-radius:50%;flex-shrink:0;position:relative;z-index:2"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat" style="color:#a78bfa;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:4px">Хэлний Бэлтгэл Хичээл</div><div class="tl-title">Хэлний бэлтгэл <span class="tl-dur">— 13:00–18:00 (5 цаг)</span></div><div class="tl-desc">Хичээлд бүрэн анхаарал. Завсарлагаанд 5 мин алхалт — тархи цэнэглэнэ. Хичээлийн тэмдэглэлийг сайтар хий.</div><div class="tl-chips"><span class="chip">Бүрэн анхаарал</span><span class="chip">Тэмдэглэл хий</span><span class="chip">Завсарт алхалт</span></div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Гэртээ харих</div><div class="tl-title">Transit — Тайвшрах <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Хичээлийн стрессийг тайл. Аудио контент сонс. YouTube deep work-д сэтгэлзүйгээр бэлд.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, утасгүй идэнэ.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хөнгөн YouTube</div><div class="tl-title">Санаа цуглуулах + Судалгаа <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Дараагийн видеоны topic, thumbnail санаа боловсруулах. Конкурент channel-уудыг шинжил. Хичээлтэй өдөр 30 мин л хангалттай.</div><div class="tl-chips"><span class="chip">Topic судлах</span><span class="chip">Thumbnail санаа</span><span class="chip">Конкурент харах</span></div><div class="why-box"><strong>Яагаад 30 мин?</strong>Shift + хичээл хоёулаа байсан өдөр 45 мин их санагдаж болно. 30 мин = тархи YouTube горимоос гарахгүй, ядралгүй.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">20:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Бүрэн чөлөөт цаг <span class="tl-dur">— 4 цаг</span></div><div class="tl-desc">Shift + хичээл + YouTube хийлээ. Энэ орой бүрэн чинийх. Маргааш Лхагва gym байна.</div></div></div>
       <div class="tl-row c-sleep"><div class="tl-time">00:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг нойр</div><div class="tl-desc">Маргааш Лхагва gym байна. Сайн унт — булчин унтах үед сэргэдэг.</div></div></div>
     </div>
   </div>
@@ -436,7 +443,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
       <div class="boss-title">Shift-ийн завсарлагаанд дараагийн YouTube видеоны гол санааг бичиж ав</div>
       <div class="boss-desc">2 минут + нэг өгүүлбэр = дараагийн видеоны үр — энэ бол системтэй creator-ийн арга.</div>
     </div>
-    <div class="day-complete" id="dc1"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Мягмар бүрэн дууслаа!</div><div class="dc-sub">Идэвхтэй амралт + YouTube тогтмол байдал хадгаллаа.</div></div><div class="dc-xp" id="dc1xp">+90 XP</div></div>
+    <div class="day-complete" id="dc1"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Мягмар бүрэн дууслаа!</div><div class="dc-sub">Хичээл + YouTube — тогтмол байдал хадгаллаа.</div></div><div class="dc-xp" id="dc1xp">+100 XP</div></div>
     <div class="checklist-wrap" id="cl1"></div>
   </div>
 </div>
@@ -447,29 +454,32 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div class="day-head">
       <div class="day-num">03</div>
       <div class="day-meta-inner">
-        <div class="day-name">Gym + YouTube дундын шалгалт</div>
+        <div class="day-name">Gym + Хичээл + YouTube дундын шалгалт</div>
         <div class="day-tags">
-          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Нуруу+Bicep</span>
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Back+Bicep</span>
+          <span class="tag" style="color:#a78bfa;border-color:rgba(167,139,250,.3)">Хэлний хичээл</span>
           <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">YouTube</span>
         </div>
-        <div class="day-quote">"7 хоногийн дунд — чи хоёр gym хийлээ, нэг YouTube хийлээ. Яг зөв зам дээр явж байна."</div>
+        <div class="day-quote">"Лхагва дундын шалгалт: 2 gym, 1 YouTube, 2 хичээл хийлээ. Яг зөв зам дээр явж байна."</div>
       </div>
     </div>
     <div class="stats">
       <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">06:15</div></div>
       <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">60+ мин</div></div>
+      <div class="stat"><div class="stat-label">Хичээл</div><div class="stat-val">13:00–18:00</div></div>
       <div class="stat"><div class="stat-label">YouTube</div><div class="stat-val">45 мин</div></div>
-      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">00:30</div></div>
     </div>
     <div class="tl">
-      <div class="tl-row c-sleep"><div class="tl-time">06:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус 500мл → 7 хоногийн дундын шалгалт хийх: YouTube ажил урагшилж байна уу? Gym тогтмол байна уу?</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">06:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус 500мл → 7 хоногийн дундын шалгалт: YouTube урагшилж байна уу? Gym тогтмол байна уу? Хичээл яаж явж байна?</div></div></div>
       <div class="tl-row c-train"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Back + Bicep</div><div class="tl-title">Back & Bicep Day <span class="tl-dur">— 60–70 мин</span></div><div class="tl-desc">Дулаацуулалт 10 мин → Deadlift 4×6 → Bent Over Row 3×10 → Lat Pulldown 3×12 → Face Pull 3×15 → Barbell Curl 3×10 → Hammer Curl 3×12 → Сунгалт.</div><div class="tl-chips"><span class="chip">Deadlift</span><span class="chip">Bent Row</span><span class="chip">Lat Pulldown</span><span class="chip">Bicep</span></div></div></div>
       <div class="tl-row c-food"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Shift бэлтгэл</div><div class="tl-title">Уураг ихтэй хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Protein shake эсвэл өндөг + тараг. Gym-ийн дараа 30 минутын дотор уураг ид.</div></div></div>
-      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— shift цагаар</span></div><div class="tl-desc">Завсарт YouTube-н нэг жижиг зорилтыг тэмдэглэ: "Өнөөдөр X хийнэ" гэж.</div></div></div>
-      <div class="tl-row c-transit"><div class="tl-time">17:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">Podcast — Creator тактик <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Content creation, editing tips, эсвэл YouTube algorithm сонс. Мэдлэг хуримтлуулах цаг.</div></div></div>
-      <div class="tl-row c-food"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, утасгүй идэнэ.</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Deep Work</div><div class="tl-title">Нэг жижиг зүйлийг бодит болгох <span class="tl-dur">— 45–60 мин</span></div><div class="tl-desc">Script-ийн нэг хэсгийг дуусга, эсвэл зургийн нэг raw footage засварла, эсвэл thumbnail дуусга. "Нэг л зүйл дуусгах" горим.</div><div class="tl-chips"><span class="chip">Нэг зүйл дуусгах</span><span class="chip">Утасгүй</span><span class="chip">Тогтмол</span></div><div class="why-box"><strong>Дундын шалгалт</strong>Да+Мя+Лх = 3 өдөр дуусгасан бол чи 3/7 замдаа байна. Хэрвээ нэг өдөр алдсан бол яг одоо нөхөж болно.</div></div></div>
-      <div class="tl-row c-rest"><div class="tl-time">20:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Тайвшрах <span class="tl-dur">— 4 цаг</span></div><div class="tl-desc">Хоёр gym, хоёр YouTube хийлээ. Энэ орой бүрэн чинийх.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— ~09:00–12:30</span></div><div class="tl-desc">Shift завсарт YouTube-н нэг жижиг зорилтыг тэмдэглэ: "Өнөөдөр X хийнэ" гэж.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">12:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Хичээлийн бэлтгэл</div><div class="tl-title">Өдрийн хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Хурдан хоол → хичээлдээ бэлд.</div></div></div>
+      <div class="tl-row" style="display:grid;grid-template-columns:60px 1px 1fr;gap:0 18px"><div class="tl-time">13:00</div><div class="tl-axis"><div class="tl-node" style="background:#a78bfa;margin-top:20px;width:7px;height:7px;border-radius:50%;flex-shrink:0;position:relative;z-index:2"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat" style="color:#a78bfa;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:4px">Хэлний Бэлтгэл Хичээл</div><div class="tl-title">Хэлний бэлтгэл <span class="tl-dur">— 13:00–18:00 (5 цаг)</span></div><div class="tl-desc">Хичээлд бүрэн анхаарал. Хичээлийн завсарт гялалзах нэг YouTube санааг тэмдэглэж ав — тархи хоёр чиглэлд ажилладаг.</div><div class="tl-chips"><span class="chip">Бүрэн анхаарал</span><span class="chip">Санаа тэмдэглэх</span></div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">Podcast — Creator тактик <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Content creation, editing tips, YouTube алгоритм сонс. Мэдлэг хуримтлуулах цаг.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, утасгүй идэнэ.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Deep Work</div><div class="tl-title">Нэг жижиг зүйлийг бодит болгох <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Script-ийн нэг хэсгийг дуусга, эсвэл thumbnail дуусга. "Нэг л зүйл дуусгах" горим.</div><div class="tl-chips"><span class="chip">Нэг зүйл дуусгах</span><span class="chip">Утасгүй</span><span class="chip">Тогтмол</span></div><div class="why-box"><strong>Дундын шалгалт</strong>Да+Мя+Лх = 3 өдөр. Gym 2x, YouTube 2x, хичээл 2x хийсэн бол 3/7 замдаа байна. Хэрвээ нэг зүйл алдсан бол яг одоо нөхөж болно.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">20:45</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Тайвшрах <span class="tl-dur">— 3.5 цаг</span></div><div class="tl-desc">Gym + хичээл + YouTube хийлээ. Энэ орой бүрэн чинийх.</div></div></div>
       <div class="tl-row c-sleep"><div class="tl-time">00:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг нойр</div><div class="tl-desc">Маргааш Пүрэв — gym амрах. Сайн унт.</div></div></div>
     </div>
   </div>
@@ -480,7 +490,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
       <div class="boss-title">YouTube-н нэг жижиг зүйлийг бодит болгоод хэн нэгэнд үзүүл эсвэл нийтэл</div>
       <div class="boss-desc">Ганцаараа хийгээд хадгалсан контент = хэнд ч үгүй. Нийтэлсэн → feedback → сайжрана.</div>
     </div>
-    <div class="day-complete" id="dc2"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Лхагва бүрэн дууслаа!</div><div class="dc-sub">Back+Bicep gym + YouTube дундын шалгалт. Хагас долоо хоног давлаа.</div></div><div class="dc-xp" id="dc2xp">+110 XP</div></div>
+    <div class="day-complete" id="dc2"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Лхагва бүрэн дууслаа!</div><div class="dc-sub">Gym + Хичээл + YouTube. Хагас долоо хоног давлаа.</div></div><div class="dc-xp" id="dc2xp">+120 XP</div></div>
     <div class="checklist-wrap" id="cl2"></div>
   </div>
 </div>
@@ -491,27 +501,31 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div class="day-head">
       <div class="day-num">04</div>
       <div class="day-meta-inner">
-        <div class="day-name">Идэвхтэй амралт + YouTube стратеги</div>
+        <div class="day-name">Gym амрах + Хичээл + YouTube стратеги</div>
         <div class="day-tags">
           <span class="tag" style="color:var(--rest);border-color:rgba(62,207,142,.3)">Gym амрах</span>
+          <span class="tag" style="color:#a78bfa;border-color:rgba(167,139,250,.3)">Хэлний хичээл</span>
           <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">YouTube стратеги</span>
         </div>
-        <div class="day-quote">"Пүрэв бол тархин амрах өдөр. Дасгалгүй = булчин нэгтгэнэ. YouTube стратеги = ухаалаг creator болно."</div>
+        <div class="day-quote">"Пүрэв gym-гүй. Хичээл + YouTube стратеги — Баасны спринтэд бэлдэх хамгийн чухал өдөр."</div>
       </div>
     </div>
     <div class="stats">
       <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">06:30</div></div>
-      <div class="stat"><div class="stat-label">Алхалт</div><div class="stat-val">20 мин</div></div>
+      <div class="stat"><div class="stat-label">Shift+Хичээл</div><div class="stat-val">09–18:00</div></div>
       <div class="stat"><div class="stat-label">YouTube</div><div class="stat-val">45 мин</div></div>
       <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">00:30</div></div>
     </div>
     <div class="tl">
-      <div class="tl-row c-sleep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Аажмаар сэрэх + Сунгалт <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус → сунгалт → Өнөөдрийн YouTube зорилтыг тодорхойлох. "Баасан нэг ажил дуусгана" гэж бэлтгэ.</div></div></div>
-      <div class="tl-row c-transit"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">YouTube analytics & стратеги судлах <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Хэрхэн YouTube-н алгоритм ажилладаг, retention rate, CTR-г podcast-аар сур. Мэдлэг = дасгал.</div></div></div>
-      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— shift цагаар</span></div><div class="tl-desc">Завсарт алхалт + хэрэв санаа ирвэл тэмдэглэ. Баасанд ямар YouTube зорилт хийх вэ гэдгийг ажлын завсарт бодоод ав.</div></div></div>
-      <div class="tl-row c-food"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван идэнэ.</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Стратеги</div><div class="tl-title">Дараагийн видеоны бүтэн план <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Topic + Hook + Script outline + Thumbnail concept → нэг хуудсанд дуусга. Маргааш Баасанд энэ планаар хийнэ.</div><div class="tl-chips"><span class="chip">Topic тодорхойлох</span><span class="chip">Hook бичих</span><span class="chip">Script outline</span><span class="chip">Thumbnail санаа</span></div><div class="why-box"><strong>Тогтвортой байдал яаж үүсдэг</strong>Хуваарь бус систем. Пүрэв план хийвэл Баасан execute хийх. Бямба нийтэлнэ. Тогтмол цикл = YouTube-н хамгийн чухал зүйл.</div></div></div>
-      <div class="tl-row c-rest"><div class="tl-time">20:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Бүрэн амрах <span class="tl-dur">— 4 цаг</span></div><div class="tl-desc">Маргааш Баасан gym + YouTube спринт байна. Сайтар амар.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Аажмаар сэрэх + Сунгалт <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус → сунгалт → "Баасан ямар YouTube ажил хийх вэ?" гэдгийг бодоод бич.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">YouTube analytics & стратеги судлах <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">YouTube алгоритм, retention rate, CTR podcast-аар сур. Мэдлэг = дасгал.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— ~09:00–12:30</span></div><div class="tl-desc">Завсарт алхалт + хэрэв санаа ирвэл тэмдэглэ. Баасан YouTube зорилтыг ажлын завсарт бодоод ав.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">12:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Хичээлийн бэлтгэл</div><div class="tl-title">Өдрийн хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Хурдан хоол → хичээлдээ бэлд.</div></div></div>
+      <div class="tl-row" style="display:grid;grid-template-columns:60px 1px 1fr;gap:0 18px"><div class="tl-time">13:00</div><div class="tl-axis"><div class="tl-node" style="background:#a78bfa;margin-top:20px;width:7px;height:7px;border-radius:50%;flex-shrink:0;position:relative;z-index:2"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat" style="color:#a78bfa;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:4px">Хэлний Бэлтгэл Хичээл</div><div class="tl-title">Хэлний бэлтгэл <span class="tl-dur">— 13:00–18:00 (5 цаг)</span></div><div class="tl-desc">Хичээлд бүрэн анхаарал. Хичээлийн завсарт Баасны YouTube план бодоод 2 мин тэмдэглэ.</div><div class="tl-chips"><span class="chip">Бүрэн анхаарал</span><span class="chip">Баасны план бодох</span></div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">Тайвшрах + Podcast <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Хичээлийн стрессийг тайл. Баасны YouTube sprint-д сэтгэлзүйгээр бэлд.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван идэнэ.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Стратеги</div><div class="tl-title">Дараагийн видеоны бүтэн план <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Topic + Hook + Script outline + Thumbnail concept → нэг хуудсанд дуусга. Маргааш Баасанд энэ планаар хийнэ.</div><div class="tl-chips"><span class="chip">Topic тодорхойлох</span><span class="chip">Hook бичих</span><span class="chip">Script outline</span><span class="chip">Thumbnail санаа</span></div><div class="why-box"><strong>Пүрэв план = Баасан execute</strong>Хичээлтэй өдрийн дараа Баасан ядарч болно. Гэхдээ план байвал шууд эхлэнэ — blank screen-гүй.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">20:45</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Бүрэн амрах <span class="tl-dur">— 3.5 цаг</span></div><div class="tl-desc">Маргааш Баасан gym + YouTube спринт байна. Сайтар амар.</div></div></div>
       <div class="tl-row c-sleep"><div class="tl-time">00:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7 цаг нойр</div><div class="tl-desc">Маргааш Баасан — gym + YouTube. Сайн унт.</div></div></div>
     </div>
   </div>
@@ -522,7 +536,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
       <div class="boss-title">Дараагийн видеоны бүтэн планыг нэг хуудсанд бичиж дуусга</div>
       <div class="boss-desc">Бичсэн план = 80% хийгдсэн. Планнгүй creator = байнга blank screen-тэй тэмцдэг.</div>
     </div>
-    <div class="day-complete" id="dc3"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Пүрэв бүрэн дууслаа!</div><div class="dc-sub">Идэвхтэй амралт + YouTube стратеги бэлэн болсон.</div></div><div class="dc-xp" id="dc3xp">+90 XP</div></div>
+    <div class="day-complete" id="dc3"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Пүрэв бүрэн дууслаа!</div><div class="dc-sub">Хичээл + YouTube стратеги бэлэн болсон.</div></div><div class="dc-xp" id="dc3xp">+100 XP</div></div>
     <div class="checklist-wrap" id="cl3"></div>
   </div>
 </div>
@@ -533,30 +547,33 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div class="day-head">
       <div class="day-num">05</div>
       <div class="day-meta-inner">
-        <div class="day-name">Gym + YouTube спринт өдөр</div>
+        <div class="day-name">Gym + Хичээл + YouTube спринт өдөр</div>
         <div class="day-tags">
-          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Хөл+Shoulder</span>
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Gym — Legs+Shoulder</span>
+          <span class="tag" style="color:#a78bfa;border-color:rgba(167,139,250,.3)">Хэлний хичээл</span>
           <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">YouTube спринт</span>
         </div>
-        <div class="day-quote">"Баасан = долоо хоногийн хамгийн хүчтэй хоёр хосолдог өдөр. Gym + YouTube хоёулаа дуусгана."</div>
+        <div class="day-quote">"Баасан = gym + хичээл + YouTube. Хамгийн дүүрэн өдөр. Гэхдээ хамгийн их XP олох өдөр."</div>
       </div>
     </div>
     <div class="stats">
       <div class="stat"><div class="stat-label">Босох</div><div class="stat-val">06:15</div></div>
-      <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">60+ мин</div></div>
+      <div class="stat"><div class="stat-label">Gym</div><div class="stat-val">70+ мин</div></div>
+      <div class="stat"><div class="stat-label">Хичээл</div><div class="stat-val">13:00–18:00</div></div>
       <div class="stat"><div class="stat-label">YouTube</div><div class="stat-val">60 мин</div></div>
-      <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">01:00</div></div>
     </div>
     <div class="tl">
-      <div class="tl-row c-sleep"><div class="tl-time">06:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл + 7н зорилт шалгах <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус → 7 хоногийн зорилт шалгах: Gym 3x хийсэн үү? YouTube 3x хийсэн үү? Өнөөдөр хоёулаа дуусга.</div></div></div>
-      <div class="tl-row c-train"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Legs + Shoulders</div><div class="tl-title">Legs & Shoulders Day <span class="tl-dur">— 70–80 мин</span></div><div class="tl-desc">Дулаацуулалт 10 мин → Squat 4×8 → Leg Press 3×12 → Romanian Deadlift 3×10 → Shoulder Press 3×10 → Lateral Raise 3×15 → Calf Raise 4×15 → Сунгалт.</div><div class="tl-chips"><span class="chip">Squat</span><span class="chip">Leg Press</span><span class="chip">RDL</span><span class="chip">Shoulder Press</span></div><div class="why-box"><strong>Баасан = тарчлаалын өдөр</strong>Legs day хамгийн хэцүү, хамгийн их үр дүнтэй. Энэ дуусгасан л бол бусад бүх зүйл амархан.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">06:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл + 7н зорилт шалгах <span class="tl-dur">— 15 мин</span></div><div class="tl-desc">Ус → Gym 3x? YouTube 3x? Хичээл 4x? Өнөөдөр бүгдийг дуусга.</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Legs + Shoulders</div><div class="tl-title">Legs & Shoulders Day <span class="tl-dur">— 70–80 мин</span></div><div class="tl-desc">Дулаацуулалт 10 мин → Squat 4×8 → Leg Press 3×12 → Romanian Deadlift 3×10 → Shoulder Press 3×10 → Lateral Raise 3×15 → Calf Raise 4×15 → Сунгалт.</div><div class="tl-chips"><span class="chip">Squat</span><span class="chip">Leg Press</span><span class="chip">RDL</span><span class="chip">Shoulder Press</span></div></div></div>
       <div class="tl-row c-food"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Shift бэлтгэл</div><div class="tl-title">Уураг ихтэй хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Protein + carb тэнцвэртэй. Legs day-ийн дараа их хоол хэрэгтэй.</div></div></div>
-      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— shift цагаар</span></div><div class="tl-desc">Баасан shift-д хөгжилтэй байгаарай. Оройн YouTube sprint-д mental бэлтгэлтэй байна уу гэдгийг бодоод яв.</div></div></div>
-      <div class="tl-row c-transit"><div class="tl-time">17:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">Podcast + YouTube sprint бэлтгэл <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Өнөөдрийн YouTube sprint-д юу хийх вэ гэдгийг transit-д шийдэж ав. Гэрт ирэхдээ шууд эхлэнэ.</div></div></div>
-      <div class="tl-row c-food"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, бэлэн. YouTube sprint-д бэлдэж хоолоо ид.</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Sprint</div><div class="tl-title">Нэг гаралтыг нийтэлж эсвэл бэлэн болгох <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Пүрэвний планаар — өнөөдөр execute хий. Script дуусга, эсвэл зурж дуусга, эсвэл edit дуусга. Нэг зүйл бодитой болгох.</div><div class="tl-chips"><span class="chip">Execute горим</span><span class="chip">Нэг зүйл дуусга</span><span class="chip">Нийтэлж эсвэл хадгалж дуусга</span></div><div class="why-box"><strong>Баасан Sprint = тогтвортой байдлын мөн чанар</strong>Да+Лх+Ба = 3 gym. Да+Лх+Ба = 3 YouTube. Энэ л систем. Бямба нийтлэл/upload хийнэ.</div></div></div>
-      <div class="tl-row c-rest"><div class="tl-time">20:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Баасны орой — чинийх <span class="tl-dur">— бүхэл орой</span></div><div class="tl-desc">Gym + YouTube хоёулаа хийлээ. Энэ орой бүрэн шагнал. Найз нөхдийн хамт байгаарай.</div></div></div>
-      <div class="tl-row c-sleep"><div class="tl-time">01:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">Баасны орой — 1:00 хүртэл хүлцэнгүй</div><div class="tl-desc">Маргааш Бямба YouTube их спринт. Оройтож унтсан ч 08:00 д бос.</div></div></div>
+      <div class="tl-row c-work"><div class="tl-time">09:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Barista Shift</div><div class="tl-title">Shift ажил <span class="tl-dur">— ~09:00–12:30</span></div><div class="tl-desc">Shift дуусаад хичээлд явахын өмнө Пүрэвний YouTube планаа нэг удаа харж, оройн sprint-д бэлд.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">12:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Хичээлийн бэлтгэл</div><div class="tl-title">Өдрийн хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Хурдан хоол. Gym ядралыг тэжээгээрэй. Хичээлд бэлд.</div></div></div>
+      <div class="tl-row" style="display:grid;grid-template-columns:60px 1px 1fr;gap:0 18px"><div class="tl-time">13:00</div><div class="tl-axis"><div class="tl-node" style="background:#a78bfa;margin-top:20px;width:7px;height:7px;border-radius:50%;flex-shrink:0;position:relative;z-index:2"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat" style="color:#a78bfa;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:4px">Хэлний Бэлтгэл Хичээл</div><div class="tl-title">Хэлний бэлтгэл <span class="tl-dur">— 13:00–18:00 (5 цаг)</span></div><div class="tl-desc">Хичээлд бүрэн анхаарал. Gym-тэй өдөр ч хичээл чухал. Завсарт 5 мин алхалт — legs day-ийн булчинг тайвшруул.</div><div class="tl-chips"><span class="chip">Бүрэн анхаарал</span><span class="chip">Завсарт алхалт</span></div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Transit</div><div class="tl-title">Podcast + YouTube sprint бэлтгэл <span class="tl-dur">— 1-2 цаг</span></div><div class="tl-desc">Өнөөдрийн YouTube sprint-д юу хийх вэ гэдгийг transit-д шийдэж ав. Гэрт ирэхдээ шууд эхлэнэ.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Тайван, бэлэн. YouTube sprint-д бэлдэж хоолоо ид.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Sprint</div><div class="tl-title">Нэг гаралтыг нийтэлж эсвэл бэлэн болгох <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Пүрэвний планаар — өнөөдөр execute хий. Script дуусга, эсвэл edit дуусга. Нэг зүйл бодитой болгох.</div><div class="tl-chips"><span class="chip">Execute горим</span><span class="chip">Нэг зүйл дуусга</span><span class="chip">Нийтэлж эсвэл хадгалж дуусга</span></div><div class="why-box"><strong>Баасан Sprint = тогтвортой байдлын мөн чанар</strong>Да+Лх+Ба = 3 gym. Да+Лх+Ба = 3 YouTube. Да+Мя+Лх+Пү+Ба = 5 хичээл. Энэ л систем.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">21:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Баасны орой — чинийх <span class="tl-dur">— бүхэл орой</span></div><div class="tl-desc">Gym + хичээл + YouTube хийлээ. Энэ орой бүрэн шагнал.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">01:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">Баасны орой — 1:00 хүртэл хүлцэнгүй</div><div class="tl-desc">Маргааш Бямба YouTube их спринт. Оройтож унтсан ч 08:00-д бос.</div></div></div>
     </div>
   </div>
   <div class="tab-panel" id="tp4-1">
@@ -566,7 +583,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
       <div class="boss-title">YouTube контентийн нэг бодит гаралтыг дуусга — нийтэлж эсвэл хэн нэгэнд үзүүл</div>
       <div class="boss-desc">Хадгалсан контент = тэг. Нийтэлсэн контент = feedback → сайжрах → өсөх.</div>
     </div>
-    <div class="day-complete" id="dc4"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Баасан бүрэн дууслаа!</div><div class="dc-sub">Legs gym + YouTube sprint. Хамгийн хүчтэй өдрийг давлаа.</div></div><div class="dc-xp" id="dc4xp">+120 XP</div></div>
+    <div class="day-complete" id="dc4"><div class="dc-icon">🏆</div><div class="dc-text"><div class="dc-title">Баасан бүрэн дууслаа!</div><div class="dc-sub">Gym + Хичээл + YouTube sprint. Хамгийн хүчтэй өдрийг давлаа.</div></div><div class="dc-xp" id="dc4xp">+130 XP</div></div>
     <div class="checklist-wrap" id="cl4"></div>
   </div>
 </div>
@@ -596,7 +613,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
       <div class="tl-row c-sleep"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Тайван сэрэх + Бэлтгэл <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Ус → тайван → Өдрийн нэг гол YouTube зорилт бичих. Бямба = shift-гүй = YouTube-н golden time.</div><div class="why-box"><strong>Бямба = ChongWoo-гийн YouTube өдөр</strong>Shift-гүй, тархи шинэхэн, цаг чөлөөтэй. YouTube channel-д зориулах хамгийн тохиромжтой өдөр.</div></div></div>
       <div class="tl-row c-deep"><div class="tl-time">08:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Блок #1</div><div class="tl-title">Урт Deep Work — 2 цаг <span class="tl-dur">— 120 мин</span></div><div class="tl-desc">90 мин + 15 мин завсар + 30 мин. Script бичих, зураглал хийх, эсвэл edit хийх. Утас нисгэлтэн, хаалт хаасан.</div><div class="tl-chips"><span class="chip">Script</span><span class="chip">Recording</span><span class="chip">Editing</span><span class="chip">Thumbnail</span></div></div></div>
       <div class="tl-row c-food"><div class="tl-time">10:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Амрах</div><div class="tl-title">Өглөөний хоол + 30 мин амрах <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Хоол идэж 30 мин бүрэн тасалт. Алхалт эсвэл гаднаа гар. Тархийг цэнэглэ.</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">12:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Блок #2</div><div class="tl-title">Upload бэлтгэл + Thumbnail + Тайлбар <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Видео edit дуусга → thumbnail хий → гарчиг, тайлбар, tag бичих → upload. Мөн дараагийн долоо хоногийн видеоны сэдэв сонго.</div><div class="tl-chips"><span class="chip">Final edit</span><span class="chip">Thumbnail</span><span class="chip">Upload</span><span class="chip">Metadata</span></div><div class="why-box"><strong>Бямба upload = амжилтын тэмдэг</strong>Тогтмол upload schedule = YouTube алгоритм + subscriber retention. Бямба бүр upload = жилд 52 видео.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">12:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">YouTube Блок #2</div><div class="tl-title">Upload бэлтгэл + Thumbnail + Тайлбар <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Видео edit дуусга → thumbnail хий → гарчиг, тайлбар, tag бичих → upload. Мөн дараагийн долоо хоногийн видеоны topic сонго.</div><div class="tl-chips"><span class="chip">Final edit</span><span class="chip">Thumbnail</span><span class="chip">Upload</span><span class="chip">Metadata</span></div><div class="why-box"><strong>Бямба upload = амжилтын тэмдэг</strong>Тогтмол upload schedule = YouTube алгоритм + subscriber retention. Бямба бүр upload = жилд 52 видео.</div></div></div>
       <div class="tl-row c-food"><div class="tl-time">14:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Амрах</div><div class="tl-title">Өдрийн хоол + Богино амрах <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Тайван хоол. 2.5 цаг YouTube хийлээ — сайн ажилласан. Энэ завсарт scroll хориотой.</div></div></div>
       <div class="tl-row c-train"><div class="tl-time">15:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Gym — Full Body</div><div class="tl-title">Full Body Circuit <span class="tl-dur">— 60–70 мин</span></div><div class="tl-desc">Squat 3×10 → Bench Press 3×10 → Bent Row 3×10 → Shoulder Press 3×10 → Deadlift 3×8 → Core: Plank, Crunch. Хөнгөн жинтэй, тогтмол байдлыг хадгалах.</div><div class="tl-chips"><span class="chip">Full Body</span><span class="chip">Хөнгөн жин</span><span class="chip">4-р gym өдөр</span></div><div class="why-box"><strong>Бямба Gym = 4x/7 хоног</strong>Да+Лх+Ба+Бм = 4 удаа. Энэ хамгийн сайн frequency gym-д. Та 3-4x хийдэг гэсэн — яг зөв байна.</div></div></div>
       <div class="tl-row c-rest"><div class="tl-time">17:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Чөлөөт цаг</div><div class="tl-title">Найз нөхөд / Амрах <span class="tl-dur">— бүхэл орой</span></div><div class="tl-desc">Та 3+ цаг YouTube хийлээ, gym хийлээ. Одоо энэ орой бүрэн чинийх. Хэрэв хүссэл байвал community-тэй engage хий.</div></div></div>
@@ -662,10 +679,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div style="padding:24px 36px 60px">
       <div class="section-title">Shift Worker + YouTube Creator-ийн практик зөвлөмж</div>
       <div class="tips-grid">
+        <div class="tip-card tc-sleep"><span class="tip-icon">📚</span><div class="tip-title">Хичээл + Gym + Ажил тэнцвэр</div><div class="tip-text">Gym-г өглөө (06:30), shift-г өдрийн эхэнд, хичээл-г 13:00–18:00, YouTube-г 20:00. Цаг тогтмол байвал тархи аяндаа дасдаг — шийдвэр гаргах хэрэггүй.</div></div>
         <div class="tip-card tc-deep"><span class="tip-icon">🎬</span><div class="tip-title">Нэг зорилт горим</div><div class="tip-text">45 мин YouTube хийхэд "нэг л зүйл хий" — script эсвэл edit эсвэл thumbnail. Гурвыг нэгэн зэрэг хийвэл бүгд дутуу үлдэнэ.</div></div>
         <div class="tip-card tc-train"><span class="tip-icon">🏋️</span><div class="tip-title">Shift-ийн өмнө gym</div><div class="tip-text">Shift дараа ядарч gym тасалдаг. Shift-ийн өмнө gym хийх = тогтмол 4x/7 хоног. Shift-ийн үед gym-ийн эрч хүч ч бий болдог.</div></div>
         <div class="tip-card tc-deep"><span class="tip-icon">🎧</span><div class="tip-title">Transit = YouTube боловсрол</div><div class="tip-text">1-2 цагийн transit = тогтмол YouTube стратеги сонсох цаг. Top creator-уудын podcast, interview сонс. Жилд 500+ цаг сурах боломж.</div></div>
-        <div class="tip-card tc-rest"><span class="tip-icon">📱</span><div class="tip-title">Тогтвортой байдал яаж үүсдэг</div><div class="tip-text">Их биш, тогтмол байх. 45 мин × 7 өдөр = 5.25 цаг/7хн. Жилд 273 цаг — channel хөгжихөд хангалттай. Нэг удаа 3 цаг > 7 удаа 45 мин биш.</div></div>
+        <div class="tip-card tc-rest"><span class="tip-icon">📱</span><div class="tip-title">Тогтвортой байдал яаж үүсдэг</div><div class="tip-text">Их биш, тогтмол байх. 45 мин × 7 өдөр = 5.25 цаг/7хн. Жилд 273 цаг — channel хөгжихөд хангалтай. Нэг удаа 3 цаг > 7 удаа 45 мин биш.</div></div>
         <div class="tip-card tc-sleep"><span class="tip-icon">😴</span><div class="tip-title">Shift worker-ийн нойр</div><div class="tip-text">00:30 унт, 06:15 бос = 5.75 цаг. Хангалттай бол тасалтгүй байх нь чухал. Утасыг унтлагаас гарга — нойрны чанар нэмэгдэнэ.</div></div>
         <div class="tip-card tc-work"><span class="tip-icon">☕</span><div class="tip-title">Barista эрч хүч</div><div class="tip-text">Shift-д хэт их кофе ууснаас болж оройн нойр муудах тохиолдол бий. 14:00-с хойш кофе зогсоо — энэ нойрны чанарыг сайжруулна.</div></div>
       </div>
@@ -783,11 +801,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
 
 <script>
 const DAYS = [
-  { name:'Даваа', meta:'ӨД #1 — MON · GYM: CHEST+TRI + YOUTUBE', xp:110, badge:'+110 XP / өдөр' },
-  { name:'Мягмар', meta:'ӨД #2 — TUE · ИДЭВХТЭЙ АМРАЛТ + КОНТЕНТ', xp:90, badge:'+90 XP / өдөр' },
-  { name:'Лхагва', meta:'ӨД #3 — WED · GYM: BACK+BI + YOUTUBE', xp:110, badge:'+110 XP / өдөр' },
-  { name:'Пүрэв', meta:'ӨД #4 — THU · АМРАЛТ + YOUTUBE СТРАТЕГИ', xp:90, badge:'+90 XP / өдөр' },
-  { name:'Баасан', meta:'ӨД #5 — FRI · GYM: LEGS+SHO + СПРИНТ', xp:120, badge:'+120 XP / өдөр' },
+  { name:'Даваа', meta:'ӨД #1 — MON · GYM + ХИЧЭЭЛ + YOUTUBE', xp:120, badge:'+120 XP / өдөр' },
+  { name:'Мягмар', meta:'ӨД #2 — TUE · ХИЧЭЭЛ + YOUTUBE', xp:100, badge:'+100 XP / өдөр' },
+  { name:'Лхагва', meta:'ӨД #3 — WED · GYM + ХИЧЭЭЛ + YOUTUBE', xp:120, badge:'+120 XP / өдөр' },
+  { name:'Пүрэв', meta:'ӨД #4 — THU · ХИЧЭЭЛ + YOUTUBE СТРАТЕГИ', xp:100, badge:'+100 XP / өдөр' },
+  { name:'Баасан', meta:'ӨД #5 — FRI · GYM + ХИЧЭЭЛ + СПРИНТ', xp:130, badge:'+130 XP / өдөр' },
   { name:'Бямба', meta:'АӨ #1 — SAT · YOUTUBE ИХ СПРИНТ + FULL BODY GYM', xp:140, badge:'+140 XP / өдөр' },
   { name:'Ням', meta:'АӨ #2 — SUN · БҮРЭН АМРАХ + WEEKLY REVIEW', xp:120, badge:'+120 XP / өдөр' },
 ];
@@ -800,9 +818,10 @@ const CHECKLISTS = [
     ['💪 Gym — Chest+Tricep (60+ мин)',25,'Gym'],
     ['✅ Gym-д утасгүй байсан',5,'Gym'],
     ['🍳 Shift-ийн өмнө уураг ихтэй хоол',5,'Хоол'],
-    ['☕ Barista shift',15,'Shift'],
+    ['☕ Barista shift дууссан',15,'Shift'],
+    ['📚 Хэлний бэлтгэл хичээл — 13:00–18:00',20,'Хичээл'],
+    ['📒 Хичээлийн тэмдэглэл хийсэн',5,'Хичээл'],
     ['🎧 Transit-д podcast/YouTube сонссон',5,'Transit'],
-    ['🍽️ Оройн хоол — утасгүй идсэн',5,'Орой'],
     ['🎬 YouTube Deep Work — 45+ мин',20,'Орой'],
     ['😴 00:30 унтсан',5,'Орой'],
   ],
@@ -811,8 +830,9 @@ const CHECKLISTS = [
     ['🌅 06:30 босох + ус',5,'Өглөө'],
     ['🤸 10 мин хөнгөн сунгалт',5,'Өглөө'],
     ['🎧 Transit-д podcast сонссон',5,'Shift'],
-    ['☕ Barista shift',15,'Shift'],
-    ['📝 Shift завсарт YouTube санаа тэмдэглэсэн',10,'Shift'],
+    ['☕ Barista shift дууссан',15,'Shift'],
+    ['📚 Хэлний бэлтгэл хичээл — 13:00–18:00',20,'Хичээл'],
+    ['📒 Хичээлийн тэмдэглэл хийсэн',5,'Хичээл'],
     ['🎬 YouTube санаа цуглуулах — 30 мин',15,'Орой'],
     ['😴 00:30 унтсан',5,'Орой'],
   ],
@@ -822,7 +842,9 @@ const CHECKLISTS = [
     ['📊 7н дундын шалгалт хийсэн',5,'Өглөө'],
     ['💪 Gym — Back+Bicep (60+ мин)',25,'Gym'],
     ['✅ Deadlift + Bent Row хийсэн',5,'Gym'],
-    ['☕ Barista shift',15,'Shift'],
+    ['☕ Barista shift дууссан',15,'Shift'],
+    ['📚 Хэлний бэлтгэл хичээл — 13:00–18:00',20,'Хичээл'],
+    ['📒 Хичээлийн тэмдэглэл хийсэн',5,'Хичээл'],
     ['🎧 Transit-д podcast сонссон',5,'Transit'],
     ['🎬 YouTube Deep Work — нэг зүйл бодит болгосон',20,'Орой'],
     ['😴 00:30 унтсан',5,'Орой'],
@@ -831,8 +853,9 @@ const CHECKLISTS = [
   [
     ['🌅 06:30 босох + ус',5,'Өглөө'],
     ['🤸 10 мин сунгалт',5,'Өглөө'],
-    ['☕ Barista shift',15,'Shift'],
-    ['📝 Shift завсарт Баасны YouTube зорилт тодорхойлсон',5,'Shift'],
+    ['☕ Barista shift дууссан',15,'Shift'],
+    ['📚 Хэлний бэлтгэл хичээл — 13:00–18:00',20,'Хичээл'],
+    ['📒 Хичээлийн тэмдэглэл хийсэн',5,'Хичээл'],
     ['🎬 YouTube стратеги — дараагийн видеоны план',20,'Орой'],
     ['✍️ Topic+Hook+Script outline+Thumbnail бичсэн',15,'Орой'],
     ['😴 00:30 унтсан',5,'Орой'],
@@ -843,7 +866,9 @@ const CHECKLISTS = [
     ['📝 7н зорилт шалгасан',5,'Өглөө'],
     ['💪 Gym — Legs+Shoulders (70+ мин)',25,'Gym'],
     ['✅ Squat + RDL + Shoulder Press хийсэн',5,'Gym'],
-    ['☕ Barista shift',15,'Shift'],
+    ['☕ Barista shift дууссан',15,'Shift'],
+    ['📚 Хэлний бэлтгэл хичээл — 13:00–18:00',20,'Хичээл'],
+    ['📒 Хичээлийн тэмдэглэл хийсэн',5,'Хичээл'],
     ['🎧 Transit-д YouTube sprint бэлтгэл',5,'Transit'],
     ['🎬 YouTube Sprint — нэг гаралт дуусгасан',20,'Орой'],
     ['😴 01:00 унтсан',5,'Орой'],

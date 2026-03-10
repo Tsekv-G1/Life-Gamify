@@ -185,14 +185,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
 .tip-icon{font-size:16px;margin-bottom:7px;display:block}
 .tip-title{font-size:12px;font-weight:700;color:var(--white);margin-bottom:4px;letter-spacing:-.01em}
 .tip-text{font-size:11px;color:var(--muted2);line-height:1.6}
-.improvements{margin-top:6px}
-.imp-item{display:grid;grid-template-columns:28px 1fr;gap:0 14px;padding:14px 0;border-bottom:1px solid var(--border);align-items:start}
-.imp-item:last-child{border-bottom:none}
-.imp-num{font-family:var(--mono);font-size:10px;color:var(--muted);padding-top:2px}
-.imp-title{font-size:12px;font-weight:600;color:var(--white);margin-bottom:3px}
-.imp-old{font-size:11px;color:var(--muted);text-decoration:line-through;margin-bottom:2px}
-.imp-new{font-size:11px;color:var(--lvl);margin-bottom:4px;font-weight:500}
-.imp-why{font-size:11px;color:var(--muted2);line-height:1.6}
+.improvements{margin-top:6px;display:flex;flex-direction:column;gap:10px}
+.imp-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:0;position:relative;overflow:hidden;transition:border-color .2s}
+.imp-item:hover{border-color:var(--border2)}
+.imp-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lvl);border-radius:10px 0 0 10px}
+.imp-num{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;margin-bottom:6px;font-weight:700}
+.imp-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:10px;line-height:1.3}
+.imp-change{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.imp-old{font-size:12px;color:var(--muted);text-decoration:line-through;padding:6px 10px;background:rgba(255,255,255,.03);border-radius:6px}
+.imp-new{font-size:12px;color:var(--lvl);font-weight:600;padding:6px 10px;background:rgba(62,207,142,.06);border-radius:6px;border:1px solid rgba(62,207,142,.15)}
+.imp-why{font-size:11px;color:var(--muted2);line-height:1.65;padding-top:8px;border-top:1px solid var(--border)}
 .day-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:6px;padding-bottom:16px;border-bottom:1px solid var(--border)}
 .day-num{font-size:42px;font-weight:700;color:var(--border2);line-height:1;letter-spacing:-.04em;flex-shrink:0;font-family:var(--mono)}
 .day-meta-inner{flex:1}
@@ -269,6 +271,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
  .boss-card{padding:11px 13px;margin-bottom:14px}
  .boss-title{font-size:13px}
  .boss-desc{font-size:11px}
+ .imp-item{padding:13px}
+ .imp-title{font-size:13px}
+ .imp-old,.imp-new{font-size:11px}
+ .imp-why{font-size:11px}
  .day-complete{padding:12px 14px;margin-bottom:14px}
  .dc-title{font-size:12px}
  .dc-sub{font-size:10px}
@@ -312,7 +318,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
  <button class="lvlup-btn" onclick="closeLvlUp()">Үргэлжлүүлэх →</button>
  </div>
 </div>
-<div class="ach-toast" id="achToast">🏅 <span id="achToastText">Амжилт!</span></div>
+<div class="ach-toast" id="achToast" style="visibility:hidden"><span id="achToastIcon">🏅</span> <span id="achToastText">Амжилт!</span></div>
 <div class="mobile-xp-bar" id="mobileXpBar">
  <div class="xp-level" id="mLvlLabel">LVL 1</div>
  <div class="xp-bar-bg"><div class="xp-bar-fill2" id="mXpBar" style="width:0%"></div></div>
@@ -749,14 +755,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
  <div class="page-title" style="font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;padding:0">7 хоногт <span style="color:var(--muted2);font-weight:300">юу өөрчлөгдөх вэ?</span></div>
  <div style="font-size:10px;color:var(--muted2);letter-spacing:.07em;font-family:var(--mono);margin-bottom:24px">ЧИНИЙ АСУУЛТАД ХАРИУЛТ — ШИНЖЛЭХ УХААНД ТУЛГУУРЛАСАН</div>
  <div class="improvements">
- <div class="imp-item"><div class="imp-num">01</div><div><div class="imp-title">Унтах дэглэм — Эхний долоо хоног</div><div class="imp-old">00:00-с хойш унтдаг, өглөө хэцүүхэн босдог</div><div class="imp-new">22:30–06:30 унтах → 8 цаг бүрэн нойр</div><div class="imp-why">Циркадийн хэмнэлийг засахад 3-7 хоног шаарддаг. Эхний 3 өдөр хэцүү байна, дараа нь автоматаар унтдаг болдог.</div></div></div>
- <div class="imp-item"><div class="imp-num">02</div><div><div class="imp-title">Биеийн галбар — 2-4 долоо хоног</div><div class="imp-old">63кг, галбар тодорхойгүй</div><div class="imp-new">Дасгал 3 удаа + уураг 100г/өдөр + ус 2.5л → 2-4 долоо хоногт харагдах өөрчлөлт</div><div class="imp-why">Дасгал эхэлсэн эхний долоо хоногт биеийн жин нэмэгддэг (булчин ус хадгалдаг), гэхдээ 2-4 долоо хоногт харагдах ялгаа гарна.</div></div></div>
- <div class="imp-item"><div class="imp-num">03</div><div><div class="imp-title">Нэмэлт орлого — 1-4 долоо хоног</div><div class="imp-old">Тогтмол бус, цаг алдагдаг</div><div class="imp-new">Өдөрт 3+ цаг → долоо хоногт 21+ цаг → тогтмол эх үүсвэр бий болно</div><div class="imp-why">Орлогын суваг нь тогтмол цаг зарцуулснаас хамаарна. Нэг долоо хоногт үр дүн гарахгүй ч, 4-8 долоо хоногт тогтмол болдог.</div></div></div>
- <div class="imp-item"><div class="imp-num">04</div><div><div class="imp-title">Бүтээмж — Эхний долоо хоног</div><div class="imp-old">Утас харах, анхаарал тасрах, оройн цаг дэмий зарцуулах</div><div class="imp-new">Тогтмол хуваарь → тархи урьдчилан мэдэж, дагалдан ажилладаг</div><div class="imp-why">Тархи нь хуваарийн дагуу ажиллах дадал хурдан бий болгодог. 3-5 хоногт аль хэдийн анхаарал сайжирна.</div></div></div>
- <div class="imp-item"><div class="imp-num">05</div><div><div class="imp-title">Дасгалын сэтгэлзүй — Эхний 3 долоо хоног</div><div class="imp-old">Яаж эхлэхээ мэдэхгүй байсан</div><div class="imp-new">3 долоо хоногт зуршил болдог — дасгал хийхгүй бол "тав тухгүй байдал" болно</div><div class="imp-why">Нейрологийн судалгаагаар зуршил бий болоход 21 хоног шаарддаг. 3 долоо хоногийг зорилт болго.</div></div></div>
- <div class="imp-item"><div class="imp-num">06</div><div><div class="imp-title">Сургуулийн гүйцэтгэл — 2-3 долоо хоног</div><div class="imp-old">Хичээл завсарлагаанд алхахгүй, тархи ядрадаг</div><div class="imp-new">5-10 минутын алхалт завсарлага → тархийн цусны эргэлт нэмэгдэж, анхаарал сайжирна</div><div class="imp-why">Физик хөдөлгөөн тархинд тархины өсөлтийн уураг нэмэгдүүлж, суралцах чадварыг дэмждэг.</div></div></div>
- <div class="imp-item"><div class="imp-num">07</div><div><div class="imp-title">Урьдчилан хоол бэлдэх — Эхний долоо хоног</div><div class="imp-old">Өдөр бүр хоол бэлдэх, цаг алддаг</div><div class="imp-new">Долоо хоногт 2 удаа урьдчилан хоол бэлдэх → өдөр бүр 30 мин хэмнэгдэж орлогын ажилд шилжинэ</div><div class="imp-why">Долоо хоногт 30 мин × 7 = 3.5 цаг. Тэр 3.5 цагийг орлогод зарцуулвал жил дэхь өсөлт асар их.</div></div></div>
- <div class="imp-item"><div class="imp-num">08</div><div><div class="imp-title">Хамгийн чухал зуршил</div><div class="imp-old">Орой 00:00-аас хойш утас харан сууж унтдаг</div><div class="imp-new">21:30 дэлгэц хаах → 22:30 унтах → 06:30 сэргэн босох</div><div class="imp-why">Энэ нэг өөрчлөлт нь бусад бүх зүйлийг дагуулна. Унтах нь дасгал, орлогын ажил, сургуулийн гүйцэтгэл бүгдийг нэгэн зэрэг сайжруулдаг.</div></div></div>
+ <div class="imp-item"><div class="imp-num">01 · УНТАХ</div><div class="imp-title">Унтах дэглэм — Эхний долоо хоног</div><div class="imp-change"><div class="imp-old">00:00-с хойш унтдаг, өглөө хэцүүхэн босдог</div><div class="imp-new">22:30–06:30 унтах → 8 цаг бүрэн нойр</div></div><div class="imp-why">Циркадийн хэмнэлийг засахад 3-7 хоног шаарддаг. Эхний 3 өдөр хэцүү байна, дараа нь автоматаар унтдаг болдог.</div></div>
+ <div class="imp-item"><div class="imp-num">02 · БИЕИЙН ГАЛБАР</div><div class="imp-title">Биеийн галбар — 2-4 долоо хоног</div><div class="imp-change"><div class="imp-old">63кг, галбар тодорхойгүй</div><div class="imp-new">Дасгал 3 удаа + уураг 100г/өдөр + ус 2.5л → 2-4 долоо хоногт харагдах өөрчлөлт</div></div><div class="imp-why">Дасгал эхэлсэн эхний долоо хоногт биеийн жин нэмэгддэг (булчин ус хадгалдаг), гэхдээ 2-4 долоо хоногт харагдах ялгаа гарна.</div></div>
+ <div class="imp-item"><div class="imp-num">03 · ОРЛОГО</div><div class="imp-title">Нэмэлт орлого — 1-4 долоо хоног</div><div class="imp-change"><div class="imp-old">Тогтмол бус, цаг алдагдаг</div><div class="imp-new">Өдөрт 3+ цаг → долоо хоногт 21+ цаг → тогтмол эх үүсвэр бий болно</div></div><div class="imp-why">Орлогын суваг нь тогтмол цаг зарцуулснаас хамаарна. Нэг долоо хоногт үр дүн гарахгүй ч, 4-8 долоо хоногт тогтмол болдог.</div></div>
+ <div class="imp-item"><div class="imp-num">04 · БҮТЭЭМЖ</div><div class="imp-title">Бүтээмж — Эхний долоо хоног</div><div class="imp-change"><div class="imp-old">Утас харах, анхаарал тасрах, оройн цаг дэмий зарцуулах</div><div class="imp-new">Тогтмол хуваарь → тархи урьдчилан мэдэж, дагалдан ажилладаг</div></div><div class="imp-why">Тархи нь хуваарийн дагуу ажиллах дадал хурдан бий болгодог. 3-5 хоногт аль хэдийн анхаарал сайжирна.</div></div>
+ <div class="imp-item"><div class="imp-num">05 · ДАСГАЛ</div><div class="imp-title">Дасгалын сэтгэлзүй — Эхний 3 долоо хоног</div><div class="imp-change"><div class="imp-old">Яаж эхлэхээ мэдэхгүй байсан</div><div class="imp-new">3 долоо хоногт зуршил болдог — дасгал хийхгүй бол "тав тухгүй байдал" болно</div></div><div class="imp-why">Нейрологийн судалгаагаар зуршил бий болоход 21 хоног шаарддаг. 3 долоо хоногийг зорилт болго.</div></div>
+ <div class="imp-item"><div class="imp-num">06 · СУРГУУЛЬ</div><div class="imp-title">Сургуулийн гүйцэтгэл — 2-3 долоо хоног</div><div class="imp-change"><div class="imp-old">Хичээл завсарлагаанд алхахгүй, тархи ядрадаг</div><div class="imp-new">5-10 минутын алхалт завсарлага → тархийн цусны эргэлт нэмэгдэж, анхаарал сайжирна</div></div><div class="imp-why">Физик хөдөлгөөн тархинд тархины өсөлтийн уураг нэмэгдүүлж, суралцах чадварыг дэмждэг.</div></div>
+ <div class="imp-item"><div class="imp-num">07 · ХООЛ</div><div class="imp-title">Урьдчилан хоол бэлдэх — Эхний долоо хоног</div><div class="imp-change"><div class="imp-old">Өдөр бүр хоол бэлдэх, цаг алддаг</div><div class="imp-new">Долоо хоногт 2 удаа урьдчилан хоол бэлдэх → өдөр бүр 30 мин хэмнэгдэж орлогын ажилд шилжинэ</div></div><div class="imp-why">Долоо хоногт 30 мин × 7 = 3.5 цаг. Тэр 3.5 цагийг орлогод зарцуулвал жил дэхь өсөлт асар их.</div></div>
+ <div class="imp-item" style="--accent:var(--xp)"><div class="imp-num">08 · ХАМГИЙН ЧУХАЛ</div><div class="imp-title">Хамгийн чухал зуршил</div><div class="imp-change"><div class="imp-old">Орой 00:00-аас хойш утас харан сууж унтдаг</div><div class="imp-new">21:30 дэлгэц хаах → 22:30 унтах → 06:30 сэргэн босох</div></div><div class="imp-why">Энэ нэг өөрчлөлт нь бусад бүх зүйлийг дагуулна. Унтах нь дасгал, орлогын ажил, сургуулийн гүйцэтгэл бүгдийг нэгэн зэрэг сайжруулдаг.</div></div>
  </div>
  </div>
 </div>
@@ -995,7 +1001,7 @@ function checkAchievements(){
  if(ach.check(state,CHECKLISTS)){ state.checks[`ach_${ach.id}`]=true; showAchToast(ach); renderAchievements(); }
  });
 }
-function showAchToast(ach){ const el=document.getElementById('achToast'); document.getElementById('achToastText').textContent=ach.name+' — '+ach.desc; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000); }
+function showAchToast(ach){ const el=document.getElementById('achToast'); document.getElementById('achToastText').textContent=ach.name+' — '+ach.desc; el.style.visibility='visible'; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.style.visibility='hidden',400); },3000); }
 
 function renderAchievements(){
  const grids=['achGrid','mobileAchGrid'].map(id=>document.getElementById(id)).filter(Boolean);

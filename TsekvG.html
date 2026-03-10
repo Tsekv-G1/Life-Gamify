@@ -486,16 +486,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
 
   <div class="nav-section">
     <div class="nav-label">Ажлын өдрүүд</div>
-    <div class="nav-item active" onclick="showDay(0)" id="nav0"><div class="nav-dot" style="background:var(--deep)"></div>Даваа<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Мөр&Гар</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(1)" id="nav1"><div class="nav-dot" style="background:var(--deep)"></div>Мягмар<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Нуруу</span><span class="nav-check">✓</span></div>
+    <div class="nav-item active" onclick="showDay(0)" id="nav0"><div class="nav-dot" style="background:var(--deep)"></div>Даваа<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Deep Work</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(1)" id="nav1"><div class="nav-dot" style="background:var(--deep)"></div>Мягмар<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Deep Work</span><span class="nav-check">✓</span></div>
     <div class="nav-item" onclick="showDay(2)" id="nav2"><div class="nav-dot" style="background:var(--rest)"></div>Лхагва<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Batch</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(3)" id="nav3"><div class="nav-dot" style="background:var(--deep)"></div>Пүрэв<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Хөл</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(4)" id="nav4"><div class="nav-dot" style="background:var(--deep)"></div>Баасан<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Core</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(3)" id="nav3"><div class="nav-dot" style="background:var(--deep)"></div>Пүрэв<span class="nav-badge" style="background:rgba(79,143,255,.1);color:var(--deep)">Хөл💪</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(4)" id="nav4"><div class="nav-dot" style="background:var(--rest)"></div>Баасан<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Selfcare</span><span class="nav-check">✓</span></div>
   </div>
   <div class="nav-section">
     <div class="nav-label">Амралтын өдрүүд</div>
     <div class="nav-item" onclick="showDay(5)" id="nav5"><div class="nav-dot" style="background:var(--train)"></div>Бямба<span class="nav-badge" style="background:rgba(255,107,74,.08);color:var(--train)">Full Body</span><span class="nav-check">✓</span></div>
-    <div class="nav-item" onclick="showDay(6)" id="nav6"><div class="nav-dot" style="background:var(--rest)"></div>Ням<span class="nav-badge" style="background:rgba(62,207,142,.08);color:var(--rest)">Batch+Plan</span><span class="nav-check">✓</span></div>
+    <div class="nav-item" onclick="showDay(6)" id="nav6"><div class="nav-dot" style="background:var(--train)"></div>Ням<span class="nav-badge" style="background:rgba(255,107,74,.08);color:var(--train)">Дасгал+SC</span><span class="nav-check">✓</span></div>
   </div>
   <div class="nav-section">
     <div class="nav-label">Нэмэлт</div>
@@ -545,32 +545,28 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div class="day-head">
       <div class="day-num">01</div>
       <div class="day-meta-inner">
-        <div class="day-name">Мөр & Гар өдөр</div>
+        <div class="day-name">Ажилд төвлөрсөн өдөр</div>
         <div class="day-tags">
-          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work ×2</span>
-          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Дасгал</span>
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work</span>
           <span class="tag" style="color:var(--muted2);border-color:var(--border2)">Ажлын өдөр</span>
         </div>
-        <div class="day-quote">"Өглөөний 80 минут бол өдрийн хамгийн үнэтэй цаг — тархи шинэхэн, дэлхий чимээгүй."</div>
+        <div class="day-quote">"Өглөөний 60 минут бол бие, тархиа тэжээх цаг — оройд шилдэг ажил гарна."</div>
       </div>
     </div>
     <div class="stats">
-      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">3.5ц</div></div>
-      <div class="stat"><div class="stat-label">Дасгал</div><div class="stat-val">50мин</div></div>
+      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">2ц+</div></div>
+      <div class="stat"><div class="stat-label">Өглөөний бэлтгэл</div><div class="stat-val">60мин</div></div>
       <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">22:30</div></div>
       <div class="stat"><div class="stat-label">Алхалт</div><div class="stat-val">8000+</div></div>
     </div>
     <div class="tl">
-      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Ус 500мл → 5-10 мин сунгалт → нүүр угаах → өдрийн нэг гол зорилт бичих</div><div class="why-box"><strong>Яагаад энэ цагт</strong>Унтсаны дараа бие 7-8 цаг усгүй байна. Ус тархийг идэвхжүүлж, кортизолийн байгалийн оргилыг ашиглана.</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #1</div><div class="tl-title">Productdrop / YouTube — хамгийн чухал ажил <span class="tl-dur">— 80 мин</span></div><div class="tl-desc">Утас нисгэлтэн горимд. Нэг л зорилтод голлоно. Контент бичих, судалгаа, стратеги.</div><div class="tl-chips"><span class="chip">Productdrop template</span><span class="chip">Судалгаа</span><span class="chip">Бизнес санаа</span></div><div class="why-box"><strong>Яагаад энэ цагт</strong>Prefrontal cortex хамгийн идэвхтэй. Допамин, серотонин оргилдоо. Ажилдаа очсоны дараа таслалт байнга гарч энэ чанарын ажил хийгдэхгүй болно.</div></div></div>
-      <div class="tl-row c-food"><div class="tl-time">07:50</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Өглөөний хоол <span class="tl-dur">— 20 мин</span></div><div class="tl-desc">Өндөг 3-4ш + талх/гурил + тараг. Утасгүй, тайван идэнэ.</div></div></div>
-      <div class="tl-row c-transit"><div class="tl-time">08:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Шилжилт</div><div class="tl-title">Ажилдаа явах <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Podcast / audiobook. Нэг буудал өмнө буугаад алхах.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Ус 500мл → 10 мин сунгалт → нүүр угаах → өглөөний цай → өглөөний хоол → өдрийн нэг гол зорилт бичих</div><div class="why-box"><strong>06:00–07:00</strong>Яарахгүй, тайван бэлдэнэ. Биеийг сэрээж, оюун тогтворжуулна.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">07:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Шилжилт — Өглөөний анхаарал</div><div class="tl-title">Ажилдаа явах <span class="tl-dur">07:00–08:30</span></div><div class="tl-desc">Podcast / audiobook. Нэг буудал өмнө буугаад алхах. Оройн deep work-ийн зорилтоо боловсруулна.</div></div></div>
       <div class="tl-row c-work"><div class="tl-time">08:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Үндсэн ажил</div><div class="tl-title">GogoShop <span class="tl-dur">08:30–17:00</span></div><div class="tl-desc">90 мин тутамд 5 мин зогсоод мөр, нуруу сунгана.</div><div class="why-box"><strong>90 мин дүрэм</strong>Ultradian rhythm — тархи 90 мин дараа цэнэглэлт шаарддаг.</div></div></div>
       <div class="tl-row c-transit"><div class="tl-time">17:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Гэртээ харих</div><div class="tl-title">Decompression <span class="tl-dur">— 1 цаг</span></div><div class="tl-desc">Podcast, музик. Ажлын сэтгэлийг тайлж оройн Deep Work-д бэлдэнэ.</div></div></div>
-      <div class="tl-row c-food"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Бэлтгэл</div><div class="tl-title">Дасгалын өмнөх хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Тараг + самар + жимс. Дасгалын хувцас өмснө бэлдэнэ.</div></div></div>
-      <div class="tl-row c-train"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Дасгал</div><div class="tl-title">Мөр & Гар <span class="tl-dur">— 50 мин</span></div><div class="tl-desc">Overhead Press → Arnold Press → Lateral Raise → Bicep Curl → Hammer Curl → Tricep Overhead Ext.</div><div class="tl-chips"><span class="chip">4×10-12 / Press</span><span class="chip">3×12 / Curl</span><span class="chip">Амрах 60-90 сек</span></div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #2</div><div class="tl-title">Productdrop / YouTube канал / E-Commerce <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Контент засах, захиалга, маркетинг. Дасгалын дараа BDNF оргилтоо.</div><div class="tl-chips"><span class="chip">YouTube канал скрипт</span><span class="chip">Productdrop захиалга</span><span class="chip">E-Commerce тест</span></div></div></div>
-      <div class="tl-row c-rest"><div class="tl-time">21:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Тайвшрах <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Дэлгэц зогсоох → ном → маргаашийн нэг зорилт бичих.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Хөнгөн хоол. Тараг + өндөг + ногоо. Утасгүй.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">18:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work</div><div class="tl-title">Productdrop / YouTube канал <span class="tl-dur">— 2.5 цаг</span></div><div class="tl-desc">Контент бичих, захиалга, маркетинг. Утас нисгэлтэн горимд.</div><div class="tl-chips"><span class="chip">YouTube канал скрипт</span><span class="chip">Productdrop захиалга</span><span class="chip">E-Commerce тест</span></div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">21:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Тайвшрах <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Дэлгэц зогсоох → ном → маргаашийн нэг зорилт бичих.</div></div></div>
       <div class="tl-row c-sleep"><div class="tl-time">22:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7.5 цаг — 5 бүрэн нойрны цикл</div><div class="tl-desc">Тасалгааг сэрүүн (18–20°C), харанхуй. Утас өөр өрөөнд.</div></div></div>
     </div>
   </div>
@@ -605,29 +601,27 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div class="day-head">
       <div class="day-num">02</div>
       <div class="day-meta-inner">
-        <div class="day-name">Нуруу & Хажуу өдөр</div>
+        <div class="day-name">Ажилд төвлөрсөн өдөр</div>
         <div class="day-tags">
-          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work ×2</span>
-          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Дасгал</span>
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work</span>
+          <span class="tag" style="color:var(--muted2);border-color:var(--border2)">Ажлын өдөр</span>
         </div>
-        <div class="day-quote">"10 цаг суусны дараа татах дасгал нуруугаа засна. Push/pull тэнцвэр бол нурууны өвдөлтгүй байхын үндэс."</div>
+        <div class="day-quote">"10 цаг суусны дараа татах сунгалт нуруугаа засна. Оройн Deep Work нь өдрийн шилдэг үр дүн."</div>
       </div>
     </div>
     <div class="stats">
-      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">3.5ц</div></div>
-      <div class="stat"><div class="stat-label">Дасгал</div><div class="stat-val">50мин</div></div>
+      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">2.5ц</div></div>
+      <div class="stat"><div class="stat-label">Өглөөний бэлтгэл</div><div class="stat-val">60мин</div></div>
       <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">22:30</div></div>
       <div class="stat"><div class="stat-label">Хуваарь</div><div class="stat-val">Дааваатай адил</div></div>
     </div>
     <div class="tl">
-      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл</div><div class="tl-desc">Ус → сунгалт → зорилт бичих</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #1</div><div class="tl-title">Бизнес <span class="tl-dur">— 80 мин</span></div><div class="tl-desc">Өчигдрийн ажлыг үргэлжлүүлэх эсвэл шинэ зорилт.</div><div class="tl-chips"><span class="chip">E-Commerce тест</span><span class="chip">YouTube канал контент</span></div></div></div>
-      <div class="tl-row c-food"><div class="tl-time">07:50</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Өглөөний хоол</div><div class="tl-desc">Өндөг + тараг + талх. Утасгүй идэнэ.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Ус → сунгалт → цай → өглөөний хоол → зорилт бичих</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">07:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Шилжилт — Өглөөний анхаарал</div><div class="tl-title">Ажилдаа явах <span class="tl-dur">07:00–08:30</span></div><div class="tl-desc">Podcast / audiobook. Нэг буудал өмнө буугаад алхах.</div></div></div>
       <div class="tl-row c-work"><div class="tl-time">08:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Үндсэн ажил</div><div class="tl-title">GogoShop <span class="tl-dur">— 8.5 цаг</span></div><div class="tl-desc">Завсарлагаанд мөр арагшаа татаж, нуруу сунгах.</div></div></div>
-      <div class="tl-row c-food"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Хөнгөн хоол</div><div class="tl-desc">Тараг + самар. Дасгалын хувцас.</div></div></div>
-      <div class="tl-row c-train"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Дасгал</div><div class="tl-title">Нуруу & Хажуу <span class="tl-dur">— 50 мин</span></div><div class="tl-desc">Bent Over Row → Single Arm Row → Renegade Row → Upright Row → Shrug → Front Raise</div><div class="why-box"><strong>Яагаад татах дасгал чухал</strong>10 цаг суусны нурууны flexor булчин хатуурна. Татах дасгал тэнцвэрийг сэргээнэ.</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #2</div><div class="tl-title">Productdrop / YouTube канал <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Захиалга, нийгмийн хэрэгсэл, контент шалгах.</div></div></div>
-      <div class="tl-row c-rest"><div class="tl-time">21:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Тайвшрах <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Дэлгэц зогсоох → ном → маргаашийн зорилт.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Хөнгөн хоол. Тараг + өндөг. Утасгүй.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">18:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work</div><div class="tl-title">Productdrop / YouTube канал <span class="tl-dur">— 2.5 цаг</span></div><div class="tl-desc">Захиалга, нийгмийн хэрэгсэл, контент шалгах.</div><div class="tl-chips"><span class="chip">E-Commerce тест</span><span class="chip">YouTube канал контент</span></div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">21:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Тайвшрах <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Дэлгэц зогсоох → ном → маргаашийн зорилт.</div></div></div>
       <div class="tl-row c-sleep"><div class="tl-time">22:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7.5 цаг</div><div class="tl-desc">Нуруу, мөрний булчин унтаж байх үед сэргэнэ.</div></div></div>
     </div>
   </div>
@@ -665,8 +659,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
       <div class="stat"><div class="stat-label">Batch Cook</div><div class="stat-val">4 хоног</div></div>
     </div>
     <div class="tl">
-      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл</div><div class="tl-desc">Ус → сунгалт → долоо хоногийн дундын шалгалт.</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #1</div><div class="tl-title">Долоо хоногийн дундын шалгалт <span class="tl-dur">— 80 мин</span></div><div class="tl-desc">Даваа-Мягмарын ахицыг шалгаж хоёр дахь хагасын зорилтыг тохируулна.</div><div class="tl-chips"><span class="chip">Mid-week review</span><span class="chip">Стратеги тохируулах</span></div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Ус → сунгалт → цай → өглөөний хоол → долоо хоногийн дундын шалгалт (5 мин).</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">07:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Шилжилт — Өглөөний анхаарал</div><div class="tl-title">Ажилдаа явах <span class="tl-dur">07:00–08:30</span></div><div class="tl-desc">Podcast / audiobook. Нэг буудал өмнө буугаад алхах.</div></div></div>
       <div class="tl-row c-work"><div class="tl-time">08:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Үндсэн ажил</div><div class="tl-title">GogoShop <span class="tl-dur">— 8.5 цаг</span></div><div class="tl-desc">Завсарлагаанд хөнгөн алхалт (active recovery).</div></div></div>
       <div class="tl-row c-food"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">🍳 Batch Cook #2 — 4 хоног</div><div class="tl-title">Пүрэв–Бямбагийн хоол бэлдэж хөлдөөх <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">4 хоногийн хоолоо нэгэн зэрэг бэлдэж хөлдөөнө.</div><div class="tl-chips"><span class="chip">Мах чанах</span><span class="chip">Ногоо огтлох</span><span class="chip">4 хоног хөлдөөх</span></div></div></div>
       <div class="tl-row c-deep"><div class="tl-time">19:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #2 — Урт блок</div><div class="tl-title">Бүтээлч ажил <span class="tl-dur">— 2.5 цаг</span></div><div class="tl-desc">90 мин + 15 мин завсар + 60 мин урт блок.</div><div class="tl-chips"><span class="chip">YouTube канал видео засах</span><span class="chip">Productdrop маркетинг</span><span class="chip">E-Commerce контент</span></div></div></div>
@@ -707,8 +701,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
       <div class="stat"><div class="stat-label">Нүүрс ус</div><div class="stat-val">+нэмэлт</div></div>
     </div>
     <div class="tl">
-      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл</div><div class="tl-desc">Ус → сунгалт. Хөлний дасгал их энерги шаарддаг.</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #1</div><div class="tl-title">Бизнес <span class="tl-dur">— 80 мин</span></div><div class="tl-desc">Долоо хоногийн 4 дэх өдөр — хамгийн чухал зорилтдоо л голлоно.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Ус → сунгалт → цай → өглөөний хоол. Хөлний дасгал их энерги шаарддаг — хоолоо сайн идэнэ.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">07:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Шилжилт — Өглөөний анхаарал</div><div class="tl-title">Ажилдаа явах <span class="tl-dur">07:00–08:30</span></div><div class="tl-desc">Podcast / audiobook. Нэг буудал өмнө буугаад алхах.</div></div></div>
       <div class="tl-row c-work"><div class="tl-time">08:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Үндсэн ажил</div><div class="tl-title">GogoShop <span class="tl-dur">— 8.5 цаг</span></div><div class="tl-desc">Завсарлагаанд хөл, гуя сунгана.</div></div></div>
       <div class="tl-row c-food"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Дасгалын өмнөх хоол</div><div class="tl-desc">Мах + будаа + ногоо. Хөлний дасгал урт тул хоолоо хангалттай идэнэ.</div></div></div>
       <div class="tl-row c-train"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Дасгал</div><div class="tl-title">Хөл & Гөлөм <span class="tl-dur">— 55 мин</span></div><div class="tl-desc">Goblet Squat → Lunge → Romanian Deadlift → Sumo Squat → Calf Raise → Step Up</div><div class="why-box"><strong>Яагаад хөлний дасгал хамгийн чухал</strong>Quad, Glute, Hamstring хамгийн том булчингийн группүүд. Testosterone + growth hormone хамгийн их ялгаруулдаг.</div></div></div>
@@ -735,28 +729,30 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div class="day-head">
       <div class="day-num">05</div>
       <div class="day-meta-inner">
-        <div class="day-name">Гэдэс & Core + Бямбаны бэлтгэл</div>
+        <div class="day-name">Deep Work + Selfcare өдөр</div>
         <div class="day-tags">
-          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work ×2</span>
-          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Core дасгал</span>
+          <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work</span>
+          <span class="tag" style="color:var(--rest);border-color:rgba(62,207,142,.3)">Selfcare</span>
           <span class="tag" style="color:var(--food);border-color:rgba(201,169,110,.3)">Бямбаны бэлтгэл</span>
         </div>
-        <div class="day-quote">"Core дасгал зөвхөн гэдэс нимгэлдэггүй — нурууны тулгуурыг бэхжүүлж бүх дасгалын үр дүнг нэмнэ."</div>
+        <div class="day-quote">"Баасан — долоо хоногийн шүүгдэх цэг. Deep Work дуусгаж, биедээ 1 цаг анхаарал тав."</div>
       </div>
     </div>
     <div class="stats">
-      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">3.5ц</div></div>
-      <div class="stat"><div class="stat-label">Дасгал</div><div class="stat-val">45мин</div></div>
+      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">2ц+</div></div>
+      <div class="stat"><div class="stat-label">Selfcare</div><div class="stat-val">1 цаг</div></div>
       <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">22:30</div></div>
-      <div class="stat"><div class="stat-label">Нэмэлт</div><div class="stat-val">Бямбын бэлтгэл</div></div>
+      <div class="stat"><div class="stat-label">Нэмэлт</div><div class="stat-val">Бымбын бэлтгэл</div></div>
     </div>
     <div class="tl">
-      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #1</div><div class="tl-title">Долоо хоногийн Sprint <span class="tl-dur">— 80 мин</span></div><div class="tl-desc">Бямба, Нямын том ажлыг бэлтгэх. Weekly analysis Нямд хийнэ.</div><div class="tl-chips"><span class="chip">Бямбаны бэлтгэл</span><span class="chip">KPI шалгах</span><span class="chip">Sprint дуусгах</span></div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Өглөөний бэлтгэл <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Ус → сунгалт → цай → өглөөний хоол → Бымбаны гол зорилтыг боловсруулна.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">07:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Шилжилт — Өглөөний анхаарал</div><div class="tl-title">Ажилдаа явах <span class="tl-dur">07:00–08:30</span></div><div class="tl-desc">Podcast / audiobook. Нэг буудал өмнө буугаад алхах.</div></div></div>
       <div class="tl-row c-work"><div class="tl-time">08:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Үндсэн ажил</div><div class="tl-title">GogoShop <span class="tl-dur">— 8.5 цаг</span></div><div class="tl-desc">Завсарлагаанд алхалт нэмэнэ.</div></div></div>
-      <div class="tl-row c-food"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Хөнгөн хоол</div><div class="tl-desc">Core дасгалд хэвлий дүүрсэн байх хэрэггүй — тараг + өндөг.</div></div></div>
-      <div class="tl-row c-train"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Дасгал</div><div class="tl-title">Гэдэс & Core <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Russian Twist → Dumbbell Crunch → Plank → Side Plank → Leg Raise → Mountain Climber</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #2</div><div class="tl-title">Долоо хоногийн тойм + Бямбаны бэлтгэл <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">7 хоногийн тайлан, KPI, бымбаны том ажлыг бэлтгэнэ.</div></div></div>
-      <div class="tl-row c-rest"><div class="tl-time">21:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">7 хоногийн дараах тайвшрал</div><div class="tl-desc">Дэлгэц зогсоох, сунгах.</div></div></div>
+      <div class="tl-row c-transit"><div class="tl-time">17:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Гэртээ харих</div><div class="tl-title">Decompression <span class="tl-dur">— 1 цаг</span></div><div class="tl-desc">Podcast. Долоо хоногийн ажлыг сэтгэлдээ тайлна.</div></div></div>
+      <div class="tl-row c-food"><div class="tl-time">18:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол <span class="tl-dur">— 30 мин</span></div><div class="tl-desc">Хөнгөн хоол. Тараг + өндөг + ногоо. Утасгүй.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">18:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work</div><div class="tl-title">Бымбаны бэлтгэл + KPI <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Бымбаны том ажлыг бэлтгэнэ. Productdrop + YouTube канал.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">20:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">🛁 Selfcare</div><div class="tl-title">Биеийн арчилгаа <span class="tl-dur">— 1 цаг</span></div><div class="tl-desc">Арьс арчилгаа → дулаан шүршүүр → биедээ анхаарал → тайвшрах. Долоо хоногийн стрессийг гаргана.</div><div class="why-box"><strong>Яагаад selfcare чухал</strong>Cortisol бууруулж, нойрны чанарыг сайжруулдаг.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">21:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">7 хоногийн дараах тайвшрал <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Дэлгэц зогсоох, ном, сунгах.</div></div></div>
       <div class="tl-row c-sleep"><div class="tl-time">22:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">7.5 цаг</div><div class="tl-desc">Маргааш бямба — хамгийн урт Deep Work + Full Body.</div></div></div>
     </div>
   </div>
@@ -788,14 +784,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
       </div>
     </div>
     <div class="stats">
-      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">6.5ц</div></div>
+      <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">6ц</div></div>
       <div class="stat"><div class="stat-label">Дасгал</div><div class="stat-val">55мин</div></div>
       <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">23:00</div></div>
       <div class="stat"><div class="stat-label">Power nap</div><div class="stat-val">14:30</div></div>
     </div>
     <div class="tl">
-      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Бямба өглөө — тайван эхлэл</div><div class="tl-desc">Ус → 10-15 мин урт сунгалт → тухтай хоол бэлдэнэ.</div></div></div>
-      <div class="tl-row c-deep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work — Хамгийн том блок</div><div class="tl-title">Нэг том зорилт <span class="tl-dur">— 3.5 цаг</span></div><div class="tl-desc">YouTube канал видео дуусгах, эсвэл Productdrop template бэлдэх, эсвэл E-Commerce контент batch.</div><div class="tl-chips"><span class="chip">YouTube канал видео</span><span class="chip">Productdrop стратеги</span><span class="chip">Контент batch</span></div><div class="why-box"><strong>Яагаад бымба 06:30 хамгийн үнэтэй</strong>Таслалт байхгүй, ажлын дарамт байхгүй, cognitive resource бүрэн.</div></div></div>
+      <div class="tl-row c-sleep"><div class="tl-time">06:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">Бямба өглөө — тайван эхлэл</div><div class="tl-desc">Ус → 10-15 мин урт сунгалт → тухтай хоол бэлдэнэ. Яарахгүй өглөө.</div></div></div>
+      <div class="tl-row c-deep"><div class="tl-time">07:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work — Хамгийн том блок</div><div class="tl-title">Нэг том зорилт <span class="tl-dur">— 3 цаг</span></div><div class="tl-desc">YouTube канал видео дуусгах, эсвэл Productdrop template бэлдэх, эсвэл E-Commerce контент batch.</div><div class="tl-chips"><span class="chip">YouTube канал видео</span><span class="chip">Productdrop стратеги</span><span class="chip">Контент batch</span></div><div class="why-box"><strong>Яагаад бымба 06:30 хамгийн үнэтэй</strong>Таслалт байхгүй, ажлын дарамт байхгүй, cognitive resource бүрэн.</div></div></div>
       <div class="tl-row c-rest"><div class="tl-time">10:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Амралт</div><div class="tl-title">Цай + гадаа алхалт <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">3.5 цагийн гүн ажлаасаа сэтгэлийг тайлах.</div></div></div>
       <div class="tl-row c-deep"><div class="tl-time">11:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Deep Work #2</div><div class="tl-title">Бүтээлч ажил <span class="tl-dur">— 3 цаг</span></div><div class="tl-desc">Дараа долоо хоногийн YouTube канал, Productdrop template-ийн контент batch.</div></div></div>
       <div class="tl-row c-food"><div class="tl-time">14:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Power Nap</div><div class="tl-title">Өдрийн хоол + 20-25 мин унтах</div><div class="tl-desc">Power nap хийж болно.</div><div class="why-box"><strong>Power nap</strong>20-25 минутын унтах нь оройн бүтээмжийг 34% нэмэгдүүлдэг.</div></div></div>
@@ -823,11 +819,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     <div class="day-head">
       <div class="day-num">07</div>
       <div class="day-meta-inner">
-        <div class="day-name">Дэлгүүр + Batch Cook + Дараа 7н бэлтгэл</div>
+        <div class="day-name">Дэлгүүр + Batch Cook + Дасгал + Selfcare</div>
         <div class="day-tags">
           <span class="tag" style="color:var(--deep);border-color:rgba(79,143,255,.3)">Deep Work 3ц</span>
-          <span class="tag" style="color:var(--food);border-color:rgba(201,169,110,.3)">Дэлгүүр + Batch Cook</span>
-          <span class="tag" style="color:var(--rest);border-color:rgba(62,207,142,.3)">Weekly Analysis</span>
+          <span class="tag" style="color:var(--train);border-color:rgba(255,107,74,.3)">Дасгал</span>
+          <span class="tag" style="color:var(--rest);border-color:rgba(62,207,142,.3)">Selfcare</span>
           <span class="tag" style="color:var(--sleep);border-color:rgba(124,109,242,.3)">22:00 унтах</span>
         </div>
         <div class="day-quote">"Ням бол дараа долоо хоногийн гарааны нохой. Бие, тархи, ажил, хоол — дөрвийг бэлтгэх өдөр."</div>
@@ -835,9 +831,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
     </div>
     <div class="stats">
       <div class="stat"><div class="stat-label">Deep Work</div><div class="stat-val">3ц</div></div>
-      <div class="stat"><div class="stat-label">Batch Cook</div><div class="stat-val">3 хоног</div></div>
+      <div class="stat"><div class="stat-label">Дасгал</div><div class="stat-val">45мин</div></div>
+      <div class="stat"><div class="stat-label">Selfcare</div><div class="stat-val">1 цаг</div></div>
       <div class="stat"><div class="stat-label">Унтах</div><div class="stat-val">22:00</div></div>
-      <div class="stat"><div class="stat-label">Дэлгүүр</div><div class="stat-val">7 хоног</div></div>
     </div>
     <div class="tl">
       <div class="tl-row c-sleep"><div class="tl-time">06:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Сэрэх</div><div class="tl-title">30 мин хожимдуулсан</div><div class="tl-desc">Ус → 10-15 мин сунгалт.</div></div></div>
@@ -846,7 +842,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
       <div class="tl-row c-food"><div class="tl-time">11:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол + Амралт</div><div class="tl-title">Өдрийн хоол + гэр бүл <span class="tl-dur">— 2 цаг</span></div><div class="tl-desc">Тайван цаг. Нийгмийн харилцаа.</div></div></div>
       <div class="tl-row c-food"><div class="tl-time">13:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">🛒 Дэлгүүр</div><div class="tl-title">7 хоногийн хүнсний бараа цуглуулах <span class="tl-dur">— 90 мин</span></div><div class="tl-desc">Бүтэн долоо хоногийн хүнс нэг удаа авна.</div><div class="tl-chips"><span class="chip">Уураг: мах, өндөг, тараг</span><span class="chip">Ногоо & жимс</span><span class="chip">Хөлдөөгч хоол</span></div></div></div>
       <div class="tl-row c-food"><div class="tl-time">14:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">🍳 Batch Cook #1 — 3 хоног</div><div class="tl-title">Даваа–Лхагвагийн хоол бэлдэж хөлдөөх <span class="tl-dur">— 2 цаг</span></div><div class="tl-desc">3 хоногийн үндсэн хоолыг нэгэн зэрэг бэлдэж хөлдөөнө.</div><div class="tl-chips"><span class="chip">Мах чанах</span><span class="chip">Ногоо огтлох</span><span class="chip">Будаа/гурил</span><span class="chip">Хөлдөөгчид хийх</span></div></div></div>
-      <div class="tl-row c-rest"><div class="tl-time">16:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Амралт</div><div class="tl-title">Гэр бүл + чөлөөт цаг <span class="tl-dur">— 2.5 цаг</span></div><div class="tl-desc">Гадаа алхах, гэр бүлтэй цаг. Ажил, утас байлга.</div></div></div>
+      <div class="tl-row c-train"><div class="tl-time">16:30</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Дасгал</div><div class="tl-title">Нямын дасгал <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Full Body хөнгөн хэлбэр: Squat → Push-up → Row → Plank. Долоо хоногийн 3 дах дасгал.</div><div class="tl-chips"><span class="chip">Body weight</span><span class="chip">3×12 / дасгал бүр</span><span class="chip">Тайван хурдаар</span></div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">17:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">🛁 Selfcare</div><div class="tl-title">Биеийн арчилгаа <span class="tl-dur">— 1 цаг</span></div><div class="tl-desc">Дулаан шүршүүр → арьс арчилгаа → тайвшрах → биедээ анхаарал. Бүтэн өдрийн шагнал.</div><div class="why-box"><strong>Нямын selfcare</strong>Долоо хоногийн ажлын ачааллаас биеийг тайлах хамгийн сайн арга. Дараа долоо хоногт сэргэсэн байна.</div></div></div>
+      <div class="tl-row c-rest"><div class="tl-time">18:15</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Амралт</div><div class="tl-title">Гэр бүл + чөлөөт цаг <span class="tl-dur">— 45 мин</span></div><div class="tl-desc">Гэр бүлтэй цаг. Ажил, утас байлга.</div></div></div>
       <div class="tl-row c-food"><div class="tl-time">19:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Хоол</div><div class="tl-title">Оройн хоол — хөнгөн</div><div class="tl-desc">Тараг + өндөг + ногоо.</div></div></div>
       <div class="tl-row c-rest"><div class="tl-time">21:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Wind-down</div><div class="tl-title">Ням шөнийн тайвшрал <span class="tl-dur">— 60 мин</span></div><div class="tl-desc">Дэлгэц зогсоох → ном → Даваагийн нэг гол зорилтыг дахин уншиж батлана.</div></div></div>
       <div class="tl-row c-sleep"><div class="tl-time">22:00</div><div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-cat">Унтах</div><div class="tl-title">30 мин эрт — 8 цаг</div><div class="tl-desc">Ням шөнийн 22:00 унтах нь Даваа өглөөний Deep Work чанарыг шууд тодорхойлдог.</div></div></div>
@@ -1011,51 +1009,46 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15
 <script>
 // ===================== DATA =====================
 const DAYS = [
-  { name:'Даваа', meta:'ОӨ #1 — MON · ДАСГАЛ: МӨР & ГАР', xp:100, badge:'+100 XP / өдөр' },
-  { name:'Мягмар', meta:'ОӨ #2 — TUE · ДАСГАЛ: НУРУУ & ХАЖУУ', xp:100, badge:'+100 XP / өдөр' },
+  { name:'Даваа', meta:'ОӨ #1 — MON · DEEP WORK FOCUS', xp:100, badge:'+100 XP / өдөр' },
+  { name:'Мягмар', meta:'ОӨ #2 — TUE · DEEP WORK FOCUS', xp:100, badge:'+100 XP / өдөр' },
   { name:'Лхагва', meta:'ОӨ #3 — WED · ДАСГАЛГҮЙ · BATCH COOK', xp:110, badge:'+110 XP / өдөр' },
   { name:'Пүрэв', meta:'ОӨ #4 — THU · ДАСГАЛ: ХӨЛ & ГӨЛӨМ', xp:100, badge:'+100 XP / өдөр' },
-  { name:'Баасан', meta:'ОӨ #5 — FRI · ДАСГАЛ: CORE', xp:100, badge:'+100 XP / өдөр' },
+  { name:'Баасан', meta:'ОӨ #5 — FRI · DEEP WORK · SELFCARE', xp:100, badge:'+100 XP / өдөр' },
   { name:'Бямба', meta:'АӨ #1 — SAT · FULL BODY · УРТ DEEP WORK', xp:130, badge:'+130 XP / өдөр' },
-  { name:'Ням', meta:'АӨ #2 — SUN · ДЭЛГҮҮР · BATCH COOK · WEEKLY', xp:130, badge:'+130 XP / өдөр' },
+  { name:'Ням', meta:'АӨ #2 — SUN · ДЭЛГҮҮР · BATCH · ДАСГАЛ · SELFCARE', xp:130, badge:'+130 XP / өдөр' },
 ];
 
 // Checklist items per day — [label, xp, section]
 const CHECKLISTS = [
   // Day 0: Даваа
   [
-    ['🌅 Өглөөний бэлтгэл',5,'Өглөө'],
+    ['🌅 Өглөөний бэлтгэл — 60 мин (цай, сунгалт, хоол)',10,'Өглөө'],
     ['💧 Ус 500мл уусан',5,'Өглөө'],
-    ['🧠 Deep Work #1 — 80 мин',20,'Өглөө'],
-    ['🍳 Өглөөний хоол',5,'Өглөө'],
-    ['🎧 Явах замдаа podcast',5,'Ажил'],
+    ['🎧 Явах замдаа 07:00–08:30 podcast/audiobook',5,'Өглөө'],
     ['💼 GogoShop 08:30–17:00',15,'Ажил'],
     ['⏱ 90 мин тутамд сунгасан',5,'Ажил'],
-    ['🥗 Дасгалын өмнөх хоол',5,'Орой'],
-    ['💪 Мөр & Гар дасгал — 50 мин',20,'Орой'],
-    ['🧠 Deep Work #2 — 90 мин',15,'Орой'],
+    ['🍳 Оройн хоол',5,'Орой'],
+    ['🧠 Deep Work — 90 мин',20,'Орой'],
     ['📵 21:30-д дэлгэц зогссон',5,'Орой'],
     ['😴 22:30 унтсан',5,'Орой'],
   ],
   // Day 1: Мягмар
   [
-    ['🌅 Өглөөний бэлтгэл',5,'Өглөө'],
+    ['🌅 Өглөөний бэлтгэл — 60 мин',10,'Өглөө'],
     ['💧 Ус 500мл уусан',5,'Өглөө'],
-    ['🧠 Deep Work #1 — 80 мин',20,'Өглөө'],
-    ['🍳 Өглөөний хоол',5,'Өглөө'],
+    ['🎧 Явах замдаа podcast',5,'Өглөө'],
     ['💼 GogoShop 08:30–17:00',15,'Ажил'],
     ['⏱ 90 мин тутамд сунгасан',5,'Ажил'],
-    ['🥗 Хөнгөн хоол',5,'Орой'],
-    ['💪 Нуруу & Хажуу дасгал — 50 мин',20,'Орой'],
-    ['🧠 Deep Work #2 — 90 мин',15,'Орой'],
+    ['🍳 Оройн хоол',5,'Орой'],
+    ['🧠 Deep Work — 90 мин',20,'Орой'],
     ['📵 21:30-д дэлгэц зогссон',5,'Орой'],
     ['😴 22:30 унтсан',5,'Орой'],
   ],
   // Day 2: Лхагва
   [
-    ['🌅 Өглөөний бэлтгэл',5,'Өглөө'],
+    ['🌅 Өглөөний бэлтгэл — 60 мин',10,'Өглөө'],
     ['💧 Ус 500мл уусан',5,'Өглөө'],
-    ['🧠 Deep Work #1 — 80 мин (Mid-week review)',20,'Өглөө'],
+    ['🎧 Явах замдаа podcast',5,'Өглөө'],
     ['💼 GogoShop 08:30–17:00',15,'Ажил'],
     ['🚶 Завсарлагаанд алхалт',5,'Ажил'],
     ['🍳 Batch Cook #2 — 4 хоногийн хоол',25,'Орой'],
@@ -1065,26 +1058,26 @@ const CHECKLISTS = [
   ],
   // Day 3: Пүрэв
   [
-    ['🌅 Өглөөний бэлтгэл',5,'Өглөө'],
+    ['🌅 Өглөөний бэлтгэл — 60 мин',10,'Өглөө'],
     ['💧 Ус 500мл уусан',5,'Өглөө'],
-    ['🧠 Deep Work #1 — 80 мин',20,'Өглөө'],
+    ['🎧 Явах замдаа podcast',5,'Өглөө'],
     ['💼 GogoShop 08:30–17:00',15,'Ажил'],
     ['⏱ 90 мин тутамд сунгасан',5,'Ажил'],
     ['🥗 Дасгалын өмнөх хоол',5,'Орой'],
-    ['💪 Хөл & Гөлөм дасгал — 55 мин',20,'Орой'],
-    ['🧠 Deep Work #2 — 90 мин',15,'Орой'],
+    ['💪 Хөл & Гөлөм дасгал — 55 мин',25,'Орой'],
+    ['🧠 Deep Work — 90 мин',15,'Орой'],
     ['🦵 Хөл сунгасан',5,'Орой'],
     ['😴 22:30 унтсан',5,'Орой'],
   ],
   // Day 4: Баасан
   [
-    ['🌅 Өглөөний бэлтгэл',5,'Өглөө'],
+    ['🌅 Өглөөний бэлтгэл — 60 мин',10,'Өглөө'],
     ['💧 Ус 500мл уусан',5,'Өглөө'],
-    ['🧠 Deep Work #1 — Sprint бэлтгэл',20,'Өглөө'],
+    ['🎧 Явах замдаа podcast',5,'Өглөө'],
     ['💼 GogoShop 08:30–17:00',15,'Ажил'],
-    ['🥗 Хөнгөн хоол',5,'Орой'],
-    ['💪 Core дасгал — 45 мин',20,'Орой'],
-    ['🧠 Deep Work #2 — 90 мин',15,'Орой'],
+    ['🍳 Оройн хоол',5,'Орой'],
+    ['🧠 Deep Work — 90 мин',20,'Орой'],
+    ['🛁 Selfcare — 1 цаг',15,'Орой'],
     ['📵 21:30-д дэлгэц зогссон',5,'Орой'],
     ['😴 22:30 унтсан',5,'Орой'],
   ],
@@ -1103,15 +1096,15 @@ const CHECKLISTS = [
   ],
   // Day 6: Ням
   [
-    ['🌅 06:30 сэрсэн',5,'Өглөө'],
+    ['🌅 07:00 сэрсэн',5,'Өглөө'],
     ['💧 Ус 500мл уусан',5,'Өглөө'],
     ['🧠 Deep Work — 3 цаг',25,'Өглөө'],
     ['📊 Weekly Analysis — 60 мин',20,'Өглөө'],
     ['👨‍👩‍👧 Гэр бүлтэй цаг',5,'Өдөр'],
     ['🛒 Дэлгүүр — 7 хоногийн хүнс',20,'Өдөр'],
     ['🍳 Batch Cook #1 — 3 хоногийн хоол',25,'Өдөр'],
-    ['🚶 Гадаа алхалт',10,'Орой'],
-    ['📵 21:00-д дэлгэц зогссон',5,'Орой'],
+    ['💪 Дасгал — 45 мин',20,'Орой'],
+    ['🛁 Selfcare — 1 цаг',15,'Орой'],
     ['📅 Даваагийн нэг зорилт батлан бичсэн',5,'Орой'],
     ['😴 22:00 унтсан',5,'Орой'],
   ],

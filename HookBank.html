@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hook Bank — 400 Hooks</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070a;--s1:#0e0e12;--s2:#141418;--s3:#1a1a20;
+  --bd:#1f1f28;--bd2:#2c2c38;--tx:#e2e2f0;--mt:#52526a;--mt2:#8888a0;--wh:#f5f5ff;
+  --acc:#c8ff00;--acc2:#00e5ff;--warn:#ff6b35;--good:#3ecf8e;
+  --c4c:#ff4e6a;--ugc:#ffb930;--vo:#7c6fff;--txt:#3ecf8e;
+  --pain:#ff4e6a;--social:#7c6fff;--proof:#ffb930;--edu:#c8ff00;
+  --fn:'Inter',sans-serif;--mo:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--fn);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* HERO */
+.hero{padding:56px 36px 44px;max-width:1280px;margin:0 auto;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent);opacity:.4}
+.hero-ey{font-family:var(--mo);font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--mt2);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.hero-ey::before{content:'';width:20px;height:1px;background:var(--mt2)}
+.hero-title{font-size:clamp(40px,7vw,80px);font-weight:900;letter-spacing:-.05em;line-height:.95;color:var(--wh);margin-bottom:8px}
+.hero-title em{font-style:normal;color:var(--acc)}
+.hero-sub{font-size:15px;color:var(--mt2);max-width:520px;line-height:1.8;margin-top:14px}
+.hero-stats{display:flex;gap:36px;margin-top:28px;flex-wrap:wrap}
+.hs{display:flex;flex-direction:column;gap:2px}
+.hs-val{font-family:var(--mo);font-size:20px;font-weight:700;color:var(--acc)}
+.hs-lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mt)}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:200;background:rgba(7,7,10,.94);backdrop-filter:blur(24px);border-bottom:1px solid var(--bd)}
+.nav-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:2px;padding:0 36px;overflow-x:auto;scrollbar-width:none}
+.nav-inner::-webkit-scrollbar{display:none}
+.ntab{padding:15px 16px;font-family:var(--fn);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mt2);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.ntab:hover{color:var(--tx)}
+.ntab.on{color:var(--wh);border-bottom-color:var(--acc)}
+.ntab.on.t4c{color:var(--c4c);border-bottom-color:var(--c4c)}
+.ntab.on.tugc{color:var(--ugc);border-bottom-color:var(--ugc)}
+.ntab.on.tvo{color:var(--vo);border-bottom-color:var(--vo)}
+.ntab.on.ttxt{color:var(--txt);border-bottom-color:var(--txt)}
+.ntab.on.tpain{color:var(--pain);border-bottom-color:var(--pain)}
+.ntab.on.tsocial{color:var(--social);border-bottom-color:var(--social)}
+.ntab.on.tproof{color:var(--proof);border-bottom-color:var(--proof)}
+.ntab.on.tedu{color:var(--edu);border-bottom-color:var(--edu)}
+.nav-sep{width:1px;height:24px;background:var(--bd2);margin:0 6px;flex-shrink:0}
+.nc{font-family:var(--mo);font-size:10px;margin-left:5px;opacity:.6}
+.rand-btn-nav{padding:8px 14px;font-family:var(--mo);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;background:rgba(200,255,0,.08);border:1px solid rgba(200,255,0,.25);color:var(--acc);transition:all .15s;white-space:nowrap}
+.rand-btn-nav:hover{background:rgba(200,255,0,.15)}
+
+/* CONTENT */
+.content{max-width:1280px;margin:0 auto;padding:32px 36px 100px}
+.section{display:none}.section.on{display:block}
+
+/* SEC HEAD */
+.sec-head{margin-bottom:24px;padding:20px 24px;border:1px solid var(--bd);background:var(--s1);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.sh-name{font-size:18px;font-weight:800;color:var(--wh);letter-spacing:-.02em}
+.sh-desc{font-size:12px;color:var(--mt2);margin-top:4px;line-height:1.7}
+.sh-stat{font-family:var(--mo);font-size:11px;padding:4px 12px;border:1px solid var(--bd2);color:var(--mt2);white-space:nowrap;flex-shrink:0;align-self:flex-start}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.sw{flex:1;min-width:220px;position:relative}
+.si{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mt);font-size:14px;pointer-events:none}
+.sin{width:100%;background:var(--s1);border:1px solid var(--bd);padding:11px 14px 11px 36px;font-family:var(--fn);font-size:14px;color:var(--tx);outline:none;transition:border-color .15s}
+.sin:focus{border-color:var(--bd2)}.sin::placeholder{color:var(--mt)}
+.rc{font-family:var(--mo);font-size:12px;color:var(--mt);white-space:nowrap;align-self:center}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:8px}
+
+/* HOOK CARD */
+.hcard{background:var(--s1);border:1px solid var(--bd);overflow:hidden;transition:border-color .2s,transform .15s;position:relative}
+.hcard:hover{border-color:var(--bd2);transform:translateY(-1px)}
+.hcard-top{height:2px}
+.hcard-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 9px;border-bottom:1px solid var(--bd)}
+.hcard-num{font-family:var(--mo);font-size:9px;color:var(--mt);letter-spacing:.08em}
+.hcard-tags{display:flex;gap:5px;flex-wrap:wrap}
+.htag{font-family:var(--mo);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;font-weight:700}
+.ht-4c{background:rgba(255,78,106,.12);color:var(--c4c)}
+.ht-ugc{background:rgba(255,185,48,.12);color:var(--ugc)}
+.ht-vo{background:rgba(124,111,255,.12);color:var(--vo)}
+.ht-txt{background:rgba(62,207,142,.12);color:var(--txt)}
+.ht-pain{background:rgba(255,78,106,.12);color:var(--pain)}
+.ht-social{background:rgba(124,111,255,.12);color:var(--social)}
+.ht-proof{background:rgba(255,185,48,.12);color:var(--proof)}
+.ht-edu{background:rgba(200,255,0,.1);color:var(--edu)}
+.hcard-body{padding:13px 14px 10px}
+.hook-txt{font-size:14px;font-weight:800;color:var(--wh);line-height:1.35;letter-spacing:-.01em;margin-bottom:6px}
+.hook-type{font-family:var(--mo);font-size:9px;color:var(--mt);letter-spacing:.1em;text-transform:uppercase}
+.hcard-ft{padding:8px 14px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.hook-tip{font-size:11px;color:var(--mt);flex:1;line-height:1.5}
+.cpybtn{font-family:var(--mo);font-size:11px;padding:8px 16px;border:1px solid var(--bd2);background:transparent;color:var(--mt2);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:all .15s;white-space:nowrap;min-width:64px;-webkit-tap-highlight-color:transparent}
+.cpybtn:hover{background:var(--s2);color:var(--tx)}.cpybtn.ok{color:var(--good);border-color:var(--good)}
+
+/* EMPTY */
+.empty{text-align:center;padding:80px 20px;color:var(--mt);grid-column:1/-1}
+.empty-ic{font-size:40px;margin-bottom:12px}
+.empty-tx{font-size:14px;color:var(--mt2)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--s2);border:1px solid var(--bd2);padding:12px 20px;font-size:13px;color:var(--tx);z-index:1000;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* RANDOM PICK */
+.rand-wrap{background:var(--s1);border:1px solid var(--acc);padding:20px 22px;margin-bottom:24px;position:relative}
+.rand-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc),var(--acc2))}
+.rand-label{font-family:var(--mo);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+.rand-hook-txt{font-size:18px;font-weight:800;color:var(--wh);line-height:1.3;margin-bottom:8px;letter-spacing:-.01em}
+.rand-meta{font-size:12px;color:var(--mt2);margin-bottom:14px}
+.rand-acts{display:flex;gap:8px;flex-wrap:wrap}
+.rbtn{padding:8px 16px;font-family:var(--mo);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s}
+.rbtn.primary{background:var(--acc);color:#000}.rbtn.primary:hover{background:#d4ff1a}
+.rbtn.sec{background:transparent;border:1px solid var(--bd2);color:var(--mt2)}.rbtn.sec:hover{color:var(--tx)}
+
+/* MOBILE */
+@media(max-width:768px){
+  .hero{padding:32px 16px 28px}.content{padding:16px 12px 80px}.nav-inner{padding:0 12px}
+  .grid{grid-template-columns:1fr;gap:6px}.hero-title{font-size:clamp(36px,10vw,60px)}
+  .ntab{padding:12px 10px;font-size:11px}.nc{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-ey">TsekvG · Productdrop + LifeOS · Hook Bank</div>
+  <h1 class="hero-title">Hook<em>Bank</em></h1>
+  <p class="hero-sub">Productdrop болон LifeOS-д зориулсан 400 бэлэн hook. Ангилал бүрт шүүж, copy хийж ашиглана.</p>
+  <div class="hero-stats">
+    <div class="hs"><span class="hs-val" id="ttl">400</span><span class="hs-lbl">Нийт Hook</span></div>
+    <div class="hs"><span class="hs-val" id="copied-cnt">0</span><span class="hs-lbl">Copy хийсэн</span></div>
+    <div class="hs"><span class="hs-val" id="cur-cnt">400</span><span class="hs-lbl">Харагдаж байна</span></div>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="ntab on" id="tab-all" onclick="sw('all',this)">Бүгд<span class="nc" id="nc-all">400</span></button>
+    <div class="nav-sep"></div>
+    <button class="ntab t4c" id="tab-4c" onclick="sw('4c',this)">🎬 4C<span class="nc" id="nc-4c"></span></button>
+    <button class="ntab tugc" id="tab-ugc" onclick="sw('ugc',this)">🤳 UGC<span class="nc" id="nc-ugc"></span></button>
+    <button class="ntab tvo" id="tab-vo" onclick="sw('vo',this)">🎙 VO<span class="nc" id="nc-vo"></span></button>
+    <button class="ntab ttxt" id="tab-txt" onclick="sw('txt',this)">✏️ Text<span class="nc" id="nc-txt"></span></button>
+    <div class="nav-sep"></div>
+    <button class="ntab tpain" id="tab-pain" onclick="sw('pain',this)">😤 Pain<span class="nc" id="nc-pain"></span></button>
+    <button class="ntab tsocial" id="tab-social" onclick="sw('social',this)">📱 Social<span class="nc" id="nc-social"></span></button>
+    <button class="ntab tproof" id="tab-proof" onclick="sw('proof',this)">💰 Value<span class="nc" id="nc-proof"></span></button>
+    <button class="ntab tedu" id="tab-edu" onclick="sw('edu',this)">🎓 Edu<span class="nc" id="nc-edu"></span></button>
+    <div class="nav-sep"></div>
+    <button class="rand-btn-nav" onclick="rollRandom()">🎲 Random</button>
+  </div>
+</nav>
+
+<div class="content">
+  <div class="rand-wrap" id="rand-wrap">
+    <div class="rand-label">🎲 Өнөөдрийн hook</div>
+    <div class="rand-hook-txt" id="rand-hook">Уншиж байна...</div>
+    <div class="rand-meta" id="rand-meta"></div>
+    <div class="rand-acts">
+      <button class="rbtn primary" onclick="copyRand()">Copy хийх</button>
+      <button class="rbtn sec" onclick="rollRandom()">🎲 Өөр</button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="sw"><span class="si">⌕</span><input class="sin" id="search-in" placeholder="Hook хайх..." oninput="doSearch(this.value)"></div>
+    <span class="rc" id="res-count"></span>
+  </div>
+
+  <div class="grid" id="main-grid"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════
+// HOOK DATA — 400 hooks
+// cat: 4c | ugc | vo | txt | pain | social | proof | edu
+// type: question | statement | list | curiosity | pattern-interrupt | social-proof | challenge | reveal
+// tip: 1-line filming note
+// ══════════════════════════════════════════════════
+const HOOKS = [
+
+// ── 4C FRAMEWORK (50) ──────────────────────────────
+{id:1,hook:"Өдрөө зохион байгуулж чадахгүй байна уу?",cat:"4c",type:"question",tip:"Эхний үгэнд зогсоод камерт шууд хар"},
+{id:2,hook:"Яагаад routine тогтооход ийм хэцүү байдаг вэ?",cat:"4c",type:"question",tip:"Гараа дэлгэж, 'яагаад' гэдэг үгэнд accent өг"},
+{id:3,hook:"Productivity-г нэмэгдүүлэх хамгийн хялбар арга",cat:"4c",type:"statement",tip:"Confidence-тай, хурдан хэл — дуусаад zoom out"},
+{id:4,hook:"Өнөөдрийн checklist-ийг гүйцэтгэсэн үү?",cat:"4c",type:"question",tip:"Эргэлзээтэй нүдээр асуу — хариуг мэдэж байгаа юм шиг"},
+{id:5,hook:"Streak 7 хоног хадгалж чадах уу?",cat:"4c",type:"challenge",tip:"Challenge мэт хэлэх — хөмсгөө өргө"},
+{id:6,hook:"Та өдрийнхөө хэдэн хувийг дэмий зарцуулдаг вэ?",cat:"4c",type:"question",tip:"Тоог хэлэхэд нь гайхсан мэт хар"},
+{id:7,hook:"Level 1 → Level 10 хүртэлх аяллыг харахыг хүсэх үү?",cat:"4c",type:"curiosity",tip:"'Level 10' гэж хэлэхэд гараараа 10 дугаар үзүүл"},
+{id:8,hook:"Нэг жилийн дараа хаана байхыг хүсэж байна?",cat:"4c",type:"question",tip:"Дээш хар — 'нэг жил' гэж хэлэхэд"},
+{id:9,hook:"Goal setting хийгээд л мартдаг хүмүүст",cat:"4c",type:"statement",tip:"Шууд камерт хар, 'та' гэж хэлэх шиг"},
+{id:10,hook:"Focus байхгүй? Систем хэрэгтэй байна",cat:"4c",type:"statement",tip:"Товч, хурдан — паузгүй"},
+{id:11,hook:"Амьдралаа системтэй болгохыг хүсэж байна уу?",cat:"4c",type:"question",tip:"Халуун дотно өнгөөр, 'амьдрал' гэдэг үгэнд зогс"},
+{id:12,hook:"Бие барихаас илүү зүйл алга — гэхдээ...",cat:"4c",type:"pattern-interrupt",tip:"'Гэхдээ' гэж хэлэхэд нь эргэлзсэн нүүр гарга"},
+{id:13,hook:"Morning routine байхгүй бол productivity хоёр дахин буурна",cat:"4c",type:"statement",tip:"Баримт мэт — нотолгоотой хэл"},
+{id:14,hook:"Дасгал хийх routine тогтоогоо гэхдээ 3 дахь долоо хоног...",cat:"4c",type:"curiosity",tip:"Дуусгалгүй орхи — эргүүлэх зорилгоор"},
+{id:15,hook:"Productivity-г tоглоом болгочихвол яах байв?",cat:"4c",type:"curiosity",tip:"Инээмсэглэл + 'яах байв' гэдэг үгэнд нүдээ аниа"},
+{id:16,hook:"Routinesiz ажилладаг хүн GPS-гүй жолоодохтой адил",cat:"4c",type:"statement",tip:"Харьцуулалтыг тодорхой хэл — хоёр гараа ашиглан"},
+{id:17,hook:"Хамгийн сайн productivity hack: consistency",cat:"4c",type:"reveal",tip:"'Consistency' гэдэг үгийг удаан, тод хэл"},
+{id:18,hook:"Цагийг хэрхэн зарцуулж байгаагаа мэддэг үү?",cat:"4c",type:"question",tip:"Хариулт нь 'үгүй' гэдгийг мэдэж байгаа мэт асуу"},
+{id:19,hook:"Нэг сарын дараа тань ямар мэдрэмж төрөх вэ?",cat:"4c",type:"question",tip:"Хол харж, сарны хугацааг visualize хий"},
+{id:20,hook:"Та ямар төрлийн хүн бэ: planner эсвэл spontaneous?",cat:"4c",type:"question",tip:"Хоёр гараа ашиглан хоёр сонголт үзүүл"},
+{id:21,hook:"Sleep, food, work, train — бүгдийг нэг дор",cat:"4c",type:"list",tip:"Тус бүр дээр нэг хуруугаа нугала — ритмтэй"},
+{id:22,hook:"Та productivity апп-д мөнгөө дэмий үрэж байна уу?",cat:"4c",type:"question",tip:"Гайхсан, шүүмжлэгч өнгөөр"},
+{id:23,hook:"Амьдралдаа routine байхгүй бол энэ видеог үзэ",cat:"4c",type:"statement",tip:"Шууд командлах өнгө — эргэлзэлгүй"},
+{id:24,hook:"Habit tracking хийж байна уу? Буруу арга хэрэглэж байвал...",cat:"4c",type:"curiosity",tip:"'Буруу' гэдэг үгэнд scroll зогсоно"},
+{id:25,hook:"Нэг долоо хоногийн дараа яаж мэдрэхийг хүсэх вэ?",cat:"4c",type:"question",tip:"Эерэг vision — нүдэнд гэрэл оруул"},
+{id:26,hook:"Өдрийн эцэст 'юу ч хийгээгүй' мэдрэмж байдаг уу?",cat:"4c",type:"question",tip:"Буруутай нүдтэйгээр — мэдрэмжийг ойлгодог юм шиг"},
+{id:27,hook:"Хурдан асуулт: өнөөдрийн зорилгоо хүрсэн үү?",cat:"4c",type:"question",tip:"Шууд, нэг эшмэгтэй — маш хурдан"},
+{id:28,hook:"Boss battle хийж байна уу?",cat:"4c",type:"question",tip:"Тоглоомын нэр томъёог хурдан, уйтгаргүй хэл"},
+{id:29,hook:"Олон зүйл хийхийг хүсдэг ч цаг алдагддаг уу?",cat:"4c",type:"question",tip:"Уйтгарласан нүдтэй — бодит pain мэт"},
+{id:30,hook:"2026 оны goal-оо хэрэгжүүлж байна уу?",cat:"4c",type:"question",tip:"Огноог тодорхой хэл — urgency үүсгэ"},
+{id:31,hook:"Уншиж буй зүйлдээ, хийж буй зүйлдээ системтэй байдаг уу?",cat:"4c",type:"question",tip:"Хоёр талыг гарааа ашиглан"},
+{id:32,hook:"Дэлхийн хамгийн busy хүн биш — цаг байна",cat:"4c",type:"statement",tip:"Тэвчилтэй, итгэлтэй өнгөөр хэл"},
+{id:33,hook:"Productivity-д хамгийн их нөлөөлдөг зүйл юу вэ?",cat:"4c",type:"question",tip:"Хариулт гарч ирэх шиг зогс — пауз ав"},
+{id:34,hook:"Одоо эхлэхэд хэтэрхий оройтоогүй",cat:"4c",type:"statement",tip:"Амлалт мэт — камерт шууд, халуун"},
+{id:35,hook:"Юу ч хийгээгүй өдрийн мэдрэмжийг мэдэх үү?",cat:"4c",type:"question",tip:"Гунигтай нүүр — тэр мэдрэмжийг act хий"},
+{id:36,hook:"Чи дэлхийн хамгийн busy хүн биш",cat:"4c",type:"pattern-interrupt",tip:"Хэн нэгний excuse-ийг таслаад байгаа мэт"},
+{id:37,hook:"Self-improvement journey эхлүүлэхийг хүсэж байна уу?",cat:"4c",type:"question",tip:"Урам дүүрэн, гэрэлтэй нүүр"},
+{id:38,hook:"Хамгийн productivity-тай хүмүүс нийтлэг нэг зүйл хийдэг",cat:"4c",type:"reveal",tip:"'Нэг зүйл' гэдэг үгийг тодотго — хуруугаа өргө"},
+{id:39,hook:"Streak-ийг хэрхэн эвддэггүй байх вэ?",cat:"4c",type:"question",tip:"Айсан нүүр — streak-ийг хайрладаг юм шиг"},
+{id:40,hook:"Нойр, хоол, дасгал — гурав нэгдэхэд productivity 3x",cat:"4c",type:"statement",tip:"'3x' гэдэг дээр хуруугаа өргө"},
+{id:41,hook:"Та өдөр бүр хичнээн XP цуглуулж байна вэ?",cat:"4c",type:"question",tip:"Тоглоомын нэр томъёог хөгжилтэйгээр хэл"},
+{id:42,hook:"Routine систем байхгүй = dream байхгүй",cat:"4c",type:"statement",tip:"Тэмцэгч өнгөөр, цэглэлгүйгээр"},
+{id:43,hook:"Өглөөний routine байхгүй хүмүүст — 10 минутын шийдэл",cat:"4c",type:"statement",tip:"'10 минут' гэхэд хуруугаа үзүүл"},
+{id:44,hook:"Амжилттай хүмүүс бүгд нэг зүйлийг нийтлэг хийдэг",cat:"4c",type:"reveal",tip:"Зогсоод таал — пауз аваад хариулна"},
+{id:45,hook:"Хугацаа = мөнгө. Дэмий үрэх мөнгөн алга.",cat:"4c",type:"statement",tip:"Хурдан, захиалга мэт — хоёр үгийн хооронд зогс"},
+{id:46,hook:"Productivity-г gamify хийсэн апп байдаг гэж мэдэх үү?",cat:"4c",type:"curiosity",tip:"'Мэдэх үү?' гэдгийг нүдээр асуу"},
+{id:47,hook:"Нэг удаа тохируулна — үүрд ажиллана",cat:"4c",type:"statement",tip:"'Үүрд' гэдэг үгийг тод, удаан хэл"},
+{id:48,hook:"Weekly report-гүйгээр яаж ахицаа харах вэ?",cat:"4c",type:"question",tip:"Гайхсан мэт — хариулт нь 'боломжгүй' гэдэг"},
+{id:49,hook:"Productivity tracker-ийг subscription-гүй яах вэ?",cat:"4c",type:"question",tip:"Өдөөн хатгасан мэт — хүнд санаа зовоол"},
+{id:50,hook:"Цусаа хэмнэ — monthly subscription бишгүй",cat:"4c",type:"statement",tip:"'Цус' гэдэг үгэнд хуруугаа шийдтэй хөдөлгө"},
+
+// ── UGC STYLE (50) ──────────────────────────────────
+{id:51,hook:"Надад routine байхгүй байхад яаж амьдарч байсан болоо",cat:"ugc",type:"statement",tip:"Өөрийн туршлага мэт, casual байдлаар"},
+{id:52,hook:"Энэ нэг апп амьдралаа 180 градус эргүүлсэн",cat:"ugc",type:"statement",tip:"Аз жаргалтай нүүр — genuine мэт"},
+{id:53,hook:"Зургаан сарын өмнөхөөс надтай хэн ч таних байхгүй",cat:"ugc",type:"statement",tip:"Хувирлын эхлэлийг дуусгалгүй орхи"},
+{id:54,hook:"Жижигхэн апп нэг өдөр 3 цаг хэмнэлт хийлгэж байна",cat:"ugc",type:"reveal",tip:"Тоог тодорхой хэл — '3 цаг' дээр зогс"},
+{id:55,hook:"Шинийг туршиж үзэхэд болохгүй гэж бодсон юм",cat:"ugc",type:"statement",tip:"Итгэлгүй байсан мэт эхэл — эерэгт хувирна"},
+{id:56,hook:"Хэн нэг нь энийг надад хурдан хэлж байсан бол...",cat:"ugc",type:"curiosity",tip:"Харамсалтай нүүр — genuine emotion"},
+{id:57,hook:"Routine-гүй байх нь яг л хоол хийхгүй байхтай адил",cat:"ugc",type:"statement",tip:"Casual харьцуулалт — гар ашиглан"},
+{id:58,hook:"Надаас 'яаж productive байна вэ?' гэж асуудаг — ингэж хариулдаг",cat:"ugc",type:"reveal",tip:"Нийгмийн нотлогоотой эхэл"},
+{id:59,hook:"Өглөө 6-д босоод XP цуглуулж эхэлдэг болсон",cat:"ugc",type:"statement",tip:"Энгийн, бодит — habit мэт"},
+{id:60,hook:"Энэ долоо хоног streak-ийг эвдэхгүй байна — энэ хол ирлээ",cat:"ugc",type:"statement",tip:"Ямар цаг болж байгааг хэл — реал мэт"},
+{id:61,hook:"Хамгийн ухаалаг 9,900₮-ийн зардал амьдралдаа",cat:"ugc",type:"social-proof",tip:"Тоог итгэлтэй хэл"},
+{id:62,hook:"Надад ийм хэрэгслийг 2 жилийн өмнө хэлсэн бол...",cat:"ugc",type:"curiosity",tip:"Зэвүүн харамсал — genuine"},
+{id:63,hook:"Өдрийг дуусгасны дараа XP нэмэгдэхэд энэ мэдрэмж...",cat:"ugc",type:"reveal",tip:"Нүүр нь инээмсэглэлд дүүрэх — genuine joy"},
+{id:64,hook:"Streak 30 болж байна — анх байхгүй байсан хүн нь",cat:"ugc",type:"social-proof",tip:"Ахиц нь бодит — итгэлтэй хэл"},
+{id:65,hook:"Эмх цэгцтэй байхгүй байхад байнга стрессддэг байсан",cat:"ugc",type:"statement",tip:"Өнгөрсөн pain-ийг дурсах мэт"},
+{id:66,hook:"Апп суулгахдаа 'дахиад л нэг апп' гэж бодсон",cat:"ugc",type:"pattern-interrupt",tip:"Скептик эхлэл — эергэшрэлтэй төгсгөл"},
+{id:67,hook:"Найздаа харуулахад 'энийг хаанаас авсан юм?' гэлээ",cat:"ugc",type:"social-proof",tip:"Найздаа ярьж байгаа мэт эргэлт"},
+{id:68,hook:"Gamify хийсэн productivity tool ашиглаж байсан уу?",cat:"ugc",type:"question",tip:"Casual, өдөр тутмын яриа мэт"},
+{id:69,hook:"Энийг ашиглахаас хойш цагийн хяналт ямар болсоныг харна уу",cat:"ugc",type:"reveal",tip:"Дэлгэцийн рүү заах — demo мэт"},
+{id:70,hook:"Үнэнийг хэлье — routine тогтооход хэцүү байсан",cat:"ugc",type:"statement",tip:"'Үнэнийг хэлье' — камерт нэг алхам ойртох"},
+{id:71,hook:"Level ахих мэдрэмжийг productivity-д мэдрэх болсон",cat:"ugc",type:"reveal",tip:"Тоглоом шиг жаргасан нүүр"},
+{id:72,hook:"Productivity tool-уудад 50,000₮+ зарцуулаад нэг нь л ажилласан",cat:"ugc",type:"social-proof",tip:"Тоог онцол — гунигтай өнгөөр эхэл"},
+{id:73,hook:"Ийм олон апп байхад яагаад энийг л ашигладаг болов?",cat:"ugc",type:"question",tip:"Өөрөөсөө асуугаа байгаа мэт"},
+{id:74,hook:"Achievement нээгдэх үед... wow",cat:"ugc",type:"reveal",tip:"'Wow' гэдгийг natural, genuine байдлаар"},
+{id:75,hook:"Энэ долоо хоног хийсэн бүхнийг нэг дор харсан",cat:"ugc",type:"reveal",tip:"Weekly review мэт — дэлгэцийг заа"},
+{id:76,hook:"Ажил + хувийн амьдрал — хоёуланд нь ажиллах систем",cat:"ugc",type:"statement",tip:"Тайван, мэргэжлийн өнгөөр"},
+{id:77,hook:"Шинэ habit эхлүүлэхэд хамгийн хэцүү нь... эхлэх",cat:"ugc",type:"statement",tip:"Хөгжилтэй байдлаар өөрөөрөө инээ"},
+{id:78,hook:"30 хоногийн дараа жинхэнэ streak болж байна гэж итгэхгүй байна",cat:"ugc",type:"statement",tip:"Гайхсан, талархсан нүүр"},
+{id:79,hook:"Өдрийн эхэнд plan хийснээр оройдоо энэ мэдрэмж",cat:"ugc",type:"reveal",tip:"Тайван, дүүрэн мэдрэмж — act хий"},
+{id:80,hook:"XP систем бодит амьдралд ажиллана гэж хэзээ ч бодоогүй байсан",cat:"ugc",type:"statement",tip:"Бодит нээлт мэт — genuine surprise"},
+{id:81,hook:"Habit tracker хэд ашигласан ч нэг ч ажиллаагүй — энэ нь ажиллаж байна",cat:"ugc",type:"social-proof",tip:"Урт туршлагын дараа нотлогоо"},
+{id:82,hook:"Энийг харахаас өмнө routine гэж юу болохыг мэддэггүй байсан",cat:"ugc",type:"statement",tip:"'Өмнө' ба 'одоо' контрастыг үзүүл"},
+{id:83,hook:"Хамгийн хялбар system яг энэ байж таарлаа",cat:"ugc",type:"reveal",tip:"Найрсаг, итгэлтэй нотолгоо"},
+{id:84,hook:"Productivity-г яаж нэмэгдүүлэх вэ гэж хайж байсан — ол",cat:"ugc",type:"statement",tip:"Хайлтын төгсгөл мэт — амрах тайвшрал"},
+{id:85,hook:"Энийг анх туршихад мунхаглан инээж байсан",cat:"ugc",type:"statement",tip:"Эхний скептик байдлаа дур хэлний дурсах"},
+{id:86,hook:"'Ажилгүй байхад' productivity tracker хэрэг байна уу?' гэж байсан",cat:"ugc",type:"pattern-interrupt",tip:"Хуучин өөрийнхөө логикийг буруушаан"},
+{id:87,hook:"Streak freeze гэж байдгийг мэдэж байсан уу? Game changer",cat:"ugc",type:"reveal",tip:"'Game changer' дээр гараа дэлгэ"},
+{id:88,hook:"Нэг 7 хоног туршаад харсан — дахиж орхихгүй болсон",cat:"ugc",type:"social-proof",tip:"Туршилтын дараа conclusion"},
+{id:89,hook:"Ганцхан html файл — бүх амьдралыг зохион байгуулна",cat:"ugc",type:"reveal",tip:"'Ганцхан файл' гэдгийг гайхуулан хэл"},
+{id:90,hook:"Boss battle функц байдгийг мэдэх үү?",cat:"ugc",type:"curiosity",tip:"Нүдний өргөлттэй, сонирхолтой tone"},
+{id:91,hook:"Routine тогтоохыг хичээгээд л явдаг байсан — одоо системтэй",cat:"ugc",type:"statement",tip:"'Явдаг' vs 'системтэй' тодорхой contrast"},
+{id:92,hook:"Bi энийг хэрэглэж эхэлснээс хойш цаг хэмнэлт маш их",cat:"ugc",type:"social-proof",tip:"Бодит цаг хэмнэлт — тоо нэмсэн бол илүү сайн"},
+{id:93,hook:"Productivity hack биш — productivity system",cat:"ugc",type:"pattern-interrupt",tip:"'Hack' vs 'system' тодорхой contrast хий"},
+{id:94,hook:"Миний хамгийн их зарцуулсан 9,900₮ — маргаашийнхаас ч биш",cat:"ugc",type:"social-proof",tip:"Өндөр үнэлэмжтэй тайлбар"},
+{id:95,hook:"Энэ апп-тай болсноор нэг долоо хоногт хэдэн цаг хэмнэдэг вэ?",cat:"ugc",type:"question",tip:"Өөрөөсөө асуугаа байгаа мэт"},
+{id:96,hook:"Productivity = тоглоом болгочихвол бүгд хийнэ",cat:"ugc",type:"statement",tip:"Энгийн дүгнэлт — нотолгоотой"},
+{id:97,hook:"Найзуудтайгаа ярьхад бүгд 'миньд ч хэрэгтэй' гэдэг",cat:"ugc",type:"social-proof",tip:"Social proof мэт эхэл"},
+{id:98,hook:"Нэг удааны 9,900₮ — жилд subscription нь хэдэн арван мянга",cat:"ugc",type:"statement",tip:"Математикийг хурдан, тодорхой"},
+{id:99,hook:"Өдрийн хуваарьтай болсноор ямар ч стресс байхгүй болсон",cat:"ugc",type:"social-proof",tip:"Амрангуй нүүр — contrast"},
+{id:100,hook:"Энэ системийг нэг ч найздаа хэлэлгүй чанга байж чадахгүй болсон",cat:"ugc",type:"social-proof",tip:"Organic word-of-mouth мэт"},
+
+// ── VOICEOVER (50) ──────────────────────────────────
+{id:101,hook:"Монголд хэн ч мэдэхгүй нэг систем байдаг...",cat:"vo",type:"curiosity",tip:"Намуухан, нууцлаг voice — дэлгэц дагана"},
+{id:102,hook:"Хэрэв өдөр тутамдаа 1 цаг дэмий үрэхгүй байвал жилд...",cat:"vo",type:"curiosity",tip:"Тоог хэлэхийн өмнө пауз ав"},
+{id:103,hook:"Энэ видеог үзэж дуусаад амьдрал нь өөрчлөгдсөн хүмүүс байдаг",cat:"vo",type:"social-proof",tip:"Итгэлтэй, намуухан tone"},
+{id:104,hook:"Өнөөдрийн хийх ёстой зүйлсийн жагсаалт байна уу?",cat:"vo",type:"question",tip:"Энгийн асуулт — дэлгэцэн дээр list гарч байна"},
+{id:105,hook:"Productivity-г нэмэгдүүлэхийн тулд зөвхөн нэг зүйл хийх хэрэгтэй",cat:"vo",type:"statement",tip:"'Нэг зүйл' дээр аяндаа удааших"},
+{id:106,hook:"Дараах 30 секундэд чиний цаг зарцуулах хэлбэрийг өөрчилнэ",cat:"vo",type:"statement",tip:"Urgency — хурдан, тодорхой"},
+{id:107,hook:"Streak хадгалах нь хэцүү биш — зөв систем байвал",cat:"vo",type:"statement",tip:"'Зөв систем' дээр онцолно"},
+{id:108,hook:"XP цуглуулах нь productivity-г яаж өөрчилдөг вэ?",cat:"vo",type:"question",tip:"Curiosity tone — хариул шийд нь хэрэглэгч"},
+{id:109,hook:"Ийм хэрэгслийг 2 жилийн өмнөөс мэдсэн бол өнөөдөр хэд дэвшилсэн байх",cat:"vo",type:"curiosity",tip:"Харамсах tone — гэхдээ одоо боломж байна"},
+{id:110,hook:"Жилийн эхэнд хийсэн goal одоо хэрэгжиж байна уу?",cat:"vo",type:"question",tip:"Шалгаж байгаа мэт tone"},
+{id:111,hook:"Нэг HTML файл — 7 хоногийн бүтэн систем",cat:"vo",type:"reveal",tip:"'Нэг' дээр пауз, дараа нь тайлбар"},
+{id:112,hook:"Habit-аа хаана тэмдэглэж байна вэ? Дэвтэр? Апп? Юу ч үгүй?",cat:"vo",type:"question",tip:"Гурван сонголт тус бүр дээр зогс"},
+{id:113,hook:"Productivity tracker-ийн гол асуудал нь...",cat:"vo",type:"curiosity",tip:"Дуусгалгүй — дэлгэцэн дэр тайлбар"},
+{id:114,hook:"Зорилгоо хүрэхийн тулд систем биш — дасгал хэрэгтэй... үү?",cat:"vo",type:"pattern-interrupt",tip:"Асуулт — нийтлэг бодлыг эргүүл"},
+{id:115,hook:"Routine OS-ийг яагаад 500+ хүн аль хэдийн ашиглаж байна вэ?",cat:"vo",type:"social-proof",tip:"Тоог онцол — нотолгоо"},
+{id:116,hook:"Дараах 7 хоног амьдралаа өөрчлөх хамгийн бага хөрөнгө оруулалт",cat:"vo",type:"statement",tip:"'Хамгийн бага' — тодорхой утга"},
+{id:117,hook:"Productivity-г тоглоом болгочихсон систем байдаг",cat:"vo",type:"reveal",tip:"Нууцлаг тайлбар tone"},
+{id:118,hook:"Subscription байхгүй — нэг удаагийн хөрөнгө оруулалт",cat:"vo",type:"statement",tip:"'Байхгүй' дээр онцол"},
+{id:119,hook:"Яагаад зарим хүн хэзээ ч зорилгодоо хүрдэггүй вэ?",cat:"vo",type:"question",tip:"Хүнд мэт асуулт — боловч хариулт хялбар"},
+{id:120,hook:"Өдрийн 24 цагийг хэрхэн 30 болгох вэ?",cat:"vo",type:"question",tip:"Гайхмаар асуулт — дараа нь хариулт"},
+{id:121,hook:"Продуктивизм биш — амьдралын систем",cat:"vo",type:"statement",tip:"Философи tone — удаан, тодорхой"},
+{id:122,hook:"Тэмдэглэж буй зүйлс нь XP болж хуримтлагддаг бол?",cat:"vo",type:"curiosity",tip:"Hypothetical — инноваци tone"},
+{id:123,hook:"Сарын 1,000₮-ийн subscription vs нэг удааны 9,900₮",cat:"vo",type:"statement",tip:"Математикийг дэлгэцэнд гарга"},
+{id:124,hook:"Ямар апп ашиглаж байна? Үр дүн нь хэд вэ?",cat:"vo",type:"question",tip:"Шалгах tone — хариулт нь муу байх магадлалтай"},
+{id:125,hook:"Productivity дахь хамгийн том худал хуурмаг: 'Цаг байхгүй'",cat:"vo",type:"pattern-interrupt",tip:"'Худал хуурмаг' — хүчтэй үг"},
+{id:126,hook:"Өдрийн эцэст хийсэн зүйлдээ дүн тавихад бол?",cat:"vo",type:"curiosity",tip:"Hypothetical — дэлгэцэнд хариулт"},
+{id:127,hook:"Routine-гүй байх нь тааламжтай мэт боловч дараа нь...",cat:"vo",type:"curiosity",tip:"Эхлэл тааламжтай — дуусгалт хэцүү"},
+{id:128,hook:"Level up хийх тоглоомоор амьдрал дүрслэх бол?",cat:"vo",type:"curiosity",tip:"Тоглоом metaphor — visual мэт"},
+{id:129,hook:"Шилдэг productivity system нь хамгийн хялбар нь",cat:"vo",type:"reveal",tip:"Дуусгалт нь 'хялбар' — тайвшруулна"},
+{id:130,hook:"Долоо хоногийн boss battle — ялах уу, ялагдах уу?",cat:"vo",type:"challenge",tip:"Тоглоомын дайны мэт — urgency"},
+{id:131,hook:"9,900₮-өөр хамгийн бага хөрөнгө оруулалтаа хий",cat:"vo",type:"statement",tip:"CTA tone — шийдлийн дуудлага"},
+{id:132,hook:"Productivity-г хэмжих боломжтой болвол яах байсан бэ?",cat:"vo",type:"curiosity",tip:"Hypothetical — visualization"},
+{id:133,hook:"Streak 1 → 100 хүртэлх аяллыг хийж байна",cat:"vo",type:"statement",tip:"Аялал metaphor — progress дүрсэл"},
+{id:134,hook:"Habit бүр XP болно — XP хуримтлагдана — level ахина",cat:"vo",type:"list",tip:"Гурван алхам — ритмтэй"},
+{id:135,hook:"Яагаад productivity apп-уудын 90% ажилладаggүй вэ?",cat:"vo",type:"question",tip:"Шүүмжлэгч tone — хариулт нь манай шийдэл"},
+{id:136,hook:"Ажил + амьдралын баланс хайдаг хүмүүст ганцхан шийдэл",cat:"vo",type:"statement",tip:"'Ганцхан' — тодорхой утга"},
+{id:137,hook:"Жилд 100 цаг хэмнэнэ — хэрхэн?",cat:"vo",type:"question",tip:"Тоо том, гайхмаар — дараа нь тайлбар"},
+{id:138,hook:"Productivity дахь хамгийн том инноваци нь gamification",cat:"vo",type:"reveal",tip:"'Инноваци' — шинэлэг tone"},
+{id:139,hook:"Нэг систем — таны бүх амьдрал",cat:"vo",type:"statement",tip:"Энгийн, хүчтэй — товч"},
+{id:140,hook:"Streak freeze гэдэг нь... life saver",cat:"vo",type:"reveal",tip:"Инээмсэглэлтэй нотолгоо"},
+{id:141,hook:"Productivity tracker-ийг apп store-оос хайхгүй — энэ HTML файлаас",cat:"vo",type:"pattern-interrupt",tip:"Гайхмаар reveal — unexpected"},
+{id:142,hook:"Монгол хэлтэй, монгол хэрэглэгчид зориулсан систем",cat:"vo",type:"statement",tip:"Localization — warm tone"},
+{id:143,hook:"Өдрийн зорилгоо хүрэхийг тоглоом шиг мэдрэхийн тулд",cat:"vo",type:"statement",tip:"Experience мэт — visualization"},
+{id:144,hook:"Хамгийн бага зардалтай habit system — subscription дутагдлаас гарах",cat:"vo",type:"statement",tip:"Эдийн засгийн давуу тал"},
+{id:145,hook:"7 хоногт нэг удаа харахад бүх ахицаа нэг дор",cat:"vo",type:"reveal",tip:"Weekly overview — visual"},
+{id:146,hook:"XP, streak, boss, level — тоглоомын логик бодит амьдралд",cat:"vo",type:"list",tip:"Нэр томъёо тус бүр дэлгэцэнд"},
+{id:147,hook:"Routine тогтоох хамгийн хурдан арга байдаг",cat:"vo",type:"reveal",tip:"'Хамгийн хурдан' — urgency"},
+{id:148,hook:"Дараагийн 30 хоног амьдралаа системтэй явуулах үү?",cat:"vo",type:"challenge",tip:"Challenge асуулт — хариулт нь тийм байх"},
+{id:149,hook:"Productivity-г хайрлах болдог — зөв хэрэгслийн тусламжтай",cat:"vo",type:"reveal",tip:"Гайхмаар дүгнэлт tone"},
+{id:150,hook:"Эхлэхэд хэтэрхий оройтсон цаг байхгүй — одоо л эхэл",cat:"vo",type:"statement",tip:"Дуусгалтын motivation — хүчтэй"},
+
+// ── TEXT ONLY (50) ──────────────────────────────────
+{id:151,hook:"Routine-гүй хүн = GPS-гүй машин 🚗",cat:"txt",type:"statement",tip:"Зургийн дэвсгэр дээр том, тод текст"},
+{id:152,hook:"XP цуглуулж байна уу? 👾",cat:"txt",type:"question",tip:"Тоглоомын icon нэмэх"},
+{id:153,hook:"Streak: 0 → 30 → 100 🔥",cat:"txt",type:"list",tip:"Тоонуудыг animated counter мэт"},
+{id:154,hook:"Checklist > Todo app > Brain 🧠",cat:"txt",type:"list",tip:"Rank мэт байрлуулалт"},
+{id:155,hook:"9,900₮ = Таны хамгийн ухаалаг зардал 💡",cat:"txt",type:"statement",tip:"Том font, тод accent өнгө"},
+{id:156,hook:"Productivity: ON ⚡",cat:"txt",type:"statement",tip:"Энгийн, хурдан — switch мэт"},
+{id:157,hook:"Sleep + Food + Train + Routine = Level Up 🎮",cat:"txt",type:"list",tip:"Баг мэт нэгтгэлт"},
+{id:158,hook:"Goal: ✓ Plan: ✓ System: ✓ Streak: 🔥",cat:"txt",type:"list",tip:"Checkbox animation"},
+{id:159,hook:"Subscription байхгүй. Үүрд тань. 🏆",cat:"txt",type:"statement",tip:"Тодорхой, хялбар — том font"},
+{id:160,hook:"Өнөөдрийн boss battle: АМЬДРАЛ 🗡️",cat:"txt",type:"statement",tip:"Тоглоомын metaphor visual"},
+{id:161,hook:"7 хоног = нэг амьдрал ✨",cat:"txt",type:"statement",tip:"Философи tone — энгийн"},
+{id:162,hook:"Weekly report харах уу? 📊",cat:"txt",type:"question",tip:"Data дуртай хүмүүст"},
+{id:163,hook:"Habit → Streak → Level → Life 🎯",cat:"txt",type:"list",tip:"Логик chain мэт"},
+{id:164,hook:"Focus mode: ON 🎯",cat:"txt",type:"statement",tip:"Tech aesthetic"},
+{id:165,hook:"'Завгүй' vs 'Системтэй' — аль нь чи? 🤔",cat:"txt",type:"question",tip:"Binary choice — хоёр талд харьцуул"},
+{id:166,hook:"Routine OS: Нэг HTML. Бүх систем. 💻",cat:"txt",type:"statement",tip:"Tech, minimal aesthetic"},
+{id:167,hook:"Өдрийн план байна уу? 📅",cat:"txt",type:"question",tip:"Дэвтэр icon нэм"},
+{id:168,hook:"Achievement нээгдлээ! 🏅",cat:"txt",type:"reveal",tip:"Game notification мэт"},
+{id:169,hook:"Productivity = Цаг + Систем + Consistency 📐",cat:"txt",type:"list",tip:"Математик formula мэт"},
+{id:170,hook:"Streak freeze ашигласан уу? ❄️",cat:"txt",type:"question",tip:"Ice icon — attention grabbing"},
+{id:171,hook:"Амьдрал тоглоом байвал score нь хэд байх вэ? 🎮",cat:"txt",type:"question",tip:"Тоглоомын UI мэт design"},
+{id:172,hook:"Morning routine = Амжилтын суурь 🌅",cat:"txt",type:"statement",tip:"Нарны icon — энергитэй"},
+{id:173,hook:"Дараах 7 хоногт streak эвдэхгүй байна уу? 🔥",cat:"txt",type:"challenge",tip:"Challenge дуудлага"},
+{id:174,hook:"Routine OS vs Notion vs Todoist: Ялагч нь? 🏆",cat:"txt",type:"question",tip:"Comparison visual"},
+{id:175,hook:"Нэг апп. Бүх амьдрал. 9,900₮. 💰",cat:"txt",type:"statement",tip:"Товч, хүчтэй — value prop"},
+{id:176,hook:"Level 1 байсан хүн Level 10 болдог — систем ашиглаж",cat:"txt",type:"statement",tip:"Transformation мэт"},
+{id:177,hook:"Өдөр бүр XP нэм. Streak хадгал. Level ахи. 🎯",cat:"txt",type:"list",tip:"Daily ritual мэт"},
+{id:178,hook:"Яагаад зарим хүн бүхнийг амжуулдаг вэ? 🤯",cat:"txt",type:"question",tip:"Гайхмаар tone"},
+{id:179,hook:"Productivity апп-д бурханлагдаж байна уу? Стоп. ✋",cat:"txt",type:"pattern-interrupt",tip:"Стоп signal — attention"},
+{id:180,hook:"Таны хамгийн сайн өдөр. Давтана уу? 🔁",cat:"txt",type:"question",tip:"Repetition challenge"},
+{id:181,hook:"Бодол → Plan → Action → XP 💡",cat:"txt",type:"list",tip:"Flow chart мэт"},
+{id:182,hook:"Routine-гүй байдал = чиглэлгүй байдал 🌀",cat:"txt",type:"statement",tip:"Spiral icon — дисориентаци"},
+{id:183,hook:"Streak: 7 хоног. Achievement: 3. Level: 2. 📈",cat:"txt",type:"reveal",tip:"Stats dashboard мэт"},
+{id:184,hook:"Deep work цаг хэдий нь вэ? 🧠",cat:"txt",type:"question",tip:"Focus tone"},
+{id:185,hook:"Амьдралын систем суулгах цаг болсон 🔧",cat:"txt",type:"statement",tip:"Installation metaphor"},
+{id:186,hook:"Өнөөдрийн top 3 зүйл: тодорхой байна уу? 🎯",cat:"txt",type:"question",tip:"Priority мэт"},
+{id:187,hook:"Habit + Reward = Brain хайрладаг систем 🧬",cat:"txt",type:"statement",tip:"Science meme tone"},
+{id:188,hook:"Routine OS = Productivity-г gamify хийсэн шийдэл 🎮",cat:"txt",type:"reveal",tip:"Game aesthetic"},
+{id:189,hook:"Стресс байхгүй. Систем байгаа. 🧘",cat:"txt",type:"statement",tip:"Contrast — тайван tone"},
+{id:190,hook:"9,900₮ vs Стресс vs Цаг алдалт — сонгол тань 💭",cat:"txt",type:"question",tip:"Trade-off comparison"},
+{id:191,hook:"Productivity tracker авсан уу? Хамгийн шилдэг нь аль вэ? 📱",cat:"txt",type:"question",tip:"Product comparison"},
+{id:192,hook:"Habit building science: Cue → Routine → Reward 🔬",cat:"txt",type:"list",tip:"Scientific diagram мэт"},
+{id:193,hook:"Нэг файл. Нэг систем. Бүх өдрүүд. 📄",cat:"txt",type:"statement",tip:"Minimalist aesthetic"},
+{id:194,hook:"Зорилго + Систем + Streak = Амжилт 🏆",cat:"txt",type:"list",tip:"Equation мэт"},
+{id:195,hook:"Productivity-г хайрлахгүй байна уу? Буруу хэрэгсэл байна. 🔧",cat:"txt",type:"pattern-interrupt",tip:"Self-reflection trigger"},
+{id:196,hook:"Streak 0 → ∞ байж болно. Эхний алхам хийх хэрэгтэй. 🚀",cat:"txt",type:"statement",tip:"Infinity symbol — unlimited potential"},
+{id:197,hook:"Level up хийх цаг болсон. 🎮",cat:"txt",type:"statement",tip:"Game call to action"},
+{id:198,hook:"Productivity tracker-ийн subscription-гүй хувилбар байдаг 💡",cat:"txt",type:"reveal",tip:"Solution reveal"},
+{id:199,hook:"7 хоногийн систем. 7,900₮. 7 дахин productivity. 7️⃣",cat:"txt",type:"list",tip:"Number pattern — memorable"},
+{id:200,hook:"Амьдралын OS суулгах цаг болсон 💾",cat:"txt",type:"statement",tip:"OS/tech metaphor"},
+
+// ── PAIN POINT (50) ──────────────────────────────────
+{id:201,hook:"Бараа судалгаанд хэдэн цаг үрдэг вэ?",cat:"pain",type:"question",tip:"Харамсалтай нүүр — pain мэдрэх"},
+{id:202,hook:"Монголд ямар бараа зарагддаг вэ гэж мэдэхгүй бол...",cat:"pain",type:"curiosity",tip:"Мэдэхгүй байдлыг дурсуул"},
+{id:203,hook:"Dropshipping эхлэхийн тулд яаж бараа олох вэ?",cat:"pain",type:"question",tip:"Шинэхэн хүний асуулт мэт"},
+{id:204,hook:"Бараа тестэлж нэг ч зарагдаагүй байсан уу?",cat:"pain",type:"question",tip:"Итгэмжтэй нотолгоо — pain recall"},
+{id:205,hook:"Ad явуулаад ROAS 0.5 гараад зоо гуйсан уу?",cat:"pain",type:"question",tip:"Конкрет тоо — таних pain"},
+{id:206,hook:"Winning product олоход хэдэн сар болдог вэ?",cat:"pain",type:"question",tip:"Цагийн зардлыг дурсуул"},
+{id:207,hook:"Supplier олоход хэдэн цаг зарцуулсан бэ?",cat:"pain",type:"question",tip:"Frustration мэт"},
+{id:208,hook:"Alibaba дээр 1000+ бараанаас яаж сонгох вэ?",cat:"pain",type:"question",tip:"Хэт олон сонголтын confusion"},
+{id:209,hook:"E-commerce эхлэхийг хүсдэг ч хаанаас эхлэхээ мэдэхгүй байна уу?",cat:"pain",type:"question",tip:"Beginner pain — дотно tone"},
+{id:210,hook:"Viral product олохыг хичээгээд л ядарсан байна уу?",cat:"pain",type:"question",tip:"Ядаргааны мэдрэмж мэт"},
+{id:211,hook:"Тест хийсэн барааны 90% нь зарагдаагүй байсан уу?",cat:"pain",type:"question",tip:"Шударга, тодорхой тоо"},
+{id:212,hook:"Wow factor гэж юу болохыг мэдэхгүй бол...",cat:"pain",type:"curiosity",tip:"Мэдэхгүй байдлын магадлал"},
+{id:213,hook:"Монгол зах зээлийн saturation-ийг хэрхэн мэдэх вэ?",cat:"pain",type:"question",tip:"Маркет мэдлэгийн хомс байдал"},
+{id:214,hook:"Competitor дүн шинжилгээ хийхэд хэдэн цаг үрдэг вэ?",cat:"pain",type:"question",tip:"Цагийн эдийн засаг"},
+{id:215,hook:"E-commerce хийхийг хүссэн ч мэдлэг дутагдаж байна уу?",cat:"pain",type:"question",tip:"Beginner confidence gap"},
+{id:216,hook:"Зарагдаагүй бараанд мөнгө зарцуулах айдас байна уу?",cat:"pain",type:"question",tip:"Risk aversion — хүний нийтлэг айдас"},
+{id:217,hook:"Ad зардал гарахад ROAS хангалтгүй байвал...",cat:"pain",type:"curiosity",tip:"ROAS pain — e-commerce хийдэг хүн мэднэ"},
+{id:218,hook:"Бараа судалгаа хийхдээ Amazon, Tiktok, Ali бүгдийг шалгадаг уу?",cat:"pain",type:"question",tip:"Research complexity — олон platform"},
+{id:219,hook:"Нэг winning product олоход хэдэн туршилт хийх ёстой вэ?",cat:"pain",type:"question",tip:"Тоо — surprise элемент"},
+{id:220,hook:"Бараа сонголтын буруу шийдвэр хэдэн мянга алдаулдаг вэ?",cat:"pain",type:"question",tip:"Мөнгөний алдагдлын pain"},
+{id:221,hook:"Монголд viral болдог бараа Дубайд ч viral болдог уу?",cat:"pain",type:"question",tip:"Global vs local trend тай"},
+{id:222,hook:"Тестэлж байгаа бараагаа аль хэдийн хэн нэгэн зарчихсан байвал?",cat:"pain",type:"question",tip:"Opportunity cost айдас"},
+{id:223,hook:"CTR >2% гаргахад хамгийн хэцүү нь...",cat:"pain",type:"curiosity",tip:"Tech metric — e-commerce хүн таних"},
+{id:224,hook:"Product research-д цаг үрэхгүйгээр хэрхэн ялагч бараа олох вэ?",cat:"pain",type:"question",tip:"Efficiency desire"},
+{id:225,hook:"E-commerce эхлэхэд хамгийн том саад нь юу вэ?",cat:"pain",type:"question",tip:"Нийтлэг саадыг нэрлүүл"},
+{id:226,hook:"Бараа судалгааг өдөрт 2 цагаар хийж 6 сарыг үрэх бол?",cat:"pain",type:"question",tip:"Цагийн математик — тодорхой"},
+{id:227,hook:"Monголд хэн ч зарахгүй байгаа бараа байдаг — хэрхэн олох вэ?",cat:"pain",type:"question",tip:"Untapped opportunity хайж байна"},
+{id:228,hook:"Supplier-тай холбоо барихад хятад хэл мэдэхгүй бол?",cat:"pain",type:"question",tip:"Language barrier — нийтлэг айдас"},
+{id:229,hook:"Amazon bestseller Монголд ч bestseller болох уу?",cat:"pain",type:"question",tip:"Market transfer logic"},
+{id:230,hook:"Dropshipping хийх хүсэлтэй ч хаанаас бараа авах вэ?",cat:"pain",type:"question",tip:"Supply chain confusion"},
+{id:231,hook:"Тест хийхэд мөнгө шаарддаг — буруу бараа сонговол?",cat:"pain",type:"question",tip:"Financial risk айдас"},
+{id:232,hook:"Viral content хийхийн тулд бараа нь яг ямар байх ёстой вэ?",cat:"pain",type:"question",tip:"Content + product alignment gap"},
+{id:233,hook:"E-commerce хийж байгаа хүмүүс бараагаа хаанаас олдог вэ?",cat:"pain",type:"question",tip:"Insider knowledge gap"},
+{id:234,hook:"Saturation буюу дүүрэлт — хэрхэн мэдэх вэ?",cat:"pain",type:"question",tip:"Market research gap"},
+{id:235,hook:"5x margin гарах бараа монголд байдаг уу?",cat:"pain",type:"question",tip:"Margin хайж байгаа хүнд"},
+{id:236,hook:"Бараа судалгаа хийхэд ямар platform хамгийн найдвартай вэ?",cat:"pain",type:"question",tip:"Tool confusion"},
+{id:237,hook:"Winning product олоод тест хийх — хэчнээн хурдан хийж болох вэ?",cat:"pain",type:"question",tip:"Speed to market desire"},
+{id:238,hook:"TikTok trending бараа Монголд зарагдах уу?",cat:"pain",type:"question",tip:"Platform transfer uncertainty"},
+{id:239,hook:"E-commerce хийх хүн мэдэх ёстой 3 зүйл",cat:"pain",type:"list",tip:"Хуруугаараа 3 тоол"},
+{id:240,hook:"Бараа сонгоход хамгийн олон алдаа гардаг алхам нь...",cat:"pain",type:"curiosity",tip:"Common mistake reveal"},
+{id:241,hook:"Монголд dropshipping хийхийн тулд юу мэдэх ёстой вэ?",cat:"pain",type:"question",tip:"Beginner roadmap question"},
+{id:242,hook:"200 бараа судлаад 3 нь л winning product болдог — яаж тодорхойлох вэ?",cat:"pain",type:"question",tip:"Selection ratio — бодит тоо"},
+{id:243,hook:"Product research без AI, без database хийх бол хэдэн цаг болдог вэ?",cat:"pain",type:"question",tip:"Manual vs automated compare"},
+{id:244,hook:"Ямар бараа e-commerce-д зарахад хамгийн хялбар вэ?",cat:"pain",type:"question",tip:"Simplicity search"},
+{id:245,hook:"Productdrop гэж юу болохыг мэдэх үү?",cat:"pain",type:"question",tip:"Brand awareness — soft"},
+{id:246,hook:"E-commerce хийхийг хүссэн хүмүүс юуг алдаж байна вэ?",cat:"pain",type:"question",tip:"Opportunity cost focus"},
+{id:247,hook:"Монголын e-commerce зах зээлд хэзээ орох нь хамгийн оновчтой вэ?",cat:"pain",type:"question",tip:"Timing question — urgency"},
+{id:248,hook:"Бараа судлахад хэдэн цаг зарцуулах нь ухаалаг вэ?",cat:"pain",type:"question",tip:"Efficiency mindset"},
+{id:249,hook:"Product research хийхгүйгээр e-commerce эхэлбэл?",cat:"pain",type:"question",tip:"Risk of skipping research"},
+{id:250,hook:"Монгол e-commerce-д хамгийн борлуулалт сайтай category нь?",cat:"pain",type:"question",tip:"Category selection question"},
+
+// ── SOCIAL PROOF (50) ──────────────────────────────────
+{id:251,hook:"Нэг сарт 30 бараа зарсан хүн юу хийсэн бэ?",cat:"social",type:"social-proof",tip:"Result-д анхаарал хандуул"},
+{id:252,hook:"Productdrop хэрэглэсний дараа ad зардал 40% буурсан",cat:"social",type:"social-proof",tip:"Конкрет тоо — итгэлтэй хэл"},
+{id:253,hook:"Энэ сард 3 бараа туршаад 1 нь winning болсон",cat:"social",type:"social-proof",tip:"Win rate — бодит туршлага"},
+{id:254,hook:"Dropshipping 3 сартай хүн яаж 200 бараа судалдаг вэ?",cat:"social",type:"question",tip:"Curiosity + social proof"},
+{id:255,hook:"Монголд e-commerce хийж байгаа хүмүүс яаж winning product олдог вэ?",cat:"social",type:"question",tip:"Community social proof"},
+{id:256,hook:"Энэ drop авсны дараа 7 хоногт тест эхэлсэн",cat:"social",type:"social-proof",tip:"Speed to market нотолгоо"},
+{id:257,hook:"Wow factor 9+ бараа — ad cost автоматаар буурна",cat:"social",type:"reveal",tip:"Causal relationship нотолгоо"},
+{id:258,hook:"Хамгийн сайн 5 бараа судалгааны хэрэгсэлийг ашигладаг хүн нэгийг л ашиглана",cat:"social",type:"reveal",tip:"Simplification нотолгоо"},
+{id:259,hook:"Drop авсан хүмүүс дундаж хэдэн бараа тестэлдэг вэ?",cat:"social",type:"question",tip:"Community behavior reveal"},
+{id:260,hook:"E-commerce хийдэг хүмүүсийн 80% бараа судалгаандаа хэт их цаг үрдэг",cat:"social",type:"social-proof",tip:"Majority data — authoritative"},
+{id:261,hook:"Winning product олоод 2 долоо хоногт profitable болсон тухай",cat:"social",type:"social-proof",tip:"Timeline нотолгоо"},
+{id:262,hook:"Beauty бараагаар Монголд сарт 50+ зарагдана гэж итгэсэн үү?",cat:"social",type:"social-proof",tip:"Гайхмаар result"},
+{id:263,hook:"Нэг drop-д 200 бараа — хэрэглэгч хэдийг нь тест хийдэг вэ?",cat:"social",type:"question",tip:"Usage data — curious"},
+{id:264,hook:"Productdrop хэрэглэгч: 'Өмнө нь 2 өдөр бараа хайдаг байсан'",cat:"social",type:"social-proof",tip:"Direct quote мэт — authentic"},
+{id:265,hook:"Supplier холбоосыг ашиглаад хэдэн цаг хэмнэсэн бэ?",cat:"social",type:"question",tip:"Time savings — quantifiable"},
+{id:266,hook:"3 сарын дотор profitable e-commerce байгуулсан хүн байдаг",cat:"social",type:"social-proof",tip:"Timeline + outcome"},
+{id:267,hook:"Ad zardal нь буурахад Wow factor хамгийн их нөлөөлдөг",cat:"social",type:"reveal",tip:"Causal insight"},
+{id:268,hook:"Энэ database-д байгаа бараагаар тест хийсэн хүмүүсийн CTR дундаж >2%",cat:"social",type:"social-proof",tip:"Aggregate metric"},
+{id:269,hook:"Dropping хийж байгаа хүмүүс яаж бараагаа сонгодог вэ? — Insider",cat:"social",type:"reveal",tip:"Insider knowledge claim"},
+{id:270,hook:"Productdrop-ийн drop авсны дараа анхны зарлыг хэдийд хийсэн бэ?",cat:"social",type:"question",tip:"Time-to-first-sale metric"},
+{id:271,hook:"Beauty & Home category Монголд хамгийн хурдан зарагддаг",cat:"social",type:"reveal",tip:"Category insight — data based"},
+{id:272,hook:"Нэг supplier холбоосоор хэчнээн ашиг гарч болох вэ?",cat:"social",type:"question",tip:"ROI curiosity"},
+{id:273,hook:"Тестэлсэн барааны wow factor нь winning rate-тэй шууд хамааралтай",cat:"social",type:"reveal",tip:"Correlation insight"},
+{id:274,hook:"Drop авсан хэрэглэгч 1 сарт дундаж 5 бараа тестэлдэг",cat:"social",type:"social-proof",tip:"Usage stats"},
+{id:275,hook:"Saturation level 2-аас доош бараа нь 3x хурдан зарагддаг",cat:"social",type:"reveal",tip:"Data-backed claim"},
+{id:276,hook:"E-commerce хийдэг Монголчуудын нийтлэг алдаа нэг байдаг",cat:"social",type:"reveal",tip:"Common mistake reveal"},
+{id:277,hook:"Viral ad жишээг ашигласан хүмүүс A/B тестийн зардалаа 50% хэмнэнэ",cat:"social",type:"social-proof",tip:"Cost saving metric"},
+{id:278,hook:"Drop авсан хүмүүс хэдийд 1-р борлуулалт хийдэг вэ?",cat:"social",type:"question",tip:"Timeline curiosity"},
+{id:279,hook:"Монголд online дэлгүүр нээсэн хүмүүсийн 70% нь бараа сонголтоос болж бүтэлгүйтдэг",cat:"social",type:"social-proof",tip:"Failure rate — wake up call"},
+{id:280,hook:"Productdrop ашигладаг хүмүүс бараа судалгаанд өдөрт 30 минутаас бага зарцуулдаг",cat:"social",type:"social-proof",tip:"Time efficiency нотолгоо"},
+{id:281,hook:"Энэ drop-н бараагаар 1-р долоо хоногт ашиг гарсан",cat:"social",type:"social-proof",tip:"Quick win — motivating"},
+{id:282,hook:"Winning product олоход database нь 10x хурдан байдаг",cat:"social",type:"social-proof",tip:"Speed multiplier"},
+{id:283,hook:"5x margin гарах бараа монголд байдаг — ийм бараа бидэнд байна",cat:"social",type:"reveal",tip:"Bold claim + proof"},
+{id:284,hook:"Хэрэглэгч: 'Анхны drop-д 43,000₮ орлого олсон'",cat:"social",type:"social-proof",tip:"Specific revenue — believable"},
+{id:285,hook:"Wow factor >8 бараа — органик reach ч нэмэгддэг",cat:"social",type:"reveal",tip:"Organic bonus metric"},
+{id:286,hook:"Drop авсан хүмүүсийн 60% нь 2-р drop-д дахин ордог",cat:"social",type:"social-proof",tip:"Repeat customer rate — trust"},
+{id:287,hook:"Бараа судалгаанд AI ашиглаж байна уу? — Хамгийн шилдэг арга энэ биш",cat:"social",type:"pattern-interrupt",tip:"Unexpected claim"},
+{id:288,hook:"Home category бараа нь beauty-гаас 2x хурдан зарагддаг",cat:"social",type:"reveal",tip:"Category comparison data"},
+{id:289,hook:"Productdrop community-д 1000+ e-commerce хийгч байна",cat:"social",type:"social-proof",tip:"Community size — credibility"},
+{id:290,hook:"Drop #01 буюу анхны drop-н бараагаар тест хийсэн ROAS",cat:"social",type:"reveal",tip:"Real ROAS data claim"},
+{id:291,hook:"Зарах бараагаа 10 минутад олно — хэрхэн?",cat:"social",type:"question",tip:"Speed claim — curiosity"},
+{id:292,hook:"Winning rate нь бараа судалгааны чанараас шалтгаалдаг",cat:"social",type:"reveal",tip:"Research quality insight"},
+{id:293,hook:"Монгол e-commerce хийгчдийн нийтлэг байдал",cat:"social",type:"social-proof",tip:"Community portrait"},
+{id:294,hook:"Supplier холбоос дутагдвал маржин хэдэн хувиар буурдаг вэ?",cat:"social",type:"question",tip:"Margin impact question"},
+{id:295,hook:"Beauty category Монголд underrated — data баталж байна",cat:"social",type:"reveal",tip:"Data-backed opportunity claim"},
+{id:296,hook:"Drop авсан хүн хэдэн бараа тестэлбэл эхний win гардаг вэ?",cat:"social",type:"question",tip:"Expected win stats"},
+{id:297,hook:"Productdrop-ийн хэрэглэгч: 'Анх скептик байсан — одоо шалгасан'",cat:"social",type:"social-proof",tip:"Skeptic converted — relatable"},
+{id:298,hook:"Нэг бараагийн судалгаа хийхэд дундаж 4.5 цаг зарцуулдаг — Productdrop 10 минут",cat:"social",type:"social-proof",tip:"Direct time comparison"},
+{id:299,hook:"Wow factor 9+ бараанаас CTR >3% гарсан кейс",cat:"social",type:"social-proof",tip:"Specific metric case study"},
+{id:300,hook:"Drop авсан хүмүүсийн санал хүсэлт: хэн нь хамгийн их тусалсан бэ?",cat:"social",type:"question",tip:"Community feedback angle"},
+
+// ── VALUE / OFFER (50) ──────────────────────────────────
+{id:301,hook:"200 бараа. 2 supplier холбоос бараа тус бүрт. Нэг drop.",cat:"proof",type:"statement",tip:"Тоог ритмтэй тоол — хуруу ашиглан"},
+{id:302,hook:"Productdrop гэж юу вэ? — 60 секундэд тайлбарлая",cat:"proof",type:"reveal",tip:"Time-boxed explanation hook"},
+{id:303,hook:"29,900₮-өөр юу авах вэ?",cat:"proof",type:"question",tip:"Value question — answer нь wow"},
+{id:304,hook:"Drop #01 буюу 200 бараа нэг файлд",cat:"proof",type:"reveal",tip:"Compact value prop"},
+{id:305,hook:"Нэг drop = нэг сарын бараа судалгаа",cat:"proof",type:"statement",tip:"Time equivalence — value"},
+{id:306,hook:"Wow factor, saturation level, supplier холбоос — бүгд нэг дор",cat:"proof",type:"list",tip:"Feature тоол — хуруу ашиглан"},
+{id:307,hook:"200 бараатай database-ийг нэг дор үзэх бол?",cat:"proof",type:"question",tip:"Scale of value — visualization"},
+{id:308,hook:"Drop авснаар хэдэн цаг хэмнэх вэ?",cat:"proof",type:"question",tip:"ROI question — answer нь их"},
+{id:309,hook:"Viral ad жишээ нь бараа тус бүрт — copy-paste хийх боломж",cat:"proof",type:"reveal",tip:"Ready-made content value"},
+{id:310,hook:"Supplier link хайхад хэдэн цаг зарцуулдаг вэ? — Productdrop-д 0",cat:"proof",type:"statement",tip:"Zero time = max value"},
+{id:311,hook:"Beauty & Home category — Монголд хамгийн хурдан зарагддаг 2 category",cat:"proof",type:"reveal",tip:"Category selection rationale"},
+{id:312,hook:"19,900₮ vs 49,900₮ vs 99,000₮ — ялгаа нь юу вэ?",cat:"proof",type:"question",tip:"Pricing tier — curiosity"},
+{id:313,hook:"Нэг удааны авалт. Дахин дахин ашиглана. Subscription байхгүй.",cat:"proof",type:"statement",tip:"One-time value emphasis"},
+{id:314,hook:"10 хоног тутам шинэ 200 бараа — сарын subscription",cat:"proof",type:"reveal",tip:"Recurring value — subscription tier"},
+{id:315,hook:"Drop #01 хэдэн бараа агуулж байна? 200. Хэдэн category? 5.",cat:"proof",type:"reveal",tip:"Specific numbers — credible"},
+{id:316,hook:"Winning product олоход database нь хэрхэн тусалдаг вэ?",cat:"proof",type:"question",tip:"Use case explanation hook"},
+{id:317,hook:"Productdrop-ийн Telegram-д нэгдсэний давуу тал",cat:"proof",type:"reveal",tip:"Community value"},
+{id:318,hook:"Amazon competitor шинжилгээ нь яагаад чухал вэ?",cat:"proof",type:"question",tip:"Market intelligence value"},
+{id:319,hook:"Viral ad жишээ байхгүй бол A/B тест хэдэн дахин үнэтэй болдог вэ?",cat:"proof",type:"question",tip:"Cost of NOT having it"},
+{id:320,hook:"5 category. 200 бараа. Тус бүрт supplier + viral ad + saturation.",cat:"proof",type:"list",tip:"Comprehensive value list"},
+{id:321,hook:"Productdrop subscription авснаар сар бүр юу авах вэ?",cat:"proof",type:"question",tip:"Recurring value question"},
+{id:322,hook:"Dropping эхлэхэд хамгийн их хэрэгтэй мэдээлэл нэг дор",cat:"proof",type:"statement",tip:"All-in-one value"},
+{id:323,hook:"29,900₮ vs 2 өдрийн цаг — тань хувьд аль нь үнэтэй вэ?",cat:"proof",type:"question",tip:"Trade-off framing"},
+{id:324,hook:"Productdrop database нь хэрхэн шинэчлэгддэг вэ?",cat:"proof",type:"question",tip:"Freshness value"},
+{id:325,hook:"Supplier холбоос — 1688 болон Alibaba хоёулангаас",cat:"proof",type:"reveal",tip:"Source diversity — credible"},
+{id:326,hook:"Drop авснаар анхны бараагаа хэдийд тест хийж болох вэ?",cat:"proof",type:"question",tip:"Time-to-action"},
+{id:327,hook:"Нэг drop-ийн агуулга: 200 бараа × 6 мэдээлэл = 1200 data point",cat:"proof",type:"reveal",tip:"Volume of value — impressive"},
+{id:328,hook:"Winning product = Wow factor + Low saturation + Good margin",cat:"proof",type:"list",tip:"Formula reveal"},
+{id:329,hook:"Productdrop-ийн Starter vs Monthly ялгаа яг юу вэ?",cat:"proof",type:"question",tip:"Tier comparison"},
+{id:330,hook:"200 бараагаас 10 сонгоод тестэлбэл — статистикийн хувьд нэг нь winning байна",cat:"proof",type:"reveal",tip:"Statistical confidence — reassuring"},
+{id:331,hook:"Drop авсан өдрөөс эхлэн зарж эхэлж болно",cat:"proof",type:"statement",tip:"Immediate action value"},
+{id:332,hook:"Productdrop-д байгаа бараанаас яаж ашиглах вэ?",cat:"proof",type:"question",tip:"Use case walkthrough hook"},
+{id:333,hook:"Sарын 49,900₮ subscription-д юу багтах вэ?",cat:"proof",type:"question",tip:"Monthly value question"},
+{id:334,hook:"Reels template нь яагаад winning product-д нэмэх ёстой вэ?",cat:"proof",type:"question",tip:"Content + product synergy"},
+{id:335,hook:"Drop-д байгаа бараа тус бүр Монгол зах зээлд тохирохыг шалгасан",cat:"proof",type:"reveal",tip:"Localization quality claim"},
+{id:336,hook:"Productdrop авсны дараа 4 алхам — эхлэх гарын авлага",cat:"proof",type:"list",tip:"Process clarity"},
+{id:337,hook:"AI product photo generate хийх боломж — Premium-д багтдаг",cat:"proof",type:"reveal",tip:"AI feature — cutting edge value"},
+{id:338,hook:"99,000₮ Premium-д яг юу нэмж авах вэ?",cat:"proof",type:"question",tip:"Premium tier justification"},
+{id:339,hook:"Нэг drop-д 200 бараа — 200 боломж",cat:"proof",type:"statement",tip:"Opportunity framing"},
+{id:340,hook:"Productdrop-ийн Telegram community-д хэдэн хүн байна вэ?",cat:"proof",type:"question",tip:"Community size — trust signal"},
+{id:341,hook:"Drop авснаар хамгийн хурдан e-commerce эхлэх арга",cat:"proof",type:"statement",tip:"Speed advantage"},
+{id:342,hook:"Beauty bараа vs Home бараа — аль нь хурдан зарагддаг вэ?",cat:"proof",type:"question",tip:"Category debate — engaging"},
+{id:343,hook:"Supplier link байхгүй бол margin хэдэн хувиар буурдаг вэ?",cat:"proof",type:"question",tip:"Cost of missing link"},
+{id:344,hook:"Saturation level гэж яаж тодорхойлогддог вэ?",cat:"proof",type:"question",tip:"Methodology transparency"},
+{id:345,hook:"200 бараанаас таны бизнест хамгийн тохирох 10-г яаж сонгох вэ?",cat:"proof",type:"question",tip:"Personalization question"},
+{id:346,hook:"Drop #01 — 43 slot үлдсэн. Дараа авахад юу болох вэ?",cat:"proof",type:"statement",tip:"Scarcity + urgency"},
+{id:347,hook:"Productdrop нь Монголын e-commerce-д юу өөрчлөх вэ?",cat:"proof",type:"question",tip:"Market impact — big picture"},
+{id:348,hook:"Нэг drop-д хэдэн цагийн бараа судалгаа bagтдаг вэ?",cat:"proof",type:"question",tip:"Time value calculation"},
+{id:349,hook:"Winning product-ийн тодорхойлолт — Productdrop хэрхэн шалгадаг вэ?",cat:"proof",type:"question",tip:"Quality standard reveal"},
+{id:350,hook:"Drop авснаар нэгдэх Telegram channel-д яг юу байдаг вэ?",cat:"proof",type:"question",tip:"Community value reveal"},
+
+// ── EDUCATION (50) ──────────────────────────────────
+{id:351,hook:"Winning product гэж яг юу болдог вэ?",cat:"edu",type:"question",tip:"Foundational definition"},
+{id:352,hook:"Wow factor хэрхэн тооцдог вэ?",cat:"edu",type:"question",tip:"Metric explanation hook"},
+{id:353,hook:"Dropshipping vs private label — ялгаа нь юу вэ?",cat:"edu",type:"question",tip:"Concept comparison"},
+{id:354,hook:"CTR >2% болгох 3 зөвлөгөө",cat:"edu",type:"list",tip:"Practical tips — хуруу ашиглан"},
+{id:355,hook:"ROAS гэж юу болдог вэ? — E-commerce хийгч бүр мэдэх ёстой",cat:"edu",type:"question",tip:"Metric education"},
+{id:356,hook:"Saturation level хэрхэн мэдэх вэ?",cat:"edu",type:"question",tip:"Research methodology"},
+{id:357,hook:"Supplier-тай яаж холбоо барих вэ? — Хятадаар ярих шаардлагагүй",cat:"edu",type:"reveal",tip:"Language barrier solution"},
+{id:358,hook:"Facebook ad-д 1000₮ зарцуулахаасаа өмнө юу мэдэх ёстой вэ?",cat:"edu",type:"question",tip:"Pre-launch checklist"},
+{id:359,hook:"Dropshipping-д хамгийн олон алдагдал гардаг алхам нь юу вэ?",cat:"edu",type:"reveal",tip:"Common mistake education"},
+{id:360,hook:"Product market fit гэж юу болдог вэ?",cat:"edu",type:"question",tip:"Marketing concept education"},
+{id:361,hook:"Монголд e-commerce хийхийн тулд юу хэрэгтэй вэ?",cat:"edu",type:"question",tip:"Startup checklist"},
+{id:362,hook:"Beauty product-ийн wow factor яагаад өндөр байдаг вэ?",cat:"edu",type:"question",tip:"Category psychology"},
+{id:363,hook:"Ad creative-г хэрхэн хурдан хийх вэ? — 3 алхам",cat:"edu",type:"list",tip:"Step-by-step education"},
+{id:364,hook:"1688 vs Alibaba — ялгаа нь юу вэ?",cat:"edu",type:"question",tip:"Platform comparison — useful"},
+{id:365,hook:"Viral bараа 3 шинж тэмдэгтэй — та мэдэх үү?",cat:"edu",type:"reveal",tip:"Mystery number — curiosity"},
+{id:366,hook:"Facebook ads CPA-г яаж бодох вэ?",cat:"edu",type:"question",tip:"Metric calculation education"},
+{id:367,hook:"E-commerce-д хамгийн хурдан ашиг гаргах категори нь юу вэ?",cat:"edu",type:"question",tip:"Category ROI education"},
+{id:368,hook:"A/B тест гэж юу болдог вэ? — Ad-д яаж хэрэглэх вэ?",cat:"edu",type:"question",tip:"Testing methodology"},
+{id:369,hook:"Бараа judging criteria: Wow, Saturation, Margin, Easy — яаж ашиглах вэ?",cat:"edu",type:"question",tip:"Framework education"},
+{id:370,hook:"Монгол e-commerce-д Reel яагаад чухал вэ?",cat:"edu",type:"question",tip:"Platform strategy education"},
+{id:371,hook:"Facebook funnel гэж юу вэ? — Reel → Message → Payment",cat:"edu",type:"reveal",tip:"Funnel visualization"},
+{id:372,hook:"Netlify-д HTML файл байршуулах яагаад ухаалаг вэ?",cat:"edu",type:"question",tip:"Tech stack education"},
+{id:373,hook:"Dropshipping-д хэдэн бараа тест хийх ёстой вэ?",cat:"edu",type:"question",tip:"Testing volume education"},
+{id:374,hook:"CapCut-р Reel хэрхэн хурдан хийх вэ?",cat:"edu",type:"question",tip:"Tool tutorial hook"},
+{id:375,hook:"Монгол зах зээлд trending гэдгийг хэрхэн тодорхойлох вэ?",cat:"edu",type:"question",tip:"Market trend methodology"},
+{id:376,hook:"E-commerce-д margin хэдэн хувиас дээш байх ёстой вэ?",cat:"edu",type:"question",tip:"Financial benchmark"},
+{id:377,hook:"Product launch хийхийн өмнө хийх 5 зүйл",cat:"edu",type:"list",tip:"Launch checklist"},
+{id:378,hook:"Reel hook — scroll зогсоодог эхний 3 секунд яаж хийх вэ?",cat:"edu",type:"question",tip:"Content craft education"},
+{id:379,hook:"Хятад supplier-тай ажиллах нь аюулгүй юу?",cat:"edu",type:"question",tip:"Risk question — reassurance"},
+{id:380,hook:"Монголд e-commerce хийхэд хамгийн том боломж нь юу вэ?",cat:"edu",type:"question",tip:"Opportunity framing"},
+{id:381,hook:"Бараа зарахдаа messaging нь хэрхэн чухал байдаг вэ?",cat:"edu",type:"question",tip:"Marketing psychology"},
+{id:382,hook:"Split-screen Reel яагаад viral болдог вэ?",cat:"edu",type:"question",tip:"Content format education"},
+{id:383,hook:"Hook-Retain-Reward гэж юу болдог вэ?",cat:"edu",type:"question",tip:"Content framework education"},
+{id:384,hook:"E-commerce-д хамгийн чухал метрик нь аль нь вэ?",cat:"edu",type:"question",tip:"KPI priority education"},
+{id:385,hook:"Winning product-ийн 5 шинж тэмдэг",cat:"edu",type:"list",tip:"Definitive list — authority"},
+{id:386,hook:"Монгол хүн e-commerce хийхийн тулд хамгийн бага хэчнээн мөнгө хэрэгтэй вэ?",cat:"edu",type:"question",tip:"Entry cost education"},
+{id:387,hook:"Home декор бараа яагаад e-commerce-д сайн гарц өгдөг вэ?",cat:"edu",type:"question",tip:"Category deep dive"},
+{id:388,hook:"Content creator болон e-commerce-ийг хэрхэн нэгтгэх вэ?",cat:"edu",type:"question",tip:"Cross-channel strategy"},
+{id:389,hook:"Reel-ийн бичлэг хийхдээ DJI Pocket 3 яаж ашиглах вэ?",cat:"edu",type:"question",tip:"Tool education"},
+{id:390,hook:"Бараа судалгааны workflow яаж харагддаг вэ? — Step by step",cat:"edu",type:"question",tip:"Process visualization"},
+{id:391,hook:"Нэг Reel-ийн хамгийн оновчтой урт хэд байдаг вэ?",cat:"edu",type:"question",tip:"Format optimization"},
+{id:392,hook:"E-commerce фunnelийг хэрхэн бүтээдэг вэ? — Монгол жишээ",cat:"edu",type:"question",tip:"Local case study"},
+{id:393,hook:"Бараагаа хэрхэн хурдан Монголд авчрах вэ?",cat:"edu",type:"question",tip:"Logistics education"},
+{id:394,hook:"Facebook vs Instagram — Монгол e-commerce-д аль нь илүү вэ?",cat:"edu",type:"question",tip:"Platform debate — engaging"},
+{id:395,hook:"Dropshipping-д хамгийн хурдан scaling хийх арга",cat:"edu",type:"reveal",tip:"Growth hack education"},
+{id:396,hook:"E-commerce хийж байгаа хүн productivity яаж удирддаг вэ?",cat:"edu",type:"question",tip:"Ops + productivity cross"},
+{id:397,hook:"Ашигтай бараа олсны дараа яаж scale хийдэг вэ?",cat:"edu",type:"question",tip:"Scaling methodology"},
+{id:398,hook:"Product page-г хэрхэн оновчтой болгох вэ?",cat:"edu",type:"question",tip:"Conversion optimization"},
+{id:399,hook:"E-commerce-д хамгийн нийтлэг 5 алдаа",cat:"edu",type:"list",tip:"Mistake list — relatable"},
+{id:400,hook:"Winning product олоод анхны продажаа хэдийд хийж болох вэ?",cat:"edu",type:"question",tip:"Speed-to-market education"},
+
+];
+
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+const CAT_COLORS = {
+  '4c':  {bg:'rgba(255,78,106,.12)',  color:'var(--c4c)',   label:'🎬 4C'},
+  'ugc': {bg:'rgba(255,185,48,.12)',  color:'var(--ugc)',   label:'🤳 UGC'},
+  'vo':  {bg:'rgba(124,111,255,.12)', color:'var(--vo)',    label:'🎙 VO'},
+  'txt': {bg:'rgba(62,207,142,.12)',  color:'var(--txt)',   label:'✏️ Text'},
+  'pain':{bg:'rgba(255,78,106,.12)',  color:'var(--pain)',  label:'😤 Pain'},
+  'social':{bg:'rgba(124,111,255,.12)',color:'var(--social)',label:'📱 Social'},
+  'proof':{bg:'rgba(255,185,48,.12)', color:'var(--proof)', label:'💰 Value'},
+  'edu': {bg:'rgba(200,255,0,.1)',    color:'var(--edu)',   label:'🎓 Edu'},
+};
+const TYPE_LABEL = {
+  question:'Асуулт',statement:'Мэдэгдэл',list:'Жагсаалт',curiosity:'Сонирхол',
+  'pattern-interrupt':'Таслалт','social-proof':'Нотолгоо',challenge:'Тэмцэл',reveal:'Нээлт'
+};
+
+let currentCat = 'all';
+let copiedCount = 0;
+
+function updStats(){
+  const vis = document.querySelectorAll('.hcard:not([style*="none"])').length;
+  document.getElementById('cur-cnt').textContent = vis;
+  document.getElementById('copied-cnt').textContent = copiedCount;
+}
+
+function buildCard(h){
+  const cc = CAT_COLORS[h.cat];
+  const tl = TYPE_LABEL[h.type] || h.type;
+  return `<div class="hcard" data-cat="${h.cat}" data-search="${h.hook.toLowerCase()}">
+    <div class="hcard-top" style="background:${cc.color}"></div>
+    <div class="hcard-head">
+      <span class="hcard-num">#${String(h.id).padStart(3,'0')}</span>
+      <div class="hcard-tags">
+        <span class="htag ht-${h.cat}" style="background:${cc.bg};color:${cc.color}">${cc.label}</span>
+        <span class="htag" style="background:var(--bd);color:var(--mt2)">${tl}</span>
+      </div>
+    </div>
+    <div class="hcard-body">
+      <div class="hook-txt">${h.hook}</div>
+      <div class="hook-type">${tl.toUpperCase()}</div>
+    </div>
+    <div class="hcard-ft">
+      <div class="hook-tip">💡 ${h.tip}</div>
+      <button class="cpybtn" onclick="copyHook(this,'${h.hook.replace(/'/g,"\\'")}')">Copy</button>
+    </div>
+  </div>`;
+}
+
+function renderGrid(cat, query=''){
+  const grid = document.getElementById('main-grid');
+  let filtered = cat === 'all' ? HOOKS : HOOKS.filter(h=>h.cat===cat);
+  if(query) filtered = filtered.filter(h=>h.hook.toLowerCase().includes(query.toLowerCase()));
+  if(!filtered.length){
+    grid.innerHTML = `<div class="empty"><div class="empty-ic">🔍</div><div class="empty-tx">"${query}" — илэрц олдсонгүй</div></div>`;
+    document.getElementById('res-count').textContent = '0 hook';
+    return;
+  }
+  grid.innerHTML = filtered.map(buildCard).join('');
+  document.getElementById('res-count').textContent = query ? `${filtered.length} үр дүн` : '';
+  document.getElementById('cur-cnt').textContent = filtered.length;
+}
+
+function sw(cat, btn){
+  currentCat = cat;
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  document.getElementById('search-in').value = '';
+  document.getElementById('res-count').textContent = '';
+  renderGrid(cat);
+}
+
+function doSearch(q){
+  renderGrid(currentCat, q);
+}
+
+function copyText(text, onSuccess){
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(onSuccess).catch(()=>fallbackCopy(text,onSuccess));
+  } else {
+    fallbackCopy(text, onSuccess);
+  }
+}
+
+function fallbackCopy(text, onSuccess){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand('copy');
+    onSuccess();
+  } catch(e){}
+  document.body.removeChild(ta);
+}
+
+function copyHook(btn, text){
+  copyText(text, ()=>{
+    btn.textContent = '✓ OK';
+    btn.classList.add('ok');
+    copiedCount++;
+    document.getElementById('copied-cnt').textContent = copiedCount;
+    showToast('✓ Copied!');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('ok')},2000);
+  });
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+function rollRandom(){
+  const pool = currentCat === 'all' ? HOOKS : HOOKS.filter(h=>h.cat===currentCat);
+  const h = pool[Math.floor(Math.random()*pool.length)];
+  const cc = CAT_COLORS[h.cat];
+  document.getElementById('rand-hook').textContent = h.hook;
+  document.getElementById('rand-meta').textContent = `#${h.id} · ${cc.label} · ${TYPE_LABEL[h.type]} · 💡 ${h.tip}`;
+  document.getElementById('rand-wrap').dataset.hook = h.hook;
+}
+
+function copyRand(){
+  const hook = document.getElementById('rand-hook').textContent;
+  if(hook && hook !== 'Уншиж байна...'){
+    copyText(hook, ()=>{
+      copiedCount++;
+      document.getElementById('copied-cnt').textContent = copiedCount;
+      showToast('✓ Copied!');
+    });
+  }
+}
+
+// Nav counts
+function initNavCounts(){
+  const cats = ['4c','ugc','vo','txt','pain','social','proof','edu'];
+  cats.forEach(cat=>{
+    const cnt = HOOKS.filter(h=>h.cat===cat).length;
+    const el = document.getElementById('nc-'+cat);
+    if(el) el.textContent = cnt;
+  });
+  document.getElementById('nc-all').textContent = HOOKS.length;
+}
+
+// INIT
+initNavCounts();
+renderGrid('all');
+rollRandom();
+</script>
+</body>
+</html>

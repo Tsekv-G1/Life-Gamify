@@ -1,0 +1,2703 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#06060a">
+<title>1 YEAR CHARACTER BUILD — TsekvG</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Mongolian&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06060a;
+    --surface: #0e0e16;
+    --border: #1e1e2e;
+    --gold: #f5c842;
+    --gold2: #e8a020;
+    --red: #ff4444;
+    --green: #00e5a0;
+    --blue: #4488ff;
+    --purple: #c084fc;
+    --text: #e8e8f0;
+    --muted: #6b6b88;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .hero {
+    position: relative;
+    padding: 60px 40px 40px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: -80px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(245,200,66,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    opacity: 0.8;
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(52px, 8vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: #fff;
+  }
+  .hero-title span { color: var(--gold); }
+  .hero-sub {
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: 12px;
+    max-width: 600px;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .stat-item { display: flex; flex-direction: column; gap: 4px; }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 36px;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label { font-size: 10px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* CONTENT */
+  .content { padding: 40px; max-width: 1400px; margin: 0 auto; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 32px;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+  .section-badge {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 3px 10px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  /* PHASE CARD */
+  .phase {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .phase::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .phase-1::before { background: var(--blue); }
+  .phase-2::before { background: var(--gold); }
+  .phase-3::before { background: var(--red); }
+  .phase-4::before { background: var(--green); }
+  .phase-5::before { background: var(--purple); }
+
+  .phase-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .phase-num {
+    font-family: var(--font-display);
+    font-size: 48px;
+    line-height: 1;
+    color: var(--border);
+  }
+  .phase-1 .phase-num { color: rgba(68,136,255,0.2); }
+  .phase-2 .phase-num { color: rgba(245,200,66,0.2); }
+  .phase-3 .phase-num { color: rgba(255,68,68,0.2); }
+  .phase-4 .phase-num { color: rgba(0,229,160,0.2); }
+  .phase-5 .phase-num { color: rgba(192,132,252,0.2); }
+
+  .phase-meta { flex: 1; }
+  .phase-name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+  .phase-period {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+  .phase-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border: 1px solid;
+    text-transform: uppercase;
+  }
+  .tag-mindset { border-color: var(--blue); color: var(--blue); }
+  .tag-execution { border-color: var(--gold); color: var(--gold); }
+  .tag-power { border-color: var(--red); color: var(--red); }
+  .tag-mastery { border-color: var(--green); color: var(--green); }
+  .tag-legacy { border-color: var(--purple); color: var(--purple); }
+
+  .phase-body { padding: 24px; }
+
+  /* BOOK GRID */
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .book-card {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .book-card:hover { border-color: var(--gold); }
+  .book-card.done { opacity: 0.5; }
+  .book-card.done::after {
+    content: '✓ УНШСАН';
+    position: absolute;
+    top: 8px; right: 8px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--green);
+    border: 1px solid var(--green);
+    padding: 2px 6px;
+  }
+
+  .book-order {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .book-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .book-author {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .book-why {
+    font-size: 11px;
+    color: var(--text);
+    line-height: 1.5;
+    border-left: 2px solid var(--gold);
+    padding-left: 10px;
+    margin-bottom: 10px;
+  }
+  .book-actions {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .book-actions strong { color: var(--gold); display: block; margin-bottom: 4px; font-size: 10px; letter-spacing: 1px; }
+  .book-kpi {
+    background: rgba(245,200,66,0.05);
+    border: 1px dashed rgba(245,200,66,0.2);
+    padding: 8px 10px;
+  }
+  .book-kpi strong { color: var(--gold); font-size: 10px; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+  .book-kpi span { color: var(--muted); font-size: 11px; }
+
+  .book-note {
+    font-size: 10px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* PHASE GOAL */
+  .phase-goal {
+    background: rgba(245,200,66,0.04);
+    border: 1px solid rgba(245,200,66,0.15);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .phase-goal strong { color: var(--gold); display: block; margin-bottom: 8px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+  .phase-goal p { font-size: 12px; color: var(--text); }
+
+  /* READING GUIDE */
+  .guide-block {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .guide-block h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--gold);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .guide-block p, .guide-block li {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .guide-block ul { padding-left: 20px; }
+  .guide-block li { margin-bottom: 6px; }
+
+  /* KPI TABLE */
+  .kpi-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  .kpi-table th {
+    background: rgba(245,200,66,0.08);
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid rgba(245,200,66,0.2);
+  }
+  .kpi-table td {
+    padding: 10px 14px;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  .kpi-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .kpi-metric { color: var(--green); font-weight: 700; }
+  .kpi-phase { font-size: 10px; color: var(--muted); }
+
+  /* PROGRESS TRACKER */
+  .tracker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .tracker-item {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    position: relative;
+  }
+  .tracker-item:hover { border-color: var(--gold); }
+  .tracker-item.checked {
+    border-color: var(--green);
+    background: rgba(0,229,160,0.05);
+  }
+  .tracker-item input[type="checkbox"] { display: none; }
+  .tracker-item-title { font-size: 11px; color: var(--text); line-height: 1.3; }
+  .tracker-item-phase { font-size: 10px; color: var(--muted); margin-top: 4px; }
+  .tracker-check {
+    position: absolute;
+    top: 8px; right: 8px;
+    font-size: 12px;
+    color: var(--green);
+    display: none;
+  }
+  .tracker-item.checked .tracker-check { display: block; }
+
+  .progress-bar-wrap {
+    background: var(--border);
+    height: 4px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.4s;
+  }
+  .progress-text {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .progress-text span { color: var(--gold); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+
+  /* ===== WEEKLY REVIEW ===== */
+  .week-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .week-nav {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .week-nav button {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-mono); font-size: 12px;
+    padding: 6px 14px; cursor: pointer; transition: all 0.2s;
+  }
+  .week-nav button:hover { border-color: var(--gold); color: var(--gold); }
+  .week-label {
+    font-family: var(--font-display); font-size: 20px; color: var(--gold);
+    min-width: 220px; text-align: center;
+  }
+  .review-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 700px) { .review-grid { grid-template-columns: 1fr; } }
+  .review-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 18px 20px;
+  }
+  .review-card label {
+    display: block; font-size: 10px; color: var(--gold);
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;
+  }
+  .review-card textarea {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-mono); font-size: 12px;
+    padding: 10px; resize: vertical; min-height: 80px; line-height: 1.6;
+    outline: none; transition: border-color 0.2s;
+  }
+  .review-card textarea:focus { border-color: var(--gold); }
+  .score-row {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .score-btn {
+    width: 36px; height: 36px;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--muted); font-family: var(--font-mono); font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .score-btn:hover, .score-btn.active {
+    background: var(--gold); border-color: var(--gold); color: #000; font-weight: 700;
+  }
+  .kpi-check-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px; margin-bottom: 16px;
+  }
+  .kpi-check-item {
+    border: 1px solid var(--border); padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+    transition: all 0.2s; user-select: none;
+  }
+  .kpi-check-item:hover { border-color: var(--gold); }
+  .kpi-check-item.done { border-color: var(--green); background: rgba(0,229,160,0.04); }
+  .kpi-check-box {
+    width: 16px; height: 16px; border: 1px solid var(--muted);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--green);
+  }
+  .kpi-check-item.done .kpi-check-box { border-color: var(--green); background: rgba(0,229,160,0.15); }
+  .kpi-check-text { font-size: 11px; color: var(--text); line-height: 1.4; }
+  .kpi-check-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .save-btn {
+    background: var(--gold); color: #000; border: none;
+    font-family: var(--font-display); font-size: 16px; letter-spacing: 1px;
+    padding: 12px 32px; cursor: pointer; transition: opacity 0.2s;
+  }
+  .save-btn:hover { opacity: 0.85; }
+  .save-confirm {
+    display: inline-block; margin-left: 12px;
+    font-size: 11px; color: var(--green); opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .history-list { margin-top: 24px; }
+  .history-item {
+    border: 1px solid var(--border); padding: 12px 16px;
+    margin-bottom: 8px; display: flex; justify-content: space-between;
+    align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .history-week { font-family: var(--font-display); font-size: 14px; color: var(--gold); }
+  .history-scores { display: flex; gap: 12px; flex-wrap: wrap; }
+  .history-score { font-size: 11px; color: var(--muted); }
+  .history-score span { color: var(--text); font-weight: 700; }
+  .history-del {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    font-family: var(--font-mono); font-size: 10px; padding: 4px 10px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .history-del:hover { border-color: var(--red); color: var(--red); }
+
+  /* ===== IMPLEMENTATION TRACKER ===== */
+  .impl-filter {
+    display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .impl-filter button {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px;
+    padding: 6px 14px; cursor: pointer; text-transform: uppercase; transition: all 0.2s;
+  }
+  .impl-filter button:hover, .impl-filter button.active {
+    border-color: var(--gold); color: var(--gold);
+  }
+  .impl-book {
+    border: 1px solid var(--border); background: var(--surface);
+    margin-bottom: 12px; overflow: hidden;
+  }
+  .impl-book-header {
+    padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+    cursor: pointer; user-select: none; transition: background 0.15s;
+  }
+  .impl-book-header:hover { background: rgba(255,255,255,0.02); }
+  .impl-book-name { font-size: 13px; font-weight: 700; color: #fff; flex: 1; }
+  .impl-book-phase { font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+  .impl-book-prog { font-size: 11px; color: var(--gold); }
+  .impl-book-arrow { font-size: 10px; color: var(--muted); transition: transform 0.2s; }
+  .impl-book.open .impl-book-arrow { transform: rotate(90deg); }
+  .impl-actions {
+    display: none; padding: 4px 16px 14px; border-top: 1px solid var(--border);
+  }
+  .impl-book.open .impl-actions { display: block; }
+  .impl-action {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer; user-select: none; transition: all 0.15s;
+  }
+  .impl-action:last-child { border-bottom: none; }
+  .impl-action:hover { opacity: 0.85; }
+  .impl-check {
+    width: 16px; height: 16px; border: 1px solid var(--muted);
+    flex-shrink: 0; margin-top: 2px; display: flex; align-items: center;
+    justify-content: center; font-size: 10px; transition: all 0.2s;
+  }
+  .impl-action.done .impl-check {
+    border-color: var(--green); background: rgba(0,229,160,0.15); color: var(--green);
+  }
+  .impl-action-text { font-size: 12px; color: var(--text); line-height: 1.5; }
+  .impl-action.done .impl-action-text { color: var(--muted); text-decoration: line-through; }
+  .impl-progress-mini {
+    height: 3px; background: var(--border); margin-top: 2px;
+  }
+  .impl-progress-mini-fill { height: 100%; background: var(--green); transition: width 0.3s; }
+  .impl-summary {
+    display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .impl-stat {
+    border: 1px solid var(--border); padding: 12px 20px; text-align: center;
+  }
+  .impl-stat-num { font-family: var(--font-display); font-size: 28px; color: var(--gold); }
+  .impl-stat-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+
+  /* ===== INSIGHT VAULT ===== */
+  .vault-add {
+    border: 1px solid var(--border); background: var(--surface);
+    padding: 20px; margin-bottom: 20px;
+  }
+  .vault-add label {
+    display: block; font-size: 10px; color: var(--gold);
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .vault-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .vault-input {
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-mono); font-size: 12px;
+    padding: 8px 12px; outline: none; transition: border-color 0.2s; flex: 1; min-width: 0;
+  }
+  .vault-input:focus { border-color: var(--gold); }
+  .vault-select {
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-mono); font-size: 12px;
+    padding: 8px 12px; outline: none; cursor: pointer; min-width: 160px;
+  }
+  .vault-textarea {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-mono); font-size: 12px;
+    padding: 10px 12px; resize: vertical; min-height: 80px;
+    line-height: 1.6; outline: none; transition: border-color 0.2s;
+    margin-bottom: 10px;
+  }
+  .vault-textarea:focus { border-color: var(--gold); }
+  .vault-add-btn {
+    background: var(--gold); color: #000; border: none;
+    font-family: var(--font-display); font-size: 15px; padding: 10px 28px;
+    cursor: pointer; letter-spacing: 1px; transition: opacity 0.2s;
+  }
+  .vault-add-btn:hover { opacity: 0.85; }
+  .vault-search {
+    display: flex; gap: 10px; margin-bottom: 16px;
+  }
+  .vault-search input {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-mono); font-size: 12px;
+    padding: 10px 14px; outline: none; transition: border-color 0.2s;
+  }
+  .vault-search input:focus { border-color: var(--gold); }
+  .insight-card {
+    border: 1px solid var(--border); background: var(--surface);
+    padding: 16px 18px; margin-bottom: 10px; position: relative;
+    transition: border-color 0.2s;
+  }
+  .insight-card:hover { border-color: rgba(245,200,66,0.3); }
+  .insight-meta {
+    display: flex; gap: 12px; align-items: center; margin-bottom: 10px; flex-wrap: wrap;
+  }
+  .insight-book-tag {
+    font-size: 10px; letter-spacing: 1px; color: var(--gold);
+    border: 1px solid rgba(245,200,66,0.3); padding: 2px 8px; text-transform: uppercase;
+  }
+  .insight-date { font-size: 10px; color: var(--muted); }
+  .insight-type {
+    font-size: 10px; padding: 2px 8px; border: 1px solid;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .insight-type-aha { border-color: var(--blue); color: var(--blue); }
+  .insight-type-action { border-color: var(--green); color: var(--green); }
+  .insight-type-quote { border-color: var(--purple); color: var(--purple); }
+  .insight-text { font-size: 12px; color: var(--text); line-height: 1.7; white-space: pre-wrap; }
+  .insight-del {
+    position: absolute; top: 10px; right: 10px;
+    background: none; border: none; color: var(--border);
+    font-size: 14px; cursor: pointer; padding: 2px 6px; transition: color 0.2s;
+  }
+  .insight-del:hover { color: var(--red); }
+  .vault-empty {
+    text-align: center; color: var(--muted); font-size: 12px; padding: 60px 0;
+  }
+  .vault-stats {
+    display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .vault-stat {
+    font-size: 11px; color: var(--muted);
+  }
+  .vault-stat span { color: var(--gold); font-weight: 700; }
+
+  /* ===== TIMER ===== */
+  .timer-wrap {
+    max-width: 540px; margin: 0 auto;
+  }
+  .timer-modes {
+    display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap;
+  }
+  .timer-mode-btn {
+    flex: 1; min-width: 140px; background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 1px; padding: 10px 12px; cursor: pointer; text-transform: uppercase;
+    transition: all 0.2s; text-align: center;
+  }
+  .timer-mode-btn:hover, .timer-mode-btn.active {
+    border-color: var(--gold); color: var(--gold);
+  }
+  .timer-display {
+    text-align: center; padding: 40px 20px 32px; position: relative;
+  }
+  .timer-ring {
+    width: 220px; height: 220px; margin: 0 auto 24px;
+    position: relative; display: flex; align-items: center; justify-content: center;
+  }
+  .timer-svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+  .timer-bg-circle { fill: none; stroke: var(--border); stroke-width: 6; }
+  .timer-progress-circle {
+    fill: none; stroke: var(--gold); stroke-width: 6;
+    stroke-linecap: round; transition: stroke-dashoffset 1s linear;
+  }
+  .timer-time {
+    font-family: var(--font-display); font-size: 56px; color: #fff;
+    line-height: 1; letter-spacing: 2px; position: relative; z-index: 1;
+  }
+  .timer-phase-label {
+    font-size: 11px; color: var(--gold); letter-spacing: 3px;
+    text-transform: uppercase; margin-top: 6px; position: relative; z-index: 1;
+  }
+  .timer-controls {
+    display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .timer-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-display); font-size: 16px;
+    padding: 10px 28px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
+  }
+  .timer-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .timer-btn.primary { background: var(--gold); border-color: var(--gold); color: #000; }
+  .timer-btn.primary:hover { opacity: 0.85; }
+  .timer-sessions {
+    display: flex; gap: 6px; justify-content: center; margin-bottom: 20px;
+  }
+  .timer-session-dot {
+    width: 10px; height: 10px; border: 1px solid var(--border);
+    border-radius: 50%; transition: all 0.3s;
+  }
+  .timer-session-dot.filled { background: var(--gold); border-color: var(--gold); }
+  .timer-log {
+    border: 1px solid var(--border); background: var(--surface); padding: 14px 16px;
+  }
+  .timer-log-title {
+    font-size: 10px; color: var(--gold); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .timer-log-item {
+    display: flex; justify-content: space-between;
+    padding: 5px 0; border-bottom: 1px solid var(--border);
+    font-size: 11px; color: var(--muted);
+  }
+  .timer-log-item:last-child { border-bottom: none; }
+  .timer-log-item span { color: var(--text); }
+  .timer-custom {
+    display: flex; gap: 8px; align-items: center; justify-content: center;
+    margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .timer-custom label { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+  .timer-custom input {
+    width: 60px; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-display); font-size: 18px;
+    padding: 6px 10px; text-align: center; outline: none;
+  }
+  .timer-custom input:focus { border-color: var(--gold); }
+
+  /* ===== BOTTOM NAV (MOBILE) ===== */
+  .bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(6,6,10,0.97);
+    border-top: 1px solid var(--border);
+    z-index: 1000;
+    padding: 0;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .bottom-nav-inner {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .bottom-nav-inner::-webkit-scrollbar { display: none; }
+  .bnav-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-width: 68px; padding: 8px 6px 10px;
+    background: none; border: none; color: var(--muted);
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.5px;
+    text-transform: uppercase; cursor: pointer; gap: 4px; transition: color 0.2s;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .bnav-btn .bnav-icon { font-size: 18px; line-height: 1; }
+  .bnav-btn.active { color: var(--gold); }
+  .bnav-btn.active .bnav-icon { filter: drop-shadow(0 0 6px var(--gold)); }
+
+  /* ===== DAILY CHECK-IN STRIP ===== */
+  .daily-strip {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  }
+  .daily-strip-label {
+    font-size: 10px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .daily-habits {
+    display: flex; gap: 8px; flex-wrap: wrap; flex: 1;
+  }
+  .daily-habit {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg); border: 1px solid var(--border);
+    padding: 5px 10px; cursor: pointer; user-select: none; transition: all 0.15s;
+    border-radius: 2px;
+  }
+  .daily-habit:hover { border-color: var(--gold); }
+  .daily-habit.done { border-color: var(--green); background: rgba(0,229,160,0.06); }
+  .daily-habit .dh-box {
+    width: 14px; height: 14px; border: 1px solid var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--green); flex-shrink: 0; transition: all 0.15s;
+  }
+  .daily-habit.done .dh-box { border-color: var(--green); background: rgba(0,229,160,0.2); }
+  .daily-habit .dh-text { font-size: 11px; color: var(--text); white-space: nowrap; }
+  .daily-habit.done .dh-text { color: var(--muted); }
+  .daily-date { font-size: 10px; color: var(--muted); white-space: nowrap; }
+  .daily-streak {
+    font-family: var(--font-display); font-size: 16px; color: var(--gold);
+    white-space: nowrap;
+  }
+
+  /* ===== DEADLINE SYSTEM ===== */
+  .deadline-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+  }
+  .deadline-add-btn {
+    background: none; border: 1px solid var(--gold); color: var(--gold);
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px;
+    padding: 7px 16px; cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+  }
+  .deadline-add-btn:hover { background: var(--gold); color: #000; }
+  .deadline-form {
+    border: 1px solid var(--border); background: var(--surface);
+    padding: 16px; margin-bottom: 16px; display: none;
+  }
+  .deadline-form.open { display: block; }
+  .dl-form-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;
+  }
+  .dl-form-full { grid-column: 1 / -1; }
+  .dl-input {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-mono); font-size: 12px;
+    padding: 8px 12px; outline: none; transition: border-color 0.2s;
+  }
+  .dl-input:focus { border-color: var(--gold); }
+  .dl-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-bottom: 4px; display: block; text-transform: uppercase; }
+  .dl-select {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-mono); font-size: 12px;
+    padding: 8px 12px; outline: none; cursor: pointer;
+  }
+  .dl-submit {
+    background: var(--gold); color: #000; border: none;
+    font-family: var(--font-display); font-size: 15px; padding: 9px 24px;
+    cursor: pointer; letter-spacing: 1px; margin-right: 8px;
+  }
+  .dl-cancel {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    font-family: var(--font-mono); font-size: 11px; padding: 9px 16px; cursor: pointer;
+  }
+  .deadline-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .deadline-card {
+    border: 1px solid var(--border); background: var(--surface);
+    padding: 14px 16px; position: relative; transition: border-color 0.2s;
+  }
+  .deadline-card.urgent { border-color: var(--red); }
+  .deadline-card.soon { border-color: var(--gold2); }
+  .deadline-card.ok { border-color: var(--border); }
+  .deadline-card.done-dl { opacity: 0.45; border-color: var(--green); }
+  .dl-card-top {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+  }
+  .dl-card-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .dl-card-title.done-text { text-decoration: line-through; color: var(--muted); }
+  .dl-card-meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .dl-tag {
+    font-size: 10px; padding: 2px 8px; border: 1px solid; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .dl-tag-book { border-color: var(--purple); color: var(--purple); }
+  .dl-tag-biz { border-color: var(--blue); color: var(--blue); }
+  .dl-tag-habit { border-color: var(--green); color: var(--green); }
+  .dl-tag-finance { border-color: var(--gold); color: var(--gold); }
+  .dl-tag-personal { border-color: var(--muted); color: var(--muted); }
+  .dl-countdown {
+    font-family: var(--font-display); font-size: 20px; line-height: 1;
+    white-space: nowrap;
+  }
+  .dl-countdown.urgent { color: var(--red); }
+  .dl-countdown.soon { color: var(--gold2); }
+  .dl-countdown.ok { color: var(--green); }
+  .dl-countdown.done-dl { color: var(--muted); }
+  .dl-date { font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .dl-desc { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+  .dl-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .dl-btn {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    font-family: var(--font-mono); font-size: 10px; padding: 4px 12px;
+    cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .dl-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .dl-btn.done-btn:hover { border-color: var(--green); color: var(--green); }
+  .dl-btn.del-btn:hover { border-color: var(--red); color: var(--red); }
+  .dl-progress-bar { height: 3px; background: var(--border); margin-top: 10px; }
+  .dl-progress-fill { height: 100%; transition: width 0.4s; }
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 700px) {
+    body { padding-bottom: 70px; }
+    .hero { padding: 24px 16px 20px; }
+    .hero-title { font-size: 42px; }
+    .hero-stats { gap: 20px; }
+    .stat-num { font-size: 28px; }
+    .content { padding: 16px; }
+
+    /* Hide desktop tabs, show bottom nav */
+    .tabs { display: none; }
+    .bottom-nav { display: block; }
+
+    .books-grid { grid-template-columns: 1fr; }
+    .phase-header { gap: 8px; }
+    .phase-num { font-size: 28px; }
+    .phase-name { font-size: 16px; }
+    .book-card { padding: 12px; }
+
+    /* Review grid */
+    .review-grid { grid-template-columns: 1fr; }
+    .review-card[style*="grid-column"] { grid-column: 1; }
+
+    /* Weekly nav */
+    .week-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .week-label { font-size: 15px; min-width: unset; }
+
+    /* Impl */
+    .impl-summary { gap: 10px; }
+    .impl-stat { padding: 10px 14px; }
+    .impl-stat-num { font-size: 22px; }
+
+    /* Timer */
+    .timer-wrap { max-width: 100%; }
+    .timer-time { font-size: 40px; }
+    .timer-ring { width: 180px; height: 180px; }
+    .timer-ring svg { width: 180px; height: 180px; }
+    .timer-ring svg circle { cx: 90; cy: 90; r: 82; }
+    .timer-modes { gap: 6px; }
+    .timer-mode-btn { min-width: unset; flex: 1; font-size: 9px; padding: 8px 6px; }
+
+    /* KPI table scroll */
+    .kpi-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .kpi-table { min-width: 600px; }
+
+    /* Vault */
+    .vault-row { flex-direction: column; }
+    .vault-select { min-width: unset; width: 100%; }
+
+    /* Deadline form */
+    .dl-form-grid { grid-template-columns: 1fr; }
+    .dl-form-full { grid-column: 1; }
+
+    /* Phase tags on mobile */
+    .phase-tags { display: none; }
+
+    /* Section header */
+    .section-header { margin-bottom: 16px; }
+    .section-title { font-size: 24px; }
+
+    /* Score buttons smaller */
+    .score-btn { width: 30px; height: 30px; font-size: 11px; }
+
+    /* Daily strip */
+    .daily-strip { padding: 10px 16px; }
+    .daily-habits { gap: 6px; }
+    .daily-habit { padding: 4px 8px; }
+    .daily-habit .dh-text { font-size: 10px; }
+  }
+
+  @media (min-width: 701px) {
+    .daily-strip { display: none; } /* desktop shows weekly review tab instead */
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">TsekvG · Character Build System · 2025–2026</div>
+  <div class="hero-title">1 YEAR<br><span>CHARACTER</span><br>BUILD</div>
+  <div class="hero-sub">Сууриас нь дээд түвшин хүртэл — 44 ном, 5 фаз, KPI хэмжигдэхүйц өөрчлөлт. Зорилго: Мэдлэг биш, хүний чанар бүтээх.</div>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">44</div><div class="stat-label">Нийт ном</div></div>
+    <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">Фаз</div></div>
+    <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Сар</div></div>
+    <div class="stat-item"><div class="stat-num">2-3</div><div class="stat-label">Ном / сар</div></div>
+  </div>
+</div>
+
+<!-- DAILY CHECK-IN STRIP (mobile дээр харагдана) -->
+<div class="daily-strip" id="dailyStrip">
+  <div class="daily-strip-label">ӨНӨӨДӨР</div>
+  <div class="daily-habits" id="dailyHabitsRow"></div>
+  <div style="display:flex;gap:12px;align-items:center;">
+    <div class="daily-streak" id="dailyStreakBadge">🔥 0</div>
+    <div class="daily-date" id="dailyDateLabel"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV (mobile only) -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bnav-btn active" onclick="mobileNav('phases',this)"><span class="bnav-icon">📚</span>Фаз</button>
+    <button class="bnav-btn" onclick="mobileNav('tracker',this)"><span class="bnav-icon">✅</span>Прогресс</button>
+    <button class="bnav-btn" onclick="mobileNav('weekly',this)"><span class="bnav-icon">📋</span>Review</button>
+    <button class="bnav-btn" onclick="mobileNav('impl',this)"><span class="bnav-icon">⚡</span>Үйлдэл</button>
+    <button class="bnav-btn" onclick="mobileNav('deadline',this)"><span class="bnav-icon">🎯</span>Deadline</button>
+    <button class="bnav-btn" onclick="mobileNav('vault',this)"><span class="bnav-icon">💡</span>Vault</button>
+    <button class="bnav-btn" onclick="mobileNav('timer',this)"><span class="bnav-icon">⏱</span>Timer</button>
+    <button class="bnav-btn" onclick="mobileNav('guide',this)"><span class="bnav-icon">📖</span>Заавар</button>
+    <button class="bnav-btn" onclick="mobileNav('kpi',this)"><span class="bnav-icon">📊</span>KPI</button>
+  </div>
+</nav>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('phases')">ФАЗУУД</button>
+  <button class="tab-btn" onclick="switchTab('guide')">УНШИХ ЗААВАР</button>
+  <button class="tab-btn" onclick="switchTab('kpi')">KPI ХЭМЖҮҮР</button>
+  <button class="tab-btn" onclick="switchTab('tracker')">ПРОГРЕСС</button>
+  <button class="tab-btn" onclick="switchTab('weekly')">WEEKLY REVIEW</button>
+  <button class="tab-btn" onclick="switchTab('impl')">ҮЙЛДЭЛ TRACKER</button>
+  <button class="tab-btn" onclick="switchTab('vault')">INSIGHT VAULT</button>
+  <button class="tab-btn" onclick="switchTab('timer')">⏱ TIMER</button>
+</div>
+
+<div class="content">
+
+<!-- =============== TAB: PHASES =============== -->
+<div id="tab-phases" class="tab-content active">
+
+  <!-- PHASE 1 -->
+  <div class="phase phase-1">
+    <div class="phase-header">
+      <div class="phase-num">01</div>
+      <div class="phase-meta">
+        <div class="phase-name">СУУРЬ — Ухамсар Сэрэх</div>
+        <div class="phase-period">1–2 сар · 8 ном · Яагаад энд: Чи одоо хэн бэ гэдгийг мэдэх</div>
+      </div>
+      <div class="phase-tags">
+        <span class="tag tag-mindset">Mindset</span>
+        <span class="tag tag-mindset">Identity</span>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="phase-goal">
+        <strong>Фазын зорилго</strong>
+        <p>Өөрийгөө хэн болохыг ойлгож, яагаад өөрчлөгдөх шаардлагатай байгааг мэдрэх. Энэ фазгүйгээр дараагийн номнуудын мэдлэг хоосон болно. Эго, айдас, системгүй байдлыг нүүр тулж мэдрэх.</p>
+      </div>
+      <div class="books-grid">
+
+        <div class="book-card done">
+          <div class="book-order">01</div>
+          <div class="book-title">Atomic Habits</div>
+          <div class="book-author">James Clear</div>
+          <div class="book-why">Бүх өөрчлөлт зуршлаар эхэлдэг. Энэ номгүйгээр өөр ном унших нь утгагүй — зуршил байхгүй бол мэдлэг хуримтлагдахгүй.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>1% дүрэм — өдөр бүр нэг жижиг зуршил / Identity-based habits: "Би ... хүн" гэж хэлэх / Habit stacking хийх (өглөөний рутин)</div>
+          <div class="book-kpi"><strong>KPI</strong><span>30 хоногийн дотор 3 зуршил тогтоно · streak 21+ хоног</span></div>
+          <div class="book-note">✓ Уншиж дууссан — дараалал баталгаажуулсан</div>
+        </div>
+
+        <div class="book-card done">
+          <div class="book-order">02</div>
+          <div class="book-title">The Courage to Be Disliked</div>
+          <div class="book-author">Ichiro Kishimi & Fumitake Koga</div>
+          <div class="book-why">Нийгмийн шахалт, хүмүүсийн санаа бодлоос чөлөөлөгдөж, өөрийн замаар явах зоригийг олоход хэрэгтэй.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>"Энэ хүний даалгавар биш, миний даалгавар" гэж ялгах / Approval-seeking зогсоох / "Одоо" дээр анхаарал төвлөрүүлэх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Бусдын шүүмжлэлд реакц буурсан эсэхийг 7 хоног бүр өөрөө үнэлнэ</span></div>
+          <div class="book-note">✓ Уншиж дууссан</div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">03</div>
+          <div class="book-title">Ego Is the Enemy</div>
+          <div class="book-author">Ryan Holiday</div>
+          <div class="book-why">Эго бол тархийн дотоод дайсан. Амжилт хүсэгч хүнийг хамгийн их сааддаг зүйл — өөртөө хэт итгэх, тайлбарлах, зөвтгөх. Фазын 1-д байгаа нь: суурь бэлтгэхдээ эгогоо тавих хэрэгтэй.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>"Still learning" дадал — ажил бүрт шавь хэвээр байх / Амжилтаа тайлбарлахаас илүүтэй ажиллах / "Aspire → Succeed → Fail" давталтыг ухаарах</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Сар бүр нэг "Би буруу байсан" тэмдэглэл бичих / Бусдын санааг сонсох тоо ++ болгох</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">04</div>
+          <div class="book-title">Deep Work</div>
+          <div class="book-author">Cal Newport</div>
+          <div class="book-why">Мэдлэг цуглуулахаас бус гүн ажиллах чадвар бүтээнэ. Хэрэв гүн ажил хийж чадахгүй бол 44 ном уншсан ч амжилт гарахгүй.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>90 мин Deep Work block өдөр бүр / Telefon чимгүй бүсийг тогтоох / "Shallow work" нь хасах эсвэл багасгах</div>
+          <div class="book-kpi"><strong>KPI</strong><span>7 хоногт 5+ өдөр 90 мин uninterrupted deep work · CapCut/notif off цагийг хэмжих</span></div>
+          <div class="book-note">✓ Уншиж дууссан — одоо хэрэгжүүлэх үлдлээ</div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">05</div>
+          <div class="book-title">The Obstacle Is the Way</div>
+          <div class="book-author">Ryan Holiday</div>
+          <div class="book-why">Амьдралд тохиолдох бэрхшээл бол зам. Ego-н дараа энэ ном уншвал "саад = давах зам" гэсэн framework батжина.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Асуудал тохиолдоход "Энэ надад юу заах вэ?" гэж асуух / Реакц → Хариу үйлдлийн зай үүсгэх / Бие эрч хүчийг ашиглах дадал</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Сар бүр нэг "obstacle journal" бичиж, хэрхэн давсанаа тэмдэглэх</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">06</div>
+          <div class="book-title">Miracle Morning</div>
+          <div class="book-author">Hal Elrod</div>
+          <div class="book-why">Өглөөний рутин бол өдрийн суурь. Чи өглөөгийн 6 цагт босдог болохоор энэ номны S.A.V.E.R.S. систем нь шууд хэрэглэгдэнэ.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>SAVERS: Silence, Affirmations, Visualization, Exercise, Reading, Scribing / Өглөөний 60 минутыг структурчлах / "5-second rule" орлиглах зуршил</div>
+          <div class="book-kpi"><strong>KPI</strong><span>21 хоногийн мөрдлөг · streak тасрахгүй бол ✓</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">07</div>
+          <div class="book-title">12 Rules for Life</div>
+          <div class="book-author">Jordan Peterson</div>
+          <div class="book-why">Хариуцлага, дэг журам, утга учрын суурь. Хэрэв дотоод ертөнц эмх цэгцтэй болохгүй бол гадаад амжилт тогтворгүй байна.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Өрөөгөө эмх цэгцтэй болгох (Rule 6) / Өнөөдрийн өөртэйгөө харьцуулах дадал / Үнэн ярих — дотоод худал хасах</div>
+          <div class="book-kpi"><strong>KPI</strong><span>7 хоног бүр: "Өнөөдөр өчигдрөөсөө дээр болсон уу?" гэж өөрөө үнэлэх (1–5 оноо)</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">08</div>
+          <div class="book-title">Thinking, Fast and Slow</div>
+          <div class="book-author">Daniel Kahneman</div>
+          <div class="book-why">Тархи яаж бодох, яаж алддагийг мэдэх. Шийдвэр гаргах, худалдаа, харилцаа — бүх зүйлд System 1 / System 2 мэдлэг хэрэгтэй.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Том шийдвэр гаргахдаа System 2 горимыг асаах / Cognitive bias-аа таних (confirmation bias, availability heuristic) / "Pre-mortem" техник хэрэглэх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Сар бүр 1 том шийдвэрт pre-mortem бичих</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase phase-2">
+    <div class="phase-header">
+      <div class="phase-num">02</div>
+      <div class="phase-meta">
+        <div class="phase-name">ГҮЙЦЭТГЭЛ — Систем Бүтээх</div>
+        <div class="phase-period">3–4 сар · 9 ном · Яагаад энд: Мэдлэгийг үйлдэл болгох</div>
+      </div>
+      <div class="phase-tags">
+        <span class="tag tag-execution">Execution</span>
+        <span class="tag tag-execution">Systems</span>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="phase-goal">
+        <strong>Фазын зорилго</strong>
+        <p>Хүсэл эрмэлзлийг бодит системд хөрвүүлэх. Life Gamify, Productdrop, YouTube — бизнесийн суурь бат бэх болгоход шаардлагатай ном бүр энд байна.</p>
+      </div>
+      <div class="books-grid">
+
+        <div class="book-card">
+          <div class="book-order">09</div>
+          <div class="book-title">The 4-Hour Workweek</div>
+          <div class="book-author">Tim Ferriss</div>
+          <div class="book-why">Цаг хэмнэлт, автоматжуулалт, мини-retirement. Чиний Life Gamify / Productdrop зарагдах тусам automation нэмэгдэх ёстой.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>DEAL framework: Define, Eliminate, Automate, Liberate / Дахин давтагддаг ажлыг автоматжуулах / "Batching" аргаар GogoShop-н ачааллыг зохицуулах</div>
+          <div class="book-kpi"><strong>KPI</strong><span>3 сарын дотор нэг ажлыг автоматжуулах · цагийн хэмнэлт 2+ цаг/7 хоног</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">10</div>
+          <div class="book-title">The ONE Thing</div>
+          <div class="book-author">Gary Keller</div>
+          <div class="book-why">Олон зүйл нэгэн зэрэг хийх нь амжилт биш — нэг зүйлийг хамгийн сайн хийх нь амжилт. Productdrop уу, Life Gamify уу гэсэн фокусын асуудлыг шийдэнэ.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>"Focusing Question" өдөр бүр асуух / Dominoe нөлөө — нэг зорилгыг дарааллаар хийх / 66-day habit commitment</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Сар бүр нэг "ONE Thing" тодорхойлж, тэр дээр 80% цаг зарцуулсан эсэхийг хэмжих</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">11</div>
+          <div class="book-title">Think and Grow Rich</div>
+          <div class="book-author">Napoleon Hill</div>
+          <div class="book-why">Баялаг бол эхлээд сэтгэлгээнд байдаг. 80+ жилийн өмнөх ном боловч desire → faith → persistence → plan гэсэн дараалал өнөөдөр ч хэрэгтэй.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Definite Chief Aim бичих (1 хуудас) / Mastermind group олох (2+ хүн) / "Burning desire" affirmation өглөө оройд хэлэх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>DCA бичиж 90 хоног ажиглах / Weekly mastermind 1x</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">12</div>
+          <div class="book-title">Miracle Equation</div>
+          <div class="book-author">Hal Elrod</div>
+          <div class="book-why">Miracle Morning-н нөгөө тал — хэрхэн зорилгод хүрэх тэгшитгэлийг бүтэц болгох. Unwavering faith + extraordinary effort.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>30-day mission тавих / Faith × Effort = Miracle тэгшитгэлийг ажиллуулах / Үр дүнгийн "detachment" дадал</div>
+          <div class="book-kpi"><strong>KPI</strong><span>30 хоногийн mission 80%+ биелсэн эсэх</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">13</div>
+          <div class="book-title">The 7 Habits of Highly Effective People</div>
+          <div class="book-author">Stephen Covey</div>
+          <div class="book-why">Зарчим дээр суурилсан амьдрал. Фаз 1-д тогтсон суурь дээр нь энэ ном байвал "inside-out" хандлага бататгагдана.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Quadrant II (чухал боловч яаралтай биш) дахь ажлыг нэмэгдүүлэх / "Begin with the end in mind" — жилийн зорилгыг дахин бичих / Win-win хайх зуршил</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Q2 ажлын хувь: 7 хоногт 40%+ байх зорилго</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">14</div>
+          <div class="book-title">Originals</div>
+          <div class="book-author">Adam Grant</div>
+          <div class="book-why">Яаж өвөрмөц санаагаа дэлгэрүүлэх, аргументлах. YouTube контент, бизнесийн санаа хэрхэн нийтэд ойлгуулах гэдгийг заана.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Idea vomit хийх (100 санаа бичих) + шүүх / "Tempered radical" болох — системд байхдаа өөрчлөгдөх / Coalition building — нэгдмэл хүмүүс олох</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Сар бүр нэг шинэ контент санаа туршиж үзэх</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">15</div>
+          <div class="book-title">Building a StoryBrand</div>
+          <div class="book-author">Donald Miller</div>
+          <div class="book-why">Life Gamify болон Productdrop-н маркетингийн мессеж тодорхой байх ёстой. Энэ ном бол "хэрэглэгч бол баатар, чи бол хөтөч" framework.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Life Gamify-н BrandScript бичих / Instagram bio-г StoryBrand аргаар дахин бичих / Customer journey: Проблем → Шийдэл → Амжилт</div>
+          <div class="book-kpi"><strong>KPI</strong><span>BrandScript дуусгах · Landing page conversion 5%+ болгох</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">16</div>
+          <div class="book-title">This Is Marketing</div>
+          <div class="book-author">Seth Godin</div>
+          <div class="book-why">Маркетинг бол хулгай биш — зөв хүнд зөв зүйлийг санал болгох. Productdrop-н "кто твой клиент" асуудлыг шийдэнэ.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>ICP (Ideal Customer Profile) нарийвчлах / "Smallest viable audience" тодорхойлох / Empathy map хийх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>ICP документ дуусгах · Нэг сарт нэг "who is this for?" шинжилгээ хийх</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">17</div>
+          <div class="book-title">The 80/20 Principle</div>
+          <div class="book-author">Richard Koch</div>
+          <div class="book-why">20% үйлдэл → 80% үр дүн. Хаана цаг, эрч хүч зарцуулах ёстойг тодорхойлоход хэрэгтэй. Бизнес болон хувийн амьдрал хоёуланд нь.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Top 20% ажлаа жагсаах / Bottom 80% ажлыг хасах эсвэл автоматжуулах / Эрч хүч → 20% үйлдэлд чиглүүлэх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Сар бүр "Парето аудит" хийх — аль ажил хамгийн их үр дүн өгсөн?</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase phase-3">
+    <div class="phase-header">
+      <div class="phase-num">03</div>
+      <div class="phase-meta">
+        <div class="phase-name">МӨНГӨ & ЭРХ МЭД — Баялгийн Бүтэц</div>
+        <div class="phase-period">5–7 сар · 11 ном · Яагаад энд: Мөнгө яаж ажилладагийг мэдэх</div>
+      </div>
+      <div class="phase-tags">
+        <span class="tag tag-power">Money</span>
+        <span class="tag tag-power">Power</span>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="phase-goal">
+        <strong>Фазын зорилго</strong>
+        <p>Мөнгөний сэтгэлгээ, хөрөнгө оруулалт, нийгмийн эрх мэд, хүний сэтгэлзүй гэсэн дөрвөн давхаргыг нэгэн зэрэг ойлгох. Энэ фаз дуусахад "санхүүгийн тодорхой зам" харагдах ёстой.</p>
+      </div>
+      <div class="books-grid">
+
+        <div class="book-card">
+          <div class="book-order">18</div>
+          <div class="book-title">Rich Dad Poor Dad</div>
+          <div class="book-author">Robert Kiyosaki</div>
+          <div class="book-why">Asset vs Liability ялгаа — энэ мэдлэггүйгээр хичнээн олсон ч баялаг хуримтлагдахгүй. Монгол залуус хамгийн эхэнд уншвал зохих ном.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Personal income statement бичих / Asset худалдаж авах эхний алхам / "Pay yourself first" дадал</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Income statement дуусгах · 1 asset олж тодорхойлох</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">19</div>
+          <div class="book-title">The Psychology of Money</div>
+          <div class="book-author">Morgan Housel</div>
+          <div class="book-why">Мөнгөний талаарх сэтгэл зүйн зуршлууд. Яагаад ухаантай хүмүүс санхүүгийн муу шийдвэр гаргадаг вэ? Compounding effect-н гүн ойлголт.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>"Enough" тодорхойлох / Long-term thinking дадлага / Volatility-г зардал гэж хүлээж авах</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Хугацааны дагуу хуримтлалын план гаргах</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">20</div>
+          <div class="book-title">The Millionaire Next Door</div>
+          <div class="book-author">Thomas Stanley</div>
+          <div class="book-why">Жинхэнэ баялагтай хүмүүс хэрхэн амьдардаг. Дэлгэрэнгүй судалгаанд суурилсан — дэлгэмэл амьдрал биш, нам дор хуримтлал.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>UAW (Under Accumulator of Wealth) vs PAW-аа тодорхойлох / Зарлагын аудит хийх / Хэрэглээний уриа: "Чадварт хөрөнгө оруулах"</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Сарын зарлагын 20%+ хуримтлал болгох зорилго тавих</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">21</div>
+          <div class="book-title">The Richest Man in Babylon</div>
+          <div class="book-author">George Clason</div>
+          <div class="book-why">Мөнгөний 7 хуулийг түүхийн дүрс аргаар заадаг — хялбар, гүн. "Орлогынхоо 10%-ийг хадгал" дүрэм энд гарна.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Орлогынхоо 10%-ийг автоматаар хуримтлуулах / "Golden rule of money" дагах / Хүүгийн ухааны суурь мэдлэг</div>
+          <div class="book-kpi"><strong>KPI</strong><span>3 сарын дотор automatic saving тогтоох</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">22</div>
+          <div class="book-title">А. Идэрбат — Fuck You Money</div>
+          <div class="book-author">А. Идэрбат</div>
+          <div class="book-why">Монгол хөрөнгө оруулалтын орчинд суурилсан ном. Глобал мэдлэгийг Монгол контекстэд орчуулсан байдаг — практик ач холбогдол өндөр.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Монгол хөрөнгийн зах зээлийн суурийг судлах / F.U. Money дүнгийн тооцоолол хийх / Хөрөнгийн анхны allocation шийдэх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Personal F.U. Money тоог тооцоолж бичих</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">23</div>
+          <div class="book-title">А. Идэрбат — Time 2 Die</div>
+          <div class="book-author">А. Идэрбат</div>
+          <div class="book-why">Хөрөнгө оруулалтын дараагийн шат — цаг хугацааны менежмент ба хөрөнгийн арга стратеги. Fuck You Money-н дагалдах ном.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Investment timeline тогтоох / Passive income stream нэмэх / Retirement projection хийх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>5 жилийн хөрөнгийн план гаргах</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">24</div>
+          <div class="book-title">The 48 Laws of Power</div>
+          <div class="book-author">Robert Greene</div>
+          <div class="book-why">Нийгмийн дотоод дүрэм. Бизнес, харилцаа, улс төр — хаана ч эрх мэдлийн тоглоом явдаг. Мэдлэггүй хүн хохирдог.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Хамгийн хэрэгтэй 10 хуулиа сонгох / "Never outshine the master" дадал / Observation first, action second</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Сар бүр нэг хуулийг судлаж, амьдралдаа нэг жишээг тэмдэглэх</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">25</div>
+          <div class="book-title">Never Split the Difference</div>
+          <div class="book-author">Chris Voss</div>
+          <div class="book-why">FBI-н ахлах хэлэлцээрч тактик. Үнэлгээ тохирох, хамтрагчидтай ярих, үйлчлүүлэгчтэй ярих — бүгдэд хэрэгтэй тактик.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Tactical empathy хэрэглэх / "Calibrated questions" — яаж, юу асуух / "No"-г тайван хүлээж авах дадал</div>
+          <div class="book-kpi"><strong>KPI</strong><span>7 хоногт нэг "хэлэлцээр" дадлага хийх (дэлгүүр, хамтрагч, etc.)</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">26</div>
+          <div class="book-title">Harvard Business Essentials: Decision Making</div>
+          <div class="book-author">Harvard Business Review</div>
+          <div class="book-why">Бизнесийн шийдвэр гаргалт. Productdrop болон Life Gamify-н стратегийн сонголтод шинжлэх ухааны арга хэрэглэх.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Decision matrix хийх зуршил / SWOT-н дараагийн шат: scenario planning / Post-decision review хийх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Сар бүр нэг том шийдвэрт decision matrix хэрэглэх</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">27</div>
+          <div class="book-title">The Dip</div>
+          <div class="book-author">Seth Godin</div>
+          <div class="book-why">Хэзээ тэвчих, хэзээ орхих — энэ нь стратегийн шийдвэр. Бизнес амьдралд Dip байдгийг урьдчилж мэдэх нь паник болохоос сэргийлнэ.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Одоогийн бүх проектийн Dip-г тодорхойлох / "Cul de sac" болон "Dip"-г ялгах / Quit criteria урьдчилж тавих</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Проект бүрт "Quit threshold" бичих</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">28</div>
+          <div class="book-title">Principles: Life and Work</div>
+          <div class="book-author">Ray Dalio</div>
+          <div class="book-why">Системтэй амьдрах. Ray Dalio 500+ зарчим дотроосоо гарган ирсэн — "radically open-minded" болж, машин шиг ажиллах аргачлал.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Өөрийн 10+ зарчмыг бичих / "Pain + Reflection = Progress" мөрдөх / Weaknesses-аа олон нийтэд хэлэх дадал</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Personal Principles document (1 хуудас) бичиж дуусгах</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase phase-4">
+    <div class="phase-header">
+      <div class="phase-num">04</div>
+      <div class="phase-meta">
+        <div class="phase-name">ХАРИЛЦАА & ДОТООД ЕРТӨНЦ — Хүн Болох</div>
+        <div class="phase-period">8–10 сар · 10 ном · Яагаад энд: Гадаад амжилтыг дотоодоор тэтгэх</div>
+      </div>
+      <div class="phase-tags">
+        <span class="tag tag-mastery">Psychology</span>
+        <span class="tag tag-mastery">Relationships</span>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="phase-goal">
+        <strong>Фазын зорилго</strong>
+        <p>Харилцаа, биеийн эрүүл мэнд, сэтгэлийн тэнцвэр — энэ фаз дуусахад "хүн" болсон байх ёстой. Зөвхөн бизнесмен биш, бүрэн хүн.</p>
+      </div>
+      <div class="books-grid">
+
+        <div class="book-card">
+          <div class="book-order">29</div>
+          <div class="book-title">How to Win Friends and Influence People</div>
+          <div class="book-author">Dale Carnegie</div>
+          <div class="book-why">Харилцааны суурь. Ямар ч байр суурьнаас — YouTube, бизнес, GogoShop — хүмүүстэй харьцах чадвар хэрэгтэй.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Нэрийг санаж хэрэглэх / Бусдын ярьхыг 80% сонсох / Буруу гэдгийг эрт хүлээн зөвшөөрөх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>7 хоногт нэг "Carnegie момент" тэмдэглэх</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">30</div>
+          <div class="book-title">Charisma</div>
+          <div class="book-author">Olivia Fox Cabane</div>
+          <div class="book-why">Харизма бол төрмөл биш — дадлагаар хөгждөг. YouTube болон бизнесийн нүүр царайд хэрэгтэй тактик.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Presence дадлага (ярихдаа 100% анхаарал) / Power pose / Eye contact хэмжих</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Видео болон уулзалт дахь "present" мэдрэмжийн өөрийн үнэлгээ 7/10+</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">31</div>
+          <div class="book-title">Окомото Жүнко — Ярих Техник</div>
+          <div class="book-author">Окомото Жүнко</div>
+          <div class="book-why">Японы ярих техник — энгийн, практик. Монгол хүнд ойлгоход хялбар аргуудаар мессеж хүргэх чадварыг хурдан сайжруулна.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>PREP хэв ашиглах / "Conclusion first" дадал / Сонсогчоо унших чадвар</div>
+          <div class="book-kpi"><strong>KPI</strong><span>GogoShop болон YouTube дахь ярианы тодорхой байдал +1 шат</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">32</div>
+          <div class="book-title">А. Идэрбат — Power (бичэх талаар)</div>
+          <div class="book-author">А. Идэрбат</div>
+          <div class="book-why">Монгол хэлэнд суурилсан бичих ур чадвар. YouTube caption, Instagram copy, landing page бүгд монголоор бичдэг учир энэ ном хамааралтай.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Daily writing 15 мин / Hook бичих дадлага / Copy template library бүтээх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Сар бүр 4 caption / copy A/B тест хийх</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">33</div>
+          <div class="book-title">Mind-Gut Connection</div>
+          <div class="book-author">Emeran Mayer</div>
+          <div class="book-why">Тархи болон гэдэсний холбоо — бие эрүүл байж байж тархи ажиллана. Нойр, хоол, стресс, шийдвэр гаргалт бүгд холбоотой.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Хоолны дэглэм засах (gut microbiome) / Стрессийн биед үзүүлэх нөлөөг таних / Mindful eating дадлага</div>
+          <div class="book-kpi"><strong>KPI</strong><span>30 хоногийн gut health protocol туршиж, эрч хүчийн өөрчлөлтийг 1-10 оноогоор хэмжих</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">34</div>
+          <div class="book-title">Gut and Brain Connection</div>
+          <div class="book-author">David Perlmutter</div>
+          <div class="book-why">Mind-Gut-н дагалдах дэлгэрэнгүй ном. Хоол тэжээл болон тархины гүйцэтгэлийн шинжлэх ухаанч тайлбар.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Sugar-processed food-ийг багасгах / Probiotic хоол нэмэх / Sleep protocol сайжруулах</div>
+          <div class="book-kpi"><strong>KPI</strong><span>7 хоногт 5+ өдөр хоолны журнал хөтлөх</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">35</div>
+          <div class="book-title">The Subtle Art of Not Giving a F*ck</div>
+          <div class="book-author">Mark Manson</div>
+          <div class="book-why">Юунд санаа тавих, юунд тавихгүй гэдгийг сонгох нь амьдралын ур чадвар. Anxiety багасгах, чиглэлтэй болоход хэрэгтэй.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>"Values" тодорхойлох — юунд санаа тавих / Problem → Solution дундын утгыг олох / "Do something" principle</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Энэ сарын "I give a f*ck" жагсаалт (5 зүйл хүртэл) бичих</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">36</div>
+          <div class="book-title">Stop Drinking Now / Allen Carr</div>
+          <div class="book-author">Allen Carr</div>
+          <div class="book-why">Хэрэв архи, сул дорой дадал байвал энэ ном шууд шийдэл болно. Архичдад зориулагдсан биш — дурын сул дадалд хэрэглэгдэнэ.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Illusion буюу "дадал надад юу өгдөг" гэсэн бодлыг задлах / Trigger таних / "The last one" гэж бодохоо болих</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Хэрэгжүүлэх дадлыг 30 хоногоор хэмжих</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">37</div>
+          <div class="book-title">Do Not Disturb</div>
+          <div class="book-author">Dami Lee</div>
+          <div class="book-why">Digital detox болон дотоод ертөнцийн тайван байдал. Нийгмийн сүлжээний хамааралт байдлаас ангижрах практик арга.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Phone-free time block тавих / FOMO-г таних / "Boredom tolerance" нэмэгдүүлэх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Screen time: social 2 цаг → 1 цаг/өдөр болгох зорилго</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">38</div>
+          <div class="book-title">Life and Work Balance</div>
+          <div class="book-author">Greg McKeown</div>
+          <div class="book-why">GogoShop + Life Gamify + Productdrop + YouTube — олон зүйл давхар явуулж байгаа хүнд тэнцвэр олох арга зам хэрэгтэй.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Essentialism дадлага: "No" хэлэх зориг / Weekly review дадлага / "Less but better" зарчим</div>
+          <div class="book-kpi"><strong>KPI</strong><span>7 хоног бүр: эрч хүч 1-10 оноо хэмжиж, 8+ байх зорилго</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 5 -->
+  <div class="phase phase-5">
+    <div class="phase-header">
+      <div class="phase-num">05</div>
+      <div class="phase-meta">
+        <div class="phase-name">ӨВТГӨМЖ & ГҮН УХААН — Мастер Болох</div>
+        <div class="phase-period">10–12 сар · 8 ном · Яагаад энд: Суурь тогтсоны дараа гүн ухааны шат</div>
+      </div>
+      <div class="phase-tags">
+        <span class="tag tag-legacy">Philosophy</span>
+        <span class="tag tag-legacy">Legacy</span>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="phase-goal">
+        <strong>Фазын зорилго</strong>
+        <p>Амьдралын гүн утга учрыг олох. Гүн ухааны суурь дээр дахин амьдралаа дахин тойм хийж, "хэн болмоор байна вэ?" гэсэн асуултанд хариу өгөх.</p>
+      </div>
+      <div class="books-grid">
+
+        <div class="book-card">
+          <div class="book-order">39</div>
+          <div class="book-title">Meditations</div>
+          <div class="book-author">Marcus Aurelius</div>
+          <div class="book-why">Эзэн хааны өөртөө бичсэн тэмдэглэл — эрх мэдлийн оргилд байсан хүний даруу, зарчимч амьдрал. Stoicism-н оргил.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Өглөө бүр нэг бодол уншиж тэмдэглэх / Memento mori — үхлийн ухаарлаас эрч хүч авах / Amor fati — бүхнийг хайрлах</div>
+          <div class="book-kpi"><strong>KPI</strong><span>365 хоногийн тэмдэглэл дэвтэр эхлүүлэх</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">40</div>
+          <div class="book-title">The Daily Stoic</div>
+          <div class="book-author">Ryan Holiday</div>
+          <div class="book-why">Meditations-н практик хэрэглэл. Өдөр бүр нэг Stoic сургамж — Meditations-тай хамт уншвал давхар нөлөө.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Өдөр бүр нэг бодол уншиж журнал бичих / "Прохайресис" — зөвхөн өөрийн хянах боломжтой зүйлд анхаарах / Evening reflection</div>
+          <div class="book-kpi"><strong>KPI</strong><span>365 өдрийн дотор 300+ оруулга / streak</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">41</div>
+          <div class="book-title">Sapiens</div>
+          <div class="book-author">Yuval Noah Harari</div>
+          <div class="book-why">Хүн төрөлхтний 70,000 жилийн түүхийг уншсан хүн жижиг асуудлуудаас ангид болдог. Macro perspective — том зурагнаас харах чадвар.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Imagined orders — нийгмийн бүтцийн хийсвэр шинжийг ухаарах / "Cognitive revolution" — хэлний хүч ойлгох / Intersubjective realities таних</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Уншсаны дараа "Хүн гэж юу вэ?" 1 хуудас бичих</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">42</div>
+          <div class="book-title">Ikigai</div>
+          <div class="book-author">Héctor García & Francesc Miralles</div>
+          <div class="book-why">Японы амьдралын утга учрын философи — "Яагаад босдог вэ?" гэсэн асуултанд хариулах. 1 жилийн дараа хэн болсонаа бататгана.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Ikigai diagram-аа бичих / Flow state байдлыг тодорхойлох / Centenarian habits нэгтгэх</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Икигай diagram дуусгах · 1 жилийн дараа хянах</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">43</div>
+          <div class="book-title">The Art of War</div>
+          <div class="book-author">Sun Tzu</div>
+          <div class="book-why">Стратегийн суурь. Бизнес бол тулаан — дайсан, нутаг, зэвсэг бүгд ойлгосон хүн ялдаг. Маркетингийн өрсөлдөөнд хэрэгтэй.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>"Know your enemy and yourself" — өрсөлдөгчийг судлах / Стратегийн шийдвэргүй тулаанаас зайлсхийх / Speed хэрэглэх дадал</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Productdrop-н өрсөлдөгч шинжилгээ хийх (1 хуудас)</span></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-order">44</div>
+          <div class="book-title">Magic Shop</div>
+          <div class="book-author">James Doty</div>
+          <div class="book-why">Тархи, зүрх сэтгэл, амьдралын утга учрын нийлбэр. Нейрохирургийн тархи дахь compassion ба амжилтын холбоо. Онлын эцэст уншвал зохимжтой.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Relaxation technique дадлага / Heart-centered intention / Compassion meditation</div>
+          <div class="book-kpi"><strong>KPI</strong><span>1 жилийн "character build" тойм бичих · Дараагийн жилийн зорилго тавих</span></div>
+        </div>
+
+        <div class="book-card" style="border-color: rgba(192,132,252,0.3);">
+          <div class="book-order" style="color: rgba(192,132,252,0.3);">+A</div>
+          <div class="book-title">LeBron James (Биография)</div>
+          <div class="book-author">Jeff Benedict</div>
+          <div class="book-why">Discipline, mindset, physical excellence — спортын оргилын хүний сэтгэлгээ ямар байдаг. Business + sport + leadership.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>"What does your body need today?" — биеийн мэдрэмж дагах / Teammate mindset / Long-game thinking</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Физик рутин сайжруулах — 12 сарын дотор биеийн эрч хүчийг baseline + 20%</span></div>
+          <div class="book-note">Фаз 4–5-д унших, зарлага нэмэх</div>
+        </div>
+
+        <div class="book-card" style="border-color: rgba(100,100,150,0.3);">
+          <div class="book-order" style="color: rgba(100,100,150,0.3);">+B</div>
+          <div class="book-title">Walter — Elon Musk</div>
+          <div class="book-author">Walter Isaacson</div>
+          <div class="book-why">Манай үеийн хамгийн нарийн судалсан бизнесмен биограф. Эрсдэл, vision, execution — бүгдийг амьдрал дундаа харуулж буй жишээ.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>First principles thinking / Moonshot зорилго тавих / Feedback loop хурдасгах</div>
+          <div class="book-kpi"><strong>KPI</strong><span>Уншсаны дараа "Миний first principle" жагсаалт бичих</span></div>
+          <div class="book-note">Фаз 4 дараа унших</div>
+        </div>
+
+        <div class="book-card" style="border-color: rgba(100,100,150,0.2); opacity: 0.6;">
+          <div class="book-order" style="color: rgba(100,100,150,0.2);">+C</div>
+          <div class="book-title">David Goggins (биш)</div>
+          <div class="book-author">David Goggins</div>
+          <div class="book-why">Англи хэлээр байгаа учир одоохондоо орхих. Хэрэв англи хэл дэвшсэн бол, гол хэсгийг podcasts / summary-р авах боломжтой.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Podcast/summary эхлүүлэх / Англи хэлийг зэрэгцүүлэн сурч байгаа бол оруулах</div>
+          <div class="book-kpi"><strong>KPI</strong><span>N/A — нөхцөл байдлаас хамаарна</span></div>
+          <div class="book-note">Одоохондоо хасагдсан — англи дэвшлийн дараа</div>
+        </div>
+
+        <div class="book-card" style="border-color: rgba(100,100,150,0.2); opacity: 0.6;">
+          <div class="book-order" style="color: rgba(100,100,150,0.2);">+D</div>
+          <div class="book-title">Our Fault in Our Stars</div>
+          <div class="book-author">John Green</div>
+          <div class="book-why">Уран зохиол — Character Build-д уран зохиол зайлшгүй биш. Нэмэлт номоор авна. Хэрэв амрах унших хүсэлтэй бол.</div>
+          <div class="book-actions"><strong>ХЭРЭГЖҮҮЛЭХ 2–3 ЗҮЙ</strong>Уран зохиолын эмпати, өгүүлэх ур чадвар / Амралтын унших</div>
+          <div class="book-kpi"><strong>KPI</strong><span>N/A — амрах зориулалт</span></div>
+          <div class="book-note">Нэмэлт / амрах номоор авна</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- =============== TAB: GUIDE =============== -->
+<div id="tab-guide" class="tab-content">
+  <div class="section-header">
+    <div class="section-title">УНШИХ ЗААВАР</div>
+    <div class="section-badge">Яаж унших вэ</div>
+  </div>
+
+  <div class="guide-block">
+    <h3>УНШИХ ДАРААЛАЛ — ЯАГААД ЭНЭ ДЭС?</h3>
+    <p>Энэ дараалал санамсаргүй биш. Бүрэн тайлбар:</p>
+    <ul>
+      <li><strong>Фаз 1 (Суурь):</strong> Эхлэх цэгийг тодорхойлох — Atomic Habits болон Courage to Be Disliked нь "хэн болохыг" тодорхойлно. Эго Is the Enemy нь "хийхдээ эгогоо тавих" дадлыг заана. Deep Work нь уншлагын чадварыг нь ч гэсэн сайжруулна.</li>
+      <li><strong>Фаз 2 (Гүйцэтгэл):</strong> Дадал тогтсоны дараа систем хийх. 4-Hour Workweek, ONE Thing, Think and Grow Rich — бүгд "яаж хэрэгжүүлэх" тухай.</li>
+      <li><strong>Фаз 3 (Мөнгө):</strong> Систем ажиллаж эхлэхэд мөнгөний суурь хэрэгтэй. Мөнгөний сэтгэлгээгүй хүн олсон мөнгөөрөө юу хийхээ мэдэхгүй.</li>
+      <li><strong>Фаз 4 (Харилцаа):</strong> Гадаад амжилтыг дотоодоор тэтгэх — биеийн эрүүл мэнд, харилцаа. Эндхэн гүн ухааны суурь бэлтгэгдэнэ.</li>
+      <li><strong>Фаз 5 (Гүн ухаан):</strong> Бүх суурь тогтсоны дараа л Meditations, Sapiens, Ikigai уншвал ойлгоно. Эхний сард уншвал зүгээр "ухаалаг зүйл" шиг санагддаг — гэхдээ амьдралд шингэдэггүй.</li>
+    </ul>
+  </div>
+
+  <div class="guide-block">
+    <h3>1 НОМЫН УНШИХ ПРОТОКОЛ</h3>
+    <ul>
+      <li><strong>Өмнө нь:</strong> "Энэ номноос би яг юу авахыг хүсэж байна?" гэж 3 минут бодох.</li>
+      <li><strong>Үед нь:</strong> Ном дундаас 2–3 "гэрэлт санаа" (insight) тэмдэглэх.</li>
+      <li><strong>Дуусгаад:</strong> 1 хуудасны хураангуй бичих — summary биш, "надад юу өгсөн".</li>
+      <li><strong>Хэрэгжүүлэлт:</strong> Наад зах нь 2–3 зүйлийг <strong>дараагийн 7 хоногт</strong> нэвтрүүлэх. Ном уншаад хэрэгжүүлэлтгүй бол цаг үрсэнтэй тэнцүү.</li>
+      <li><strong>KPI хэмжих:</strong> 30 хоногийн дараа "энэ номноос авсан зүйл надад ямар өөрчлөлт авчирсан бэ?" тойм хийх.</li>
+    </ul>
+  </div>
+
+  <div class="guide-block">
+    <h3>ХЭДЭН НОМ / ЦАГ?</h3>
+    <ul>
+      <li><strong>Зорилго:</strong> Сарт 3–4 ном = 7 хоногт 1 ном</li>
+      <li><strong>Өдөрт унших цаг:</strong> 30–45 мин (Miracle Morning блок дотор)</li>
+      <li><strong>Хурдан ном:</strong> &lt;200 хуудас — 5 хоногт</li>
+      <li><strong>Дунд ном:</strong> 200–350 хуудас — 7–10 хоногт</li>
+      <li><strong>Зузаан ном:</strong> 350+ хуудас (Principles, 7 Habits, 48 Laws) — 2–3 долоо хоногт</li>
+      <li><strong>Дуртай гэж мэдэгдэхгүй байгаа номыг орхих:</strong> Хэрэв 50 хуудас уншаад юу ч өгөхгүй байвал skip хийх эрхтэй.</li>
+    </ul>
+  </div>
+
+  <div class="guide-block">
+    <h3>НЭГЭН ЗЭРЭГ УНШИХ ХОСОЛТ</h3>
+    <ul>
+      <li>Ego Is Enemy + Obstacle Is the Way — Ryan Holiday-н хос ном, дараалан уншина</li>
+      <li>Meditations + Daily Stoic — зэрэгцүүлэн уншина (Daily Stoic өглөө бүр, Meditations гүнзгий уншлагаар)</li>
+      <li>Mind-Gut Connection + Gut and Brain — нэг сарт хоёуланг</li>
+      <li>Rich Dad Poor Dad + Psychology of Money — санхүүгийн сэтгэлгээ сарын ном</li>
+      <li>Think and Grow Rich + Miracle Equation — зорилго тавих дэс</li>
+    </ul>
+  </div>
+
+  <div class="guide-block">
+    <h3>ОРЛУУЛАХ / ХАСАХ ДҮРЭМ</h3>
+    <ul>
+      <li>Уншиж дууссан номнуудыг (Atomic Habits, Deep Work, Courage to Be Disliked) давтан уншихгүй — тэр цагийг шинэ номд зарцуулах.</li>
+      <li>Давтан хэрэгтэй ном (Meditations, Principles) жилд 1 удаа дахин унших боломжтой.</li>
+      <li>Our Fault in Stars болон David Goggins — одоохондоо хойш тавих.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- =============== TAB: KPI =============== -->
+<div id="tab-kpi" class="tab-content">
+  <div class="section-header">
+    <div class="section-title">KPI ХЭМЖҮҮР</div>
+    <div class="section-badge">12 сарын хэмжигдэхүйц өөрчлөлт</div>
+  </div>
+
+  <div class="kpi-table-wrap">
+  <table class="kpi-table">
+    <thead>
+      <tr>
+        <th>ФАЗ</th>
+        <th>НОМ</th>
+        <th>ХЭРЭГЖҮҮЛЭХ ЗҮЙ</th>
+        <th>KPI / ХЭМЖҮҮР</th>
+        <th>ХУГАЦАА</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="kpi-phase">Фаз 1</td><td>Atomic Habits</td><td>3 зуршил тогтоох</td><td class="kpi-metric">Streak 21+ хоног · 3 зуршил actie</td><td>Сар 1</td></tr>
+      <tr><td class="kpi-phase">Фаз 1</td><td>Deep Work</td><td>90 мин deep work block</td><td class="kpi-metric">7 хоногт 5+ өдөр uninterrupted 90 мин</td><td>Сар 1–2</td></tr>
+      <tr><td class="kpi-phase">Фаз 1</td><td>Ego Is Enemy</td><td>Сар бүр "Би буруу байсан" тэмдэглэл</td><td class="kpi-metric">Сар бүр 1+ ego journal оруулга</td><td>Байнга</td></tr>
+      <tr><td class="kpi-phase">Фаз 1</td><td>12 Rules for Life</td><td>Долоо хоногийн өөрийн үнэлгээ</td><td class="kpi-metric">Avg score 3.5+ /5 хадгалах</td><td>Байнга</td></tr>
+      <tr><td class="kpi-phase">Фаз 1</td><td>Miracle Morning</td><td>SAVERS routine</td><td class="kpi-metric">21 хоногийн streak · Тасрахгүй байх</td><td>Сар 1–2</td></tr>
+      <tr><td class="kpi-phase">Фаз 2</td><td>The ONE Thing</td><td>Сар бүр ONE Thing тодорхойлох</td><td class="kpi-metric">ONE Thing-д 80% цаг · Хэмжиж баталгаажуулах</td><td>Сар 3–4</td></tr>
+      <tr><td class="kpi-phase">Фаз 2</td><td>4-Hour Workweek</td><td>1 ажлыг автоматжуулах</td><td class="kpi-metric">2+ цаг/7 хоног хэмнэлт</td><td>Сар 3</td></tr>
+      <tr><td class="kpi-phase">Фаз 2</td><td>Building a StoryBrand</td><td>Life Gamify BrandScript</td><td class="kpi-metric">Landing page conversion 5%+ болгох</td><td>Сар 3–4</td></tr>
+      <tr><td class="kpi-phase">Фаз 2</td><td>7 Habits</td><td>Q2 ажлын хувь нэмэгдүүлэх</td><td class="kpi-metric">Q2 ажил 40%+/7 хоног</td><td>Сар 3–4</td></tr>
+      <tr><td class="kpi-phase">Фаз 2</td><td>80/20 Principle</td><td>Сар бүр Парето аудит</td><td class="kpi-metric">Хамгийн их үр дүн өгдөг 20%-ийг тодорхойлох</td><td>Байнга</td></tr>
+      <tr><td class="kpi-phase">Фаз 3</td><td>Rich Dad Poor Dad</td><td>Personal income statement</td><td class="kpi-metric">Income statement дуусгах · 1 asset тодорхойлох</td><td>Сар 5</td></tr>
+      <tr><td class="kpi-phase">Фаз 3</td><td>Millionaire Next Door</td><td>Зарлагын аудит</td><td class="kpi-metric">Сарын зарлагын 20%+ хуримтлал болгох</td><td>Сар 5–6</td></tr>
+      <tr><td class="kpi-phase">Фаз 3</td><td>Richest Man in Babylon</td><td>Automatic saving тогтоох</td><td class="kpi-metric">10% automatic saving · 3 сар дараалсан</td><td>Сар 5</td></tr>
+      <tr><td class="kpi-phase">Фаз 3</td><td>Never Split the Difference</td><td>Долоо хоногт 1 хэлэлцээр дадлага</td><td class="kpi-metric">Сарт 4+ negotiation дадлага</td><td>Сар 6–7</td></tr>
+      <tr><td class="kpi-phase">Фаз 3</td><td>Principles</td><td>Personal principles document</td><td class="kpi-metric">1 хуудас document дуусгах · 90 хоногт хянах</td><td>Сар 7</td></tr>
+      <tr><td class="kpi-phase">Фаз 4</td><td>How to Win Friends</td><td>Carnegie момент тэмдэглэх</td><td class="kpi-metric">7 хоногт 1+ момент journal</td><td>Байнга</td></tr>
+      <tr><td class="kpi-phase">Фаз 4</td><td>Mind-Gut Connection</td><td>Gut health protocol 30 хоног</td><td class="kpi-metric">Эрч хүч 1–10 оноо: baseline + 1.5</td><td>Сар 8</td></tr>
+      <tr><td class="kpi-phase">Фаз 4</td><td>Do Not Disturb</td><td>Screen time багасгах</td><td class="kpi-metric">Social screen time 2цаг → 1цаг/өдөр</td><td>Сар 8–9</td></tr>
+      <tr><td class="kpi-phase">Фаз 4</td><td>Life and Work Balance</td><td>Долоо хоногийн эрч хүч</td><td class="kpi-metric">Avg weekly energy score 8+/10</td><td>Байнга</td></tr>
+      <tr><td class="kpi-phase">Фаз 5</td><td>Meditations + Daily Stoic</td><td>365 хоногийн journal</td><td class="kpi-metric">300+ оруулга 12 сарт</td><td>Сар 10–12</td></tr>
+      <tr><td class="kpi-phase">Фаз 5</td><td>Ikigai</td><td>Ikigai diagram</td><td class="kpi-metric">Diagram дуусгах · 1 жилийн дараа хянах</td><td>Сар 11</td></tr>
+      <tr><td class="kpi-phase">Жилийн эцэст</td><td>Бүх фаз</td><td>Жилийн тойм</td><td class="kpi-metric">44 номны 80%+ уншсан · KPI 70%+ биелсэн</td><td>Сар 12</td></tr>
+    </tbody>
+  </table>
+  </div><!-- /kpi-table-wrap -->
+
+  <div class="guide-block">
+    <h3>ЖИЛИЙН НЭГДСЭН KPI ЗОРИЛТ</h3>
+    <ul>
+      <li><strong>Ном:</strong> 36–40 ном уншиж дуусгах (80%+ биелэлт)</li>
+      <li><strong>Зуршил:</strong> 5+ зуршил системтэй үргэлжилж байна (streak 90+ хоног)</li>
+      <li><strong>Санхүү:</strong> Орлогын 15%+ хуримтлагдаж байна · 1 asset тодорхойлсон</li>
+      <li><strong>Бизнес:</strong> Life Gamify 30+ борлуулалт/сар · Productdrop 20+ борлуулалт/сар</li>
+      <li><strong>Бие:</strong> Эрч хүч avg 7.5+/10 · Screen time &lt;1.5 цаг/өдөр</li>
+      <li><strong>Харилцаа:</strong> Negotiation, storytelling, charisma — 3 чадвар мэдэгдэхүйц дэвшсэн</li>
+      <li><strong>Гүн ухаан:</strong> Personal principles + ikigai diagram + 300+ journal оруулга</li>
+    </ul>
+  </div>
+</div>
+
+<!-- =============== TAB: TRACKER =============== -->
+<div id="tab-tracker" class="tab-content">
+  <div class="section-header">
+    <div class="section-title">ПРОГРЕСС TRACKER</div>
+    <div class="section-badge">Дарж тэмдэглэх</div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+  </div>
+  <div class="progress-text"><span id="progressCount">0</span> / 44 ном уншсан · <span id="progressPct">0</span>% Character Build</div>
+
+  <div class="tracker-grid" id="trackerGrid">
+    <!-- JS-ээр үүсгэнэ -->
+  </div>
+</div>
+
+
+<!-- =============== TAB: WEEKLY REVIEW =============== -->
+<div id="tab-weekly" class="tab-content">
+  <div class="section-header">
+    <div class="section-title">WEEKLY REVIEW</div>
+    <div class="section-badge">7 хоног бүр · KPI Хянах</div>
+  </div>
+
+  <div class="week-header">
+    <div class="week-nav">
+      <button onclick="changeWeek(-1)">← ӨМНӨХ</button>
+      <div class="week-label" id="weekLabel">—</div>
+      <button onclick="changeWeek(1)">ДАРААХ →</button>
+    </div>
+    <button class="save-btn" onclick="saveWeeklyReview()">ХАДГАЛАХ</button>
+    <span class="save-confirm" id="saveConfirm">✓ Хадгалагдлаа</span>
+  </div>
+
+  <div style="margin-bottom:20px;">
+    <div style="font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">ДОЛОО ХОНОГИЙН KPI — БИЕЛСЭН ЭСЭХ</div>
+    <div class="kpi-check-grid" id="weeklyKpiGrid"></div>
+  </div>
+
+  <div class="review-grid">
+    <div class="review-card">
+      <label>⚡ ЭРЧ ХҮЧ (1–10)</label>
+      <div class="score-row" id="energyScore"></div>
+    </div>
+    <div class="review-card">
+      <label>🎯 ФОКУС (1–10)</label>
+      <div class="score-row" id="focusScore"></div>
+    </div>
+    <div class="review-card" style="grid-column: 1 / -1;">
+      <label>✅ ЭНЭ 7 ХОНОГТ ХИЙСЭН ЗҮЙ</label>
+      <textarea id="weekWins" placeholder="Хамгийн чухал 3 амжилтаа бич..."></textarea>
+    </div>
+    <div class="review-card">
+      <label>❌ ХИЙГДЭЭГҮЙ / АЛДАА</label>
+      <textarea id="weekMisses" placeholder="Юу хийгдэлгүй үлдсэн бэ?"></textarea>
+    </div>
+    <div class="review-card">
+      <label>💡 ДАРААГИЙН 7 ХОНОГИЙН 1 ЗОРИЛГО</label>
+      <textarea id="weekNext" placeholder="Яг нэг зорилго — хамгийн чухал нь юу вэ?"></textarea>
+    </div>
+    <div class="review-card" style="grid-column: 1 / -1;">
+      <label>📚 НОМНЫ ХЭРЭГЖҮҮЛЭЛТ — ЭНЭ 7 ХОНОГТ</label>
+      <textarea id="weekBooks" placeholder="Ямар номноос ямар зүйл хэрэгжүүлсэн бэ?"></textarea>
+    </div>
+  </div>
+
+  <div class="history-list" id="weeklyHistory">
+    <div style="font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">ӨНГӨРСӨН ДОЛОО ХОНОГУУД</div>
+  </div>
+</div>
+
+<!-- =============== TAB: IMPLEMENTATION TRACKER =============== -->
+<div id="tab-impl" class="tab-content">
+  <div class="section-header">
+    <div class="section-title">ҮЙЛДЭЛ TRACKER</div>
+    <div class="section-badge">Мэдлэг → Үйлдэл</div>
+  </div>
+
+  <div class="impl-summary" id="implSummary"></div>
+
+  <div class="impl-filter">
+    <button class="active" onclick="filterImpl('all', this)">БҮГД</button>
+    <button onclick="filterImpl('Фаз 1', this)">ФАЗ 1</button>
+    <button onclick="filterImpl('Фаз 2', this)">ФАЗ 2</button>
+    <button onclick="filterImpl('Фаз 3', this)">ФАЗ 3</button>
+    <button onclick="filterImpl('Фаз 4', this)">ФАЗ 4</button>
+    <button onclick="filterImpl('Фаз 5', this)">ФАЗ 5</button>
+    <button onclick="filterImpl('done', this)">ДУУССАН ✓</button>
+    <button onclick="filterImpl('pending', this)">ХИЙГДЭХ</button>
+  </div>
+
+  <div id="implList"></div>
+</div>
+
+<!-- =============== TAB: INSIGHT VAULT =============== -->
+<div id="tab-vault" class="tab-content">
+  <div class="section-header">
+    <div class="section-title">INSIGHT VAULT</div>
+    <div class="section-badge">Гэрэлт санаа хадгалах</div>
+  </div>
+
+  <div class="vault-add">
+    <div class="vault-row">
+      <div style="flex:1;min-width:0;">
+        <label>НОМ</label>
+        <select class="vault-select" id="vaultBook" style="width:100%;">
+          <option value="">— Ном сонгох —</option>
+          <option>Atomic Habits</option><option>Courage to Be Disliked</option>
+          <option>Deep Work</option><option>Ego Is the Enemy</option>
+          <option>The Obstacle Is the Way</option><option>Miracle Morning</option>
+          <option>12 Rules for Life</option><option>Thinking Fast and Slow</option>
+          <option>The 4-Hour Workweek</option><option>The ONE Thing</option>
+          <option>Think and Grow Rich</option><option>Miracle Equation</option>
+          <option>7 Habits</option><option>Originals</option>
+          <option>Building a StoryBrand</option><option>This Is Marketing</option>
+          <option>The 80/20 Principle</option><option>Rich Dad Poor Dad</option>
+          <option>Psychology of Money</option><option>Millionaire Next Door</option>
+          <option>Richest Man in Babylon</option><option>Fuck You Money</option>
+          <option>Time 2 Die</option><option>48 Laws of Power</option>
+          <option>Never Split the Difference</option><option>Harvard Decision Making</option>
+          <option>The Dip</option><option>Principles</option>
+          <option>How to Win Friends</option><option>Charisma</option>
+          <option>Окомото Жүнко</option><option>А.Идэрбат Power</option>
+          <option>Mind-Gut Connection</option><option>Gut and Brain</option>
+          <option>The Subtle Art</option><option>Stop Drinking Now</option>
+          <option>Do Not Disturb</option><option>Life and Work Balance</option>
+          <option>Meditations</option><option>The Daily Stoic</option>
+          <option>Sapiens</option><option>Ikigai</option>
+          <option>The Art of War</option><option>Magic Shop</option>
+        </select>
+      </div>
+      <div style="min-width:140px;">
+        <label>ТӨРӨЛ</label>
+        <select class="vault-select" id="vaultType">
+          <option value="aha">💡 AHA момент</option>
+          <option value="action">⚡ Үйлдэл санаа</option>
+          <option value="quote">✦ Ишлэл / Хэллэг</option>
+        </select>
+      </div>
+    </div>
+    <label>САНАА / ТЭМДЭГЛЭЛ</label>
+    <textarea class="vault-textarea" id="vaultText" placeholder="Гэрэлт санаа, хэрэгжүүлэх зүйл, эсвэл чухал ишлэлийг бич..."></textarea>
+    <button class="vault-add-btn" onclick="addInsight()">+ НЭМЭХ</button>
+  </div>
+
+  <div class="vault-search">
+    <input type="text" id="vaultSearch" placeholder="Хайх — ном нэр эсвэл санаагаар..." oninput="renderVault()">
+  </div>
+
+  <div class="vault-stats" id="vaultStats"></div>
+  <div id="vaultList"></div>
+</div>
+
+<!-- =============== TAB: TIMER =============== -->
+<div id="tab-timer" class="tab-content">
+  <div class="section-header">
+    <div class="section-title">FOCUS TIMER</div>
+    <div class="section-badge">Deep Work · Morning Routine</div>
+  </div>
+
+  <div class="timer-wrap">
+    <div class="timer-modes" id="timerModes">
+      <button class="timer-mode-btn active" onclick="setTimerMode(this,'DEEP WORK',90)">DEEP WORK · 90 МИН</button>
+      <button class="timer-mode-btn" onclick="setTimerMode(this,'MORNING ROUTINE',60)">MORNING ROUTINE · 60 МИН</button>
+      <button class="timer-mode-btn" onclick="setTimerMode(this,'УНШИХ',45)">УНШИХ · 45 МИН</button>
+      <button class="timer-mode-btn" onclick="setTimerMode(this,'БОГИНО ФОКУС',25)">POMODORO · 25 МИН</button>
+      <button class="timer-mode-btn" onclick="setTimerMode(this,'ЗАХИАЛГАТ',0)">ЗАХИАЛГАТ</button>
+    </div>
+
+    <div class="timer-custom" id="timerCustom" style="display:none;">
+      <label>МИНУТ:</label>
+      <input type="number" id="customMinutes" value="30" min="1" max="180" onchange="applyCustomTimer()">
+    </div>
+
+    <div class="timer-display">
+      <div class="timer-ring">
+        <svg class="timer-svg" width="220" height="220" viewBox="0 0 220 220">
+          <circle class="timer-bg-circle" cx="110" cy="110" r="100"/>
+          <circle class="timer-progress-circle" id="timerCircle" cx="110" cy="110" r="100"
+            stroke-dasharray="628" stroke-dashoffset="0"/>
+        </svg>
+        <div>
+          <div class="timer-time" id="timerDisplay">90:00</div>
+          <div class="timer-phase-label" id="timerLabel">DEEP WORK</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timer-sessions" id="timerSessions"></div>
+
+    <div class="timer-controls">
+      <button class="timer-btn primary" id="timerStartBtn" onclick="timerToggle()">ЭХЛҮҮЛЭХ</button>
+      <button class="timer-btn" onclick="timerReset()">RESET</button>
+    </div>
+
+    <div class="timer-log">
+      <div class="timer-log-title">ӨНӨӨДРИЙН СЕССҮҮД</div>
+      <div id="timerLogList">
+        <div style="font-size:11px;color:var(--muted);padding:8px 0;">Одоохондоо сесс байхгүй.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =============== TAB: DEADLINE =============== -->
+<div id="tab-deadline" class="tab-content">
+  <div class="section-header">
+    <div class="section-title">DEADLINE</div>
+    <div class="section-badge">Зорилго · Хугацаа · Хариуцлага</div>
+  </div>
+
+  <div class="deadline-header">
+    <div>
+      <div style="font-size:11px;color:var(--muted);">Ном, бизнес, зуршил — бүх зорилгоо deadline-тай болго</div>
+    </div>
+    <button class="deadline-add-btn" onclick="toggleDlForm()">+ НЭМЭХ</button>
+  </div>
+
+  <div class="deadline-form" id="dlForm">
+    <div class="dl-form-grid">
+      <div class="dl-form-full">
+        <label class="dl-label">ЗОРИЛГО / АЖИЛ</label>
+        <input class="dl-input" id="dlTitle" placeholder="Жишээ: Rich Dad Poor Dad уншиж дуусгах">
+      </div>
+      <div>
+        <label class="dl-label">ДУУСАХ ОГНОО</label>
+        <input class="dl-input" type="date" id="dlDate">
+      </div>
+      <div>
+        <label class="dl-label">ТӨРӨЛ</label>
+        <select class="dl-select" id="dlCat">
+          <option value="book">📚 Ном</option>
+          <option value="biz">💼 Бизнес</option>
+          <option value="habit">🔥 Зуршил</option>
+          <option value="finance">💰 Санхүү</option>
+          <option value="personal">⚡ Хувийн</option>
+        </select>
+      </div>
+      <div class="dl-form-full">
+        <label class="dl-label">ТАЙЛБАР (заавал биш)</label>
+        <input class="dl-input" id="dlDesc" placeholder="Яагаад чухал вэ?">
+      </div>
+    </div>
+    <button class="dl-submit" onclick="addDeadline()">НЭМЭХ</button>
+    <button class="dl-cancel" onclick="toggleDlForm()">БОЛИХ</button>
+  </div>
+
+  <!-- Filters -->
+  <div class="impl-filter" id="dlFilter">
+    <button class="active" onclick="filterDl('all',this)">БҮГД</button>
+    <button onclick="filterDl('active',this)">ИДЭВХТЭЙ</button>
+    <button onclick="filterDl('urgent',this)">🔴 ЯАРАЛТАЙ</button>
+    <button onclick="filterDl('book',this)">📚 НОМ</button>
+    <button onclick="filterDl('biz',this)">💼 БИЗНЕС</button>
+    <button onclick="filterDl('habit',this)">🔥 ЗУРШИЛ</button>
+    <button onclick="filterDl('done',this)">✓ ДУУССАН</button>
+  </div>
+
+  <div class="deadline-list" id="deadlineList"></div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+// ========== STORAGE HELPERS ==========
+const LS = {
+  get: (k, def=null) => { try { const v=localStorage.getItem(k); return v?JSON.parse(v):def; } catch(e){ return def; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+
+// ========== TAB SWITCHING ==========
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='weekly') renderWeeklyHistory();
+  if(id==='impl') renderImpl();
+  if(id==='vault') renderVault();
+  if(id==='deadline') renderDeadlines();
+}
+
+function mobileNav(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(id==='weekly') { renderWeeklyHistory(); }
+  if(id==='impl') renderImpl();
+  if(id==='vault') renderVault();
+  if(id==='deadline') renderDeadlines();
+}
+
+// ========== DAILY CHECK-IN ==========
+const DAILY_HABITS = [
+  {id:'dw', label:'Deep Work'},
+  {id:'mr', label:'Morning'},
+  {id:'book', label:'Унших'},
+  {id:'move', label:'Хөдөлгөөн'},
+  {id:'reflect', label:'Тэмдэглэл'},
+];
+
+function todayKey() {
+  const d = new Date();
+  return `daily_${d.getFullYear()}_${String(d.getMonth()+1).padStart(2,'0')}_${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function renderDailyStrip() {
+  const key = todayKey();
+  const state = LS.get(key, {});
+  const row = document.getElementById('dailyHabitsRow');
+  if(!row) return;
+  row.innerHTML = '';
+  DAILY_HABITS.forEach(h => {
+    const done = !!state[h.id];
+    const div = document.createElement('div');
+    div.className = 'daily-habit' + (done ? ' done' : '');
+    div.innerHTML = `<div class="dh-box">${done?'✓':''}</div><div class="dh-text">${h.label}</div>`;
+    div.onclick = () => {
+      state[h.id] = !state[h.id];
+      LS.set(key, state);
+      renderDailyStrip();
+      updateDailyStreak();
+    };
+    row.appendChild(div);
+  });
+  const d = new Date();
+  const el = document.getElementById('dailyDateLabel');
+  if(el) el.textContent = `${d.getMonth()+1}/${d.getDate()}`;
+}
+
+function updateDailyStreak() {
+  let streak = 0;
+  const today = new Date();
+  for(let i=0; i<365; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const k = `daily_${d.getFullYear()}_${String(d.getMonth()+1).padStart(2,'0')}_${String(d.getDate()).padStart(2,'0')}`;
+    const state = LS.get(k, {});
+    const done = Object.values(state).filter(Boolean).length;
+    if(done >= 3) streak++;
+    else if(i > 0) break;
+  }
+  const el = document.getElementById('dailyStreakBadge');
+  if(el) el.textContent = `🔥 ${streak}`;
+}
+
+// ========== BOOK TRACKER ==========
+const books = [
+  {n:"Atomic Habits", p:"Фаз 1", done:true},
+  {n:"Courage to Be Disliked", p:"Фаз 1", done:true},
+  {n:"Deep Work", p:"Фаз 1", done:true},
+  {n:"Ego Is the Enemy", p:"Фаз 1"},
+  {n:"The Obstacle Is the Way", p:"Фаз 1"},
+  {n:"Miracle Morning", p:"Фаз 1"},
+  {n:"12 Rules for Life", p:"Фаз 1"},
+  {n:"Thinking, Fast and Slow", p:"Фаз 1"},
+  {n:"The 4-Hour Workweek", p:"Фаз 2"},
+  {n:"The ONE Thing", p:"Фаз 2"},
+  {n:"Think and Grow Rich", p:"Фаз 2"},
+  {n:"Miracle Equation", p:"Фаз 2"},
+  {n:"7 Habits of Highly Effective People", p:"Фаз 2"},
+  {n:"Originals", p:"Фаз 2"},
+  {n:"Building a StoryBrand", p:"Фаз 2"},
+  {n:"This Is Marketing", p:"Фаз 2"},
+  {n:"The 80/20 Principle", p:"Фаз 2"},
+  {n:"Rich Dad Poor Dad", p:"Фаз 3"},
+  {n:"The Psychology of Money", p:"Фаз 3"},
+  {n:"The Millionaire Next Door", p:"Фаз 3"},
+  {n:"The Richest Man in Babylon", p:"Фаз 3"},
+  {n:"А. Идэрбат — Fuck You Money", p:"Фаз 3"},
+  {n:"А. Идэрбат — Time 2 Die", p:"Фаз 3"},
+  {n:"The 48 Laws of Power", p:"Фаз 3"},
+  {n:"Never Split the Difference", p:"Фаз 3"},
+  {n:"Harvard Business Decision Making", p:"Фаз 3"},
+  {n:"The Dip", p:"Фаз 3"},
+  {n:"Principles: Life and Work", p:"Фаз 3"},
+  {n:"How to Win Friends", p:"Фаз 4"},
+  {n:"Charisma", p:"Фаз 4"},
+  {n:"Окомото Жүнко — Ярих Техник", p:"Фаз 4"},
+  {n:"А. Идэрбат — Power", p:"Фаз 4"},
+  {n:"Mind-Gut Connection", p:"Фаз 4"},
+  {n:"Gut and Brain Connection", p:"Фаз 4"},
+  {n:"The Subtle Art", p:"Фаз 4"},
+  {n:"Stop Drinking Now / Allen Carr", p:"Фаз 4"},
+  {n:"Do Not Disturb", p:"Фаз 4"},
+  {n:"Life and Work Balance", p:"Фаз 4"},
+  {n:"Meditations — Marcus Aurelius", p:"Фаз 5"},
+  {n:"The Daily Stoic", p:"Фаз 5"},
+  {n:"Sapiens", p:"Фаз 5"},
+  {n:"Ikigai", p:"Фаз 5"},
+  {n:"The Art of War", p:"Фаз 5"},
+  {n:"Magic Shop", p:"Фаз 5"},
+];
+
+const STORAGE_KEY = 'charBuild_v3';
+let checked = {};
+
+function loadChecked() {
+  const saved = LS.get(STORAGE_KEY, {});
+  checked = saved;
+  books.forEach((b,i) => { if(b.done) checked[i] = true; });
+}
+function saveChecked() { LS.set(STORAGE_KEY, checked); }
+function updateProgress() {
+  const total = books.length;
+  const done = Object.values(checked).filter(Boolean).length;
+  const pct = Math.round((done/total)*100);
+  document.getElementById('progressCount').textContent = done;
+  document.getElementById('progressPct').textContent = pct;
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+function renderTracker() {
+  loadChecked();
+  const grid = document.getElementById('trackerGrid');
+  grid.innerHTML = '';
+  books.forEach((b,i) => {
+    const div = document.createElement('div');
+    div.className = 'tracker-item' + (checked[i] ? ' checked' : '');
+    div.innerHTML = `<div class="tracker-item-title">${b.n}</div><div class="tracker-item-phase">${b.p}</div><div class="tracker-check">✓</div>`;
+    div.onclick = () => {
+      checked[i] = !checked[i];
+      div.classList.toggle('checked');
+      saveChecked();
+      updateProgress();
+    };
+    grid.appendChild(div);
+  });
+  updateProgress();
+}
+
+// ========== WEEKLY REVIEW ==========
+let currentWeekOffset = 0;
+
+function getWeekKey(offset=0) {
+  const d = new Date();
+  d.setDate(d.getDate() - d.getDay() + 1 + offset*7);
+  return `week_${d.getFullYear()}_${String(d.getMonth()+1).padStart(2,'0')}_${String(d.getDate()).padStart(2,'0')}`;
+}
+function getWeekLabel(offset=0) {
+  const d = new Date();
+  d.setDate(d.getDate() - d.getDay() + 1 + offset*7);
+  const d2 = new Date(d); d2.setDate(d2.getDate()+6);
+  const fmt = dt => `${dt.getMonth()+1}/${dt.getDate()}`;
+  return `${d.getFullYear()} · ${fmt(d)} — ${fmt(d2)}`;
+}
+function changeWeek(dir) {
+  currentWeekOffset += dir;
+  if(currentWeekOffset > 0) currentWeekOffset = 0;
+  document.getElementById('weekLabel').textContent = getWeekLabel(currentWeekOffset);
+  loadWeeklyData();
+}
+
+const weeklyKpis = [
+  {label:"Deep Work 90 мин", sub:"7 хоногт 5+ өдөр"},
+  {label:"Morning Routine streak", sub:"Тасраагүй байх"},
+  {label:"Номноос 1 зүйл хэрэгжүүлсэн", sub:"Аль номноосоо?"},
+  {label:"ONE Thing-д 80% цаг", sub:"Сарын зорилго дээр"},
+  {label:"Ego journal бичсэн", sub:"1+ оруулга"},
+  {label:"Парето аудит", sub:"Хамгийн их үр дүнтэй ажил"},
+  {label:"Хуримтлал / санхүү алхам", sub:"Нэг конкрет үйлдэл"},
+  {label:"Биеийн эрч хүч 7+", sub:"Хоол, нойр, дасгал"},
+];
+
+function initWeeklyKpiGrid() {
+  const grid = document.getElementById('weeklyKpiGrid');
+  grid.innerHTML = '';
+  weeklyKpis.forEach((kpi, i) => {
+    const div = document.createElement('div');
+    div.className = 'kpi-check-item';
+    div.id = `wkpi_${i}`;
+    div.innerHTML = `<div class="kpi-check-box" id="wkpibox_${i}"></div>
+      <div><div class="kpi-check-text">${kpi.label}</div><div class="kpi-check-sub">${kpi.sub}</div></div>`;
+    div.onclick = () => toggleWeeklyKpi(i);
+    grid.appendChild(div);
+  });
+}
+
+let weeklyKpiState = {};
+function toggleWeeklyKpi(i) {
+  weeklyKpiState[i] = !weeklyKpiState[i];
+  const item = document.getElementById(`wkpi_${i}`);
+  const box = document.getElementById(`wkpibox_${i}`);
+  item.classList.toggle('done', !!weeklyKpiState[i]);
+  box.textContent = weeklyKpiState[i] ? '✓' : '';
+}
+
+function initScoreButtons(containerId, stateKey) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  for(let i=1;i<=10;i++){
+    const b = document.createElement('button');
+    b.className = 'score-btn';
+    b.textContent = i;
+    b.dataset.val = i;
+    b.dataset.key = stateKey;
+    b.onclick = function() {
+      document.querySelectorAll(`[data-key="${stateKey}"]`).forEach(x=>x.classList.remove('active'));
+      this.classList.add('active');
+    };
+    c.appendChild(b);
+  }
+}
+function getScoreValue(stateKey) {
+  const active = document.querySelector(`[data-key="${stateKey}"].active`);
+  return active ? parseInt(active.dataset.val) : null;
+}
+function setScoreValue(stateKey, val) {
+  document.querySelectorAll(`[data-key="${stateKey}"]`).forEach(x=>x.classList.remove('active'));
+  if(val) {
+    const btn = document.querySelector(`[data-key="${stateKey}"][data-val="${val}"]`);
+    if(btn) btn.classList.add('active');
+  }
+}
+
+function loadWeeklyData() {
+  const key = getWeekKey(currentWeekOffset);
+  const data = LS.get(key, {});
+  weeklyKpiState = data.kpis || {};
+  weeklyKpis.forEach((_,i) => {
+    const item = document.getElementById(`wkpi_${i}`);
+    const box = document.getElementById(`wkpibox_${i}`);
+    if(item) {
+      item.classList.toggle('done', !!weeklyKpiState[i]);
+      if(box) box.textContent = weeklyKpiState[i] ? '✓' : '';
+    }
+  });
+  setScoreValue('energy', data.energy);
+  setScoreValue('focus', data.focus);
+  document.getElementById('weekWins').value = data.wins || '';
+  document.getElementById('weekMisses').value = data.misses || '';
+  document.getElementById('weekNext').value = data.next || '';
+  document.getElementById('weekBooks').value = data.books || '';
+}
+
+function saveWeeklyReview() {
+  const key = getWeekKey(currentWeekOffset);
+  const data = {
+    kpis: weeklyKpiState,
+    energy: getScoreValue('energy'),
+    focus: getScoreValue('focus'),
+    wins: document.getElementById('weekWins').value,
+    misses: document.getElementById('weekMisses').value,
+    next: document.getElementById('weekNext').value,
+    books: document.getElementById('weekBooks').value,
+    label: getWeekLabel(currentWeekOffset),
+    savedAt: Date.now()
+  };
+  LS.set(key, data);
+  const confirm = document.getElementById('saveConfirm');
+  confirm.style.opacity = 1;
+  setTimeout(() => confirm.style.opacity = 0, 2000);
+  renderWeeklyHistory();
+}
+
+function renderWeeklyHistory() {
+  const container = document.getElementById('weeklyHistory');
+  container.innerHTML = '<div style="font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">ӨНГӨРСӨН ДОЛОО ХОНОГУУД</div>';
+  const keys = [];
+  for(let i=0; i<localStorage.length; i++){
+    const k = localStorage.key(i);
+    if(k && k.startsWith('week_')) keys.push(k);
+  }
+  keys.sort().reverse().forEach(k => {
+    const data = LS.get(k);
+    if(!data || !data.label) return;
+    const kpiDone = Object.values(data.kpis||{}).filter(Boolean).length;
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.innerHTML = `
+      <div class="history-week">${data.label}</div>
+      <div class="history-scores">
+        <div class="history-score">⚡ <span>${data.energy||'—'}</span></div>
+        <div class="history-score">🎯 <span>${data.focus||'—'}</span></div>
+        <div class="history-score">KPI: <span>${kpiDone}/${weeklyKpis.length}</span></div>
+      </div>
+      <button class="history-del" onclick="deleteWeek('${k}')">×</button>`;
+    container.appendChild(div);
+  });
+  if(keys.length === 0) {
+    container.innerHTML += '<div style="font-size:11px;color:var(--muted);padding:16px 0;">Одоохондоо бичлэг байхгүй.</div>';
+  }
+}
+function deleteWeek(k) {
+  if(confirm('Устгах уу?')) { localStorage.removeItem(k); renderWeeklyHistory(); }
+}
+
+// ========== IMPLEMENTATION TRACKER ==========
+const implData = [
+  {book:"Atomic Habits", phase:"Фаз 1", actions:["1% дүрэм — өдөр бүр нэг жижиг зуршил хийх","Identity-based habit: 'Би ... хүн' гэж хэлэх дадал","Habit stacking — өглөөний рутиндаа нэмэх"]},
+  {book:"Deep Work", phase:"Фаз 1", actions:["90 мин Deep Work block өдөр бүр тогтоох","Утас чимгүй бүс / цаг тогтоох","'Shallow work' ажлыг хасах эсвэл багасгах"]},
+  {book:"Ego Is the Enemy", phase:"Фаз 1", actions:["'Still learning' дадал — ажил бүрт шавь хэвээр байх","Амжилтаа тайлбарлахаас илүүтэй ажиллах","Сар бүр 'Би буруу байсан' тэмдэглэл бичих"]},
+  {book:"The Obstacle Is the Way", phase:"Фаз 1", actions:["'Энэ надад юу заах вэ?' гэсэн асуулт тавих дадал","Реакц → Хариу үйлдлийн зай үүсгэх","Сар бүр obstacle journal бичих"]},
+  {book:"Miracle Morning", phase:"Фаз 1", actions:["SAVERS routine өдөр бүр хийх","Өглөөний 60 минутыг бүтэцтэй болгох","Streak 21+ хоног тасрахгүй байлгах"]},
+  {book:"12 Rules for Life", phase:"Фаз 1", actions:["Өрөөгөө / орчноо эмх цэгцтэй болгох (Rule 6)","Өнөөдрийн өөртэйгөө харьцуулах дадал","Үнэн ярих — дотоод худал хасах"]},
+  {book:"Thinking, Fast and Slow", phase:"Фаз 1", actions:["Том шийдвэрт System 2 горим асаах дадал","Confirmation bias-аа таних практик","Pre-mortem техник хэрэглэх"]},
+  {book:"The 4-Hour Workweek", phase:"Фаз 2", actions:["DEAL framework хэрэгжүүлэх","Нэг давтагддаг ажлыг автоматжуулах","Batching аргаар цаг хэмнэх"]},
+  {book:"The ONE Thing", phase:"Фаз 2", actions:["Өдөр бүр Focusing Question асуух","Сар бүр ONE Thing тодорхойлох","ONE Thing-д 80% цаг зарцуулах"]},
+  {book:"Think and Grow Rich", phase:"Фаз 2", actions:["Definite Chief Aim бичих (1 хуудас)","Mastermind group олох (2+ хүн)","Burning desire affirmation өглөө/орой хэлэх"]},
+  {book:"7 Habits of Highly Effective People", phase:"Фаз 2", actions:["Quadrant II ажлын хувийг нэмэгдүүлэх","'Begin with the end in mind' — жилийн зорилго бичих","Win-win хайх зуршил нэвтрүүлэх"]},
+  {book:"Building a StoryBrand", phase:"Фаз 2", actions:["Life Gamify BrandScript бичих","Instagram bio-г StoryBrand аргаар дахин бичих","Customer journey зураглах"]},
+  {book:"This Is Marketing", phase:"Фаз 2", actions:["ICP (Ideal Customer Profile) нарийвчлах","'Smallest viable audience' тодорхойлох","Empathy map хийх"]},
+  {book:"The 80/20 Principle", phase:"Фаз 2", actions:["Top 20% ажлаа жагсаах","Bottom 80%-ийг хасах/автоматжуулах","Сар бүр Парето аудит хийх"]},
+  {book:"Rich Dad Poor Dad", phase:"Фаз 3", actions:["Personal income statement бичих","Asset vs Liability ялгаж тодорхойлох","'Pay yourself first' дадал тогтоох"]},
+  {book:"The Psychology of Money", phase:"Фаз 3", actions:["'Enough' тодорхойлох — хэр их мөнгө хангалттай вэ?","Long-term thinking дадлага","Volatility-г зардал гэж хүлээж авах сэтгэлгээ"]},
+  {book:"The Richest Man in Babylon", phase:"Фаз 3", actions:["Орлогынхоо 10%-ийг автоматаар хуримтлуулах","Golden rule of money дагах","Хүүгийн ухааны суурь ойлголт бий болгох"]},
+  {book:"Never Split the Difference", phase:"Фаз 3", actions:["Tactical empathy хэрэглэх дадал","Calibrated questions — яаж/юу асуух","'No'-г тайван хүлээж авах"]},
+  {book:"Principles: Life and Work", phase:"Фаз 3", actions:["Өөрийн 10+ зарчмаа бичих","'Pain + Reflection = Progress' мөрдөх","Personal Principles document дуусгах"]},
+  {book:"How to Win Friends", phase:"Фаз 4", actions:["Хүний нэрийг санаж хэрэглэх","80% сонсох, 20% ярих дадал","Буруугаа эрт хүлээн зөвшөөрөх"]},
+  {book:"Charisma", phase:"Фаз 4", actions:["Presence дадлага — ярихдаа 100% анхаарал","Power pose хэрэглэх","Eye contact чанар сайжруулах"]},
+  {book:"Mind-Gut Connection", phase:"Фаз 4", actions:["Хоолны дэглэм засах (gut microbiome)","Стрессийн биед үзүүлэх нөлөөг таних","Mindful eating дадлага"]},
+  {book:"The Subtle Art", phase:"Фаз 4", actions:["Values тодорхойлох — юунд санаа тавих?","'Do something' principle хэрэглэх","Энэ сарын '5 give a f*ck' жагсаалт бичих"]},
+  {book:"Meditations", phase:"Фаз 5", actions:["Өглөө бүр нэг бодол уншиж тэмдэглэх","Memento mori — үхлийн ухаарлаас эрч хүч авах","Amor fati дадал — бүхнийг хайрлах"]},
+  {book:"Ikigai", phase:"Фаз 5", actions:["Ikigai diagram-аа бичих","Flow state байдлыг тодорхойлох","Centenarian habits нэгтгэх"]},
+  {book:"The Art of War", phase:"Фаз 5", actions:["Productdrop өрсөлдөгч шинжилгээ хийх","Strategy first, action second дадал","Speed + информацийг давуу талд ашиглах"]},
+];
+
+let implFilter = 'all';
+let implState = {};
+
+function loadImplState() { implState = LS.get('impl_state', {}); }
+function saveImplState() { LS.set('impl_state', implState); }
+
+function filterImpl(f, btn) {
+  implFilter = f;
+  document.querySelectorAll('.impl-filter button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderImpl();
+}
+
+function renderImpl() {
+  loadImplState();
+  const list = document.getElementById('implList');
+  list.innerHTML = '';
+  let totalActions=0, doneActions=0;
+  implData.forEach(b => b.actions.forEach((_,i) => {
+    totalActions++;
+    if(implState[`${b.book}_${i}`]) doneActions++;
+  }));
+  document.getElementById('implSummary').innerHTML = `
+    <div class="impl-stat"><div class="impl-stat-num">${doneActions}</div><div class="impl-stat-label">Хийсэн</div></div>
+    <div class="impl-stat"><div class="impl-stat-num">${totalActions - doneActions}</div><div class="impl-stat-label">Хийгдэх</div></div>
+    <div class="impl-stat"><div class="impl-stat-num">${Math.round(doneActions/totalActions*100)}%</div><div class="impl-stat-label">Биелэлт</div></div>
+    <div class="impl-stat"><div class="impl-stat-num">${implData.length}</div><div class="impl-stat-label">Ном</div></div>`;
+  implData.forEach(b => {
+    const bookDone = b.actions.filter((_,i) => implState[`${b.book}_${i}`]).length;
+    const bookTotal = b.actions.length;
+    const allDone = bookDone === bookTotal;
+    if(implFilter !== 'all') {
+      if(['Фаз 1','Фаз 2','Фаз 3','Фаз 4','Фаз 5'].includes(implFilter) && b.phase !== implFilter) return;
+      if(implFilter === 'done' && !allDone) return;
+      if(implFilter === 'pending' && allDone) return;
+    }
+    const div = document.createElement('div');
+    div.className = 'impl-book';
+    div.innerHTML = `<div class="impl-book-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="impl-book-name">${b.book}</div>
+      <div class="impl-book-phase">${b.phase}</div>
+      <div class="impl-book-prog">${bookDone}/${bookTotal}</div>
+      <div class="impl-book-arrow">▶</div>
+    </div>
+    <div class="impl-progress-mini"><div class="impl-progress-mini-fill" style="width:${bookTotal?bookDone/bookTotal*100:0}%"></div></div>
+    <div class="impl-actions">${b.actions.map((a,i) => {
+      const key = `${b.book}_${i}`;
+      const done = !!implState[key];
+      return `<div class="impl-action${done?' done':''}" onclick="toggleImpl('${b.book}',${i},this)">
+        <div class="impl-check">${done?'✓':''}</div>
+        <div class="impl-action-text">${a}</div>
+      </div>`;
+    }).join('')}</div>`;
+    list.appendChild(div);
+  });
+}
+
+function toggleImpl(book, idx, el) {
+  const key = `${book}_${idx}`;
+  implState[key] = !implState[key];
+  el.classList.toggle('done', !!implState[key]);
+  el.querySelector('.impl-check').textContent = implState[key] ? '✓' : '';
+  saveImplState();
+  const bookData = implData.find(b=>b.book===book);
+  if(bookData) {
+    const done = bookData.actions.filter((_,i)=>implState[`${book}_${i}`]).length;
+    const header = el.closest('.impl-book').querySelector('.impl-book-prog');
+    if(header) header.textContent = `${done}/${bookData.actions.length}`;
+    const bar = el.closest('.impl-book').querySelector('.impl-progress-mini-fill');
+    if(bar) bar.style.width = `${done/bookData.actions.length*100}%`;
+  }
+}
+
+// ========== INSIGHT VAULT ==========
+let insights = [];
+function loadInsights() { insights = LS.get('insights', []); }
+function saveInsights() { LS.set('insights', insights); }
+
+function addInsight() {
+  const book = document.getElementById('vaultBook').value;
+  const type = document.getElementById('vaultType').value;
+  const text = document.getElementById('vaultText').value.trim();
+  if(!book || !text) { alert('Ном болон санааг бөглөнө үү.'); return; }
+  insights.unshift({ id: Date.now(), book, type, text, date: new Date().toLocaleDateString('mn-MN') });
+  saveInsights();
+  document.getElementById('vaultText').value = '';
+  document.getElementById('vaultBook').value = '';
+  renderVault();
+}
+function deleteInsight(id) {
+  insights = insights.filter(i => i.id !== id);
+  saveInsights();
+  renderVault();
+}
+function renderVault() {
+  loadInsights();
+  const q = (document.getElementById('vaultSearch')?.value || '').toLowerCase();
+  const filtered = insights.filter(i => i.text.toLowerCase().includes(q) || i.book.toLowerCase().includes(q));
+  const bookSet = new Set(insights.map(i=>i.book));
+  document.getElementById('vaultStats').innerHTML =
+    `<div class="vault-stat">Нийт: <span>${insights.length}</span></div>
+     <div class="vault-stat">Ном: <span>${bookSet.size}</span></div>
+     <div class="vault-stat">💡 <span>${insights.filter(i=>i.type==='aha').length}</span></div>
+     <div class="vault-stat">⚡ <span>${insights.filter(i=>i.type==='action').length}</span></div>
+     <div class="vault-stat">✦ <span>${insights.filter(i=>i.type==='quote').length}</span></div>`;
+  const list = document.getElementById('vaultList');
+  if(filtered.length === 0) {
+    list.innerHTML = '<div class="vault-empty">Санаа байхгүй.<br>Ном унших явцдаа энд тэмдэглэ.</div>';
+    return;
+  }
+  const typeLabels = {aha:'💡 AHA', action:'⚡ Үйлдэл', quote:'✦ Ишлэл'};
+  const typeClasses = {aha:'insight-type-aha', action:'insight-type-action', quote:'insight-type-quote'};
+  list.innerHTML = filtered.map(i => `
+    <div class="insight-card">
+      <div class="insight-meta">
+        <span class="insight-book-tag">${i.book}</span>
+        <span class="insight-type ${typeClasses[i.type]}">${typeLabels[i.type]}</span>
+        <span class="insight-date">${i.date}</span>
+      </div>
+      <div class="insight-text">${i.text}</div>
+      <button class="insight-del" onclick="deleteInsight(${i.id})">×</button>
+    </div>`).join('');
+}
+
+// ========== DEADLINE SYSTEM ==========
+let deadlines = [];
+let dlFormOpen = false;
+let dlFilter = 'all';
+
+function loadDeadlines() { deadlines = LS.get('deadlines_v1', []); }
+function saveDeadlines() { LS.set('deadlines_v1', deadlines); }
+
+function toggleDlForm() {
+  dlFormOpen = !dlFormOpen;
+  document.getElementById('dlForm').classList.toggle('open', dlFormOpen);
+  if(dlFormOpen) {
+    // default date = 7 days from now
+    const d = new Date(); d.setDate(d.getDate()+7);
+    document.getElementById('dlDate').value = d.toISOString().split('T')[0];
+    document.getElementById('dlTitle').focus();
+  }
+}
+
+function addDeadline() {
+  const title = document.getElementById('dlTitle').value.trim();
+  const date = document.getElementById('dlDate').value;
+  const cat = document.getElementById('dlCat').value;
+  const desc = document.getElementById('dlDesc').value.trim();
+  if(!title || !date) { alert('Зорилго болон огноог оруулна уу.'); return; }
+  deadlines.unshift({ id: Date.now(), title, date, cat, desc, done: false, createdAt: Date.now() });
+  saveDeadlines();
+  document.getElementById('dlTitle').value = '';
+  document.getElementById('dlDesc').value = '';
+  toggleDlForm();
+  renderDeadlines();
+}
+
+function toggleDeadlineDone(id) {
+  const dl = deadlines.find(d=>d.id===id);
+  if(dl) { dl.done = !dl.done; saveDeadlines(); renderDeadlines(); }
+}
+function deleteDeadline(id) {
+  if(confirm('Устгах уу?')) {
+    deadlines = deadlines.filter(d=>d.id!==id);
+    saveDeadlines(); renderDeadlines();
+  }
+}
+
+function filterDl(f, btn) {
+  dlFilter = f;
+  document.querySelectorAll('#dlFilter button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDeadlines();
+}
+
+function getDaysLeft(dateStr) {
+  const target = new Date(dateStr); target.setHours(23,59,59);
+  const now = new Date();
+  return Math.ceil((target - now) / (1000*60*60*24));
+}
+
+function renderDeadlines() {
+  loadDeadlines();
+  const list = document.getElementById('deadlineList');
+  list.innerHTML = '';
+
+  let filtered = [...deadlines];
+  if(dlFilter === 'active') filtered = filtered.filter(d=>!d.done);
+  else if(dlFilter === 'urgent') filtered = filtered.filter(d=>!d.done && getDaysLeft(d.date) <= 3);
+  else if(dlFilter === 'done') filtered = filtered.filter(d=>d.done);
+  else if(['book','biz','habit','finance','personal'].includes(dlFilter)) {
+    filtered = filtered.filter(d=>d.cat===dlFilter);
+  }
+
+  if(filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:12px;padding:40px 0;">Deadline байхгүй байна.<br>+ НЭМЭХ товчоор нэмнэ үү.</div>';
+    return;
+  }
+
+  // Sort: urgent first, then by date
+  filtered.sort((a,b) => {
+    if(a.done !== b.done) return a.done ? 1 : -1;
+    return new Date(a.date) - new Date(b.date);
+  });
+
+  const catLabels = {book:'📚 Ном', biz:'💼 Бизнес', habit:'🔥 Зуршил', finance:'💰 Санхүү', personal:'⚡ Хувийн'};
+  const catClasses = {book:'dl-tag-book', biz:'dl-tag-biz', habit:'dl-tag-habit', finance:'dl-tag-finance', personal:'dl-tag-personal'};
+
+  filtered.forEach(dl => {
+    const days = getDaysLeft(dl.date);
+    let urgency = 'ok', countdownClass = 'ok';
+    if(dl.done) { urgency = 'done-dl'; countdownClass = 'done-dl'; }
+    else if(days < 0) { urgency = 'urgent'; countdownClass = 'urgent'; }
+    else if(days <= 3) { urgency = 'urgent'; countdownClass = 'urgent'; }
+    else if(days <= 7) { urgency = 'soon'; countdownClass = 'soon'; }
+
+    let countdownText;
+    if(dl.done) countdownText = 'ДУУСГАСАН';
+    else if(days < 0) countdownText = `${Math.abs(days)}Х ХОЦОРСОН`;
+    else if(days === 0) countdownText = 'ӨНӨӨДӨР';
+    else if(days === 1) countdownText = 'МАРГААШ';
+    else countdownText = `${days} ХОНОГ`;
+
+    // Progress: days elapsed / total days
+    const created = new Date(dl.createdAt);
+    const target = new Date(dl.date);
+    const totalDays = Math.max(1, Math.ceil((target - created)/(1000*60*60*24)));
+    const elapsed = Math.max(0, totalDays - Math.max(0, days));
+    const pct = Math.min(100, Math.round(elapsed/totalDays*100));
+    const barColor = dl.done ? 'var(--green)' : days <= 3 ? 'var(--red)' : days <= 7 ? 'var(--gold2)' : 'var(--gold)';
+
+    const div = document.createElement('div');
+    div.className = `deadline-card ${urgency}`;
+    div.innerHTML = `
+      <div class="dl-card-top">
+        <div style="flex:1;min-width:0;">
+          <div class="dl-card-title${dl.done?' done-text':''}">${dl.title}</div>
+          <div class="dl-card-meta">
+            <span class="dl-tag ${catClasses[dl.cat]}">${catLabels[dl.cat]}</span>
+            <span class="dl-date">${dl.date.replace(/-/g,'/')}</span>
+          </div>
+          ${dl.desc ? `<div class="dl-desc">${dl.desc}</div>` : ''}
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div class="dl-countdown ${countdownClass}">${countdownText}</div>
+        </div>
+      </div>
+      <div class="dl-progress-bar">
+        <div class="dl-progress-fill" style="width:${dl.done?100:pct}%;background:${barColor};"></div>
+      </div>
+      <div class="dl-actions">
+        <button class="dl-btn done-btn" onclick="toggleDeadlineDone(${dl.id})">${dl.done?'↩ БУЦААХ':'✓ ДУУСГАСАН'}</button>
+        <button class="dl-btn del-btn" onclick="deleteDeadline(${dl.id})">× УСТГАХ</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+// ========== FOCUS TIMER ==========
+let timerInterval = null;
+let timerRunning = false;
+let timerTotal = 90 * 60;
+let timerRemaining = 90 * 60;
+let timerModeName = 'DEEP WORK';
+let timerSessions = [];
+let timerSessionCount = 0;
+let timerSessionTarget = 4;
+
+function setTimerMode(btn, name, mins) {
+  document.querySelectorAll('.timer-mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  timerModeName = name;
+  const customBlock = document.getElementById('timerCustom');
+  if(mins === 0) {
+    customBlock.style.display = 'flex';
+    const customVal = parseInt(document.getElementById('customMinutes').value) || 30;
+    timerTotal = customVal * 60;
+  } else {
+    customBlock.style.display = 'none';
+    timerTotal = mins * 60;
+  }
+  timerRemaining = timerTotal;
+  timerRunning = false;
+  clearInterval(timerInterval);
+  document.getElementById('timerStartBtn').textContent = 'ЭХЛҮҮЛЭХ';
+  document.getElementById('timerLabel').textContent = name;
+  updateTimerDisplay();
+}
+
+function applyCustomTimer() {
+  const val = parseInt(document.getElementById('customMinutes').value) || 30;
+  timerTotal = val * 60;
+  timerRemaining = timerTotal;
+  updateTimerDisplay();
+}
+
+function timerToggle() {
+  if(timerRunning) {
+    timerRunning = false;
+    clearInterval(timerInterval);
+    document.getElementById('timerStartBtn').textContent = 'ҮРГЭЛЖЛҮҮЛЭХ';
+  } else {
+    if(timerRemaining <= 0) timerReset();
+    timerRunning = true;
+    document.getElementById('timerStartBtn').textContent = 'ЗОГСООХ';
+    timerInterval = setInterval(() => {
+      timerRemaining--;
+      updateTimerDisplay();
+      if(timerRemaining <= 0) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        timerDone();
+      }
+    }, 1000);
+  }
+}
+
+function timerReset() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerRemaining = timerTotal;
+  document.getElementById('timerStartBtn').textContent = 'ЭХЛҮҮЛЭХ';
+  updateTimerDisplay();
+}
+
+function timerDone() {
+  document.getElementById('timerStartBtn').textContent = 'ДАХИН ЭХЛҮҮЛЭХ';
+  timerSessionCount++;
+  const now = new Date();
+  const timeStr = now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  timerSessions.push({ mode: timerModeName, mins: Math.round(timerTotal/60), time: timeStr });
+  renderTimerSessions();
+  renderTimerLog();
+  alert(`✅ ${timerModeName} — ${Math.round(timerTotal/60)} минут дуусгалаа!`);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerRemaining/60);
+  const s = timerRemaining % 60;
+  document.getElementById('timerDisplay').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const circumference = 628;
+  const ratio = timerTotal > 0 ? timerRemaining / timerTotal : 1;
+  const offset = circumference * (1 - ratio);
+  document.getElementById('timerCircle').style.strokeDashoffset = offset;
+  const circle = document.getElementById('timerCircle');
+  if(ratio < 0.25) circle.style.stroke = 'var(--red)';
+  else if(ratio < 0.5) circle.style.stroke = 'var(--gold2)';
+  else circle.style.stroke = 'var(--gold)';
+}
+
+function renderTimerSessions() {
+  const container = document.getElementById('timerSessions');
+  container.innerHTML = '';
+  for(let i=0;i<timerSessionTarget;i++){
+    const dot = document.createElement('div');
+    dot.className = 'timer-session-dot' + (i < timerSessionCount ? ' filled' : '');
+    container.appendChild(dot);
+  }
+}
+
+function renderTimerLog() {
+  const list = document.getElementById('timerLogList');
+  if(timerSessions.length === 0) {
+    list.innerHTML = '<div style="font-size:11px;color:var(--muted);padding:8px 0;">Одоохондоо сесс байхгүй.</div>';
+    return;
+  }
+  list.innerHTML = timerSessions.slice().reverse().map(s =>
+    `<div class="timer-log-item"><span>${s.mode}</span><span>${s.mins} мин · ${s.time}</span></div>`
+  ).join('');
+}
+
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', () => {
+  renderTracker();
+  document.getElementById('weekLabel').textContent = getWeekLabel(0);
+  initWeeklyKpiGrid();
+  initScoreButtons('energyScore', 'energy');
+  initScoreButtons('focusScore', 'focus');
+  loadWeeklyData();
+  updateTimerDisplay();
+  renderTimerSessions();
+  renderTimerLog();
+  renderDailyStrip();
+  updateDailyStreak();
+  renderDeadlines();
+  // Pre-load impl state
+  loadImplState();
+});
+</script>
+</body>
+</html>

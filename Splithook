@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Split-Screen Hook Bank — 200 Hooks</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070a;--s1:#0e0e12;--s2:#141418;--s3:#1a1a20;
+  --bd:#1f1f28;--bd2:#2c2c38;--tx:#e2e2f0;--mt:#52526a;--mt2:#8888a0;--wh:#f5f5ff;
+  --acc:#c8ff00;--acc2:#00e5ff;--warn:#ff6b35;--good:#3ecf8e;
+  --ugc:#ffb930;--vo:#7c6fff;
+  --fn:'Inter',sans-serif;--mo:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--fn);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* HERO */
+.hero{padding:48px 24px 36px;max-width:960px;margin:0 auto;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent);opacity:.4}
+.hero-ey{font-family:var(--mo);font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--mt2);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.hero-ey::before{content:'';width:20px;height:1px;background:var(--mt2)}
+.hero-title{font-size:clamp(36px,7vw,72px);font-weight:900;letter-spacing:-.05em;line-height:.95;color:var(--wh)}
+.hero-title em{font-style:normal;color:var(--acc)}
+.hero-sub{font-size:14px;color:var(--mt2);max-width:480px;line-height:1.8;margin-top:12px}
+.hero-stats{display:flex;gap:28px;margin-top:24px;flex-wrap:wrap}
+.hs{display:flex;flex-direction:column;gap:2px}
+.hs-val{font-family:var(--mo);font-size:20px;font-weight:700;color:var(--acc)}
+.hs-lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mt)}
+
+/* HOW-TO BANNER */
+.how-banner{max-width:960px;margin:0 auto 0;padding:0 24px}
+.how-inner{background:var(--s1);border:1px solid var(--bd);border-top:2px solid var(--acc);padding:16px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.how-item{display:flex;gap:10px;align-items:flex-start;flex:1;min-width:180px}
+.how-num{font-family:var(--mo);font-size:10px;font-weight:700;color:var(--acc);background:rgba(200,255,0,.1);border:1px solid rgba(200,255,0,.2);padding:2px 7px;flex-shrink:0;margin-top:2px}
+.how-txt{font-size:12px;color:var(--mt2);line-height:1.6}
+.how-txt strong{color:var(--tx)}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:200;background:rgba(7,7,10,.96);backdrop-filter:blur(24px);border-bottom:1px solid var(--bd);margin-top:20px}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:2px;padding:0 24px;overflow-x:auto;scrollbar-width:none}
+.nav-inner::-webkit-scrollbar{display:none}
+.ntab{padding:14px 14px;font-family:var(--fn);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mt2);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.ntab:hover{color:var(--tx)}
+.ntab.on{color:var(--acc);border-bottom-color:var(--acc)}
+.ntab.on.tw{color:var(--good);border-bottom-color:var(--good)}
+.ntab.on.tm{color:#ff6b35;border-bottom-color:#ff6b35}
+.ntab.on.ts{color:var(--acc2);border-bottom-color:var(--acc2)}
+.ntab.on.tf{color:var(--ugc);border-bottom-color:var(--ugc)}
+.ntab.on.tp{color:var(--vo);border-bottom-color:var(--vo)}
+.ntab.on.tc{color:#e879f9;border-bottom-color:#e879f9}
+.nav-sep{width:1px;height:22px;background:var(--bd2);margin:0 4px;flex-shrink:0}
+.nc{font-family:var(--mo);font-size:9px;margin-left:4px;opacity:.55}
+.rand-nav{padding:7px 12px;font-family:var(--mo);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;background:rgba(200,255,0,.08);border:1px solid rgba(200,255,0,.2);color:var(--acc);transition:all .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.rand-nav:hover{background:rgba(200,255,0,.15)}
+
+/* CONTENT */
+.content{max-width:960px;margin:0 auto;padding:24px 24px 100px}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.sw{flex:1;min-width:200px;position:relative}
+.si{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mt);font-size:13px;pointer-events:none}
+.sin{width:100%;background:var(--s1);border:1px solid var(--bd);padding:11px 14px 11px 34px;font-family:var(--fn);font-size:14px;color:var(--tx);outline:none;transition:border-color .15s;-webkit-appearance:none}
+.sin:focus{border-color:var(--bd2)}.sin::placeholder{color:var(--mt)}
+.rc{font-family:var(--mo);font-size:11px;color:var(--mt);white-space:nowrap;align-self:center}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+
+/* ── SPLIT CARD ── */
+.scard{background:var(--s1);border:1px solid var(--bd);overflow:hidden;transition:border-color .2s;display:flex;flex-direction:column}
+.scard:hover{border-color:var(--bd2)}
+
+/* CARD TOP BAR */
+.scard-bar{height:2px;width:100%}
+
+/* CARD HEADER */
+.scard-hd{display:flex;align-items:center;justify-content:space-between;padding:9px 12px 8px;border-bottom:1px solid var(--bd)}
+.scard-num{font-family:var(--mo);font-size:9px;color:var(--mt);letter-spacing:.08em}
+.scard-badges{display:flex;gap:4px;align-items:center}
+.badge{font-family:var(--mo);font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;font-weight:700}
+
+/* SPLIT VISUAL — the reel mockup */
+.split-wrap{display:flex;flex-direction:column}
+
+/* TOP HALF — 바라a visual note */
+.split-top{background:var(--s2);border-bottom:1px solid var(--acc);padding:10px 12px;min-height:52px;display:flex;align-items:center;gap:8px;position:relative}
+.split-top-label{font-family:var(--mo);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);opacity:.7;position:absolute;top:6px;right:10px}
+.split-top-icon{font-size:18px;flex-shrink:0;opacity:.8}
+.split-top-txt{font-size:11px;color:var(--mt2);line-height:1.5;flex:1}
+.split-top-txt strong{color:var(--tx);font-size:11px}
+
+/* DIVIDER LINE */
+.split-line{height:2px;background:linear-gradient(90deg,transparent,var(--acc),transparent);opacity:.5}
+
+/* BOTTOM HALF — hook текст */
+.split-bot{background:var(--s3);padding:12px 12px 10px;min-height:60px;display:flex;align-items:center;gap:8px;position:relative}
+.split-bot-label{font-family:var(--mo);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--mt);opacity:.6;position:absolute;top:6px;right:10px}
+.split-mic{font-size:15px;flex-shrink:0;opacity:.7}
+.split-hook{font-size:14px;font-weight:800;color:var(--wh);line-height:1.35;letter-spacing:-.01em;flex:1}
+
+/* CARD FOOTER */
+.scard-ft{padding:8px 12px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tip-txt{font-size:10px;color:var(--mt);flex:1;line-height:1.5;min-width:0}
+.cpybtn{font-family:var(--mo);font-size:10px;padding:8px 14px;border:1px solid var(--bd2);background:transparent;color:var(--mt2);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:all .15s;white-space:nowrap;flex-shrink:0;-webkit-tap-highlight-color:transparent;min-width:60px;text-align:center}
+.cpybtn:active{background:var(--s2)}.cpybtn.ok{color:var(--good);border-color:var(--good)}
+
+/* RANDOM CARD */
+.rand-wrap{background:var(--s1);border:1px solid var(--acc);padding:0;margin-bottom:20px;position:relative;overflow:hidden}
+.rand-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc),var(--acc2))}
+.rand-lbl{font-family:var(--mo);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);padding:14px 16px 0}
+.rand-split{display:flex;flex-direction:column;margin:10px 16px 0}
+.rand-top{background:var(--s2);border:1px solid var(--bd2);border-bottom:2px solid var(--acc);padding:8px 12px;font-size:11px;color:var(--mt2);line-height:1.5}
+.rand-top strong{color:var(--tx)}
+.rand-bot{background:var(--s3);border:1px solid var(--bd2);border-top:none;padding:10px 12px}
+.rand-hook-txt{font-size:17px;font-weight:800;color:var(--wh);line-height:1.3;letter-spacing:-.02em}
+.rand-meta{font-size:11px;color:var(--mt2);padding:8px 16px 0}
+.rand-acts{display:flex;gap:8px;padding:12px 16px 16px;flex-wrap:wrap}
+.rbtn{padding:9px 18px;font-family:var(--mo);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.rbtn.primary{background:var(--acc);color:#000}
+.rbtn.sec{background:transparent;border:1px solid var(--bd2);color:var(--mt2)}
+
+/* EMPTY */
+.empty{text-align:center;padding:64px 20px;color:var(--mt);grid-column:1/-1}
+.empty-ic{font-size:36px;margin-bottom:10px}
+.empty-tx{font-size:13px;color:var(--mt2)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--s2);border:1px solid var(--good);padding:10px 20px;font-family:var(--mo);font-size:12px;color:var(--good);z-index:1000;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  .hero{padding:32px 16px 24px}
+  .content{padding:16px 12px 80px}
+  .how-banner{padding:0 12px}
+  .nav-inner{padding:0 12px}
+  .grid{grid-template-columns:1fr}
+  .ntab{padding:12px 10px;font-size:10px}
+  .nc{display:none}
+  .how-item{min-width:140px}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-ey">Productdrop · Split-Screen Reel · Hook Bank</div>
+  <h1 class="hero-title">Split-Screen<em>Hook</em></h1>
+  <p class="hero-sub">Дээд хэсэгт бараа — доод хэсэгт чи. Эхний 3 секундын hook. Productdrop winning product angle.</p>
+  <div class="hero-stats">
+    <div class="hs"><span class="hs-val">200</span><span class="hs-lbl">Нийт Hook</span></div>
+    <div class="hs"><span class="hs-val" id="copied-cnt">0</span><span class="hs-lbl">Copy хийсэн</span></div>
+    <div class="hs"><span class="hs-val" id="vis-cnt">200</span><span class="hs-lbl">Харагдаж байна</span></div>
+  </div>
+</div>
+
+<div class="how-banner">
+  <div class="how-inner">
+    <div class="how-item">
+      <span class="how-num">ДЭЭД</span>
+      <div class="how-txt"><strong>Бараагийн visual</strong> — бараагаа барьж, demo хийж эсвэл unbox хийж байгаа footage</div>
+    </div>
+    <div class="how-item">
+      <span class="how-num">ДООД</span>
+      <div class="how-txt"><strong>Чи ярьж байна</strong> — камерт шууд харж hook хэлж байна. 2–3 секунд.</div>
+    </div>
+    <div class="how-item">
+      <span class="how-num">TIP</span>
+      <div class="how-txt"><strong>CapCut:</strong> 9:16, 960px дээш бараа, 960px доош чи, дунд нь 2px <span style="color:var(--acc)">accent</span> шугам</div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="ntab on" id="tab-all" onclick="sw('all',this)">Бүгд<span class="nc" id="nc-all">200</span></button>
+    <div class="nav-sep"></div>
+    <button class="ntab tw" id="tab-w" onclick="sw('w',this)">🏆 Winning<span class="nc" id="nc-w"></span></button>
+    <button class="ntab tm" id="tab-m" onclick="sw('m',this)">💰 Мөнгө<span class="nc" id="nc-m"></span></button>
+    <button class="ntab ts" id="tab-s" onclick="sw('s',this)">🔥 Зун<span class="nc" id="nc-s"></span></button>
+    <button class="ntab tf" id="tab-f" onclick="sw('f',this)">😱 FOMO<span class="nc" id="nc-f"></span></button>
+    <button class="ntab tp" id="tab-p" onclick="sw('p',this)">😤 Pain<span class="nc" id="nc-p"></span></button>
+    <button class="ntab tc" id="tab-c" onclick="sw('c',this)">🤫 Нууц<span class="nc" id="nc-c"></span></button>
+    <div class="nav-sep"></div>
+    <button class="rand-nav" onclick="rollRandom()">🎲 Random</button>
+  </div>
+</nav>
+
+<div class="content">
+
+  <!-- RANDOM -->
+  <div class="rand-wrap" id="rand-wrap">
+    <div class="rand-lbl">🎲 Өнөөдрийн hook</div>
+    <div class="rand-split">
+      <div class="rand-top" id="rand-visual">...</div>
+      <div class="rand-bot">
+        <div class="rand-hook-txt" id="rand-hook">Уншиж байна...</div>
+      </div>
+    </div>
+    <div class="rand-meta" id="rand-meta"></div>
+    <div class="rand-acts">
+      <button class="rbtn primary" onclick="copyRand()">Hook copy хийх</button>
+      <button class="rbtn sec" onclick="rollRandom()">🎲 Өөр</button>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="toolbar">
+    <div class="sw"><span class="si">⌕</span><input class="sin" id="search-in" placeholder="Hook хайх..." oninput="doSearch(this.value)" autocomplete="off"></div>
+    <span class="rc" id="res-count"></span>
+  </div>
+
+  <div class="grid" id="main-grid"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════
+// cat:
+//   w = winning product angle
+//   m = мөнгө / орлого angle
+//   s = зун / seasonal angle
+//   f = FOMO / urgency angle
+//   p = pain point angle
+//   c = нууц / insider angle
+//
+// visual = дээд хэсэгт бараагийн footage яг юу харагдаж байх
+// hook   = доод хэсэгт чи юу хэлэх (3 сек)
+// tip    = filming note
+// ══════════════════════════════════════════════════
+const HOOKS = [
+
+// ── 🏆 WINNING PRODUCT (35) ──────────────────
+{id:1,cat:'w',visual:'Бараагаа гарт барьж, камерт ойртуулж байна',hook:'Энэ бол таны winning product.',tip:'Итгэлтэй, хурдан. "Winning" дээр зогс.'},
+{id:2,cat:'w',visual:'Бараагаа table дээр тавьж, camera нь доороос дээшлэж байна',hook:'Winning product олсон уу? Энэ л байна.',tip:'Асуулт эхлэл — хариулт нь дэлгэцэнд'},
+{id:3,cat:'w',visual:'Бараагаа unbox хийж байна, хайрцгийг нээж байна',hook:'Мянган бараанаас нэгийг нь олдог — энэ тэр нэг.',tip:'"Нэг" дээр хуруугаа өргө'},
+{id:4,cat:'w',visual:'Бараагийн wow detail — texture, color, detail дээр zoom',hook:'Wow factor 9.2. Монголд хэн ч зараагүй.',tip:'Тоог тодорхой, итгэлтэй хэл'},
+{id:5,cat:'w',visual:'Бараагаа ашиглаж байгаа гар / нүүр / ширээний footage',hook:'Энэ бараа Дубайд вирал болсон. Монголд одоо.',tip:'Газарт нэр хэлснээр trust нэмнэ'},
+{id:6,cat:'w',visual:'Бараагаа box-оос гаргаж, камерт харуулж байна',hook:'Анх харахад "энэ юу вэ?" гэдэг бараа л зарагддаг.',tip:'Итгэлтэй дүгнэлт — expert tone'},
+{id:7,cat:'w',visual:'Бараагийн Amazon хайлтын дэлгэц + бараа хажуу тал',hook:'Amazon дээр bestseller. Монголд одоо анх орж байна.',tip:'Гадаад нотлогоо + local opportunity'},
+{id:8,cat:'w',visual:'Бараагаа хоёр гараараа барьж, дэлгэцэд ойртуулж байна',hook:'Энэ бараанаас өнгөрч болохгүй.',tip:'Шууд, товч — эргүүлэх хүч'},
+{id:9,cat:'w',visual:'Бараагийн ашиглалтын before/after footage эсвэл demo',hook:'Бараа бүр зарагдахгүй. Энэ нь зарагдана.',tip:'Contrast — "бүр" vs "энэ нь"'},
+{id:10,cat:'w',visual:'Бараагаа нэг гараар барьж, нөгөө гараараа камерт заагаад байна',hook:'Winning product гэж энэ л байдаг.',tip:'Заах хест — камерт шууд'},
+{id:11,cat:'w',visual:'Бараагийн видеог TikTok/Instagram дэлгэцтэй хажуу тавьж байна',hook:'TikTok дээр 2 сая view. Монголд хэн ч зараагүй.',tip:'Социал нотлогоо + urgency нэгтгэл'},
+{id:12,cat:'w',visual:'Бараагаа аажмаар table дээр тавьж, zoom in хийж байна',hook:'Зах зээлийн saturation: 1 из 10. Орох цаг болсон.',tip:'Тоог metric мэт хэл — expert'},
+{id:13,cat:'w',visual:'Бараагийн packaging / дизайны detail footage',hook:'Дизайн нь анхаарал татна. Чанар нь дахин авахуулна.',tip:'Хоёр давуу тал — хурдан'},
+{id:14,cat:'w',visual:'Бараагаа ашиглаж байгаа footage + үр дүн',hook:'Хэрэглэгч анх харахад л худалдаж авдаг бараа.',tip:'Consumer psychology — итгэлтэй'},
+{id:15,cat:'w',visual:'Бараагаа гараасаа унагаж, дахин барьж байна — playful',hook:'Импульс худалдаа. Харсан дороо авдаг.',tip:'Хөгжилтэй физик — attention grab'},
+{id:16,cat:'w',visual:'Бараагийн margin тооцоо дэлгэцэнд + бараа footage',hook:'5x margin. Монголд зарагдаагүй. Энэ тэр combo.',tip:'Тооны хүч — хурдан хэл'},
+{id:17,cat:'w',visual:'Бараагаа хайрцгаас гаргаж, инээмсэглэн харуулж байна',hook:'Энэ барааг харсан хүн ярихгүй байж чадахгүй.',tip:'Word-of-mouth бүтээгдэхүүн — organic'},
+{id:18,cat:'w',visual:'Бараагийн ойрын footage — texture, material detail',hook:'Энэ бараа нэг л дор зарагдана. Тест хийх цаг болсон.',tip:'Urgency + confidence нэгтгэл'},
+{id:19,cat:'w',visual:'Бараагаа packaging нь дотор нь байгаа footage',hook:'Unboxing мэдрэмж нь ч давуу талтай бараа байна.',tip:'Experience angle — харьцангуй шинэ'},
+{id:20,cat:'w',visual:'Бараагаа өнгөтэй арын фонтой харуулж байна — clean aesthetic',hook:'Scroll зогсоодог, click хийлгэдэг, авахуулдаг.',tip:'Conversion funnel — хурдан 3 үйлдэл'},
+{id:21,cat:'w',visual:'Бараагаа тойрч харуулж байна — 360 мэт',hook:'Бараа бүр зарагддаггүй. Ингэж харагддаг нь зарагддаг.',tip:'Visual quality insight'},
+{id:22,cat:'w',visual:'Бараагийн footage + хажуу талд дүр, comparison',hook:'Ижил бараа Alibaba дээр. Манайд supplier link нь байна.',tip:'Supply chain value — Productdrop advantage'},
+{id:23,cat:'w',visual:'Бараагаа шинэ хүнд өгч байгаа footage / reaction',hook:'Хэн ч харахад "энэ хаанаас авсан юм?" гэдэг.',tip:'Social proof reaction angle'},
+{id:24,cat:'w',visual:'Бараагийн ашиглалтын footage — simple, clean',hook:'Энгийн. Хэрэгтэй. Хэн ч авна. Winning тэмдэг.',tip:'Simplicity = mass market appeal'},
+{id:25,cat:'w',visual:'Бараагаа ширээн дээр тавьж, камер нь өндрөөс доошлуулж байна',hook:'Productdrop-д wow factor 9.2 гарсан бараа.',tip:'Database credential angle'},
+{id:26,cat:'w',visual:'Бараагийн footage + back гарч ирэх дэлгэц эффект',hook:'Энэ бараанаас өмнө зарсан хүн байхгүй. Одоо чи.',tip:'First mover advantage angle'},
+{id:27,cat:'w',visual:'Бараагаа хялбархан ашиглаж байгаа footage',hook:'Хэрэглэхэд хялбар. Зарахад хялбар. Winning.',tip:'Double ease = strong hook'},
+{id:28,cat:'w',visual:'Бараагийн footage + price tag мэт текст overlay',hook:'Cost нь 4,000₮. Зарах үнэ 19,900₮. 5x.',tip:'Margin reveal — satisfying'},
+{id:29,cat:'w',visual:'Бараагаа гарт барьж, нөгөө гараараа "check" тэмдэг хийж байна',hook:'Checklist: Wow ✓ Saturation low ✓ Margin 5x ✓',tip:'Framework visual — expert credibility'},
+{id:30,cat:'w',visual:'Бараагийн footage — slow motion эсвэл zoom',hook:'Нэг бараа. Нэг сард 30+ борлуулалт. Яаж?',tip:'Result нь hook — шийдэл нь retain хэсэгт'},
+{id:31,cat:'w',visual:'Бараагаа баглааны хажуугаар тавьж байна',hook:'Монголд орж ирээгүй байхад нь олно — ингэж.',tip:'Timing advantage insight'},
+{id:32,cat:'w',visual:'Бараагийн footage + хурдан хөдөлгөөнт demo',hook:'Demo хийхэд л хангалттай. Бараа өөрөө зардаг.',tip:'Self-selling product concept'},
+{id:33,cat:'w',visual:'Бараагаа хайрцгаас шинэлэгээр гаргаж байна',hook:'Энэ бараа байгааг мэдвэл аль хэдийн авсан байна.',tip:'Regret hook — FOMO мэт'},
+{id:34,cat:'w',visual:'Бараагийн footage + social media icon / like эффект',hook:'Viral болоход шалтгаан хэрэгтэй. Энэ бол тэр шалтгаан.',tip:'Virality logic — content creator angle'},
+{id:35,cat:'w',visual:'Бараагаа камерт ойртуулан zoom хийж байна',hook:'Zoom хийхэд л мэдэгдэнэ. Winning product энэ.',tip:'Visual quality hook — show don\'t tell'},
+
+// ── 💰 МӨНГӨ / ОРЛОГО (35) ──────────────────
+{id:36,cat:'m',visual:'Бараагаа гарт барьж, нөгөө гараараа тоолж байна',hook:'Магадгүй энэ таньд дараагийн 10 сая төгрөгийг авчрах бараа.',tip:'"10 сая" дээр зогс — пауз ав'},
+{id:37,cat:'m',visual:'Бараагийн footage + хойно нь мөнгөний тоо мэт visual',hook:'Нэг бараа. Нэг сар. Хэдэн арван мянга.',tip:'Хуруугаараа тоол — ритмтэй'},
+{id:38,cat:'m',visual:'Бараагаа ширээн дээр тавьж, calculator мэт visual хажуу тал',hook:'Cost 4,000₮. Price 19,900₮. Математик нь хийгдэж байна.',tip:'Тооны хүч — хурдан, тодорхой'},
+{id:39,cat:'m',visual:'Бараагийн ашиглалтын footage — хэрэглэгчийн гарт',hook:'Энэ бараагаар дараагийн өрийгөө дарж болно.',tip:'Конкрет зорилго — таны өрийг нэрлэ'},
+{id:40,cat:'m',visual:'Бараагаа unbox хийж, гайхсан мэт нүүр гарга',hook:'Ашгийн margin нь 5x. Монголд аль хэдийн байх байсан.',tip:'Regret + opportunity нэгтгэл'},
+{id:41,cat:'m',visual:'Бараагийн footage + price comparison дэлгэцэн дээр',hook:'19,900₮-д зарна. Supplier-ээс 4,000₮-д авна. Profit.',tip:'Simple arbitrage reveal'},
+{id:42,cat:'m',visual:'Бараагаа гарт барьж, confident байдалтай камерт харж байна',hook:'Орлогын гол эх нь зөв бараа сонголтоос эхэлнэ.',tip:'Wisdom tone — expert credibility'},
+{id:43,cat:'m',visual:'Бараагийн footage + phone дэлгэцэнд order notification',hook:'Order орж байгаа мэдэгдэл. Энэ бараанаас.',tip:'Order notification visual — social proof'},
+{id:44,cat:'m',visual:'Бараагаа хоёр гараараа барьж, дэлгэцэд ойртуулж байна',hook:'Нэг тест. Нэг долоо хоног. Эхний орлого.',tip:'Timeline hope — achievable'},
+{id:45,cat:'m',visual:'Бараагийн footage — slow, quality feel',hook:'Зах зээлд байхгүй бараа = монополь үнэ = том margin.',tip:'Economic logic — хурдан'},
+{id:46,cat:'m',visual:'Бараагаа хайрцгаас гаргаж, price tag дотор тавьж байна',hook:'Supplier price vs зах зээлийн үнэ. Ялгаа нь таны ашиг.',tip:'Arbitrage visual explain'},
+{id:47,cat:'m',visual:'Бараагийн footage + Монгол хэрэглэгчийн reaction footage',hook:'Монгол хүн шинэ, ер бусын зүйлд мөнгөө гаргана.',tip:'Consumer insight — local market'},
+{id:48,cat:'m',visual:'Бараагаа аажмаар zoom in — detail дээр',hook:'Энэ барааны margin-г тооцоолоход 30 секунд хангалттай.',tip:'Speed + simplicity = trust'},
+{id:49,cat:'m',visual:'Бараагийн footage + calculator footage',hook:'Сарт 30 зарвал: 30 × 15,900₮ = 477,000₮ ашиг.',tip:'Real math — конкрет тоо'},
+{id:50,cat:'m',visual:'Бараагаа камерт харуулж, дараа нь phone дэлгэцийг харуулж байна',hook:'Энэ бараагаар дараагийн цалингаа дарж болно.',tip:'Salary supplement angle — relatable'},
+{id:51,cat:'m',visual:'Бараагийн footage — trending color, aesthetic',hook:'Trending + Монголд байхгүй = орлогын алтан цонх.',tip:'Trend timing formula'},
+{id:52,cat:'m',visual:'Бараагаа unbox footage — нарийн detail',hook:'Нэг бараагаас сарт 300,000₮+ гарч болно. Яаж?',tip:'Big number → curiosity retain'},
+{id:53,cat:'m',visual:'Бараагийн footage + хоёр хүний харьцуулалт мэт split',hook:'Хэн нь орлого олж байна? Зөв бараа сонгосон хүн.',tip:'Contrast persona hook'},
+{id:54,cat:'m',visual:'Бараагаа гарт барьж, итгэлтэй нүдтэй камерт харж байна',hook:'Дараагийн winning product нь энэ байж болно.',tip:'Possibility angle — open-ended'},
+{id:55,cat:'m',visual:'Бараагийн footage + order list / тоо харуулж байна',hook:'100 зарсны дараа automation эхэлнэ. Эхний 100 энэ барааар.',tip:'Scale roadmap — motivating'},
+{id:56,cat:'m',visual:'Бараагийн detail footage — premium feel',hook:'Premium look. Хямд cost. Өндөр margin. Энэ тэр бараа.',tip:'Value perception angle'},
+{id:57,cat:'m',visual:'Бараагаа хялбархан demo хийж байна',hook:'Зарахад хялбар бараа = ad зардал бага = ашиг их.',tip:'Inverse logic — smart hook'},
+{id:58,cat:'m',visual:'Бараагийн footage + Alibaba screenshot мэт visual',hook:'Alibaba дээр 4,000₮. Монголд 19,900₮. Ялгаа: таны.',tip:'Import arbitrage clear visual'},
+{id:59,cat:'m',visual:'Бараагаа гарт барьж, "энэ" гэж заагаад байна',hook:'Энэ бараагаар анхны 1 сая чинь хийгдэж болно.',tip:'First million hook — aspirational'},
+{id:60,cat:'m',visual:'Бараагийн ашиглалтын footage — customer POV мэт',hook:'Хэрэглэгч авсны дараа дахин авдаг бараа = recurring revenue.',tip:'Retention economics hook'},
+{id:61,cat:'m',visual:'Бараагийн footage + хоёр мөрт тоо overlay мэт',hook:'5x margin. 30 борлуулалт. Нэг сар. Тооцоо хий.',tip:'Invite calculation — interactive'},
+{id:62,cat:'m',visual:'Бараагаа камерт ойртуулан, дараа нь татаж байна',hook:'Орлогын гол нууц: зах зээл бэлтгэгдээгүй байхад орох.',tip:'Timing secret angle'},
+{id:63,cat:'m',visual:'Бараагийн packaging footage — clean, satisfying',hook:'Packaging нь ч давуу тал. Хэрэглэгч дахин авахуулна.',tip:'Unboxing experience = retention'},
+{id:64,cat:'m',visual:'Бараагаа тавцан дээр тавьж, тойрч харуулж байна',hook:'Энэ бараа өдөрт 3 зарвал — нэг сард 90 борлуулалт.',tip:'Daily math → monthly result'},
+{id:65,cat:'m',visual:'Бараагийн footage + payment app notification',hook:'Payment notification. Унтаж байхад орж ирдэг мөнгө.',tip:'Passive income dream hook'},
+{id:66,cat:'m',visual:'Бараагаа гарт барьж, хоёр тал харуулж байна',hook:'Хоёр тал нь сайн. Cost тал. Profit тал. Хоёулаа.',tip:'Two-sided value reveal'},
+{id:67,cat:'m',visual:'Бараагийн footage + fast zoom',hook:'Энэ бараагаар дараагийн 10 сая төгрөгийг чи авч чадна.',tip:'Biggest aspiration — confidence tone'},
+{id:68,cat:'m',visual:'Бараагийн clean beauty footage — satisfying',hook:'Beauty бараа монголд хурдан зарагдана. Энэ баталгаатай.',tip:'Category trend + confidence'},
+{id:69,cat:'m',visual:'Бараагаа unbox + react footage',hook:'Анх харахдаа худалдаж авна. Энэ бол тэр хүч.',tip:'Impulse buy psychology'},
+{id:70,cat:'m',visual:'Бараагийн footage + Telegram channel icon',hook:'Telegram channel нь дүүрэн. Reason нь энэ бараа байна.',tip:'Demand proof angle'},
+
+// ── 🔥 ЗУН / SEASONAL (30) ──────────────────
+{id:71,cat:'s',visual:'Бараагийн footage — bright, summer color тон',hook:'Энэ бараа энэ зун хамгийн их зарагдана.',tip:'Seasonal confidence — итгэлтэй хэл'},
+{id:72,cat:'s',visual:'Бараагийн footage — нарны гэрэлтэй, outdoor feel',hook:'Зун ирлээ. Энэ бараагийн demand хоёр дахин нэмэгдэнэ.',tip:'Seasonal demand logic'},
+{id:73,cat:'s',visual:'Бараагийн footage — fresh, clean aesthetic',hook:'Зуны trending бараа. Монголд одоо байхгүй.',tip:'Seasonal scarcity + opportunity'},
+{id:74,cat:'s',visual:'Бараагийн footage — warm, summer tone',hook:'6-р сар гэхэд хожимдоно. Одоо орох цаг.',tip:'Timing urgency — season'},
+{id:75,cat:'s',visual:'Бараагийн ашиглалтын footage — summer context',hook:'Зуны бараа 3 сарын орлого нэг удаагийн тест.',tip:'Seasonal ROI logic'},
+{id:76,cat:'s',visual:'Бараагийн footage — outdoor, bright background',hook:'Дулаан болмогц энэ бараагийн борлуулалт spike хийнэ.',tip:'Spike prediction — data feel'},
+{id:77,cat:'s',visual:'Бараагийн detail — summer use case',hook:'Зунд хэрэгтэй. Зунд зарагдана. Зунд мөнгө болно.',tip:'Triple summer — ритмтэй'},
+{id:78,cat:'s',visual:'Бараагийн footage — sunlight reflection',hook:'Зуны bestseller. Монголд одоо нэгийг нь ч зарахгүй байна.',tip:'Bestseller + gap нэгтгэл'},
+{id:79,cat:'s',visual:'Бараагийн footage — lifestyle, summer feel',hook:'Хүмүүс энэ зун энэ барааг хайна. Чи зарах уу?',tip:'Direct challenge to viewer'},
+{id:80,cat:'s',visual:'Бараагийн footage — clean product shot',hook:'Зуны seasonal window. 3 сар. Одоо эхэл.',tip:'Time window urgency'},
+{id:81,cat:'s',visual:'Бараагийн footage — colorful, energetic',hook:'5-р сараас 8-р сар хүртэл. Энэ бараа эдгээр сарын бараа.',tip:'Specific months = concrete'},
+{id:82,cat:'s',visual:'Бараагийн ашиглалтын footage — outdoor setting',hook:'Гэртээ ч, гадаа ч хэрэгтэй бараа. Зун = хоёр дахин.',tip:'Dual context = wide market'},
+{id:83,cat:'s',visual:'Бараагийн footage — fresh product reveal',hook:'Зуны winner product. Хэн ч зарахгүй байхад олсон.',tip:'First mover seasonal angle'},
+{id:84,cat:'s',visual:'Бараагийн footage — trendy summer aesthetic',hook:'Instagram, TikTok дүүрэн болохоор нь Монголд орно. Одоо орох.',tip:'International to local pipeline'},
+{id:85,cat:'s',visual:'Бараагийн footage + outdoor use case',hook:'Хуурай, дулаан зун. Энэ бараагийн цаг.',tip:'Weather + product alignment'},
+{id:86,cat:'s',visual:'Бараагийн footage — satisfying, summer colors',hook:'Зуны 90 хоног. Тест хийх эхний 7 хоног. Одоо.',tip:'Day count urgency'},
+{id:87,cat:'s',visual:'Бараагийн footage — lifestyle shot',hook:'Зуны бараа сонгох нь хялбар. Энэ 3 шинж хангасан.',tip:'Criteria reveal → retain'},
+{id:88,cat:'s',visual:'Бараагийн footage — premium feel, summer',hook:'Зун болмогц demand нь. Хуурай болмогц demand нь.',tip:'Seasonal demand cycle'},
+{id:89,cat:'s',visual:'Бараагийн footage — fun, playful energy',hook:'Энэ зун хамгийн хурдан зарагдах категори: beauty + home.',tip:'Category + season niche'},
+{id:90,cat:'s',visual:'Бараагийн footage — bright, outdoor',hook:'Зуны бараа = 3 сарын орлого = жилийн 30%.',tip:'Annual revenue framing'},
+{id:91,cat:'s',visual:'Бараагийн footage — warm tones',hook:'Зун өнгөрвөл хожимдоно. Seasonal window нь богино.',tip:'Seasonal scarcity urgency'},
+{id:92,cat:'s',visual:'Бараагийн clean product footage',hook:'Энэ зун energy нь өндөр бараа. Demand нь харагдаж байна.',tip:'Energy/trend language'},
+{id:93,cat:'s',visual:'Бараагийн footage — outdoor, warm',hook:'Зуны бараа сонговол margin нь ч сайн, speed нь ч сайн.',tip:'Double advantage summer'},
+{id:94,cat:'s',visual:'Бараагийн footage — detail shot',hook:'Зуны bestseller Монголд нэвтрэхийн өмнө олно.',tip:'Pre-trend entry angle'},
+{id:95,cat:'s',visual:'Бараагийн footage — colorful reveal',hook:'Энэ бараа энэ зун хамгийн их зарагдана. Шалтгаан нь:',tip:'Cliffhanger — retain section рүү'},
+{id:96,cat:'s',visual:'Бараагийн footage — outdoor lifestyle',hook:'3 сарын зун. 1 бараа. Зөв тест. Жилийн орлого.',tip:'Seasonal ROI framework'},
+{id:97,cat:'s',visual:'Бараагийн footage — summer energy',hook:'Дулааны бараа хүйтний барааг 2x гардаг. Энэ зун.',tip:'Season comparison data'},
+{id:98,cat:'s',visual:'Бараагийн footage — vibrant',hook:'Зуны тренд бараа. Дараагийн 60 хоногт ашиглах цаг.',tip:'Time window specific'},
+{id:99,cat:'s',visual:'Бараагийн footage — fresh aesthetic',hook:'Зуны winner product гэдэг нь энэ шинжтэй байдаг.',tip:'Definition → criteria reveal'},
+{id:100,cat:'s',visual:'Бараагийн footage — outdoor, bright',hook:'Зун = мөнгөний сезон. Зөв бараатай хүнд.',tip:'Season = money equation'},
+
+// ── 😱 FOMO / URGENCY (30) ──────────────────
+{id:101,cat:'f',visual:'Бараагийн footage + "SOLD OUT" мэт visual дэвсгэр',hook:'Дуусч байна. Энэ бараагаар тест хийх цаг болсон.',tip:'Scarcity + action нэгтгэл'},
+{id:102,cat:'f',visual:'Бараагаа гарт барьж, urgency tone',hook:'Энэ бараанаас өнгөрвөл харамсана.',tip:'Regret future hook'},
+{id:103,cat:'f',visual:'Бараагийн footage + countdown мэт visual',hook:'Монголд зарах хүн байхгүй байхад нь орох цаг.',tip:'First mover window — time-bound'},
+{id:104,cat:'f',visual:'Бараагийн footage + viral counter',hook:'Дубайд 2 сая view. Монголд 0 зарагдсан. Одоо.',tip:'Gap contrast = maximum urgency'},
+{id:105,cat:'f',visual:'Бараагийн footage — дараа нь хурдан cut',hook:'Дараагийн drop гарахаар зах зээл дүүрнэ. Одоо орох.',tip:'Future competition warning'},
+{id:106,cat:'f',visual:'Бараагийн footage + хурдан motion',hook:'Энэ бараагийн цонх богино. Trend буурахаас өмнө.',tip:'Trend lifecycle urgency'},
+{id:107,cat:'f',visual:'Бараагийн footage + timer мэт хэлбэр',hook:'Зөв цагт зөв бараа. Хоёулаа нэгэн зэрэг байхгүй.',tip:'Timing alignment = rare'},
+{id:108,cat:'f',visual:'Бараагийн footage — revealing mэт',hook:'Маргаашаас хожимдоно. Одоо тест эхэл.',tip:'Overnight urgency'},
+{id:109,cat:'f',visual:'Бараагийн footage + competitor warning',hook:'Хэн нэгэн олоод зараад эхэлбэл. Чи хойно байна.',tip:'Competitor fear hook'},
+{id:110,cat:'f',visual:'Бараагийн footage + нарийн detail',hook:'Saturation 1/10 одоо. 3 сарын дараа 8/10 болно.',tip:'Saturation timeline prediction'},
+{id:111,cat:'f',visual:'Бараагийн footage — хурдан cut, энергитэй',hook:'Trending window 2–3 сар. Энэ бараа одоо тэр window-д.',tip:'Trend window specific time'},
+{id:112,cat:'f',visual:'Бараагийн footage + phone order notification',hook:'Хэн нэгэн аль хэдийн ашиглаж байна. Чи хожимдсон уу?',tip:'FOMO via others action'},
+{id:113,cat:'f',visual:'Бараагийн footage — clean, simple',hook:'Энэ бараагийн slot 43 үлдсэн. Productdrop-д.',tip:'Scarcity metric — specific'},
+{id:114,cat:'f',visual:'Бараагийн footage + urgency energy',hook:'Зах зээл бэлтгэгдэхийн өмнө. Хэрэглэгч хайхын өмнө.',tip:'Pre-demand entry = maximum edge'},
+{id:115,cat:'f',visual:'Бараагийн footage — satisfying reveal',hook:'Анх орсон хүн авна. Хожимдсон хүн хардана.',tip:'First vs late adopter contrast'},
+{id:116,cat:'f',visual:'Бараагийн footage + хурдан action feel',hook:'Одоо тест хийхгүй бол 6 сарын дараа хожимдоно.',tip:'Future regret — time-bound'},
+{id:117,cat:'f',visual:'Бараагийн footage — high energy',hook:'Энэ бараагийн trending window нээгдэж байна. Одоо.',tip:'Window opening metaphor'},
+{id:118,cat:'f',visual:'Бараагийн footage + exclusive feel',hook:'Мэдсэн хүн ашиглана. Мэдэхгүй хүн харна.',tip:'Knowledge gap = action trigger'},
+{id:119,cat:'f',visual:'Бараагийн footage — premium, limited feel',hook:'Drop #01 дуусахаас өмнө. 43 slot үлдсэн.',tip:'Real scarcity number'},
+{id:120,cat:'f',visual:'Бараагийн footage + tension build',hook:'Хэн нь эхэлж зарах вэ? Эхлэгч нь монополь.',tip:'Monopoly race frame'},
+{id:121,cat:'f',visual:'Бараагийн footage — fast reveal',hook:'Энэ бараагаар 7 хоногт тест хийгдэнэ. Чи байх уу?',tip:'Direct invitation — challenge'},
+{id:122,cat:'f',visual:'Бараагийн footage + market map',hook:'Монгол зах зээлийн энэ хэсэг одоо хоосон байна.',tip:'Market gap visual argument'},
+{id:123,cat:'f',visual:'Бараагийн footage — motion, energy',hook:'Тренд болохоос 1 алхам өмнө байна. Одоо орох цаг.',tip:'One step ahead frame'},
+{id:124,cat:'f',visual:'Бараагийн footage — focused shot',hook:'Энэ бараагийн supplier мэдэгдэж байна. Цаг байна.',tip:'Information advantage urgency'},
+{id:125,cat:'f',visual:'Бараагийн footage + "limited" feel',hook:'Монголд анх удаа. Энэ цаг буцаж ирэхгүй.',tip:'Unique moment — one time only'},
+{id:126,cat:'f',visual:'Бараагийн footage — confident energy',hook:'Дараагийн winning product хэн нь эхэлж олох вэ?',tip:'Race framing — competitive'},
+{id:127,cat:'f',visual:'Бараагийн footage + calendar мэт visual',hook:'5-р сарын эцэс. 6-р сараас хожимдоно. Тест хий.',tip:'Calendar deadline specific'},
+{id:128,cat:'f',visual:'Бараагийн footage — энэргитэй',hook:'Мэдсэн хүн одоо тест хийж байна. Хаана чи?',tip:'Peer action FOMO'},
+{id:129,cat:'f',visual:'Бараагийн footage + zoom out',hook:'Цонх нээгдэж байна. Үүнийг харж байгаа хүн олдохгүй.',tip:'Exclusive insight angle'},
+{id:130,cat:'f',visual:'Бараагийн footage — revealing',hook:'Энэ бараагийн demand curve одоо эхэлж байна.',tip:'Data language = credibility'},
+
+// ── 😤 PAIN POINT (35) ──────────────────────
+{id:131,cat:'p',visual:'Бараагийн footage — хайж байгаа мэт feel',hook:'Winning product олоход хэдэн цаг үрдэг вэ?',tip:'Pain асуулт — хариулт нь хэцүү байна'},
+{id:132,cat:'p',visual:'Бараагийн footage + frustrated tone',hook:'Тест хийсэн. Зарагдаагүй. Дахиад тест. Мөнгө дуусав.',tip:'Pain narrative — cycle of loss'},
+{id:133,cat:'p',visual:'Бараагийн footage + search bar мэт visual',hook:'Alibaba дээр 10,000 бараа. Аль нь winning вэ?',tip:'Overwhelm pain — relatable'},
+{id:134,cat:'p',visual:'Бараагийн footage — slow reveal',hook:'Буруу бараа сонгоход хэдэн зуун мянга алдаж болно.',tip:'Financial risk pain'},
+{id:135,cat:'p',visual:'Бараагийн footage — before/after feel',hook:'Winning product байхгүйгээр ad явуулах нь мөнгө шатаах.',tip:'Ad waste pain — harsh truth'},
+{id:136,cat:'p',visual:'Бараагийн footage + thinking mэт',hook:'Яаж мэдэх вэ — энэ бараа зарагдах уу, үгүй юу?',tip:'Uncertainty pain — direct'},
+{id:137,cat:'p',visual:'Бараагийн footage — research feel',hook:'Бараа судалгаанд 2 өдөр зарцуулсан. 1 ч зарагдаагүй.',tip:'Time wasted + result zero'},
+{id:138,cat:'p',visual:'Бараагийн footage + competitor visual',hook:'Дүгнэж чадаагүй хооронд хэн нэгэн зарж эхэлсэн байна.',tip:'Missed opportunity pain'},
+{id:139,cat:'p',visual:'Бараагийн footage — searching feel',hook:'E-commerce эхлэхийг хүсдэг ч яаж бараа олохоо мэдэхгүй.',tip:'Beginner confusion pain'},
+{id:140,cat:'p',visual:'Бараагийн footage — doubt energy',hook:'CTR 0.5%. Ad зогсоов. Яагаад? Бараа буруу байсан.',tip:'CTR failure → root cause'},
+{id:141,cat:'p',visual:'Бараагийн footage — loss feel',hook:'Тестэлсэн барааны 9 из 10 нь зарагдаагүй — ингэж ялгах.',tip:'9/10 fail rate pain'},
+{id:142,cat:'p',visual:'Бараагийн footage — frustration',hook:'Supplier олоход хэдэн цаг. Ярилцахад хятад хэл. Хэцүү.',tip:'Language + time barrier'},
+{id:143,cat:'p',visual:'Бараагийн footage — wasted time',hook:'Бараа судалгааг зөв хийхгүй бол тест хийх мөнгөн дэмий.',tip:'Research quality → test ROI'},
+{id:144,cat:'p',visual:'Бараагийн footage — uncertainty',hook:'Wow factor гэж юу болохыг мэдэхгүй бол winning олохгүй.',tip:'Terminology gap pain'},
+{id:145,cat:'p',visual:'Бараагийн footage — searching mood',hook:'Монголд аль категори зарагддаг вэ? Хэн нэгэн мэдэх үү?',tip:'Market insight gap pain'},
+{id:146,cat:'p',visual:'Бараагийн footage — stuck feel',hook:'E-commerce хийхийг хүсдэг. Юуг зарахаа мэдэхгүй. Тойрог.',tip:'Decision paralysis pain'},
+{id:147,cat:'p',visual:'Бараагийн footage — comparison',hook:'Ижил бараа. Нэг нь зарагдана. Нэг нь зарагдахгүй. Яагаад?',tip:'Same product different result mystery'},
+{id:148,cat:'p',visual:'Бараагийн footage — loss',hook:'ROAS 0.8. Мөнгө алдлаа. Дараагийн бараа хайж байна.',tip:'ROAS loss cycle pain'},
+{id:149,cat:'p',visual:'Бараагийн footage — doubt',hook:'Энэ бараа зарагдах уу гэдэгт итгэлгүй байдал.',tip:'Confidence gap pain'},
+{id:150,cat:'p',visual:'Бараагийн footage — long search',hook:'2 долоо хоног бараа судалж олсон. Нэг ч зарагдаагүй.',tip:'Time + zero result = maximum pain'},
+{id:151,cat:'p',visual:'Бараагийн footage — researching',hook:'Амжилтгүй тестүүд. Зарагдаагүй бараанууд. Хэзээ winner?',tip:'Cumulative failure pain'},
+{id:152,cat:'p',visual:'Бараагийн footage — confusion',hook:'E-commerce хийдэг хүмүүс хаанаас бараагаа олдог вэ?',tip:'Insider secret question'},
+{id:153,cat:'p',visual:'Бараагийн footage — fear',hook:'Буруу бараанд мөнгө зарцуулахаас айдаг уу?',tip:'Risk aversion pain'},
+{id:154,cat:'p',visual:'Бараагийн footage — lost time',hook:'Бараа судалгаанд зарцуулсан 40 цаг. Үр дүн тэгтэй.',tip:'Hour count + zero result'},
+{id:155,cat:'p',visual:'Бараагийн footage — stumbling',hook:'Alibaba, 1688, Amazon, TikTok — бүгдийг шалгаад ч мэдэхгүй.',tip:'Research overwhelm pain'},
+{id:156,cat:'p',visual:'Бараагийн footage — frustration',hook:'Winning product олох нь азтай байхаас хамаарна уу?',tip:'Myth busting pain hook'},
+{id:157,cat:'p',visual:'Бараагийн footage — confusion',hook:'Сатурэйшн гэж юу болохыг мэдэхгүй бол…',tip:'Knowledge gap that costs money'},
+{id:158,cat:'p',visual:'Бараагийн footage — research desk',hook:'Supplier хайхад хятад хэл хэрэгтэй. Мэдэхгүй. Яах вэ?',tip:'Barrier to entry pain'},
+{id:159,cat:'p',visual:'Бараагийн footage — doubt',hook:'Тест хийхэд мөнгө хэрэгтэй. Буруу бараа бол тэр мөнгө алдана.',tip:'Test cost risk pain'},
+{id:160,cat:'p',visual:'Бараагийн footage — searching',hook:'E-commerce хийхийг хүсдэг хүн бүр нэг асуулт асуудаг.',tip:'Universal pain question setup'},
+{id:161,cat:'p',visual:'Бараагийн footage — disappointment',hook:'Бараа зарагдахгүй байхад яагаад ч мэдэхгүй байх.',tip:'Root cause unknown pain'},
+{id:162,cat:'p',visual:'Бараагийн footage — stuck',hook:'CTR сайн. ROAS муу. Бараа нь асуудал байсан.',tip:'Metric mystery → product issue'},
+{id:163,cat:'p',visual:'Бараагийн footage — uncertainty',hook:'Winning product олоод л e-commerce амжилттай болно гэдэг.',tip:'Conditional success belief pain'},
+{id:164,cat:'p',visual:'Бараагийн footage — losing',hook:'Хамгийн их мөнгө алдуулдаг шийдвэр: буруу бараа сонгох.',tip:'Biggest mistake reveal'},
+{id:165,cat:'p',visual:'Бараагийн footage — research fatigue',hook:'E-commerce-д хамгийн хэцүү хэсэг нь бараа сонгох.',tip:'Honest difficulty acknowledgment'},
+
+// ── 🤫 НУУЦ / INSIDER (35) ──────────────────
+{id:166,cat:'c',visual:'Бараагийн footage — нууцлаг, shadowy feel',hook:'Монголд хэн ч мэдэхгүй энэ барааг олсон.',tip:'Нууц нээлт tone — confident'},
+{id:167,cat:'c',visual:'Бараагийн footage — exclusive reveal мэт',hook:'Winning product олох арга байдаг. Ихэнх нь мэдэхгүй.',tip:'Exclusive knowledge claim'},
+{id:168,cat:'c',visual:'Бараагийн footage — insider feel',hook:'E-commerce хийдэг хүмүүс энэ барааны тухай ярьдаг.',tip:'Insider community angle'},
+{id:169,cat:'c',visual:'Бараагийн footage — revealing',hook:'Энэ бараагийн supplier-ийг олоход 2 жил зарцуулсан хүн байна.',tip:'Effort behind insight'},
+{id:170,cat:'c',visual:'Бараагийн footage — close shot, detailed',hook:'Дубайн e-commerce хийгчид энэ барааны тухай яриад байна.',tip:'International insider community'},
+{id:171,cat:'c',visual:'Бараагийн footage — secretive tone',hook:'Winning product олохын нууц: wow + saturation + margin.',tip:'Formula reveal — insider'},
+{id:172,cat:'c',visual:'Бараагийн footage — "only for you" feel',hook:'Энэ видеог харж байгаа хүмүүс л мэднэ.',tip:'Exclusive viewer angle'},
+{id:173,cat:'c',visual:'Бараагийн footage — slow, careful reveal',hook:'Монголын e-commerce-ийн дараагийн тренд энэ байж болно.',tip:'Prediction insider angle'},
+{id:174,cat:'c',visual:'Бараагийн footage — detail, zoomed',hook:'Supplier link нь хамгийн чухал нууц. Энд байна.',tip:'Supply chain secret'},
+{id:175,cat:'c',visual:'Бараагийн footage — mysterious tone',hook:'Баялаг болсон e-commerce хийгчид мэддэг зүйл.',tip:'Wealth knowledge gap'},
+{id:176,cat:'c',visual:'Бараагийн footage — revealing, exclusive',hook:'Энэ барааны saturation одоо 1/10. Хэн мэддэг вэ?',tip:'Data insight — rare knowledge'},
+{id:177,cat:'c',visual:'Бараагийн footage — underground feel',hook:'Productdrop database-д байгаа бараа. Олонд мэдэгдэхгүй.',tip:'Database exclusivity angle'},
+{id:178,cat:'c',visual:'Бараагийн footage — close, intimate',hook:'Зарж байгаа хүн байхгүй. Мэдэж байгаа хүн байхгүй. Чи мэднэ.',tip:'Tri-scarcity hook'},
+{id:179,cat:'c',visual:'Бараагийн footage — research-based',hook:'200 бараанаас нэгийг нь шүүлт хийж гаргана — тэр энэ.',tip:'Curation process reveal'},
+{id:180,cat:'c',visual:'Бараагийн footage — premium, insider',hook:'E-commerce-д 1 жил ажилласны дараа мэдсэн зүйл энэ.',tip:'Experience-based insight'},
+{id:181,cat:'c',visual:'Бараагийн footage — slow reveal',hook:'Энэ барааны wow factor, saturation, margin — бүгдийг мэднэ.',tip:'Full data insight claim'},
+{id:182,cat:'c',visual:'Бараагийн footage — exclusive',hook:'Winning product ямар харагддагийг олонд хэлэхгүй байна.',tip:'Withheld knowledge hook'},
+{id:183,cat:'c',visual:'Бараагийн footage — dramatic reveal',hook:'Энэ бараагийн тухай мэддэг хүн Монголд цөөхөн.',tip:'Scarcity of knowledge'},
+{id:184,cat:'c',visual:'Бараагийн footage — careful, measured',hook:'E-commerce-ийн гол нууц нь бараа — бусад нь техник.',tip:'Hierarchy of importance reveal'},
+{id:185,cat:'c',visual:'Бараагийн footage — insider community',hook:'Drop авсан хүмүүс энэ барааг аль хэдийн мэдэж байна.',tip:'Community insider angle'},
+{id:186,cat:'c',visual:'Бараагийн footage — secretive but confident',hook:'Монгол зах зээлд одоо байхгүй. Хэн мэднэ вэ?',tip:'Gap + knowledge combo'},
+{id:187,cat:'c',visual:'Бараагийн footage — research room feel',hook:'Ийм бараагийн тухай хэлэхэд хэцүү. Харахад л мэдэгдэнэ.',tip:'Show don\'t tell insider'},
+{id:188,cat:'c',visual:'Бараагийн footage — exclusive feel',hook:'Энэ бараагийн supplier холбоос. Productdrop-д байна.',tip:'Source exclusive claim'},
+{id:189,cat:'c',visual:'Бараагийн footage — smart, knowing',hook:'Smart e-commerce хийгч энэ шинжийг хайдаг.',tip:'Smart audience identification'},
+{id:190,cat:'c',visual:'Бараагийн footage — dramatic',hook:'Монголын e-commerce-д одоо хамгийн том opportunity.',tip:'Macro opportunity claim'},
+{id:191,cat:'c',visual:'Бараагийн footage — calm, expert',hook:'Winning product нь азаар олддоггүй. Систем хэрэгтэй.',tip:'System > luck reveal'},
+{id:192,cat:'c',visual:'Бараагийн footage — exclusive reveal',hook:'Энэ бараагийн тухай хэдэн хүн мэдэх вэ? Цөөхөн.',tip:'Scarcity of awareness'},
+{id:193,cat:'c',visual:'Бараагийн footage — insider frame',hook:'E-commerce амжилттай хийгчдийн нийтлэг зүйл нэг байдаг.',tip:'Common thread of success'},
+{id:194,cat:'c',visual:'Бараагийн footage — research, careful',hook:'Бараа судалгааны цаг = хамгийн үнэтэй цаг. Хэмнэ.',tip:'Time value insider'},
+{id:195,cat:'c',visual:'Бараагийн footage — exclusive information',hook:'Хэн ч зарахгүй байхад зарах нь хамгийн хялбар.',tip:'First mover logic = insider secret'},
+{id:196,cat:'c',visual:'Бараагийн footage — revealing moment',hook:'Энэ бараагийн тухай мэдэх нь л хангалттай. Тест хий.',tip:'Knowledge to action bridge'},
+{id:197,cat:'c',visual:'Бараагийн footage — slow, confident',hook:'Winning product нь харагдана. Мэдэх хүн харна.',tip:'Pattern recognition insider claim'},
+{id:198,cat:'c',visual:'Бараагийн footage — close, detailed',hook:'Productdrop database-ийн нэг бараа. Энэ нь.',tip:'Database reveal anchor'},
+{id:199,cat:'c',visual:'Бараагийн footage — exclusive, final',hook:'Монголд шинэ. Зарагдаагүй. Supplier байна. Энэ нь.',tip:'Three facts = three reasons'},
+{id:200,cat:'c',visual:'Бараагийн footage — dramatic close',hook:'Энэ бараагийн тухай мэдэх хүн Монголд одоо цөөхөн. Чи мэднэ.',tip:'Exclusive viewer knowledge transfer'},
+
+];
+
+// ══════════════════════════════════════════════════
+const CAT_META = {
+  w: {label:'🏆 Winning',color:'var(--good)',  bg:'rgba(62,207,142,.12)'},
+  m: {label:'💰 Мөнгө',  color:'#ff6b35',      bg:'rgba(255,107,53,.12)'},
+  s: {label:'🔥 Зун',    color:'var(--acc)',    bg:'rgba(200,255,0,.1)'},
+  f: {label:'😱 FOMO',   color:'var(--ugc)',    bg:'rgba(255,185,48,.12)'},
+  p: {label:'😤 Pain',   color:'var(--acc2)',   bg:'rgba(0,229,255,.1)'},
+  c: {label:'🤫 Нууц',   color:'#e879f9',       bg:'rgba(232,121,249,.1)'},
+};
+
+let currentCat = 'all';
+let copiedCount = 0;
+
+function buildCard(h){
+  const cm = CAT_META[h.cat];
+  return `<div class="scard" data-cat="${h.cat}" data-search="${(h.hook+' '+h.visual).toLowerCase()}">
+    <div class="scard-bar" style="background:${cm.color}"></div>
+    <div class="scard-hd">
+      <span class="scard-num">#${String(h.id).padStart(3,'0')}</span>
+      <div class="scard-badges">
+        <span class="badge" style="background:${cm.bg};color:${cm.color}">${cm.label}</span>
+      </div>
+    </div>
+    <div class="split-wrap">
+      <div class="split-top">
+        <span class="split-top-label">ДЭЭД · БАРАА</span>
+        <span class="split-top-icon">🎬</span>
+        <div class="split-top-txt">${h.visual}</div>
+      </div>
+      <div class="split-line"></div>
+      <div class="split-bot">
+        <span class="split-bot-label">ДООД · ЧИ</span>
+        <span class="split-mic">🎙</span>
+        <div class="split-hook">${h.hook}</div>
+      </div>
+    </div>
+    <div class="scard-ft">
+      <div class="tip-txt">💡 ${h.tip}</div>
+      <button class="cpybtn" onclick="copyHook(this,\`${h.hook.replace(/`/g,'\\`')}\`)">Copy</button>
+    </div>
+  </div>`;
+}
+
+function renderGrid(cat, query=''){
+  const grid = document.getElementById('main-grid');
+  let list = cat==='all' ? HOOKS : HOOKS.filter(h=>h.cat===cat);
+  if(query) list = list.filter(h=>(h.hook+h.visual).toLowerCase().includes(query.toLowerCase()));
+  document.getElementById('vis-cnt').textContent = list.length;
+  if(!list.length){
+    grid.innerHTML = `<div class="empty"><div class="empty-ic">🔍</div><div class="empty-tx">"${query}" — илэрц олдсонгүй</div></div>`;
+    document.getElementById('res-count').textContent = '0 hook';
+    return;
+  }
+  grid.innerHTML = list.map(buildCard).join('');
+  document.getElementById('res-count').textContent = query ? list.length+' үр дүн' : '';
+}
+
+function sw(cat, btn){
+  currentCat = cat;
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  if(btn){btn.classList.add('on')}
+  document.getElementById('search-in').value='';
+  document.getElementById('res-count').textContent='';
+  renderGrid(cat);
+}
+
+function doSearch(q){ renderGrid(currentCat, q); }
+
+// Copy with fallback for mobile
+function doCopy(text, onOk){
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(onOk).catch(()=>fallback(text,onOk));
+  } else { fallback(text,onOk); }
+}
+function fallback(text,onOk){
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.style.cssText='position:fixed;left:-9999px;top:-9999px;opacity:0;font-size:16px';
+  document.body.appendChild(ta);
+  ta.focus();ta.select();
+  try{document.execCommand('copy');onOk();}catch(e){}
+  document.body.removeChild(ta);
+}
+
+function copyHook(btn,text){
+  doCopy(text,()=>{
+    btn.textContent='✓ OK';btn.classList.add('ok');
+    copiedCount++;
+    document.getElementById('copied-cnt').textContent=copiedCount;
+    showToast('✓ Hook copied!');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('ok');},2000);
+  });
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function rollRandom(){
+  const pool=currentCat==='all'?HOOKS:HOOKS.filter(h=>h.cat===currentCat);
+  const h=pool[Math.floor(Math.random()*pool.length)];
+  const cm=CAT_META[h.cat];
+  document.getElementById('rand-visual').innerHTML=`<strong style="color:var(--acc);font-size:9px;font-family:var(--mo);letter-spacing:.1em;display:block;margin-bottom:4px">🎬 БАРАА:</strong>${h.visual}`;
+  document.getElementById('rand-hook').textContent=h.hook;
+  document.getElementById('rand-meta').textContent=`#${h.id} · ${cm.label} · 💡 ${h.tip}`;
+  document.getElementById('rand-wrap').dataset.hook=h.hook;
+}
+
+function copyRand(){
+  const hook=document.getElementById('rand-hook').textContent;
+  if(hook&&hook!=='Уншиж байна...'){
+    doCopy(hook,()=>{
+      copiedCount++;
+      document.getElementById('copied-cnt').textContent=copiedCount;
+      showToast('✓ Copied!');
+    });
+  }
+}
+
+// Nav counts
+function initCounts(){
+  const cats=['w','m','s','f','p','c'];
+  cats.forEach(c=>{
+    const el=document.getElementById('nc-'+c);
+    if(el) el.textContent=HOOKS.filter(h=>h.cat===c).length;
+  });
+  document.getElementById('nc-all').textContent=HOOKS.length;
+}
+
+initCounts();
+renderGrid('all');
+rollRandom();
+</script>
+</body>
+</html>

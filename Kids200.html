@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIDS — Product Research</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a; --bg2: #121212; --bg3: #1a1a1a;
+    --border: #222222; --border2: #333333;
+    --text: #f0f0f0; --muted: #777777; --muted2: #3a3a3a;
+    --accent: #ff4ecb; --accent2: #ff6b35; --white: #ffffff;
+    --tik: #69c9d0; --ig: #e1306c; --fb: #5890ff; --amz: #ffaa44; --ali: #ff6b35;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; min-height:100vh; overflow-x:hidden; font-size:14px; }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    position:fixed; inset:0; background:var(--bg);
+    display:flex; align-items:center; justify-content:center; z-index:1000;
+  }
+  .login-box {
+    width:400px; padding:56px 48px;
+    border:1px solid var(--border2); background:var(--bg2); position:relative;
+  }
+  .login-box::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); }
+  .login-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:28px; letter-spacing:.15em; color:var(--white); margin-bottom:8px; }
+  .login-logo span { color:var(--accent); }
+  .login-sub { font-size:12px; color:var(--muted); letter-spacing:.2em; text-transform:uppercase; margin-bottom:44px; }
+  .login-label { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; display:block; }
+  .login-input {
+    width:100%; background:var(--bg3); border:1px solid var(--border2);
+    color:var(--text); font-family:'DM Mono',monospace; font-size:15px;
+    padding:15px 18px; outline:none; transition:border-color .2s; letter-spacing:.1em;
+  }
+  .login-input:focus { border-color:var(--accent); }
+  .login-btn {
+    width:100%; margin-top:20px; padding:16px; background:var(--accent); color:#000;
+    border:none; font-family:'Syne',sans-serif; font-weight:700; font-size:13px;
+    letter-spacing:.2em; text-transform:uppercase; cursor:pointer; transition:opacity .2s;
+  }
+  .login-btn:hover { opacity:.85; }
+  .login-error { margin-top:14px; font-size:12px; color:var(--accent2); letter-spacing:.1em; display:none; text-align:center; }
+
+  /* ── APP ── */
+  #app { display:none; }
+
+  .header {
+    position:sticky; top:0; background:var(--bg); border-bottom:1px solid var(--border);
+    padding:0 44px; height:66px; display:flex; align-items:center; justify-content:space-between; z-index:100;
+  }
+  .header-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:18px; letter-spacing:.2em; color:var(--white); }
+  .header-logo span { color:var(--accent); }
+  .header-right { display:flex; align-items:center; gap:20px; }
+  .header-meta { font-size:12px; color:var(--muted); letter-spacing:.15em; text-transform:uppercase; }
+  .save-btn {
+    padding:10px 22px; background:var(--accent); color:#000; border:none;
+    font-family:'Syne',sans-serif; font-weight:700; font-size:11px;
+    letter-spacing:.15em; text-transform:uppercase; cursor:pointer; transition:opacity .2s;
+  }
+  .save-btn:hover { opacity:.8; }
+  .saved-msg { font-size:12px; color:var(--accent); letter-spacing:.15em; opacity:0; transition:opacity .4s; }
+
+  .stats-bar {
+    padding:22px 44px; border-bottom:1px solid var(--border);
+    display:flex; gap:48px; background:var(--bg2);
+  }
+  .stat { display:flex; flex-direction:column; gap:5px; }
+  .stat-val { font-family:'Syne',sans-serif; font-weight:700; font-size:26px; color:var(--white); }
+  .stat-val.accent { color:var(--accent); }
+  .stat-label { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+
+  /* ── TABLE ── */
+  .table-wrap { padding:0 44px 80px; }
+
+  table { width:100%; border-collapse:collapse; }
+  thead tr { border-bottom:2px solid var(--border2); position:sticky; top:66px; background:var(--bg); z-index:50; }
+  th {
+    font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted);
+    padding:18px 14px; text-align:left; font-weight:400; white-space:nowrap;
+  }
+  th:first-child { padding-left:0; }
+  tbody tr { border-bottom:1px solid var(--border); transition:background .12s; }
+  tbody tr:hover { background:var(--bg2); }
+  td { padding:16px 14px; font-size:13px; color:var(--text); vertical-align:top; }
+  td:first-child { padding-left:0; }
+
+  .td-num { color:var(--muted); font-size:12px; width:44px; padding-top:18px; }
+  .td-name { font-family:'Syne',sans-serif; font-weight:600; font-size:15px; color:var(--white); min-width:200px; padding-top:16px; line-height:1.4; }
+  .td-cat { font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--accent); background:rgba(255,78,203,.08); padding:5px 12px; display:inline-block; margin-top:10px; border:1px solid rgba(255,78,203,.2); }
+
+  /* Links */
+  .links-col { display:flex; flex-direction:column; gap:7px; min-width:170px; }
+  .link-row { display:flex; gap:6px; }
+
+  .link-wrap { position:relative; display:flex; align-items:stretch; gap:0; }
+  .link-btn {
+    display:inline-flex; align-items:center; gap:6px; padding:7px 12px;
+    font-size:11px; letter-spacing:.1em; text-transform:uppercase; text-decoration:none;
+    border:1px solid var(--border2); color:#999; background:transparent;
+    white-space:nowrap; transition:all .15s; font-family:'DM Mono',monospace; cursor:pointer;
+  }
+  .link-btn:hover { background:rgba(255,255,255,.04); }
+  .link-btn.ali:hover  { border-color:var(--ali); color:var(--ali); background:rgba(255,107,53,.06); }
+  .link-btn.tik:hover  { border-color:var(--tik); color:var(--tik); background:rgba(105,201,208,.06); }
+  .link-btn.ig:hover   { border-color:var(--ig);  color:var(--ig);  background:rgba(225,48,108,.06); }
+  .link-btn.fb:hover   { border-color:var(--fb);  color:var(--fb);  background:rgba(88,144,255,.06); }
+  .link-btn.amz:hover  { border-color:var(--amz); color:var(--amz); background:rgba(255,170,68,.06); }
+
+  .dot { width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+
+  /* platform colored dots */
+  .link-btn.ali .dot { background:var(--ali); }
+  .link-btn.tik .dot { background:var(--tik); }
+  .link-btn.ig  .dot { background:var(--ig); }
+  .link-btn.fb  .dot { background:var(--fb); }
+  .link-btn.amz .dot { background:var(--amz); }
+
+  .edit-btn {
+    padding:0 10px; border:1px solid var(--border2); border-left:0;
+    background:transparent; color:var(--muted); cursor:pointer; font-size:13px;
+    display:flex; align-items:center; justify-content:center; transition:all .12s;
+    flex-shrink:0;
+  }
+  .edit-btn:hover { background:var(--bg3); color:var(--accent); border-color:var(--accent); }
+
+  /* Edit modal */
+  .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.88);
+    display:none; align-items:center; justify-content:center; z-index:500;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    width:520px; background:var(--bg2); border:1px solid var(--border2);
+    padding:36px; position:relative;
+  }
+  .modal::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); }
+  .modal-title { font-family:'Syne',sans-serif; font-weight:700; font-size:16px; color:var(--white); margin-bottom:6px; }
+  .modal-sub { font-size:12px; color:var(--muted); letter-spacing:.15em; margin-bottom:28px; }
+  .modal-field { margin-bottom:18px; }
+  .modal-label { font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; display:block; }
+  .modal-input {
+    width:100%; background:var(--bg3); border:1px solid var(--border2);
+    color:var(--text); font-family:'DM Mono',monospace; font-size:12px;
+    padding:11px 14px; outline:none; transition:border-color .15s;
+  }
+  .modal-input:focus { border-color:var(--accent); }
+  .modal-actions { display:flex; gap:10px; margin-top:28px; }
+  .modal-save {
+    flex:1; padding:14px; background:var(--accent); color:#000; border:none;
+    font-family:'Syne',sans-serif; font-weight:700; font-size:12px;
+    letter-spacing:.15em; text-transform:uppercase; cursor:pointer;
+  }
+  .modal-cancel {
+    padding:14px 24px; background:transparent; border:1px solid var(--border2);
+    color:var(--muted); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer;
+  }
+  .modal-cancel:hover { border-color:var(--muted); color:var(--text); }
+
+  /* Ratings */
+  .ratings-col { display:flex; flex-direction:column; gap:7px; min-width:240px; }
+  .rating-row { display:flex; align-items:center; gap:10px; }
+  .rating-key { font-size:11px; color:#888; letter-spacing:.05em; width:96px; flex-shrink:0; }
+  .rating-select {
+    background:var(--bg3); border:1px solid var(--border2); color:#aaa;
+    font-family:'DM Mono',monospace; font-size:12px; padding:6px 10px;
+    outline:none; cursor:pointer; transition:all .12s; appearance:none;
+    -webkit-appearance:none; min-width:110px;
+  }
+  .rating-select:focus { border-color:var(--accent); }
+  .rating-select.val-good    { color:#ff4ecb; border-color:rgba(255,78,203,.4); background:rgba(255,78,203,.05); }
+  .rating-select.val-wow     { color:#ff4ecb; border-color:rgba(255,78,203,.4); background:rgba(255,78,203,.05); }
+  .rating-select.val-notbad  { color:#ffaa00; border-color:rgba(255,170,0,.4); background:rgba(255,170,0,.05); }
+  .rating-select.val-bad     { color:#ff5555; border-color:rgba(255,85,85,.4);  background:rgba(255,85,85,.05); }
+  .rating-select.val-yes     { color:#ff4ecb; border-color:rgba(255,78,203,.4); background:rgba(255,78,203,.05); }
+  .rating-select.val-no      { color:#ff5555; border-color:rgba(255,85,85,.4);  background:rgba(255,85,85,.05); }
+  .rating-select.val-notyet  { color:#ffaa00; border-color:rgba(255,170,0,.4); background:rgba(255,170,0,.05); }
+  .rating-select.val-vgood   { color:#ff4ecb; border-color:rgba(255,78,203,.4); background:rgba(255,78,203,.05); }
+  .rating-select.val-3x      { color:#ffaa00; border-color:rgba(255,170,0,.4); background:rgba(255,170,0,.05); }
+  .rating-select.val-5x      { color:#ff4ecb; border-color:rgba(255,78,203,.4); background:rgba(255,78,203,.05); }
+
+  .notes-input {
+    background:var(--bg3); border:1px solid var(--border2); color:var(--text);
+    font-family:'DM Mono',monospace; font-size:12px; padding:8px 10px;
+    outline:none; width:100%; resize:none; transition:border-color .12s; height:46px;
+  }
+  .notes-input:focus { border-color:var(--accent); }
+  .notes-input::placeholder { color:#444; font-size:11px; }
+  .value-info-input { height:54px; border-color:rgba(255,78,203,.2); }
+  .value-info-input:focus { border-color:var(--accent); }
+  .value-info-wrap { margin-bottom:4px; }
+
+  .no-link { font-size:11px; color:var(--muted2); padding:7px 0; }
+  .add-link-btn {
+    display:inline-flex; align-items:center; padding:7px 10px;
+    font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+    border:1px dashed var(--border2); color:var(--muted); background:transparent;
+    cursor:pointer; font-family:'DM Mono',monospace; transition:all .15s; white-space:nowrap;
+  }
+  .add-link-btn:hover { border-color:var(--accent); color:var(--accent); }
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border2); }
+  /* ── MOBILE RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .login-box { width: calc(100% - 32px); max-width: 400px; padding: 36px 24px; }
+    .header { padding: 0 16px; height: auto; min-height: 56px; flex-wrap: wrap; gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+    .header-logo { font-size: 15px; }
+    .header-right { gap: 10px; }
+    .header-meta { display: none; }
+    .save-btn { padding: 8px 14px; font-size: 10px; }
+    .stats-bar { padding: 14px 16px; gap: 20px; flex-wrap: wrap; }
+    .stat-val { font-size: 20px; }
+    .stat-label { font-size: 10px; }
+    .table-wrap { padding: 0 0 80px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-width: 700px; }
+    thead tr { top: 56px; }
+    th { padding: 14px 10px; font-size: 10px; }
+    td { padding: 12px 10px; font-size: 12px; }
+    .td-name { min-width: 140px; font-size: 13px; }
+    .links-col { min-width: 130px; }
+    .link-btn { padding: 6px 8px; font-size: 10px; }
+    .ratings-col { min-width: 190px; }
+    .rating-select { min-width: 90px; font-size: 11px; padding: 5px 7px; }
+    .rating-key { width: 80px; font-size: 10px; }
+    .modal { width: calc(100% - 24px); max-width: 520px; padding: 24px 18px; max-height: 90vh; overflow-y: auto; }
+  }
+  @media (max-width: 480px) {
+    .header-logo { font-size: 13px; letter-spacing: .1em; }
+    .stats-bar { gap: 14px; }
+    .stat-val { font-size: 18px; }
+    table { min-width: 620px; }
+    .td-name { min-width: 120px; font-size: 12px; }
+    .ratings-col { min-width: 170px; }
+    .rating-select { min-width: 80px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">KIDS<span>.</span></div>
+    <div class="login-sub">Product Research Database</div>
+    <label class="login-label">Access Password</label>
+    <input type="password" class="login-input" id="pwd-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPwd()">
+    <button class="login-btn" onclick="checkPwd()">Enter →</button>
+    <div class="login-error" id="pwd-error">Incorrect password</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header class="header">
+    <div class="header-logo">KIDS<span>.</span></div>
+    <div class="header-right">
+      <span class="saved-msg" id="saved-msg">✓ Saved</span>
+      <button class="save-btn" onclick="saveAll()">Save All</button>
+      <div class="header-meta">200 Products</div>
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-val accent">200</div><div class="stat-label">Total Products</div></div>
+    <div class="stat"><div class="stat-val">Kids</div><div class="stat-label">Category</div></div>
+    <div class="stat"><div class="stat-val" id="stat-rated">0</div><div class="stat-label">Rated</div></div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="product-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Product</th>
+          <th>Cat</th>
+          <th>Supplier Links</th>
+          <th>Viral Ads</th>
+          <th>Competitors</th>
+          <th>Ratings & Notes</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Edit Links</div>
+    <div class="modal-sub" id="modal-sub">—</div>
+    <div class="modal-field">
+      <label class="modal-label">Supplier 1 (Alibaba)</label>
+      <input class="modal-input" id="m-sup1" placeholder="https://alibaba.com/...">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Supplier 2 (Alibaba DS)</label>
+      <input class="modal-input" id="m-sup2" placeholder="https://alibaba.com/...">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Viral Ad 1 (TikTok)</label>
+      <input class="modal-input" id="m-tik" placeholder="https://tiktok.com/...">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Viral Ad 2 (Instagram)</label>
+      <input class="modal-input" id="m-ig" placeholder="https://instagram.com/...">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Facebook Ad Library</label>
+      <input class="modal-input" id="m-fb" placeholder="https://facebook.com/ads/library/...">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Competitor 1</label>
+      <input class="modal-input" id="m-comp1" placeholder="https://...">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Competitor 2</label>
+      <input class="modal-input" id="m-comp2" placeholder="https://...">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-save" onclick="saveModal()">Save Links</button>
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const AI_RATINGS = {
+  // Toys & Play
+  "Magnetic Tiles Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "STEM toy, creative play. Incredible build demo content. Parents love it."},
+  "Sensory Fidget Toy Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Anxiety + focus angle. School-friendly. Strong parent and kid content."},
+  "Kinetic Sand Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Satisfying texture demo = viral. Great sensory play content."},
+  "Slime Making Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "no", "notes": "Massive TikTok trend. Kids love making and showing. Easy demo content."},
+  "Fidget Spinner Pack": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Trend faded. Needs new angle or bundle to compete."},
+  "Pop It Fidget Toy": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Very saturated. New shapes or giant versions may stand out."},
+  "Marble Run Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "STEM + satisfying content. Parents and kids both love it."},
+  "Glow in Dark Stars": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Bedroom decor angle. Bedtime routine. Easy to gift."},
+  "Play Tent Castle": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Indoor play solution. Imagination + space angle. Great UGC."},
+  "Foam Building Blocks": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Safe for toddlers. Motor skills development. Colorful content."},
+  "Wooden Puzzle Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Educational toy. Screen-free play angle. Strong parent appeal."},
+  "Dinosaur Figure Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Dino obsession among kids 3-7. Detail quality = content gold."},
+  "Animal Planet Figures": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Educational + play combo. Nature-loving families."},
+  "Remote Control Car": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Speed + stunt demo = viral. Boys 5-12 strong audience."},
+  "Mini RC Drone": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Tech toy trend. Outdoor demo content highly engaging."},
+  "Bubble Gun Toy": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Endless bubble stream = mesmerizing demo. Outdoor summer toy."},
+  "Water Balloon Pump Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Summer viral product. Fast fill hack = content hook."},
+  "Nerf Compatible Blaster": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Battle play content. Strong boys audience. Repeat purchase ammo."},
+  "Walkie Talkie Kids Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Adventure role play angle. Outdoor + camping appeal."},
+  "Spy Gadget Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Secret agent theme. Unboxing + demo content huge on YouTube."},
+
+  // Arts & Crafts
+  "Shrink Art Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Wow transformation = viral. Before/after shrink very satisfying."},
+  "Diamond Painting Kit Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "ASMR-style video content. Focus activity for rainy days."},
+  "Tie Dye Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Colorful results = shareable content. Summer activity classic."},
+  "Scratch Art Notebook": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Reveal color magic = wow content. Gift appeal very high."},
+  "Perler Bead Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Nostalgia + kids craft. Pixel art trend revival."},
+  "Loom Band Kit": {"value": "notbad", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Trend came and went. Revival possible with new styles."},
+  "Origami Paper Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Focus + creativity. Tutorial content easy to make."},
+  "Watercolor Paint Set Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Art class supplement. Parents buy eagerly. Easy UGC."},
+  "Air Dry Clay Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Sculpting satisfaction = viral. Colorful clay content popular."},
+  "Friendship Bracelet Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Social craft. Taylor Swift fan trend boosted demand."},
+  "Sticker Book Mega Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "High perceived value bundle. Kids obsess over stickers."},
+  "Invisible Ink Pen Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Secret message reveal = wow. Great gift item."},
+  "Glitter Glue Art Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Sparkle appeal for girls. Easy art project content."},
+  "3D Pen Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "3D creation wow factor. Demo videos very engaging."},
+  "Paint by Numbers Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Achievement satisfaction. Focus + calm activity."},
+
+  // Educational
+  "Flash Cards Learning Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Parent purchase. School readiness angle. Easy to bundle."},
+  "Alphabet Puzzle Board": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Early learning essentials. Preschool prep angle."},
+  "Math Manipulatives Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "School supplemental. Homeschool market strong."},
+  "Science Experiment Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Volcano, slime, crystals = viral demo. STEM gift classic."},
+  "Coding Robot Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Future skills positioning. Parent high purchase intent."},
+  "Microscope Kit Junior": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Curiosity + science. Discovery unboxing content huge."},
+  "Telescope Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Space fascination. Moon/stars demo content viral."},
+  "Globe Interactive Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Geography learning. Smart toy appeal for parents."},
+  "Kids Encyclopedia Set": {"value": "notbad", "wow": "notyet", "saturation": "notyet", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Traditional product. Limited online content appeal."},
+  "Sight Words Game": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Reading readiness. Strong school-prep parent market."},
+
+  // Outdoor & Active
+  "Jump Rope Kids": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Commodity. Needs premium LED or trick angle."},
+  "Balance Bike No Pedal": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Pre-bike learning. Parents buy eagerly. Toddler market strong."},
+  "Pogo Stick Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Fun active toy. Trick attempts = viral content."},
+  "Hula Hoop LED Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Glow in dark performance = wow content. Active + fun."},
+  "Kite Flying Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Outdoor family activity. Sky content very visual and appealing."},
+  "Stomp Rocket Launcher": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Launch height demo = wow. Outdoor STEM play."},
+  "Sidewalk Chalk Mega Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Colorful street art. Summer activity classic. Easy UGC."},
+  "Kids Binoculars": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Nature explorer angle. Birdwatching + hiking content."},
+  "Sand Toy Beach Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Summer seasonal peak. Bundle value = high purchase intent."},
+  "Sprinkler Water Toy": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Hot day solution. Kids running through = viral summer content."},
+  "Badminton Set Kids": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Commodity. Needs quality upgrade to differentiate."},
+  "Frisbee Glow Disk": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "LED night play = unique angle. Family activity product."},
+  "Outdoor Obstacle Course": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Backyard fun = high UGC. Active play solution parents want."},
+  "Mini Trampoline Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Indoor active play. Energy burning angle for parents."},
+
+  // Role Play & Dress Up
+  "Doctor Kit Toy": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Role play classic. Kids pretend play content very shareable."},
+  "Kitchen Play Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Imaginative play. Birthday gift classic. Parent approved."},
+  "Tool Belt Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Builder role play. Cute demo with kids = high engagement."},
+  "Princess Dress Up Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Transformation content = viral. Girls 3-8 strong market."},
+  "Superhero Costume Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Hero play + Halloween. Transformation reveal = content gold."},
+  "Grocery Store Play Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Life skills + play. Montessori-aligned = parent trust."},
+  "Cash Register Toy": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Math + pretend play combo. Durable = good reviews."},
+  "Magic Wand Light Up": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Magical effects = wow content. Fantasy role play product."},
+  "Police Officer Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Community helper theme. Role play educational angle."},
+  "Puppet Theater Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Storytelling + performance. Creative play gift idea."},
+
+  // Baby & Toddler
+  "Teething Ring Silicone": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Pain relief solution. Safe material claim. Strong parent market."},
+  "Baby Sensory Gym Mat": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Development milestone angle. Milestone photo content popular."},
+  "Stacking Rings Toy": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Classic first toy. Montessori colors. Easy parenting content."},
+  "Shape Sorter Cube": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Cognitive development toy. Baby fail = cute viral content."},
+  "Baby Bathtub Toy Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Bathtime fun solution. Adorable baby content = shares."},
+  "Musical Toys Baby": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Baby reaction videos = viral. Sound + light combo."},
+  "Soft Book Baby": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "First books category. Crinkle + tactile. Gift staple."},
+  "Baby Push Walker": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "First steps milestone. Parent emotional purchase."},
+  "Montessori Object Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Trending parenting philosophy. Premium natural materials."},
+  "Night Light Projector Baby": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Sleep solution claim. Galaxy ceiling = wow room content."},
+
+  // Books & Storytelling
+  "Personalized Story Book": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Custom name in story = emotional gift. Unboxing very shareable."},
+  "Glow in Dark Story Cards": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Bedtime magic + literacy. Wow reveal in dark = viral."},
+  "Audiobook Player Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Screen-free listening. Parent approved. No algorithm concern."},
+  "Interactive Reading Pen": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Tap-to-read technology = wow demo. Language learning bonus."},
+  "Joke Book Kids": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "no", "notes": "Low ticket. Kids laugh reaction = cute content."},
+
+  // Games & Puzzles
+  "Floor Puzzle Giant": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Family activity. Big visual impact = great content."},
+  "Memory Match Game": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Cognitive development. Classic party game. Easy gift."},
+  "Card Game Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Travel + family game. Laughter content very shareable."},
+  "Bingo Kids Set": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Simple game. Needs themed version to differentiate."},
+  "Magnetic Fishing Game": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Toddler coordination game. Adorable reaction content."},
+  "Tumbling Tower Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Tension build + crash = viral. Oversized version trending."},
+  "Ring Toss Game": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Commodity party game. Needs premium or LED version."},
+  "Escape Room Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Puzzle challenge trend. Family content very engaging."},
+  "Treasure Hunt Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Adventure play. Parents love the setup. Reaction content huge."},
+  "Domino Train Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Chain reaction satisfying video = viral. Patient play reward."},
+
+  // Room & Decor
+  "LED Light Strip Kids Room": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Room transformation = content gold. Kids and teens love it."},
+  "Lava Lamp Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Retro trend revival. Calming sensory item. Aesthetic room content."},
+  "Cloud Night Light": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Fluffy cloud glow aesthetic. Sleep + decor combo."},
+  "Name Wall Letters Wood": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Custom personalized room decor. Gift appeal very high."},
+  "Tepee Tent Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Reading nook + play corner. Aesthetic room content very shareable."},
+  "Glow Star Projector": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Bedroom galaxy ceiling wow. Sleep aid + decor combo."},
+  "Chalkboard Wall Decal": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Creative wall art solution. DIY parent content popular."},
+  "Bookshelf Kids Colorful": {"value": "notbad", "wow": "notyet", "saturation": "notyet", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Functional room item. Needs unique design or IKEA hack angle."},
+
+  // Clothing & Accessories
+  "Light Up Sneakers Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Kids beg for them. Night walk LED content = viral."},
+  "Dinosaur Hoodie Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Spikes on hood = adorable content. Gift purchase strong."},
+  "Glow in Dark PJs": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Reveal in dark = viral moment. Bedtime content very popular."},
+  "Personalized Name Backpack": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Back to school gift. Custom = emotional purchase."},
+  "Superhero Cape Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Hero play dress up. Kids running in cape = cute content."},
+  "Kids Swim Vest Float": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Safety + fun. Pool confidence angle. Parent safety purchase."},
+  "Rain Boots Kids Animal": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Puddle jump = cute content. Seasonal demand spike."},
+  "Sun Hat Kids Wide Brim": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Sun protection. Summer essential. Travel family content."},
+  "Reversible Sequin Bag": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Color flip = wow demo. Girls love it. High impulse buy."},
+  "Kids Apron Chef Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Cooking with kids trend. Adorable mini chef content."},
+
+  // Health & Wellness
+  "Kids Toothbrush Electric": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Dental hygiene concern. Timer + fun design = parent buy."},
+  "Gummy Vitamins Kids": {"value": "good", "wow": "good", "saturation": "yes", "easy": "vgood", "margin": "3x", "unique": "no", "problem": "yes", "notes": "High demand, saturated. Strong brand needed to compete."},
+  "Kids Weighted Blanket": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Anxiety + sleep solution. Sensory need strong market."},
+  "Sleep Sound Machine Baby": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Sleep training solution. Parent purchase intent high."},
+  "Kids Sunscreen SPF 50": {"value": "good", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Safety purchase. Natural/reef-safe angle differentiates."},
+  "Foot Warmer Socks Kids": {"value": "notbad", "wow": "notyet", "saturation": "notyet", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Winter comfort. Low ticket bundle item."},
+  "Eco Lunch Box Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Eco + healthy eating angle. Back to school peak. Bento trend."},
+  "Kids Water Bottle Straw": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Hydration + fun design. Spill-proof claim. Strong parent buy."},
+  "Band Aid Character Pack": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Commodity. IP licensed versions dominate."},
+  "Kids First Aid Kit Cute": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Safety + cute design. Parent gift angle. Travel essential."},
+
+  // Tech & Digital
+  "Kids Tablet Rugged": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Drop-proof + educational. Parent peace of mind purchase."},
+  "Smart Watch Kids GPS": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Safety + independence. Parent tracking feature strong sell."},
+  "Camera for Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Creativity + screen time alternative. Kid photographer content cute."},
+  "Kids Karaoke Microphone": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Performance content = viral. Echo effect = instant wow."},
+  "Projector Kids Portable": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Indoor movie night = experience product. High AOV."},
+  "LED Drawing Tablet Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Light-up art = wow content. Screen-free creative play."},
+  "Kids Alarm Clock Learning": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Independence training. Time learning tool. Back to school."},
+  "Talking Globe Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Interactive geography. Pen-tap learning = demo content."},
+  "Kids MP3 Player": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Screen-free audio. Long car rides solution. Parent approved."},
+  "Color Mixing Science Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Color change = wow demo. Science meets art product."},
+
+  // Party & Gifting
+  "Piñata Kit Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Party essential. Smash reveal = viral birthday content."},
+  "Balloon Arch Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Party decor trend. DIY tutorial = content opportunity."},
+  "Gift Wrapping Kids Theme": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Seasonal demand. Low differentiation without unique design."},
+  "Glow Party Pack": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Blacklight party = wow. Kids glow = incredible content."},
+  "Birthday Crown Set": {"value": "notbad", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Party photo prop. Birthday photo content popular."},
+  "Party Favor Bags Bulk": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Utility purchase. Needs cute theme to differentiate."},
+  "Confetti Cannon Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Celebration pop = instant wow. Gender reveal + party content."},
+  "Photo Booth Props Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Party memory making. Content creation tool for parents."},
+  "Cupcake Decorating Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Baking with kids trend. Colorful results = shareable content."},
+  "Mini Donuts Maker Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Kids cooking appliance. Mini donuts = cute food content."},
+
+  // Subscription & Bundles
+  "Mystery Toy Box Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Unboxing surprise = viral content. Repeat purchase model."},
+  "STEM Activity Box Monthly": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Subscription education model. High LTV parent purchase."},
+  "Kids Craft Supply Bundle": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "All-in-one craft value. Rainy day solution = parent buy."},
+  "Activity Book Bundle": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Travel + screen-free bundle. Road trip essential."},
+  "Sensory Play Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Sensory development + calming. OT-recommended positioning."},
+
+  // Seasonal & Trending
+  "Advent Calendar Kids Toy": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Christmas countdown magic. Daily reveal = 24 content days."},
+  "Easter Basket Filler Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Seasonal peak demand. Bundle value = parent convenience."},
+  "Halloween Costume Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Costume reveal content huge. Seasonal peak = urgency."},
+  "Valentines Cards Kids": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Seasonal utility. Needs cute design to justify purchase."},
+  "Summer Activity Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Boredom buster bundle. Summer break parent purchase."},
+  "Foam Sword Set Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Battle play, safe foam. Reaction content very fun."},
+  "Giant Jenga Outdoor": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Outdoor family game. Tower crash = viral moment."},
+  "Squishy Stress Ball Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Anxiety relief toy. Satisfying squish content."},
+  "Glow in Dark Slime Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "no", "notes": "Glow reveal = viral. Doubles slime + glow trend."},
+  "Mini Bowling Set Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Indoor active game. Strike celebration = cute content."},
+  "Foam Dart Target Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Aim + shoot game. Score reaction content popular."},
+  "Magnetic Drawing Board": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Mess-free drawing. Toddler erase wow. Parent loved."},
+  "Sand Art Bottle Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Color layering = satisfying visual. Gift appeal high."},
+  "Fairy Garden Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Fantasy + nature play. Creative setup content popular."},
+  "Kids Yoga Mat Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Wellness for kids trend. Morning routine content angle."},
+  "Wooden Train Track Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Classic toddler toy. Big track build = satisfying content."},
+  "Water Gun Super Soaker": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Summer battle play. Soak reaction = viral summer content."},
+  "Pop Tube Fidget Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Connect + pop satisfying. Sensory fidget bundle."},
+  "Inflatable Punching Bag Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Energy release toy. Bop back = funny reaction content."},
+  "Dinosaur Dig Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Excavation reveal wow. STEM + dino obsession combo."},
+  "Crystal Growing Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Time-lapse crystal grow = viral. Science gift classic."},
+  "Volcano Science Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Eruption demo = instant viral. STEM classic."},
+  "Mosaic Sticker Art Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Peel reveal = satisfying content. No mess craft."},
+  "Kids Sewing Kit Beginner": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Life skill craft. Finished plush = proud kid content."},
+  "Beeswax Candle Kit Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Safe craft gift. Natural material angle. Roll reveal content."},
+  "Solar System Model Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Space fascination. Room display + STEM education."},
+  "Weather Station Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Real data reading = wow. Mini scientist content."},
+  "Insect Observation Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Nature curiosity angle. Bug magnifier = cool content."},
+  "Grow Your Own Plant Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Responsibility + nature. Sprout time-lapse very popular."},
+  "Periscope Spy Toy": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "See-around-corners wow. Spy play popular with kids 6-10."},
+  "Marble Maze Puzzle Board": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Tilt maze challenge = engaging content. Focus toy."},
+  "Giant Coloring Poster": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Wall-sized art = impressive result. Group activity content."},
+  "Tangram Puzzle Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Ancient shape puzzle. Brain teaser + STEM toy."},
+  "Kids Archery Set Foam": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Safe foam tips. Bullseye reaction = great content."},
+  "Snow Making Kit Indoor": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Instant snow reaction = viral. Holiday gift hit."},
+  "Glow in Dark Paint Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Paint + reveal in dark = wow. Art meets science."},
+  "Kids Pottery Wheel": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Spinning clay = satisfying ASMR content. Creative gift."},
+  "Acrylic Paint Set Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Art class at home. Canvas result = shareable content."},
+  "Wooden Art Easel Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Artist setup = cute content. Dual whiteboard + blackboard."},
+  "Stamp Set Kids Mega": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Color + stamp play. Pattern reveal = easy content."},
+  "Foam Clay Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Lightweight squishy clay. Fluffy texture = ASMR content."},
+  "Resin Art Kit Kids Safe": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Safe water-based resin. Swirl result = stunning visual."},
+  "Number Tracing Board": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Pre-school writing skill. Reusable wipe-clean angle."},
+  "Kids Cash Counting Game": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Financial literacy toy. Life skills angle parents love."},
+  "Suction Cup Dart Gun": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Stick to any surface = wow. Indoor target game."},
+  "Geoboard Math Toy": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Shape + math learning. Homeschool Montessori market."},
+  "Wooden Abacus Kids": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Classic counting tool. Montessori angle. Desk decor."},
+  "Kids Kaleidoscope": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Color pattern magic = wow. Simple sensory visual toy."},
+  "Pinball Machine Kids": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Retro arcade at home. Score chasing content fun."},
+  "Dinosaur Egg Hatch Toy": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Hatch reveal = viral. Dino obsession + surprise unbox."},
+  "Kids Hammock Outdoor": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Outdoor chill spot. Reading nook + adventure angle."},
+  "Emoji Pillow Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Room decor + play. Expressive cushion kids love."},
+  "Kids Backpack Sprout": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Unique design backpack. Back to school gift angle."},
+  "Felt Board Story Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Storytelling + literacy. Screen-free imaginative play."}
+};
+
+const PASSWORD = "2631DropKids";
+
+const PRODUCTS = [
+  "Magnetic Tiles Set","Sensory Fidget Toy Set","Kinetic Sand Kit",
+  "Slime Making Kit","Fidget Spinner Pack","Pop It Fidget Toy",
+  "Marble Run Set","Glow in Dark Stars","Play Tent Castle",
+  "Foam Building Blocks","Wooden Puzzle Set","Dinosaur Figure Set",
+  "Animal Planet Figures","Remote Control Car","Mini RC Drone",
+  "Bubble Gun Toy","Water Balloon Pump Kit","Nerf Compatible Blaster",
+  "Walkie Talkie Kids Set","Spy Gadget Kit",
+  "Shrink Art Kit","Diamond Painting Kit Kids","Tie Dye Kit",
+  "Scratch Art Notebook","Perler Bead Set","Loom Band Kit",
+  "Origami Paper Kit","Watercolor Paint Set Kids","Air Dry Clay Set",
+  "Friendship Bracelet Kit","Sticker Book Mega Set","Invisible Ink Pen Set",
+  "Glitter Glue Art Kit","3D Pen Kids","Paint by Numbers Kids",
+  "Flash Cards Learning Set","Alphabet Puzzle Board","Math Manipulatives Kit",
+  "Science Experiment Kit","Coding Robot Kids","Microscope Kit Junior",
+  "Telescope Kids","Globe Interactive Kids","Kids Encyclopedia Set",
+  "Sight Words Game",
+  "Jump Rope Kids","Balance Bike No Pedal","Pogo Stick Kids",
+  "Hula Hoop LED Kids","Kite Flying Set","Stomp Rocket Launcher",
+  "Sidewalk Chalk Mega Set","Kids Binoculars","Sand Toy Beach Set",
+  "Sprinkler Water Toy","Badminton Set Kids","Frisbee Glow Disk",
+  "Outdoor Obstacle Course","Mini Trampoline Kids",
+  "Doctor Kit Toy","Kitchen Play Set","Tool Belt Kids",
+  "Princess Dress Up Set","Superhero Costume Kids","Grocery Store Play Set",
+  "Cash Register Toy","Magic Wand Light Up","Police Officer Kit",
+  "Puppet Theater Set",
+  "Teething Ring Silicone","Baby Sensory Gym Mat","Stacking Rings Toy",
+  "Shape Sorter Cube","Baby Bathtub Toy Set","Musical Toys Baby",
+  "Soft Book Baby","Baby Push Walker","Montessori Object Set",
+  "Night Light Projector Baby",
+  "Personalized Story Book","Glow in Dark Story Cards","Audiobook Player Kids",
+  "Interactive Reading Pen","Joke Book Kids",
+  "Floor Puzzle Giant","Memory Match Game","Card Game Kids",
+  "Bingo Kids Set","Magnetic Fishing Game","Tumbling Tower Kids",
+  "Ring Toss Game","Escape Room Kids","Treasure Hunt Kit",
+  "Domino Train Set",
+  "LED Light Strip Kids Room","Lava Lamp Kids","Cloud Night Light",
+  "Name Wall Letters Wood","Tepee Tent Kids","Glow Star Projector",
+  "Chalkboard Wall Decal","Bookshelf Kids Colorful",
+  "Light Up Sneakers Kids","Dinosaur Hoodie Kids","Glow in Dark PJs",
+  "Personalized Name Backpack","Superhero Cape Set","Kids Swim Vest Float",
+  "Rain Boots Kids Animal","Sun Hat Kids Wide Brim","Reversible Sequin Bag",
+  "Kids Apron Chef Set",
+  "Kids Toothbrush Electric","Gummy Vitamins Kids","Kids Weighted Blanket",
+  "Sleep Sound Machine Baby","Kids Sunscreen SPF 50","Foot Warmer Socks Kids",
+  "Eco Lunch Box Kids","Kids Water Bottle Straw","Band Aid Character Pack",
+  "Kids First Aid Kit Cute",
+  "Kids Tablet Rugged","Smart Watch Kids GPS","Camera for Kids",
+  "Kids Karaoke Microphone","Projector Kids Portable","LED Drawing Tablet Kids",
+  "Kids Alarm Clock Learning","Talking Globe Kids","Kids MP3 Player",
+  "Color Mixing Science Kit",
+  "Piñata Kit Kids","Balloon Arch Kit","Gift Wrapping Kids Theme",
+  "Glow Party Pack","Birthday Crown Set","Party Favor Bags Bulk",
+  "Confetti Cannon Set","Photo Booth Props Kids","Cupcake Decorating Kit",
+  "Mini Donuts Maker Kids",
+  "Mystery Toy Box Kids","STEM Activity Box Monthly","Kids Craft Supply Bundle",
+  "Activity Book Bundle","Sensory Play Kit",
+  "Advent Calendar Kids Toy","Easter Basket Filler Set","Halloween Costume Kids",
+  "Valentines Cards Kids","Summer Activity Kit",
+  "Foam Sword Set Kids","Giant Jenga Outdoor","Squishy Stress Ball Kids",
+  "Glow in Dark Slime Kit","Mini Bowling Set Kids","Foam Dart Target Set",
+  "Magnetic Drawing Board","Sand Art Bottle Kit","Fairy Garden Kit",
+  "Kids Yoga Mat Set","Wooden Train Track Set","Water Gun Super Soaker",
+  "Pop Tube Fidget Set","Inflatable Punching Bag Kids","Dinosaur Dig Kit",
+  "Crystal Growing Kit","Volcano Science Kit","Mosaic Sticker Art Kit",
+  "Kids Sewing Kit Beginner","Beeswax Candle Kit Kids","Solar System Model Kit",
+  "Weather Station Kids","Insect Observation Kit","Grow Your Own Plant Kit",
+  "Periscope Spy Toy","Marble Maze Puzzle Board","Giant Coloring Poster",
+  "Tangram Puzzle Set","Kids Archery Set Foam","Snow Making Kit Indoor",
+  "Glow in Dark Paint Set","Kids Pottery Wheel","Acrylic Paint Set Kids",
+  "Wooden Art Easel Kids","Stamp Set Kids Mega","Foam Clay Kit",
+  "Resin Art Kit Kids Safe","Number Tracing Board","Kids Cash Counting Game",
+  "Suction Cup Dart Gun","Geoboard Math Toy","Wooden Abacus Kids",
+  "Kids Kaleidoscope","Pinball Machine Kids","Dinosaur Egg Hatch Toy",
+  "Kids Hammock Outdoor","Emoji Pillow Set","Felt Board Story Set"
+];
+
+// State
+let data = {};
+let editingIdx = null;
+
+function defaultLinks(name) {
+  const p = name.replace(/ /g,'+'), q = encodeURIComponent(name);
+  return {
+    sup1:  `https://www.alibaba.com/trade/search?SearchText=${p}&IndexArea=product_en`,
+    sup2:  `https://www.alibaba.com/trade/search?SearchText=${p}+dropshipping&IndexArea=product_en`,
+    tik:   `https://www.tiktok.com/search?q=${q}`,
+    ig:    `https://www.instagram.com/explore/search/keyword/?q=${q}`,
+    fb:    `https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&q=${p}&search_type=keyword_unordered`,
+    comp1: `https://www.amazon.com/s?k=${p}`,
+    comp2: ``
+  };
+}
+
+function defaultRatings(name) {
+  const r = AI_RATINGS[name];
+  if (r) return { valueInfo:'', value:r.value||'', wow:r.wow||'', saturation:r.saturation||'', easy:r.easy||'', margin:r.margin||'', unique:r.unique||'', problem:r.problem||'', notes:'' };
+  return { valueInfo:'', value:'', wow:'', saturation:'', easy:'', margin:'', unique:'', problem:'', notes:'' };
+}
+
+function initData() {
+  const saved = localStorage.getItem('kids_research_v1');
+  if (saved) { try { data = JSON.parse(saved); } catch(e) { data = {}; } }
+  PRODUCTS.forEach((name, i) => {
+    if (!data[i]) data[i] = { links: defaultLinks(name), ratings: defaultRatings(name) };
+    if (!data[i].links) data[i].links = defaultLinks(name);
+    const L = data[i].links;
+    if (!('comp1' in L)) {
+      L.comp1 = L.amz || '';
+      L.comp2 = '';
+      delete L.amz;
+    }
+    if (!data[i].ratings) data[i].ratings = defaultRatings(name);
+    if (data[i].ratings.valueInfo === undefined) data[i].ratings.valueInfo = '';
+  });
+}
+
+function saveAll() {
+  localStorage.setItem('kids_research_v1', JSON.stringify(data));
+  const msg = document.getElementById('saved-msg');
+  msg.style.opacity = '1';
+  setTimeout(() => msg.style.opacity = '0', 2000);
+  updateStats();
+}
+
+function updateStats() {
+  let rated = 0;
+  PRODUCTS.forEach((_, i) => {
+    const r = data[i].ratings;
+    if (r.value || r.wow || r.margin) rated++;
+  });
+  document.getElementById('stat-rated').textContent = rated;
+}
+
+// Rating options
+const RATING_OPTS = {
+  value:      [['','—'],['good','Good'],['notbad','Not Bad'],['bad','Bad']],
+  wow:        [['','—'],['wow','Wow'],['good','Good'],['notyet','Not Yet']],
+  saturation: [['','—'],['yes','Yes'],['no','No'],['notyet','Not Yet']],
+  easy:       [['','—'],['vgood','Very Good'],['good','Good'],['notbad','Not Bad']],
+  margin:     [['','—'],['3x','3x'],['5x','5x']],
+  unique:     [['','—'],['yes','Yes'],['no','No']],
+  problem:    [['','—'],['yes','Yes'],['no','No']],
+};
+
+const RATING_LABELS = {
+  value:'Value', wow:'Wow Factor', saturation:'Saturation',
+  easy:'Easy Mkt', margin:'Margin', unique:'Unique', problem:'Problem'
+};
+
+function valClass(key, val) {
+  if (!val) return '';
+  const map = { good:'val-good', wow:'val-wow', notbad:'val-notbad', bad:'val-bad',
+    yes:'val-yes', no:'val-no', notyet:'val-notyet', vgood:'val-vgood',
+    '3x':'val-3x', '5x':'val-5x' };
+  return map[val] || '';
+}
+
+function renderTable() {
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = PRODUCTS.map((name, i) => {
+    const L = data[i].links;
+    const R = data[i].ratings;
+
+    const linkBtn = (cls, label, href) =>
+      `<a class="link-btn ${cls}" href="${href}" target="_blank"><span class="dot"></span>${label}</a>`;
+
+    const ratings = Object.keys(RATING_OPTS).map(key => {
+      const opts = RATING_OPTS[key].map(([v,l]) =>
+        `<option value="${v}" ${R[key]===v?'selected':''}>${l}</option>`).join('');
+      const cls = valClass(key, R[key]);
+      return `<div class="rating-row">
+        <span class="rating-key">${RATING_LABELS[key]}</span>
+        <select class="rating-select ${cls}" onchange="updateRating(${i},'${key}',this)" data-key="${key}">
+          ${opts}
+        </select>
+      </div>`;
+    }).join('');
+    const valueInfoHtml = `<div class="value-info-wrap">
+      <span class="rating-key" style="font-size:10px;color:#666;margin-bottom:5px;display:block;letter-spacing:.1em;text-transform:uppercase;">Value Info</span>
+      <textarea class="notes-input value-info-input" placeholder="Энэ хэсэгт та тухай барааг судлаад үнэ цэнийг нь тодорхойлж бичнэ..." onchange="updateValueInfo(${i},this)">${R.valueInfo||''}</textarea>
+    </div>`;
+
+    return `<tr id="row-${i}">
+      <td class="td-num">${String(i+1).padStart(3,'0')}</td>
+      <td class="td-name">${name}</td>
+      <td><span class="td-cat">Kids</span></td>
+      <td>
+        <div class="links-col">
+          <div class="link-row">
+            <div class="link-wrap">
+              ${linkBtn('ali','ALI·1',L.sup1)}
+              <button class="edit-btn" onclick="openModal(${i})" title="Edit links">✎</button>
+            </div>
+            ${linkBtn('ali','ALI·2',L.sup2)}
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="links-col">
+          <div class="link-row">
+            ${linkBtn('tik','TIK',L.tik)}
+            ${linkBtn('ig','IG',L.ig)}
+            ${linkBtn('fb','FB',L.fb)}
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="links-col">
+          <div class="link-row">
+            ${L.comp1 ? linkBtn('amz','COMP·1',L.comp1) : '<span class="no-link">—</span>'}
+            ${L.comp2 ? linkBtn('amz','COMP·2',L.comp2) : `<button class="add-link-btn" onclick="openModal(${i})">+ COMP·2</button>`}
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="ratings-col">
+          ${valueInfoHtml}
+          ${ratings}
+          <textarea class="notes-input" placeholder="Notes..." onchange="updateNotes(${i},this)">${R.notes||''}</textarea>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+  updateStats();
+}
+
+function updateRating(idx, key, sel) {
+  const val = sel.value;
+  data[idx].ratings[key] = val;
+  sel.className = `rating-select ${valClass(key, val)}`;
+  saveAll();
+}
+
+function updateValueInfo(idx, el) {
+  data[idx].ratings.valueInfo = el.value;
+  saveAll();
+}
+
+function updateNotes(idx, el) {
+  data[idx].ratings.notes = el.value;
+  saveAll();
+}
+
+// Modal
+function openModal(idx) {
+  editingIdx = idx;
+  const L = data[idx].links;
+  document.getElementById('modal-title').textContent = `Edit Links — ${PRODUCTS[idx]}`;
+  document.getElementById('modal-sub').textContent = `#${String(idx+1).padStart(3,'0')} · Kids`;
+  document.getElementById('m-sup1').value = L.sup1 || '';
+  document.getElementById('m-sup2').value = L.sup2 || '';
+  document.getElementById('m-tik').value  = L.tik  || '';
+  document.getElementById('m-ig').value   = L.ig   || '';
+  document.getElementById('m-fb').value   = L.fb   || '';
+  document.getElementById('m-comp1').value = L.comp1 || '';
+  document.getElementById('m-comp2').value = L.comp2 || '';
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  editingIdx = null;
+}
+
+function saveModal() {
+  if (editingIdx === null) return;
+  data[editingIdx].links = {
+    sup1: document.getElementById('m-sup1').value,
+    sup2: document.getElementById('m-sup2').value,
+    tik:  document.getElementById('m-tik').value,
+    ig:   document.getElementById('m-ig').value,
+    fb:   document.getElementById('m-fb').value,
+    comp1: document.getElementById('m-comp1').value,
+    comp2: document.getElementById('m-comp2').value,
+  };
+  saveAll();
+  const row = document.getElementById(`row-${editingIdx}`);
+  const tmp = document.createElement('tbody');
+  tmp.innerHTML = (() => {
+    const i = editingIdx, name = PRODUCTS[i];
+    const L = data[i].links, R = data[i].ratings;
+    const linkBtn = (cls,label,href) => `<a class="link-btn ${cls}" href="${href}" target="_blank"><span class="dot"></span>${label}</a>`;
+    return `<tr id="row-${i}">
+      <td class="td-num">${String(i+1).padStart(3,'0')}</td>
+      <td class="td-name">${name}</td>
+      <td><span class="td-cat">Kids</span></td>
+      <td><div class="links-col"><div class="link-row">
+        <div class="link-wrap">${linkBtn('ali','ALI·1',L.sup1)}<button class="edit-btn" onclick="openModal(${i})" title="Edit links">✎</button></div>
+        ${linkBtn('ali','ALI·2',L.sup2)}</div></div></td>
+      <td><div class="links-col"><div class="link-row">
+        ${linkBtn('tik','TIK',L.tik)}${linkBtn('ig','IG',L.ig)}${linkBtn('fb','FB',L.fb)}
+        </div></div></td>
+      <td><div class="links-col"><div class="link-row">
+        ${L.comp1?linkBtn('amz','COMP·1',L.comp1):'<span class="no-link">—</span>'}
+        ${L.comp2?linkBtn('amz','COMP·2',L.comp2):`<button class="add-link-btn" onclick="openModal(${i})">+ COMP·2</button>`}
+        </div></div></td>
+      <td><div class="ratings-col">
+        <div class="value-info-wrap">
+          <span class="rating-key" style="font-size:10px;color:#666;margin-bottom:5px;display:block;letter-spacing:.1em;text-transform:uppercase;">Value Info</span>
+          <textarea class="notes-input value-info-input" placeholder="Энэ хэсэгт та тухай барааг судлаад үнэ цэнийг нь тодорхойлж бичнэ..." onchange="updateValueInfo(${i},this)">${R.valueInfo||''}</textarea>
+        </div>
+        ${Object.keys(RATING_OPTS).map(key => {
+          const opts = RATING_OPTS[key].map(([v,l]) => `<option value="${v}" ${R[key]===v?'selected':''}>${l}</option>`).join('');
+          return `<div class="rating-row"><span class="rating-key">${RATING_LABELS[key]}</span>
+            <select class="rating-select ${valClass(key,R[key])}" onchange="updateRating(${i},'${key}',this)">${opts}</select></div>`;
+        }).join('')}
+        <textarea class="notes-input" placeholder="Notes..." onchange="updateNotes(${i},this)">${R.notes||''}</textarea>
+      </div></td>
+    </tr>`;
+  })();
+  row.parentNode.replaceChild(tmp.firstChild, row);
+  closeModal();
+}
+
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Password
+function checkPwd() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === PASSWORD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initData();
+    renderTable();
+  } else {
+    const err = document.getElementById('pwd-error');
+    err.style.display = 'block';
+    document.getElementById('pwd-input').style.borderColor = '#ff4444';
+    setTimeout(() => { err.style.display='none'; document.getElementById('pwd-input').style.borderColor=''; }, 2000);
+  }
+}
+document.getElementById('pwd-input').addEventListener('keydown', e => { if(e.key==='Enter') checkPwd(); });
+</script>
+</body>
+</html>

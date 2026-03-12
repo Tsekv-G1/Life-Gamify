@@ -806,11 +806,12 @@ body{background:var(--bg);color:var(--tx);font-family:var(--fn);font-size:15px;l
 </div>
 
 <!-- CUSTOM SCRIPT MODAL -->
-<div class="modal-bg" id="modal-bg" onclick="if(event.target===this)closeModal()">
+<div class="modal-bg" id="modal-bg" onclick="if(event.target===this)tryCloseModal()">
   <div class="modal">
     <div class="modal-head">
       <div class="modal-title" id="modal-title-txt">✏️ Шинэ Script нэмэх</div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <span id="autosave-status" style="font-family:var(--mo);font-size:9px;color:var(--mt);margin-left:8px"></span>
+      <button class="modal-close" onclick="tryCloseModal()">✕</button>
     </div>
     <div class="modal-body">
       <div class="mf">
@@ -827,15 +828,15 @@ body{background:var(--bg);color:var(--tx);font-family:var(--fn);font-size:15px;l
           <button class="mcb" id="mcb-custom" onclick="selCat('custom')" style="border-color:var(--acc);background:rgba(200,255,0,.1);color:var(--acc)">⭐ Өөрийн</button>
         </div>
       </div>
-      <div class="mf"><div class="ml">Hook (эхний 3 секунд) <span>*</span></div><input class="mi" id="m-hook" placeholder="жнь: Яагаад ихэнх хүн routine тогтоод байна гэж?" /></div>
-      <div class="mf"><div class="ml">Нэмэлт Hook-үүд <span style="color:var(--mt);font-size:10px">(нэг мөрт нэг hook)</span></div><textarea class="mta" id="m-hooks" placeholder="жнь:&#10;Энэ 1 зүйл амьдралыг өөрчилнэ&#10;30 секундэд ойлгоно уу?" style="min-height:80px"></textarea></div>
-      <div class="mf"><div class="ml">Бие (script-ийн үндсэн хэсэг) <span>*</span></div><textarea class="mta" id="m-body" placeholder="Script-ийн дэлгэрэнгүй агуулга..." style="min-height:120px"></textarea></div>
-      <div class="mf"><div class="ml">Итгүүлэх өгүүлбэр</div><input class="mi" id="m-convince" placeholder="жнь: Систем байхгүй бол цаг дэмий үрэгдэнэ." /></div>
-      <div class="mf"><div class="ml">CTA (дуудлага)</div><input class="mi" id="m-cta" placeholder="жнь: 9,900₮ · Bio дахь линк" /></div>
-      <div class="mf"><div class="ml">Тэг <span style="color:var(--mt);font-size:10px">(таслалаар тусгаарла)</span></div><input class="mi" id="m-tags" placeholder="жнь: routine, productivity, streak" /></div>
+      <div class="mf"><div class="ml">Hook (эхний 3 секунд) <span>*</span></div><input class="mi" id="m-hook" oninput="markDirty()" placeholder="жнь: Яагаад ихэнх хүн routine тогтоод байна гэж?" /></div>
+      <div class="mf"><div class="ml">Нэмэлт Hook-үүд <span style="color:var(--mt);font-size:10px">(нэг мөрт нэг hook)</span></div><textarea class="mta" id="m-hooks" oninput="markDirty()" placeholder="жнь:&#10;Энэ 1 зүйл амьдралыг өөрчилнэ&#10;30 секундэд ойлгоно уу?" style="min-height:80px"></textarea></div>
+      <div class="mf"><div class="ml">Бие (script-ийн үндсэн хэсэг) <span>*</span></div><textarea class="mta" id="m-body" oninput="markDirty()" placeholder="Script-ийн дэлгэрэнгүй агуулга..." style="min-height:120px"></textarea></div>
+      <div class="mf"><div class="ml">Итгүүлэх өгүүлбэр</div><input class="mi" id="m-convince" oninput="markDirty()" placeholder="жнь: Систем байхгүй бол цаг дэмий үрэгдэнэ." /></div>
+      <div class="mf"><div class="ml">CTA (дуудлага)</div><input class="mi" id="m-cta" oninput="markDirty()" placeholder="жнь: 9,900₮ · Bio дахь линк" /></div>
+      <div class="mf"><div class="ml">Тэг <span style="color:var(--mt);font-size:10px">(таслалаар тусгаарла)</span></div><input class="mi" id="m-tags" oninput="markDirty()" placeholder="жнь: routine, productivity, streak" /></div>
     </div>
     <div class="modal-acts">
-      <button class="mbtn mbtn-cancel" onclick="closeModal()">Болих</button>
+      <button class="mbtn mbtn-cancel" onclick="tryCloseModal()">Болих</button>
       <button class="mbtn mbtn-save" onclick="saveCustom()">Хадгалах</button>
     </div>
   </div>
@@ -1642,7 +1643,60 @@ function openModal(editId){
   bg.classList.add('op');
   document.getElementById('m-hook').focus();
 }
-function closeModal(){document.getElementById('modal-bg').classList.remove('op');}
+let modalDirty=false;
+let autoSaveTimer=null;
+
+function closeModal(){
+  document.getElementById('modal-bg').classList.remove('op');
+  modalDirty=false;
+  clearTimeout(autoSaveTimer);
+  document.getElementById('autosave-status').textContent='';
+}
+
+function tryCloseModal(){
+  if(modalDirty){
+    if(confirm('Хадгалаагүй өөрчлөлт байна. Хадгалах уу?')){
+      saveCustom();
+    } else {
+      closeModal();
+    }
+  } else {
+    closeModal();
+  }
+}
+
+function markDirty(){
+  modalDirty=true;
+  document.getElementById('autosave-status').textContent='● Хадгалагдаагүй';
+  document.getElementById('autosave-status').style.color='var(--warn)';
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer=setTimeout(()=>{
+    autoSaveCustom();
+  },1500);
+}
+
+function autoSaveCustom(){
+  const hook=document.getElementById('m-hook').value.trim();
+  if(!hook)return;
+  const hooks=document.getElementById('m-hooks').value.trim().split('\n').filter(Boolean);
+  const body=document.getElementById('m-body').value.trim();
+  const convince=document.getElementById('m-convince').value.trim();
+  const cta=document.getElementById('m-cta').value.trim();
+  const tags=document.getElementById('m-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  if(editingId){
+    const idx=CUSTOM.findIndex(c=>c.id===editingId);
+    if(idx>-1)CUSTOM[idx]={...CUSTOM[idx],hook,hooks,body,convince,cta,tags,cat:editingCat};
+  } else {
+    // Create temp draft
+    const draftId='draft_'+Date.now();
+    editingId=draftId;
+    CUSTOM.push({id:draftId,hook,hooks,body,convince,cta,tags,cat:editingCat});
+  }
+  saveCustomData();
+  document.getElementById('autosave-status').textContent='✓ Автомат хадгалагдлаа';
+  document.getElementById('autosave-status').style.color='var(--good)';
+  modalDirty=false;
+}
 
 function selCat(cat){
   editingCat=cat;

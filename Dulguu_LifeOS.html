@@ -20,7 +20,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg)}
 body{color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
 
 /* ── LAYOUT ── */
-.shell{display:grid;grid-template-columns:220px 1fr;height:100vh;overflow:hidden}
+.shell{display:grid;grid-template-columns:220px 1fr;height:100vh;height:calc(var(--vh,1vh)*100);overflow:hidden}
 @media(max-width:768px){.shell{grid-template-columns:1fr;grid-template-rows:1fr auto}}
 
 /* ── SIDEBAR ── */
@@ -61,11 +61,11 @@ body{color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;-w
 .nav-item.done .nav-check{opacity:1}
 
 /* ── MAIN ── */
-.main{display:flex;flex-direction:column;overflow:hidden;height:100vh}
-@media(max-width:768px){.main{height:calc(100vh - 68px)}}
+.main{display:flex;flex-direction:column;overflow:hidden;height:100vh;height:calc(var(--vh,1vh)*100)}
+@media(max-width:768px){.main{height:calc(100vh - 68px);height:calc(calc(var(--vh,1vh)*100) - 68px)}}
 
 /* Topbar */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px 12px;border-bottom:1px solid var(--b1);background:var(--bg);flex-shrink:0;gap:12px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;border-bottom:1px solid var(--b1);background:var(--bg);flex-shrink:0;gap:12px}
 .topbar-left{min-width:0;flex:1}
 .page-title{font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--white);line-height:1}
 .page-title span{color:var(--dim);font-weight:400}
@@ -76,7 +76,7 @@ body{color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;-w
 .day-xp{background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);color:var(--gold);font-size:12px;font-family:var(--mono);font-weight:700;padding:5px 12px;border-radius:20px;white-space:nowrap}
 
 /* Tabs */
-.tabs{display:flex;gap:0;padding:0 28px;border-bottom:1px solid var(--b1);background:var(--bg);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.tabs{display:flex;gap:0;padding:0 16px;border-bottom:1px solid var(--b1);background:var(--bg);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{padding:10px 16px;font-size:12px;font-weight:700;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.08em;text-transform:uppercase;transition:all .12s;white-space:nowrap;user-select:none}
 .tab:hover{color:var(--text)}
@@ -88,12 +88,12 @@ body{color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;-w
 .scroll-area::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
 
 /* Tab panels */
-.tab-panel{display:none;padding:20px 28px 80px;animation:fadeUp .2s ease}
+.tab-panel{display:none;padding:16px 16px 90px;animation:fadeUp .2s ease}
 .tab-panel.active{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* ── CALENDAR STRIP ── */
-.cal-strip{display:flex;gap:4px;padding:12px 28px;border-bottom:1px solid var(--b1);background:var(--s1);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.cal-strip{display:flex;gap:4px;padding:10px 16px;border-bottom:1px solid var(--b1);background:var(--s1);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
 .cal-strip::-webkit-scrollbar{display:none}
 .cal-day{flex-shrink:0;width:36px;display:flex;flex-direction:column;align-items:center;padding:6px 4px;border-radius:8px;cursor:pointer;transition:all .15s;border:1px solid transparent;position:relative}
 .cal-day:hover{background:rgba(255,255,255,.04)}
@@ -665,6 +665,15 @@ input,select,textarea{color-scheme:dark}
 </div>
 
 <script>
+// iOS Safari viewport height fix
+(function() {
+  function setVH() {
+    var vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', vh + 'px');
+  }
+  setVH();
+  window.addEventListener('resize', setVH);
+})();
 // ══════════════════════════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════════════════════════
@@ -1634,7 +1643,7 @@ function buildEditorList() {
   const tl = JSON.parse(JSON.stringify(getTimeline(editorDay)));
   let html = '';
   tl.forEach((ev,ei) => {
-    const catOpts = ['c-sleep','c-deep','c-work','c-train','c-rest','c-food','c-transit'].map(c=>`<option value="${c}"${ev.cat===c?' selected':''}>${c.replace('c-','')}</option>`).join('');
+    const catOpts = ['c-sleep','c-deep','c-work','c-train','c-rest','c-food','c-transit','c-lang'].map(c=>`<option value="${c}"${ev.cat===c?' selected':''}>${c.replace('c-','')}</option>`).join('');
     html += `<div class="editor-item" draggable="true" data-idx="${ei}" ondragstart="edDragStart(event)" ondragover="edDragOver(event)" ondragleave="edDragLeave(event)" ondrop="edDrop(event)">
       <div class="editor-drag-handle">⠿</div>
       <div class="editor-item-body">
@@ -1660,7 +1669,7 @@ function edUpdate(idx, field, val) {
   if (tl[idx]) {
     tl[idx][field] = val;
     // Update catName
-    const catMap = {'c-sleep':'Нойр/Сэрэх','c-deep':'Deep Work','c-work':'Ажил','c-train':'Дасгал','c-rest':'Амралт','c-food':'Хоол','c-transit':'Тээвэр'};
+    const catMap = {'c-sleep':'Нойр/Сэрэх','c-deep':'Deep Work','c-work':'Ажил','c-train':'Дасгал','c-rest':'Амралт','c-food':'Хоол','c-transit':'Тээвэр','c-lang':'Хятад хэл'};
     if (field === 'cat') tl[idx].catName = catMap[val]||val;
     saveState();
     showSaveBanner();
@@ -1912,7 +1921,7 @@ function closeQuote() {
 // ══════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', () => { try {
   // Build all day panels
   for (let di=0;di<7;di++) buildDayPanel(di);
   // Build mobile nav
@@ -1955,6 +1964,11 @@ window.addEventListener('DOMContentLoaded', () => {
         else if (diff<0&&currentDay>0) showDay(currentDay-1);
       }
     },{passive:true});
+  }
+  } catch(e) {
+    console.error('Init error:', e);
+    const scr = document.getElementById('mainScroll');
+    if (scr) scr.innerHTML = '<div style="color:#ff5f4a;padding:30px 20px;font-family:monospace;font-size:13px"><b>Алдаа гарлаа:</b><br>' + e.message + '</div>';
   }
 });
 </script>

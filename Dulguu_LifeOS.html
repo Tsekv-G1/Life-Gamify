@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Routine OS v3 — Dulguu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05050a;--s1:#0a0a12;--s2:#0f0f1a;--s3:#161624;
+  --b1:#1e1e30;--b2:#282840;--b3:#32325a;
+  --text:#d4d4f0;--dim:#6e6e9a;--faint:#3a3a5c;--white:#f0f0ff;
+  --blue:#5b8fff;--orange:#f5a623;--red:#ff5f4a;--green:#3ecf8e;
+  --gold:#ffd700;--purple:#9b8df5;--teal:#4ecdc4;--pink:#ff6b9d;
+  --r:10px;--font:'Syne',sans-serif;--mono:'DM Mono',monospace;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.shell{display:grid;grid-template-columns:220px 1fr;height:100vh;overflow:hidden}
+@media(max-width:768px){.shell{grid-template-columns:1fr;grid-template-rows:1fr auto}}
+.sidebar{background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden;height:100vh;position:relative}
+@media(max-width:768px){.sidebar{display:none}}
+.sidebar-scroll{flex:1;overflow-y:auto;scrollbar-width:none}
+.sidebar-scroll::-webkit-scrollbar{display:none}
+.sidebar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none;z-index:10}
+.brand{padding:18px 16px 14px;border-bottom:1px solid var(--b1)}
+.brand-logo{font-size:13px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--white);display:flex;align-items:center;gap:6px}
+.brand-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px var(--blue);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.brand-sub{font-size:11px;color:var(--dim);letter-spacing:.08em;margin-top:3px;font-family:var(--mono)}
+.xp-block{padding:12px 16px;border-bottom:1px solid var(--b1)}
+.xp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.xp-lvl{font-size:12px;font-weight:700;color:var(--green);font-family:var(--mono);letter-spacing:.04em}
+.xp-pts{font-size:11px;color:var(--dim);font-family:var(--mono)}
+.xp-track{height:3px;background:var(--b2);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--green),#5fffb0);border-radius:3px;transition:width .8s cubic-bezier(.34,1.56,.64,1)}
+.xp-bottom{display:flex;justify-content:space-between;margin-top:6px}
+.streak-pill{display:flex;align-items:center;gap:4px;font-size:11px;font-family:var(--mono);font-weight:700;color:var(--orange)}
+.week-pill{font-size:11px;color:var(--dim);font-family:var(--mono)}
+.freeze-btn{margin-top:8px;font-size:10px;font-family:var(--mono);color:var(--teal);background:rgba(78,205,196,.08);border:1px solid rgba(78,205,196,.2);border-radius:5px;padding:4px 10px;cursor:pointer;transition:all .15s;text-align:center}
+.freeze-btn:hover{background:rgba(78,205,196,.15)}
+.nav-group{padding:8px 0}
+.nav-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);padding:0 16px 4px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--dim);letter-spacing:.01em;border-left:2px solid transparent;transition:all .12s;user-select:none}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.02)}
+.nav-item.active{color:var(--white);border-left-color:var(--blue);background:rgba(91,143,255,.06)}
+.nav-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;background:var(--faint);transition:all .15s}
+.nav-item.active .nav-dot{background:var(--blue);box-shadow:0 0 6px var(--blue)}
+.nav-item.done .nav-dot{background:var(--green);box-shadow:0 0 6px var(--green)}
+.nav-item.done{color:var(--green)}
+.nav-check{margin-left:auto;font-size:11px;font-family:var(--mono);color:var(--green);opacity:0;transition:opacity .2s}
+.nav-item.done .nav-check{opacity:1}
+.main{display:flex;flex-direction:column;overflow:hidden;height:100vh}
+@media(max-width:768px){.main{height:calc(100vh - 68px)}}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px 12px;border-bottom:1px solid var(--b1);background:var(--bg);flex-shrink:0;gap:12px}
+.topbar-left{min-width:0;flex:1}
+.page-title{font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--white);line-height:1}
+.page-title span{color:var(--dim);font-weight:400}
+.page-meta{font-size:11px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.topbar-btn{background:var(--s2);border:1px solid var(--b2);color:var(--dim);font-size:12px;font-family:var(--mono);padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.topbar-btn:hover{color:var(--text);border-color:var(--b3)}
+.day-xp{background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);color:var(--gold);font-size:12px;font-family:var(--mono);font-weight:700;padding:5px 12px;border-radius:20px;white-space:nowrap}
+.tabs{display:flex;gap:0;padding:0 28px;border-bottom:1px solid var(--b1);background:var(--bg);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 16px;font-size:12px;font-weight:700;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.08em;text-transform:uppercase;transition:all .12s;white-space:nowrap;user-select:none}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--white);border-bottom-color:var(--blue)}
+.scroll-area{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
+.scroll-area::-webkit-scrollbar{width:3px}
+.scroll-area::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+.tab-panel{display:none;padding:20px 28px 80px;animation:fadeUp .2s ease}
+.tab-panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.cal-strip{display:flex;gap:4px;padding:12px 28px;border-bottom:1px solid var(--b1);background:var(--s1);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.cal-strip::-webkit-scrollbar{display:none}
+.cal-day{flex-shrink:0;width:36px;display:flex;flex-direction:column;align-items:center;padding:6px 4px;border-radius:8px;cursor:pointer;transition:all .15s;border:1px solid transparent;position:relative}
+.cal-day:hover{background:rgba(255,255,255,.04)}
+.cal-day.active{background:rgba(91,143,255,.12);border-color:rgba(91,143,255,.3)}
+.cal-day.today{border-color:rgba(91,143,255,.5)}
+.cal-day.past-done{background:rgba(62,207,142,.06);border-color:rgba(62,207,142,.2)}
+.cal-day.past-miss{opacity:.5}
+.cal-wd{font-size:7px;font-family:var(--mono);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.cal-num{font-size:13px;font-weight:800;color:var(--white);line-height:1}
+.cal-dot{width:4px;height:4px;border-radius:50%;margin-top:3px}
+.cal-day.past-done .cal-dot{background:var(--green)}
+.cal-day.active .cal-dot{background:var(--blue)}
+.cal-day.today .cal-dot{background:var(--orange)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;margin-bottom:18px}
+.stat{background:var(--s1);padding:10px 12px}
+.stat-label{font-size:10px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px}
+.stat-val{font-size:16px;font-weight:700;color:var(--white);font-family:var(--mono)}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}}
+.tl-row{display:grid;grid-template-columns:52px 1px 1fr;gap:0 14px;opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s}
+.tl-row.show{opacity:1;transform:none}
+.tl-time{padding-top:18px;text-align:right;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em;line-height:1}
+.tl-axis{display:flex;flex-direction:column;align-items:center}
+.tl-node{width:8px;height:8px;border-radius:50%;margin-top:18px;flex-shrink:0;position:relative;z-index:2;transition:transform .2s,box-shadow .2s;cursor:pointer}
+.tl-row:hover .tl-node{transform:scale(1.8)}
+.tl-line{flex:1;width:1px;background:var(--b1);margin-top:2px}
+.tl-row:last-child .tl-line{display:none}
+.tl-body{padding:10px 0 14px}
+.tl-cat{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:6px}
+.tl-cat::before{content:'';width:12px;height:1.5px;border-radius:1px}
+.tl-title{font-size:16px;font-weight:700;color:var(--white);letter-spacing:-.01em;margin-bottom:3px;line-height:1.25;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tl-dur{font-size:12px;color:var(--dim);font-family:var(--mono);font-weight:400}
+.tl-desc{font-size:13px;color:var(--dim);line-height:1.7;margin-top:3px;max-width:540px}
+.tl-chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+.chip{font-size:11px;padding:3px 9px;border-radius:3px;background:var(--b2);color:var(--dim)}
+.why-box{margin-top:7px;padding:9px 13px;border-radius:8px;background:rgba(255,255,255,.02);border-left:2px solid;font-size:12px;color:var(--dim);line-height:1.7;max-width:500px}
+.why-box strong{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;opacity:.5}
+.tl-timer-btn{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-family:var(--mono);font-weight:600;color:var(--blue);background:rgba(91,143,255,.1);border:1px solid rgba(91,143,255,.2);border-radius:6px;padding:3px 9px;cursor:pointer;transition:all .15s;margin-top:4px}
+.tl-timer-btn:hover{background:rgba(91,143,255,.2)}
+.c-deep .tl-node{background:var(--blue);box-shadow:0 0 8px rgba(91,143,255,.4)}.c-deep .tl-cat{color:var(--blue)}.c-deep .tl-cat::before,.c-deep .why-box{border-color:var(--blue)}
+.c-work .tl-node{background:var(--orange);box-shadow:0 0 8px rgba(245,166,35,.4)}.c-work .tl-cat{color:var(--orange)}.c-work .tl-cat::before,.c-work .why-box{border-color:var(--orange)}
+.c-train .tl-node{background:var(--red);box-shadow:0 0 8px rgba(255,95,74,.4)}.c-train .tl-cat{color:var(--red)}.c-train .tl-cat::before,.c-train .why-box{border-color:var(--red)}
+.c-rest .tl-node{background:var(--green);box-shadow:0 0 8px rgba(62,207,142,.4)}.c-rest .tl-cat{color:var(--green)}.c-rest .tl-cat::before,.c-rest .why-box{border-color:var(--green)}
+.c-food .tl-node{background:#c9a96e;box-shadow:0 0 8px rgba(201,169,110,.4)}.c-food .tl-cat{color:#c9a96e}.c-food .tl-cat::before,.c-food .why-box{border-color:#c9a96e}
+.c-sleep .tl-node{background:var(--purple);box-shadow:0 0 8px rgba(155,141,245,.4)}.c-sleep .tl-cat{color:var(--purple)}.c-sleep .tl-cat::before,.c-sleep .why-box{border-color:var(--purple)}
+.c-transit .tl-node{background:var(--teal);box-shadow:0 0 8px rgba(78,205,196,.4)}.c-transit .tl-cat{color:var(--teal)}.c-transit .tl-cat::before,.c-transit .why-box{border-color:var(--teal)}
+.c-lang .tl-node{background:var(--pink);box-shadow:0 0 8px rgba(255,107,157,.4)}.c-lang .tl-cat{color:var(--pink)}.c-lang .tl-cat::before,.c-lang .why-box{border-color:var(--pink)}
+.pomo-panel{position:fixed;bottom:80px;right:20px;width:220px;background:var(--s2);border:1px solid var(--b2);border-radius:16px;padding:18px;z-index:500;box-shadow:0 16px 40px rgba(0,0,0,.6);transition:all .3s cubic-bezier(.34,1.56,.64,1);transform:scale(.9) translateY(20px);opacity:0;pointer-events:none}
+.pomo-panel.open{transform:none;opacity:1;pointer-events:all}
+.pomo-title{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.pomo-close{cursor:pointer;color:var(--dim);font-size:16px;transition:color .15s}
+.pomo-close:hover{color:var(--text)}
+.pomo-ring{position:relative;width:100px;height:100px;margin:0 auto 14px}
+.pomo-svg{transform:rotate(-90deg)}
+.pomo-track{fill:none;stroke:var(--b2);stroke-width:6}
+.pomo-prog{fill:none;stroke:var(--blue);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .5s linear,stroke .3s}
+.pomo-time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pomo-mins{font-size:26px;font-weight:800;color:var(--white);font-family:var(--mono);line-height:1}
+.pomo-label{font-size:10px;color:var(--dim);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.pomo-modes{display:flex;gap:4px;margin-bottom:12px;justify-content:center}
+.pomo-mode{font-size:11px;font-family:var(--mono);font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--b2);color:var(--dim);transition:all .15s}
+.pomo-mode.active{background:rgba(91,143,255,.15);border-color:var(--blue);color:var(--blue)}
+.pomo-controls{display:flex;justify-content:center;gap:8px}
+.pomo-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--b3);background:var(--s3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s;color:var(--text)}
+.pomo-btn:hover{background:var(--b2)}
+.pomo-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;font-size:18px}
+.pomo-btn.primary:hover{background:#4a7ef0}
+.pomo-session{font-size:11px;text-align:center;color:var(--dim);font-family:var(--mono);margin-top:8px}
+.timer-fab{position:fixed;bottom:80px;right:20px;width:44px;height:44px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(91,143,255,.4);z-index:499;transition:all .2s;font-size:18px}
+.timer-fab:hover{transform:scale(1.1)}
+.timer-fab.active{background:var(--red);box-shadow:0 4px 16px rgba(255,95,74,.4)}
+@media(max-width:768px){.timer-fab{bottom:78px}.pomo-panel{bottom:78px;right:10px;left:10px;width:auto}}
+.cl-wrap{}
+.cl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cl-title{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.cl-prog-text{font-size:11px;font-family:var(--mono);color:var(--dim)}
+.prog-wrap{height:3px;background:var(--b2);border-radius:3px;overflow:hidden;margin-bottom:14px}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--green),#5fffb0);border-radius:3px;transition:width .5s ease}
+.cl-section{margin-bottom:14px}
+.cl-sec-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--b1)}
+.cl-item{display:flex;align-items:center;gap:10px;padding:8px 10px;cursor:pointer;border-radius:8px;transition:background .1s;position:relative;overflow:hidden}
+.cl-item:hover{background:rgba(255,255,255,.025)}
+.cl-item::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(62,207,142,.08),transparent);transform:scaleX(0);transform-origin:left;transition:transform .3s ease;border-radius:8px}
+.cl-item.checked::after{transform:scaleX(1)}
+.cl-box{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--b3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;background:transparent;position:relative;overflow:hidden}
+.cl-item.checked .cl-box{background:var(--green);border-color:var(--green)}
+.cl-check-icon{font-size:11px;font-weight:700;color:var(--bg);opacity:0;transform:scale(0) rotate(-20deg);transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.cl-item.checked .cl-check-icon{opacity:1;transform:scale(1) rotate(0)}
+.cl-text{flex:1;min-width:0}
+.cl-label{font-size:14px;color:var(--text);line-height:1.35;transition:color .2s}
+.cl-item.checked .cl-label{color:var(--dim);text-decoration:line-through}
+.cl-xp{font-size:11px;font-family:var(--mono);color:var(--gold);opacity:.5;margin-top:1px}
+.cl-item.checked .cl-xp{opacity:.25}
+.ripple{position:absolute;border-radius:50%;background:rgba(62,207,142,.3);transform:scale(0);animation:rippleAnim .5s ease;pointer-events:none}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0}}
+.boss-card{background:linear-gradient(135deg,rgba(255,95,74,.06),rgba(255,215,0,.03));border:1px solid rgba(255,95,74,.2);border-radius:var(--r);padding:14px 16px;margin-bottom:16px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.boss-card:hover{border-color:rgba(255,95,74,.4)}
+.boss-glow{position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,95,74,.03),transparent);animation:shimmer 3s ease infinite}
+@keyframes shimmer{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+.boss-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.boss-icon-wrap{font-size:18px}
+.boss-badge{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--red);font-family:var(--mono);font-weight:700}
+.boss-xp{margin-left:auto;background:rgba(255,95,74,.15);color:var(--red);font-family:var(--mono);font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px}
+.boss-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px}
+.boss-desc{font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:10px}
+.boss-counter{display:flex;align-items:center;gap:10px}
+.boss-steps{display:flex;gap:5px}
+.boss-step{width:28px;height:8px;border-radius:4px;background:var(--b2);border:1px solid var(--b3);cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.boss-step.done{background:var(--red);border-color:var(--red);box-shadow:0 0 6px rgba(255,95,74,.5)}
+.boss-step::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2));opacity:0;transition:opacity .2s}
+.boss-step.done::after{opacity:1}
+.boss-count-label{font-size:9px;font-family:var(--mono);color:var(--dim)}
+.boss-count-label.complete{color:var(--red);font-weight:700}
+.boss-done-overlay{position:absolute;inset:0;background:rgba(62,207,142,.06);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;border-radius:var(--r);pointer-events:none}
+.boss-done-overlay.show{opacity:1}
+.boss-done-text{font-size:14px;font-weight:700;color:var(--green);font-family:var(--mono);letter-spacing:.08em;text-shadow:0 0 20px var(--green)}
+.day-complete{display:none;align-items:center;gap:12px;background:rgba(62,207,142,.05);border:1px solid rgba(62,207,142,.18);border-radius:var(--r);padding:14px 16px;margin-bottom:18px}
+.day-complete.show{display:flex;animation:fadeUp .4s ease}
+.dc-icon{font-size:22px}
+.dc-title{font-size:14px;font-weight:700;color:var(--green)}
+.dc-sub{font-size:12px;color:var(--dim);margin-top:1px}
+.dc-xp{margin-left:auto;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--gold)}
+.missions{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:12px 14px;margin-bottom:16px}
+.missions-title{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;font-family:var(--mono)}
+.mission-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--b1)}
+.mission-item:last-child{border:none}
+.m-icon{font-size:14px;flex-shrink:0}
+.m-text{flex:1;font-size:13px;color:var(--text)}
+.m-xp{font-family:var(--mono);font-size:11px;color:var(--gold);font-weight:700}
+.m-check{font-size:13px;color:var(--green);opacity:0;transition:opacity .2s}
+.mission-item.done .m-text{color:var(--dim);text-decoration:line-through}
+.mission-item.done .m-check{opacity:1}
+.m-mini-bar{height:2px;background:var(--b2);border-radius:2px;overflow:hidden;margin-top:3px;width:60px}
+.m-mini-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s}
+.stats-section{margin-bottom:24px}
+.stats-section-title{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:8px}
+.range-btns{display:flex;gap:4px;margin-left:auto}
+.range-btn{font-size:11px;font-family:var(--mono);font-weight:600;padding:3px 10px;border-radius:4px;cursor:pointer;border:1px solid var(--b2);color:var(--dim);transition:all .12s}
+.range-btn.active{background:rgba(91,143,255,.12);border-color:var(--blue);color:var(--blue)}
+.xp-chart{height:120px;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:12px;position:relative;overflow:hidden}
+.chart-canvas{width:100%;height:100%}
+.heatmap-grid{display:flex;gap:2px;flex-wrap:wrap}
+.hm-cell{width:14px;height:14px;border-radius:2px;background:var(--b1);cursor:pointer;transition:transform .1s;position:relative}
+.hm-cell:hover{transform:scale(1.3);z-index:10}
+.hm-cell.l1{background:rgba(62,207,142,.15)}
+.hm-cell.l2{background:rgba(62,207,142,.35)}
+.hm-cell.l3{background:rgba(62,207,142,.6)}
+.hm-cell.l4{background:rgba(62,207,142,.9);box-shadow:0 0 4px rgba(62,207,142,.4)}
+.hm-tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--s3);border:1px solid var(--b2);color:var(--text);font-size:9px;font-family:var(--mono);padding:3px 7px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:100;opacity:0;transition:opacity .15s}
+.hm-cell:hover .hm-tooltip{opacity:1}
+.stat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:12px 14px}
+.sc-icon{font-size:18px;margin-bottom:6px}
+.sc-val{font-size:22px;font-weight:800;color:var(--white);font-family:var(--mono);line-height:1}
+.sc-label{font-size:11px;color:var(--dim);letter-spacing:.06em;margin-top:3px}
+.sc-trend{font-size:11px;font-family:var(--mono);margin-top:4px}
+.sc-trend.up{color:var(--green)}
+.sc-trend.down{color:var(--red)}
+@media(max-width:600px){.stat-cards{grid-template-columns:repeat(2,1fr)}}
+.cat-bars{display:flex;flex-direction:column;gap:6px}
+.cat-bar-item{display:flex;align-items:center;gap:10px}
+.cat-bar-label{font-size:12px;color:var(--dim);width:90px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-bar-track{flex:1;height:6px;background:var(--b2);border-radius:3px;overflow:hidden}
+.cat-bar-fill{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.34,1.56,.64,1)}
+.cat-bar-val{font-size:11px;font-family:var(--mono);color:var(--dim);width:44px;text-align:right;flex-shrink:0}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:20px}
+.wk-cell{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:10px 8px;text-align:center;cursor:pointer;transition:all .2s}
+.wk-cell:hover{border-color:var(--b2)}
+.wk-cell.done{background:rgba(62,207,142,.05);border-color:rgba(62,207,142,.18)}
+.wk-day{font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.08em;margin-bottom:4px}
+.wk-pct{font-size:18px;font-weight:800;color:var(--white);font-family:var(--mono);line-height:1}
+.wk-xp{font-size:11px;font-family:var(--mono);color:var(--gold);margin-top:3px}
+@media(max-width:600px){.week-grid{grid-template-columns:repeat(4,1fr)}}
+.tips-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.tip-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:14px;position:relative;overflow:hidden}
+.tip-card:hover{border-color:var(--b2)}
+.tip-icon{font-size:20px;margin-bottom:7px}
+.tip-title{font-size:13px;font-weight:700;color:var(--white);margin-bottom:4px}
+.tip-body{font-size:12px;color:var(--dim);line-height:1.65}
+@media(max-width:600px){.tips-grid{grid-template-columns:1fr}}
+.xp-popup{position:fixed;right:28px;bottom:100px;pointer-events:none;z-index:600;opacity:0;transform:translateY(0);transition:opacity .2s,transform .6s cubic-bezier(.34,1.56,.64,1)}
+.xp-popup.show{opacity:1;transform:translateY(-24px)}
+.xp-popup-inner{background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3);color:var(--gold);font-family:var(--mono);font-size:15px;font-weight:800;padding:7px 16px;border-radius:20px;letter-spacing:.06em;white-space:nowrap}
+.combo-wrap{position:fixed;right:28px;bottom:140px;pointer-events:none;z-index:599;text-align:right;opacity:0;transition:opacity .3s}
+.combo-wrap.show{opacity:1}
+.combo-fire{font-size:20px;animation:comboPulse .35s ease infinite alternate}
+.combo-mult{font-family:var(--mono);font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--red),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+@keyframes comboPulse{from{transform:scale(1)}to{transform:scale(1.12)}}
+@media(max-width:768px){.xp-popup,.combo-wrap{right:16px;bottom:80px}}
+.streak-fire{animation:streakPulse 1.5s ease infinite}
+@keyframes streakPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.8;transform:scale(1.15)}}
+.lvlup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;backdrop-filter:blur(4px)}
+.lvlup-overlay.show{opacity:1;pointer-events:all}
+.lvlup-box{text-align:center;transform:scale(.6);transition:transform .6s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:1}
+.lvlup-overlay.show .lvlup-box{transform:scale(1)}
+.lvlup-glow{position:absolute;inset:-40px;background:radial-gradient(circle,rgba(255,215,0,.08),transparent 70%);pointer-events:none}
+.lvlup-icon{font-size:68px;display:block;animation:lvlSpin .8s cubic-bezier(.34,1.56,.64,1) both;margin-bottom:10px}
+@keyframes lvlSpin{from{transform:rotate(-30deg) scale(0)}to{transform:rotate(0) scale(1)}}
+.lvlup-sub-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:6px;font-family:var(--mono)}
+.lvlup-name{font-size:38px;font-weight:800;letter-spacing:-.04em;background:linear-gradient(135deg,var(--gold),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:12px}
+.lvlup-desc{font-size:14px;color:var(--dim);margin-bottom:24px}
+.lvlup-btn{background:linear-gradient(135deg,var(--gold),#ffaa00);color:#000;font-family:var(--mono);font-weight:800;font-size:13px;letter-spacing:.1em;padding:13px 30px;border:none;border-radius:8px;cursor:pointer;text-transform:uppercase;transition:transform .15s}
+.lvlup-btn:hover{transform:scale(1.05)}
+.particles-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;border-radius:50%;animation:particleFly 1.4s ease forwards}
+@keyframes particleFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+.ach-toast{position:fixed;top:20px;right:20px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:10px;padding:10px 16px;z-index:800;font-size:13px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(-10px);transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.ach-toast.show{opacity:1;transform:none}
+.ach-strip{padding:10px 16px 4px;display:flex;gap:6px;flex-wrap:wrap}
+.ach-pill{font-size:13px;opacity:.25;transition:all .3s;cursor:default}
+.ach-pill.unlocked{opacity:1;filter:drop-shadow(0 0 6px var(--gold))}
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--b1);z-index:100;height:68px}
+@media(max-width:768px){.mobile-nav{display:flex}}
+.mn-scroll{display:flex;overflow-x:auto;scrollbar-width:none;flex:1}
+.mn-scroll::-webkit-scrollbar{display:none}
+.mob-nav-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 12px;cursor:pointer;flex-shrink:0;transition:all .15s;min-width:56px;user-select:none;border-bottom:2px solid transparent}
+.mob-nav-btn.active{border-bottom-color:var(--blue)}
+.mob-nav-btn.active .mn-label{color:var(--white)}
+.mob-nav-btn.done .mn-label{color:var(--green)}
+.mn-icon{font-size:18px;line-height:1}
+.mn-label{font-size:10px;font-family:var(--mono);font-weight:700;color:var(--dim);letter-spacing:.04em;white-space:nowrap;transition:color .15s}
+.mn-actions{display:flex;flex-shrink:0}
+.mn-action-btn{width:52px;height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border-left:1px solid var(--b1)}
+.mn-action-icon{font-size:18px}
+.mn-action-label{font-size:9px;font-family:var(--mono);color:var(--dim)}
+.mob-xp{display:none;padding:8px 16px;background:var(--s1);border-bottom:1px solid var(--b1);flex-shrink:0}
+@media(max-width:768px){.mob-xp{display:flex;align-items:center;gap:10px}}
+.mob-xp-fill-wrap{flex:1;height:4px;background:var(--b2);border-radius:3px;overflow:hidden}
+.mob-xp-fill{height:100%;background:linear-gradient(90deg,var(--green),#5fffb0);border-radius:3px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+.mob-lvl{font-size:11px;font-family:var(--mono);font-weight:700;color:var(--green);white-space:nowrap}
+.mob-streak{font-size:11px;font-family:var(--mono);font-weight:700;color:var(--orange);display:flex;align-items:center;gap:3px}
+.mob-ach-panel{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);overflow-y:auto;padding-bottom:70px}
+.mob-ach-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--b1);position:sticky;top:0;background:var(--bg);z-index:10}
+.mob-ach-title{font-size:17px;font-weight:800;color:var(--white)}
+.mob-ach-close{font-size:12px;color:var(--dim);cursor:pointer;padding:6px 12px;background:var(--s2);border-radius:6px;border:1px solid var(--b2)}
+.mob-ach-item{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--s1);border:1px solid var(--b1);border-radius:8px}
+.mob-ach-item.unlocked{border-color:rgba(255,215,0,.25);background:rgba(255,215,0,.03)}
+.quote-toast{position:fixed;bottom:80px;left:20px;right:80px;background:rgba(10,10,20,.95);border:1px solid var(--b2);border-radius:12px;padding:12px 16px;z-index:400;opacity:0;transform:translateY(10px);transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:360px}
+.quote-toast.show{opacity:1;transform:translateY(0)}
+.qt-text{font-size:14px;color:var(--text);line-height:1.6;font-style:italic}
+.qt-close{font-size:12px;color:var(--dim);margin-top:6px;cursor:pointer;pointer-events:all;display:inline-block;font-family:var(--mono)}
+@media(max-width:768px){.quote-toast{left:16px;right:16px;bottom:78px;max-width:none}}
+.sec-title{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--b1)}
+input,select,textarea{color-scheme:dark}
+</style>
+</head>
+<body>
+<div id="xpPopup" class="xp-popup"><div class="xp-popup-inner" id="xpPopupInner">+10 XP</div></div>
+<div id="comboWrap" class="combo-wrap">
+  <div class="combo-fire">🔥</div>
+  <div class="combo-mult" id="comboMult">×2</div>
+</div>
+<div id="achToast" class="ach-toast"><span id="achToastIcon">⭐</span><span id="achToastText">Achievement unlocked</span></div>
+<div id="lvlupOverlay" class="lvlup-overlay">
+  <div class="particles-wrap" id="lvlupParticles"></div>
+  <div class="lvlup-box">
+    <div class="lvlup-glow"></div>
+    <span class="lvlup-icon">⚡</span>
+    <div class="lvlup-sub-label">Level Up!</div>
+    <div class="lvlup-name" id="lvlupName">Хүчтэй</div>
+    <div class="lvlup-desc" id="lvlupDesc">Та шинэ түвшинд хүрлээ!</div>
+    <button class="lvlup-btn" onclick="closeLvlUp()">Үргэлжлүүлэх →</button>
+  </div>
+</div>
+<div id="quoteToast" class="quote-toast">
+  <div class="qt-text" id="quoteToastText"></div>
+  <div class="qt-close" onclick="closeQuote()">✕ Хаах</div>
+</div>
+<div id="pomoPanel" class="pomo-panel">
+  <div class="pomo-title">
+    <span>⏱ POMODORO</span>
+    <span class="pomo-close" onclick="togglePomo()">✕</span>
+  </div>
+  <div class="pomo-modes">
+    <div class="pomo-mode active" id="modeWork" onclick="setPomoDuration(25,'Фокус','modeWork')">25мин</div>
+    <div class="pomo-mode" id="modeShort" onclick="setPomoDuration(5,'Завсар','modeShort')">5мин</div>
+    <div class="pomo-mode" id="modeLong" onclick="setPomoDuration(15,'Урт завсар','modeLong')">15мин</div>
+  </div>
+  <div class="pomo-ring">
+    <svg class="pomo-svg" width="100" height="100" viewBox="0 0 100 100">
+      <circle class="pomo-track" cx="50" cy="50" r="42"/>
+      <circle class="pomo-prog" id="pomoProg" cx="50" cy="50" r="42" stroke-dasharray="263.9" stroke-dashoffset="0"/>
+    </svg>
+    <div class="pomo-time">
+      <div class="pomo-mins" id="pomoDisplay">25:00</div>
+      <div class="pomo-label" id="pomoModeLabel">Фокус</div>
+    </div>
+  </div>
+  <div class="pomo-controls">
+    <div class="pomo-btn" onclick="resetPomo()" title="Reset">↺</div>
+    <div class="pomo-btn primary" id="pomoPlayBtn" onclick="togglePomoRun()">▶</div>
+    <div class="pomo-btn" onclick="skipPomo()" title="Skip">⏭</div>
+  </div>
+  <div class="pomo-session" id="pomoSession">Сессий #1 · Нийт 0мин</div>
+</div>
+<div id="timerFab" class="timer-fab" onclick="togglePomo()" title="Pomodoro таймер">⏱</div>
+
+<div class="shell">
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-logo"><div class="brand-dot"></div> Routine OS</div>
+    <div class="brand-sub">v3.0 — Dulguu</div>
+  </div>
+  <div class="xp-block">
+    <div class="xp-row">
+      <div class="xp-lvl" id="lvlLabel">LVL 1 · Анхлагч</div>
+      <div class="xp-pts" id="xpLabel">0 / 700 XP</div>
+    </div>
+    <div class="xp-track"><div class="xp-fill" id="xpBar" style="width:0%"></div></div>
+    <div class="xp-bottom">
+      <div class="streak-pill"><span class="streak-fire">🔥</span><span id="streakNum">0</span> streak</div>
+      <div class="week-pill" id="weekScore">7н: 0 XP</div>
+    </div>
+    <div id="freezeBtn" class="freeze-btn" onclick="useStreakFreeze()">🧊 Streak Freeze</div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="ach-strip" id="achStrip"></div>
+    <div class="nav-group">
+      <div class="nav-label">Ажлын өдрүүд</div>
+      <div class="nav-item active" id="nav0" onclick="showDay(0)"><div class="nav-dot"></div>Даваа<span class="nav-check">✓</span></div>
+      <div class="nav-item" id="nav1" onclick="showDay(1)"><div class="nav-dot"></div>Мягмар<span class="nav-check">✓</span></div>
+      <div class="nav-item" id="nav2" onclick="showDay(2)"><div class="nav-dot"></div>Лхагва<span class="nav-check">✓</span></div>
+      <div class="nav-item" id="nav3" onclick="showDay(3)"><div class="nav-dot"></div>Пүрэв<span class="nav-check">✓</span></div>
+      <div class="nav-item" id="nav4" onclick="showDay(4)"><div class="nav-dot"></div>Баасан<span class="nav-check">✓</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Амралтын өдрүүд</div>
+      <div class="nav-item" id="nav5" onclick="showDay(5)"><div class="nav-dot"></div>Бямба<span class="nav-check">✓</span></div>
+      <div class="nav-item" id="nav6" onclick="showDay(6)"><div class="nav-dot"></div>Ням<span class="nav-check">✓</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Хэрэгсэл</div>
+      <div class="nav-item" id="nav7" onclick="showDay(7)"><div class="nav-dot" style="background:var(--purple)"></div>📊 Статистик</div>
+      <div class="nav-item" id="nav9" onclick="showDay(9)"><div class="nav-dot" style="background:var(--gold)"></div>📅 7н Тайлан</div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="mob-xp">
+    <div class="mob-lvl" id="mLvlLabel">LVL 1</div>
+    <div class="mob-xp-fill-wrap"><div class="mob-xp-fill" id="mXpBar" style="width:0%"></div></div>
+    <div class="mob-streak"><span class="streak-fire">🔥</span><span id="mStreakNum">0</span></div>
+  </div>
+  <div class="cal-strip" id="calStrip"></div>
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title" id="topTitle">Даваа <span>гараг</span></div>
+      <div class="page-meta" id="topMeta">ОӨ #1 — MON · ДАСГАЛ + ХЯТАД</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-btn" onclick="showQuote()">💬</div>
+      <div class="day-xp" id="dayXpBadge">+100 XP</div>
+    </div>
+  </div>
+  <div class="tabs" id="tabBar">
+    <div class="tab active" onclick="showTab(0)">Хуваарь</div>
+    <div class="tab" onclick="showTab(1)">✓ Checklist</div>
+  </div>
+  <div class="scroll-area" id="mainScroll">
+    <div id="dp0" class="day-panel"></div>
+    <div id="dp1" class="day-panel" style="display:none"></div>
+    <div id="dp2" class="day-panel" style="display:none"></div>
+    <div id="dp3" class="day-panel" style="display:none"></div>
+    <div id="dp4" class="day-panel" style="display:none"></div>
+    <div id="dp5" class="day-panel" style="display:none"></div>
+    <div id="dp6" class="day-panel" style="display:none"></div>
+    <div id="dp7" class="day-panel" style="display:none">
+      <div class="tab-panel active" style="display:block;padding:20px 28px 80px">
+        <div class="stats-section">
+          <div class="stats-section-title">
+            📊 Урт хугацааны дэвшил
+            <div class="range-btns">
+              <div class="range-btn active" onclick="setRange(7,this)">7 хон</div>
+              <div class="range-btn" onclick="setRange(30,this)">30 хон</div>
+            </div>
+          </div>
+          <div class="xp-chart"><canvas id="xpChart" class="chart-canvas"></canvas></div>
+        </div>
+        <div class="stats-section">
+          <div class="stats-section-title">🔥 Идэвхийн хэлхээ</div>
+          <div class="heatmap-grid" id="heatmapGrid"></div>
+        </div>
+        <div class="stats-section">
+          <div class="stats-section-title">⚡ Ерөнхий үзүүлэлт</div>
+          <div class="stat-cards">
+            <div class="stat-card"><div class="sc-icon">🏆</div><div class="sc-val" id="statTotalXp">0</div><div class="sc-label">Нийт XP</div><div class="sc-trend up" id="statXpTrend">↑ 0 энэ 7хон</div></div>
+            <div class="stat-card"><div class="sc-icon">🔥</div><div class="sc-val" id="statStreak">0</div><div class="sc-label">Streak (өдөр)</div></div>
+            <div class="stat-card"><div class="sc-icon">✅</div><div class="sc-val" id="statDone">0%</div><div class="sc-label">7хон дундаж</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="dp9" class="day-panel" style="display:none">
+      <div class="tab-panel active" style="display:block;padding:20px 28px 80px">
+        <div class="week-grid" id="weekGrid"></div>
+        <div class="stats" style="margin-bottom:20px">
+          <div class="stat"><div class="stat-label">7н нийт XP</div><div class="stat-val" id="totalXpVal">0</div></div>
+          <div class="stat"><div class="stat-label">Дууссан өдөр</div><div class="stat-val" id="totalDoneVal">0/7</div></div>
+          <div class="stat"><div class="stat-label">Streak</div><div class="stat-val" id="totalStreakVal">0</div></div>
+          <div class="stat"><div class="stat-label">Дундаж %</div><div class="stat-val" id="totalAvgVal">0%</div></div>
+        </div>
+        <div class="sec-title">Сайжруулалтын санал</div>
+        <div class="tips-grid" id="improveTips"></div>
+        <div style="text-align:center;margin-top:20px">
+          <div class="topbar-btn" onclick="resetWeek()" style="display:inline-block">↺ Долоо хоног дахин эхлүүлэх</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<nav class="mobile-nav">
+  <div class="mn-scroll" id="mnScroll"></div>
+  <div class="mn-actions">
+    <div class="mn-action-btn" onclick="togglePomo()"><div class="mn-action-icon">⏱</div><div class="mn-action-label">Таймер</div></div>
+    <div class="mn-action-btn" onclick="showMobAch()"><div class="mn-action-icon">🏅</div><div class="mn-action-label">Амжилт</div></div>
+  </div>
+</nav>
+<div id="mobAchPanel" class="mob-ach-panel">
+  <div class="mob-ach-header">
+    <div class="mob-ach-title">🏅 Амжилтууд</div>
+    <div class="mob-ach-close" onclick="hideMobAch()">✕ Хаах</div>
+  </div>
+  <div style="padding:14px" id="mobAchList"></div>
+</div>
+
+<script>
+// ══════════ DATA ══════════
+const DAYS = [
+  { name:'Даваа', short:'Да', meta:'ОӨ #1 — MON · ДАСГАЛ + ХЯТАД', xp:100, badge:'+100 XP', quote:'"Биеийн хэлбэр — зорилго биш, зан чанар. Өдөр бүр нэг алхам урагш."', emoji:'💼' },
+  { name:'Мягмар', short:'Мя', meta:'ОӨ #2 — TUE · ХЯТАД ХЭЛ + ФОКУС', xp:100, badge:'+100 XP', quote:'"Хятад хэлний 1 үг = 1 XP. Жижиг дэвшил хуримтлагдна."', emoji:'🈶' },
+  { name:'Лхагва', short:'Лх', meta:'ОӨ #3 — WED · ДАСГАЛ + ХООЛ', xp:110, badge:'+110 XP', quote:'"Batch cook — нэг удаа хийж 4 хоног амар."', emoji:'🍳' },
+  { name:'Пүрэв', short:'Пү', meta:'ОӨ #4 — THU · ХЯТАД ХЭЛ + БИЕ', xp:100, badge:'+100 XP', quote:'"99 кг → зорилго руу аяндаа явна. Тогтмол гэдэг нь чухал."', emoji:'💪' },
+  { name:'Баасан', short:'Ба', meta:'ОӨ #5 — FRI · АМРАХ + SELFCARE', xp:100, badge:'+100 XP', quote:'"Баасан бол сэтгэлийн цэнэглэлтийн өдөр."', emoji:'✨' },
+  { name:'Бямба', short:'Бя', meta:'АӨ #1 — SAT · ДАСГАЛ + ГҮНЗГИЙ АЖИЛ', xp:130, badge:'+130 XP', quote:'"Бямба — хамгийн их чөлөөтэй цаг. Хамгийн их боломж."', emoji:'🏋️' },
+  { name:'Ням', short:'Ня', meta:'АӨ #2 — SUN · RELOAD + БЭЛТГЭЛ', xp:130, badge:'+130 XP', quote:'"Ням бол ирэх долоо хоногийн амжилтыг урьдчилан шийдэх өдөр."', emoji:'🌟' },
+];
+
+// Ажлын цаг: 10:00-19:00 | Босох: 07:30 | Унтах: 23:30 | Дасгал: 30-45 мин | Түгжрэл: 1-2 цаг
+// Side project: Биеийн хэлбэр + Хятад хэл | 2-3 цаг зарцуулж чадна
+const DEFAULT_TIMELINES = [
+  // Day 0: Даваа — Дасгал + Хятад хэл
+  [
+    {time:'07:30',cat:'c-sleep',catName:'Сэрэх',title:'Өглөөний бэлтгэл',dur:'30 мин',desc:'Ус 500мл → нүүр угаах → өглөөний цай → өдрийн нэг гол зорилт бичих.',why:'Яарахгүй, тайван эхлэл. Биеийг сэрээж оюун тогтворжуулна.',timerMins:30},
+    {time:'08:00',cat:'c-transit',catName:'Ажилд явах',title:'Явах зам — 1-2 цаг',dur:'08:00–10:00',desc:'Podcast сонс. "Chinese Corner" эсвэл хятад хэлний аудио сонс. Цагийг давхар ашиглана.',chips:['Хятад аудио','Podcast']},
+    {time:'10:00',cat:'c-work',catName:'Ажил',title:'Оффисийн ажил',dur:'10:00–19:00',desc:'90 мин тутамд 5 мин зогсоод сунгалт хийнэ. Зогссон үед хойш харах — нүдийг амраана.'},
+    {time:'13:00',cat:'c-food',catName:'Үдийн завсарлага',title:'Хоол + Хятад хэл',dur:'60 мин',desc:'Хоол идэж дуусаад 20-30 мин Hsk.kz эсвэл Duolingo хятад хичээл хийнэ.',chips:['HSK үг цээжлэх','Duolingo']},
+    {time:'19:00',cat:'c-transit',catName:'Гэртээ харих',title:'Буцах зам',dur:'19:00–20:30',desc:'Хятад аудио, podcast. Гэртээ хүрэхэд тархи аль хэдийн хятадаар дүүрсэн байна.'},
+    {time:'20:30',cat:'c-train',catName:'🏃 Дасгал — Анхан шат',title:'Гэрийн дасгал (эхлэгч)',dur:'35 мин',desc:'Warmup 5 мин → Squat 3×10, Push-up 3×8, Plank 3×30с, Glute bridge 3×12. Хэлбэрт анхаарна.',chips:['Squat','Push-up','Plank'],why:'Дасгалын газар явахгүйгээр гэртээ эхлэнэ. Зөв хэлбэр нь хамгийн чухал — жин биш.',timerMins:35},
+    {time:'21:30',cat:'c-lang',catName:'🈶 Хятад хэл',title:'Хятад хэлний фокус',dur:'30 мин',desc:'Anki картаар 20 шинэ үг → 10 мин уншлага эсвэл бичих. Утас нисгэлтийн горим.',chips:['Anki үг','HSK1 уншлага'],timerMins:30},
+    {time:'22:00',cat:'c-rest',catName:'Wind-down',title:'Тайвших цаг',dur:'45 мин',desc:'Дэлгэц зогсоох → сунгалт 10 мин → маргаашийн нэг зорилт бичих.'},
+    {time:'23:30',cat:'c-sleep',catName:'Унтах',title:'7.5 цаг — 5 бүрэн нойрны цикл',desc:'Утас өөр өрөөнд. Тасалгааг сэрүүн, харанхуй байлга.'},
+  ],
+  // Day 1: Мягмар — Хятад хэл + Фокус
+  [
+    {time:'07:30',cat:'c-sleep',catName:'Сэрэх',title:'Өглөөний бэлтгэл',dur:'30 мин',desc:'Ус → цай → зорилт бичих.',timerMins:30},
+    {time:'08:00',cat:'c-transit',catName:'Ажилд явах',title:'Явах зам — Хятад аудио',dur:'08:00–10:00',desc:'Хятад аудио ном эсвэл HSK дасгал. Замыг хятад хэлэнд зориул.',chips:['HSK аудио','Хятад дуу']},
+    {time:'10:00',cat:'c-work',catName:'Ажил',title:'Оффисийн ажил',dur:'10:00–19:00',desc:'90 мин тутамд сунгалт. Завсарлагаанд алхалт хийнэ.'},
+    {time:'13:00',cat:'c-food',catName:'Үдийн завсарлага',title:'Хоол + Анки',dur:'60 мин',desc:'Хоол → 25 мин Anki картаар үг давтах.',chips:['Anki давтах']},
+    {time:'19:00',cat:'c-transit',catName:'Гэртээ харих',title:'Буцах зам',dur:'19:00–20:30',desc:'Хятад хэлний аудио.'},
+    {time:'20:30',cat:'c-rest',catName:'Амрах',title:'Тайвших + хооллох',dur:'30 мин',desc:'Хоол идэж, биеийг амраана.'},
+    {time:'21:00',cat:'c-lang',catName:'🈶 Хятад хэл — Гүнзгий',title:'Хятад хэлний чанартай фокус',dur:'90 мин',desc:'30 мин үг цээжлэх → 30 мин дуртай сэдвээр хятадаар унших → 30 мин дуулж сонс.',chips:['Anki','Unсhained HSK','Хятад дуу'],timerMins:90},
+    {time:'22:30',cat:'c-rest',catName:'Wind-down',title:'Тайвших',dur:'30 мин',desc:'Сунгалт → ном.'},
+    {time:'23:30',cat:'c-sleep',catName:'Унтах',title:'7.5 цаг',desc:'Тайван нойр.'},
+  ],
+  // Day 2: Лхагва — Дасгал + Batch cook
+  [
+    {time:'07:30',cat:'c-sleep',catName:'Сэрэх',title:'Өглөөний бэлтгэл',dur:'30 мин',desc:'Ус → цай → долоо хоногийн дундын шалгалт (5 мин).',timerMins:30},
+    {time:'08:00',cat:'c-transit',catName:'Ажилд явах',title:'Явах зам',dur:'08:00–10:00',desc:'Хятад аудио. Лхагвагийн batch cook-ийн дарааллаа толгойдоо зохион байгуул.',chips:['Хятад аудио','Хоолны төлөвлөгөө']},
+    {time:'10:00',cat:'c-work',catName:'Ажил',title:'Оффисийн ажил',dur:'10:00–19:00',desc:'90 мин тутамд сунгалт. Завсарлагаанд алхалт.'},
+    {time:'13:00',cat:'c-food',catName:'Үдийн завсарлага',title:'Хоол',dur:'60 мин',desc:'Хөнгөн хоол. Утасгүй, тархийг амраана.'},
+    {time:'19:00',cat:'c-transit',catName:'Гэртээ харих',title:'Буцах зам',dur:'19:00–20:30',desc:'Podcast. Batch cook хийх дарааллаа дахин бод.'},
+    {time:'20:30',cat:'c-train',catName:'🏃 Дасгал',title:'Гэрийн дасгал (Лхагва)',dur:'35 мин',desc:'Warmup → Deadlift хэлбэр гэрт (сугалаагаар) 3×10, Lunge 3×10, Side plank 2×30с, Hip thrust 3×12.',chips:['Lunge','Hip thrust','Side plank'],timerMins:35},
+    {time:'21:15',cat:'c-food',catName:'🍳 Batch Cook',title:'Пүрэв–Бямба хүртэлх хоол бэлдэх',dur:'60 мин',desc:'Мах чанах + ногоо огтлох + будаа чанах. Podcast сонс. 4 хоногийн хоолоо нэгэн зэрэг.',chips:['Мах чанах','Ногоо','Будаа'],timerMins:60},
+    {time:'22:15',cat:'c-lang',catName:'🈶 Хятад хэл',title:'Оройн Анки',dur:'20 мин',desc:'20 мин Anki давтах. Batch cook хийсэн тул богино хийнэ.',timerMins:20},
+    {time:'22:45',cat:'c-rest',catName:'Wind-down',title:'Тайвших',desc:'Сунгалт → ном.'},
+    {time:'23:30',cat:'c-sleep',catName:'Унтах',title:'7.5 цаг',desc:'Тайван нойр.'},
+  ],
+  // Day 3: Пүрэв — Хятад + Бие
+  [
+    {time:'07:30',cat:'c-sleep',catName:'Сэрэх',title:'Өглөөний бэлтгэл',dur:'30 мин',desc:'Ус → цай → зорилт бичих.',timerMins:30},
+    {time:'08:00',cat:'c-transit',catName:'Ажилд явах',title:'Явах зам',dur:'08:00–10:00',desc:'Хятад аудио.',chips:['Хятад аудио']},
+    {time:'10:00',cat:'c-work',catName:'Ажил',title:'Оффисийн ажил',dur:'10:00–19:00',desc:'90 мин тутамд сунгалт.'},
+    {time:'13:00',cat:'c-food',catName:'Үдийн завсарлага',title:'Хоол + Анки',dur:'60 мин',desc:'Хоол → 25 мин Anki.',chips:['Anki давтах']},
+    {time:'19:00',cat:'c-transit',catName:'Гэртээ харих',title:'Буцах зам',dur:'19:00–20:30',desc:'Хятад хэлний аудио.'},
+    {time:'20:30',cat:'c-train',catName:'💪 Дасгал — Дээд бие',title:'Гэрийн дасгал',dur:'40 мин',desc:'Push-up 4×8, Dumbbell row (гэр хэрэгслээр) 3×10, Shoulder press 3×10, Tricep dip 3×8, Bicep curl 3×10.',chips:['Push-up','Dumbbell row','Shoulder press'],why:'Дасгалын газраар явахаас өмнө гэртээ хэлбэрт суваалт. 1 сарын дараа шатаана.',timerMins:40},
+    {time:'21:15',cat:'c-lang',catName:'🈶 Хятад хэл',title:'Хятад хэлний бичих дасгал',dur:'45 мин',desc:'15 мин бичлэг (хятадаар өдрийн тухайгаа) → 30 мин унших эсвэл YouTube хятад контент.',chips:['Хятадаар бичих','Хятад видео'],timerMins:45},
+    {time:'22:00',cat:'c-rest',catName:'Wind-down',title:'Тайвших + сунгалт',dur:'60 мин',desc:'Биеийн сунгалт 15 мин → дэлгэц зогсоох → ном.',timerMins:30},
+    {time:'23:30',cat:'c-sleep',catName:'Унтах',title:'7.5 цаг',desc:'Тайван нойр.'},
+  ],
+  // Day 4: Баасан — Амрах + Selfcare
+  [
+    {time:'07:30',cat:'c-sleep',catName:'Сэрэх',title:'Өглөөний бэлтгэл',dur:'30 мин',desc:'Ус → цай → долоо хоногийн сүүлчийн өдрийн зорилт.',timerMins:30},
+    {time:'08:00',cat:'c-transit',catName:'Ажилд явах',title:'Явах зам',dur:'08:00–10:00',desc:'Хятад аудио эсвэл дуртай podcast. Баасан — тайвшруулах.',chips:['Хятад аудио']},
+    {time:'10:00',cat:'c-work',catName:'Ажил',title:'Оффисийн ажил',dur:'10:00–19:00',desc:'Баасангийн тайван ажил. 90 мин тутамд сунгалт.'},
+    {time:'13:00',cat:'c-food',catName:'Үдийн завсарлага',title:'Хоол + амрах',dur:'60 мин',desc:'Хоол идэж, гадаа гарч 10-15 мин алхалт хийнэ.'},
+    {time:'19:00',cat:'c-transit',catName:'Гэртээ харих',title:'Буцах зам',dur:'19:00–20:30',desc:'Дуртай podcast.'},
+    {time:'20:30',cat:'c-food',catName:'Хоол',title:'Оройн хоол',dur:'30 мин',desc:'Batch cook хоол халааж идэнэ.'},
+    {time:'21:00',cat:'c-lang',catName:'🈶 Хятад хэл — Тайван',title:'Хятад хэлний хөнгөн дасгал',dur:'45 мин',desc:'Кино эсвэл YouTube видео хятадаар үзэх (хятад хэрчим). Суралцах → зугаатай.',chips:['Хятад кино','YouTube хятад'],timerMins:45},
+    {time:'22:00',cat:'c-rest',catName:'Selfcare',title:'Selfcare цаг',dur:'90 мин',desc:'Усанд орох → арьс арчлал → ном → маргаашийн бэлтгэл. Баасан оройн шагнал.',timerMins:60},
+    {time:'23:30',cat:'c-sleep',catName:'Унтах',title:'7.5 цаг',desc:'Тайван нойр.'},
+  ],
+  // Day 5: Бямба — Гүнзгий дасгал + Хятад
+  [
+    {time:'07:30',cat:'c-sleep',catName:'Сэрэх',title:'Бямбагийн тайван эхлэл',dur:'30 мин',desc:'Урт сунгалт → ус → цай → Бямбагийн гол зорилт.',timerMins:30},
+    {time:'08:00',cat:'c-lang',catName:'🈶 Хятад хэл — Өглөөний блок',title:'Хятад хэлний интенсив',dur:'2 цаг',desc:'30 мин Anki → 30 мин HSK дасгал → 30 мин YouTube хятад контент → 30 мин бичих дасгал.',chips:['Anki','HSK дасгал','Хятад контент'],timerMins:120},
+    {time:'10:00',cat:'c-rest',catName:'Завсарлага',title:'Амрах + хоол',dur:'60 мин',desc:'Хоол идэх → 15 мин алхалт.'},
+    {time:'11:00',cat:'c-lang',catName:'🈶 Хятад хэл — Дунд блок',title:'Хятад хэлний дадлага',dur:'90 мин',desc:'Хятадаар ярих дасгал (iTalki, Tandem), эсвэл хятад кино утгыг орчуулах дасгал.',chips:['Хятадаар ярих','Орчуулах дасгал'],timerMins:90},
+    {time:'12:30',cat:'c-food',catName:'Үдийн хоол',title:'Хоол + амрах',dur:'60 мин',desc:'Batch cook хоол.'},
+    {time:'13:30',cat:'c-rest',catName:'Амрах',title:'Power nap / чөлөөт цаг',dur:'30 мин',desc:'20 мин power nap эсвэл алхалт.',timerMins:30},
+    {time:'14:00',cat:'c-rest',catName:'Гадаа алхалт',title:'60 мин алхалт',dur:'60 мин',desc:'Гадаа гарч толгой цэвэрлэнэ. Хятад аудио сонсож болно.',timerMins:60},
+    {time:'15:00',cat:'c-train',catName:'🏋️ Бямбагийн Full Body',title:'Дасгалын газар эсвэл гэрт',dur:'50 мин',desc:'Warmup → Squat 4×10, Push-up 4×10, Deadlift хэлбэр 3×10, Pull-up (туслах тугалгаар) 3×8, Core 10 мин.',chips:['Squat','Push-up','Core'],why:'Бямба бол 7 хоногийн хамгийн чанартай дасгалын өдөр. Биеийн хэлбэр энд бүрддэг.',timerMins:50},
+    {time:'16:00',cat:'c-food',catName:'Дасгалын дараах хоол',title:'Уураг хоол',dur:'30 мин',desc:'Мах + цагаан будаа + ногоо. Дасгалын дараа 45 мин дотор уураг авна.'},
+    {time:'16:30',cat:'c-rest',catName:'Амрах',title:'Чөлөөт цаг',dur:'90 мин',desc:'Найз нөхөд, гэр бүл — чөлөөтэй.'},
+    {time:'18:00',cat:'c-lang',catName:'🈶 Хятад хэл — Оройн sprint',title:'Оройн хятад',dur:'60 мин',desc:'Долоо хоногийн хятад хэлний дэвшлийг шалгана. Шинэ хичээл нэмнэ.',timerMins:60},
+    {time:'19:00',cat:'c-rest',catName:'Гэр бүл / Найзууд',title:'Нийгмийн цаг',dur:'120 мин',desc:'Утасгүй байх хэрэггүй. Тайван.'},
+    {time:'21:00',cat:'c-rest',catName:'Wind-down',title:'Тайвших',dur:'60 мин',desc:'Сунгалт → дэлгэц зогсоох → ном.'},
+    {time:'23:00',cat:'c-sleep',catName:'Унтах',title:'8 цаг',desc:'Бямба оройн нойр.'},
+  ],
+  // Day 6: Ням — Reload + Бэлтгэл
+  [
+    {time:'07:30',cat:'c-sleep',catName:'Сэрэх',title:'Тайван эхлэл',dur:'30 мин',desc:'Ус → сунгалт → цай.',timerMins:30},
+    {time:'08:00',cat:'c-rest',catName:'📊 Нямын тайлан',title:'Weekly Analysis',dur:'60 мин',desc:'7 хоногийн дасгал хэд хийсэн? Хятад хэл хэдэн үг цээжилсэн? Дараа долоо хоногийн 3 гол зорилт.',why:'Шалгахгүй бол дэвшлийг мэдэхгүй. 10 мин гарцгүй.',timerMins:60},
+    {time:'09:00',cat:'c-train',catName:'💪 Нямын дасгал',title:'Хөнгөн full body + сунгалт',dur:'45 мин',desc:'Хөнгөн cardio 15 мин (алхалт/гүйлт) + full body хөнгөн тойрог + 15 мин сунгалт.',chips:['Cardio','Full body','Сунгалт'],timerMins:45},
+    {time:'09:45',cat:'c-rest',catName:'Гэр бүл',title:'Гэр бүлтэй цаг',dur:'90 мин',desc:'Утасгүй. Бүрэн анхаарал.'},
+    {time:'11:15',cat:'c-food',catName:'🛒 Дэлгүүр',title:'7 хоногийн хүнс авах',dur:'90 мин',desc:'Бэлдсэн жагсаалтаар. Уураг хоол (мах, өндөг, тофу) + ногоо + будаа.',chips:['Уураг хоол','Ногоо','Жагсаалт'],timerMins:90},
+    {time:'13:00',cat:'c-food',catName:'🍳 Batch Cook #1',title:'Да–Мя–Лх хоол бэлдэх',dur:'90 мин',desc:'3 хоногийн хоол нэгэн зэрэг. Хятад аудио сонс. Хийх зуур podcast.',timerMins:90},
+    {time:'14:30',cat:'c-lang',catName:'🈶 Хятад хэл',title:'Нямын хятад',dur:'60 мин',desc:'Шинэ хичээл → Anki шинэчлэх → долоо хоногийн нэгтгэл.',timerMins:60},
+    {time:'15:30',cat:'c-rest',catName:'Selfcare',title:'Selfcare + амрах',dur:'90 мин',desc:'Усанд орох → арьс арчлал → ном.',timerMins:60},
+    {time:'17:00',cat:'c-rest',catName:'Чөлөөт цаг',title:'Гэр бүл / Найзууд',dur:'120 мин',desc:'Тайван.'},
+    {time:'19:00',cat:'c-food',catName:'Хоол',title:'Оройн хоол',dur:'60 мин',desc:'Тайван хоол.'},
+    {time:'20:00',cat:'c-rest',catName:'📅 Дараа долоо хоногийн бэлтгэл',title:'7 хоногийн стратеги',dur:'30 мин',desc:'Дааваагийн нэг гол зорилт батлан бичих. Хятад хэлний шинэ зорилт тавих.'},
+    {time:'22:00',cat:'c-sleep',catName:'Унтах',title:'7.5 цаг',desc:'Шинэ долоо хоногт бэлэн.'},
+  ],
+];
+
+const CHECKLISTS = [
+  // Даваа
+  [['🌅 07:30 босч бэлдсэн',5,'Өглөө'],['💧 Ус 500мл уусан',5,'Өглөө'],['🎧 Явах замдаа хятад аудио сонссон',10,'Явах зам'],['💼 Ажил 10:00–19:00',15,'Ажил'],['⏱ 90 мин тутамд сунгасан',5,'Ажил'],['🈶 Үдийн завсарлагаанд Anki хийсэн',10,'Ажил'],['🎧 Буцах замдаа хятад аудио',5,'Буцах зам'],['🏃 Гэрийн дасгал 35 мин',25,'Орой'],['🈶 Хятад хэлний фокус 30 мин',15,'Орой'],['📵 23:00 дэлгэц зогссон',5,'Орой'],['😴 23:30 унтсан',5,'Орой']],
+  // Мягмар
+  [['🌅 07:30 босч бэлдсэн',5,'Өглөө'],['💧 Ус 500мл уусан',5,'Өглөө'],['🎧 Явах замдаа хятад аудио',10,'Явах зам'],['💼 Ажил 10:00–19:00',15,'Ажил'],['⏱ 90 мин тутамд сунгасан',5,'Ажил'],['🈶 Үдийн завсарлагаанд Anki',10,'Ажил'],['🎧 Буцах замдаа хятад аудио',5,'Буцах зам'],['🈶 Хятад хэлний гүнзгий блок 90 мин',30,'Орой'],['📵 23:00 дэлгэц зогссон',5,'Орой'],['😴 23:30 унтсан',5,'Орой']],
+  // Лхагва
+  [['🌅 07:30 босч бэлдсэн',5,'Өглөө'],['💧 Ус 500мл уусан',5,'Өглөө'],['🎧 Явах замдаа хятад аудио',10,'Явах зам'],['💼 Ажил 10:00–19:00',15,'Ажил'],['⏱ 90 мин тутамд сунгасан',5,'Ажил'],['🎧 Буцах замдаа podcast',5,'Буцах зам'],['🏃 Гэрийн дасгал 35 мин',25,'Орой'],['🍳 Batch Cook хийсэн',20,'Орой'],['🈶 Оройн Anki 20 мин',10,'Орой'],['📵 23:00 дэлгэц зогссон',5,'Орой'],['😴 23:30 унтсан',5,'Орой']],
+  // Пүрэв
+  [['🌅 07:30 босч бэлдсэн',5,'Өглөө'],['💧 Ус 500мл уусан',5,'Өглөө'],['🎧 Явах замдаа хятад аудио',10,'Явах зам'],['💼 Ажил 10:00–19:00',15,'Ажил'],['⏱ 90 мин тутамд сунгасан',5,'Ажил'],['🈶 Үдийн Anki',10,'Ажил'],['🎧 Буцах замдаа хятад аудио',5,'Буцах зам'],['💪 Гэрийн дасгал дээд бие 40 мин',25,'Орой'],['🈶 Хятад хэл бичих 45 мин',15,'Орой'],['😴 23:30 унтсан',5,'Орой']],
+  // Баасан
+  [['🌅 07:30 босч бэлдсэн',5,'Өглөө'],['💧 Ус 500мл уусан',5,'Өглөө'],['🎧 Явах замдаа аудио',5,'Явах зам'],['💼 Ажил 10:00–19:00',15,'Ажил'],['⏱ 90 мин тутамд сунгасан',5,'Ажил'],['🚶 Завсарлагаанд алхалт',5,'Ажил'],['🈶 Хятад кино/видео 45 мин',15,'Орой'],['🛁 Selfcare — усанд орсон',10,'Орой'],['📵 23:00 дэлгэц зогссон',5,'Орой'],['😴 23:30 унтсан',5,'Орой']],
+  // Бямба
+  [['🌅 07:30 босч бэлдсэн',5,'Өглөө'],['💧 Ус 500мл уусан',5,'Өглөө'],['🈶 Хятад хэл өглөөний блок 2 цаг',30,'Өглөө'],['🈶 Хятад хэл дунд блок 90 мин',20,'Өдөр'],['🚶 Гадаа алхалт 60 мин',10,'Өдөр'],['🏋️ Full Body дасгал 50 мин',30,'Орой'],['🈶 Оройн хятад 60 мин',15,'Орой'],['👨‍👩‍👧 Гэр бүл/найзуудтай цаг',5,'Орой'],['😴 23:00 унтсан',5,'Орой']],
+  // Ням
+  [['🌅 07:30 босч бэлдсэн',5,'Өглөө'],['💧 Ус 500мл уусан',5,'Өглөө'],['📊 Weekly Analysis — 60 мин',20,'Өглөө'],['💪 Нямын дасгал 45 мин',20,'Өглөө'],['👨‍👩‍👧 Гэр бүлтэй цаг',5,'Өдөр'],['🛒 Дэлгүүр — 7 хоногийн хүнс',15,'Өдөр'],['🍳 Batch Cook #1 — 3 хоногийн хоол',25,'Өдөр'],['🈶 Нямын хятад 60 мин',15,'Орой'],['🛁 Selfcare',10,'Орой'],['📅 Дааваагийн нэг зорилт бичсэн',5,'Орой'],['😴 22:00 унтсан',5,'Орой']],
+];
+
+const BOSS_CHALLENGES = [
+  {icon:'🈶', title:'Явах + буцах замаа бүгдийг хятад аудиод зориул', desc:'Нийт 2+ цаг хятад аудио = boss.', target:2},
+  {icon:'💪', title:'Anki картыг өдөрт 2 удаа нээж давта — өглөө + орой', desc:'2 удаа нээж давтах = boss.', target:2},
+  {icon:'🍳', title:'Batch cook хийх зуур хятад аудио/podcast сонс', desc:'60+ мин batch cook + аудио = boss.', target:1},
+  {icon:'🏃', title:'Дасгал хийхдээ хэлбэрт анхаарч, толинд харж хий', desc:'3 set бүрд хэлбэр шалгах = boss.', target:3},
+  {icon:'📵', title:'Ажлаас гарсны дараа утасгүй 1 цаг өнгөрүүл', desc:'1 цаг утасгүй = boss.', target:1},
+  {icon:'⚡', title:'Бямбагийн хятад хэлний 2 блокыг тасалдалгүй дуусга', desc:'2 блок дуусгах = boss.', target:2},
+  {icon:'📅', title:'Weekly Analysis + ирэх долоо хоногийн хятад зорилт бичих', desc:'2 хэсгийг дуусгах = boss.', target:2},
+];
+
+const LEVELS = [
+  {lvl:1,min:0,max:700,name:'Анхлагч',emoji:'🌱'},
+  {lvl:2,min:700,max:1400,name:'Тогтсон',emoji:'⚡'},
+  {lvl:3,min:1400,max:2500,name:'Хүчтэй',emoji:'🔥'},
+  {lvl:4,min:2500,max:4000,name:'Мастер',emoji:'💎'},
+  {lvl:5,min:4000,max:9999,name:'Легенд',emoji:'👑'},
+];
+
+const ACHIEVEMENTS = [
+  {id:'first',icon:'🌱',name:'Эхний алхам',desc:'Анхны task биелүүлсэн',xp:10,check:s=>s.totalXp>=5},
+  {id:'streak3',icon:'🔥',name:'3 өдрийн Streak',desc:'3 өдөр дараалан',xp:30,check:s=>(s.streak||0)>=3},
+  {id:'streak7',icon:'🌟',name:'7 өдөр',desc:'Бүтэн долоо хоног',xp:100,check:s=>(s.streak||0)>=7},
+  {id:'streak30',icon:'💫',name:'Сарын баатар',desc:'30 өдөр дараалан',xp:300,check:s=>(s.streak||0)>=30},
+  {id:'xp500',icon:'💎',name:'500 XP',desc:'Нийт 500 XP',xp:50,check:s=>(s.totalXp||0)>=500},
+  {id:'xp1000',icon:'👑',name:'1000 XP',desc:'Нийт 1000 XP',xp:100,check:s=>(s.totalXp||0)>=1000},
+  {id:'xp5000',icon:'🚀',name:'5000 XP',desc:'Нийт 5000 XP',xp:500,check:s=>(s.totalXp||0)>=5000},
+  {id:'combo5',icon:'⚡',name:'5× Combo',desc:'5 task дараалан',xp:25,check:s=>(s.maxCombo||0)>=5},
+  {id:'combo10',icon:'💥',name:'10× Combo',desc:'10 task дараалан',xp:75,check:s=>(s.maxCombo||0)>=10},
+  {id:'boss1',icon:'🗡️',name:'Boss Hunter',desc:'Boss Challenge дарсан',xp:30,check:s=>Object.keys(s.bosses||{}).length>=1},
+  {id:'bossAll',icon:'🏰',name:'Boss Slayer',desc:'7 өдрийн Boss бүгд дарсан',xp:150,check:s=>Object.keys(s.bosses||{}).length>=7},
+  {id:'lvl3',icon:'🔥',name:'Хүчтэй',desc:'LVL 3 хүрсэн',xp:50,check:s=>(s.totalXp||0)>=1400},
+  {id:'pomo10',icon:'⏱',name:'Pomodoro Pro',desc:'10 pomodoro хийсэн',xp:40,check:s=>(s.pomoCount||0)>=10},
+  {id:'early',icon:'🌅',name:'Эртний шувуу',desc:'07:30-д checklist эхэлсэн',xp:20,check:s=>s.earlyCheck},
+  {id:'lang10',icon:'🈶',name:'Хятад судлаач',desc:'10 өдөр хятад хэлний task хийсэн',xp:80,check:s=>(s.langDays||0)>=10},
+  {id:'fit10',icon:'🏃',name:'Фитнесс тогтмол',desc:'10 удаа дасгал хийсэн',xp:80,check:s=>(s.fitCount||0)>=10},
+];
+
+const DAILY_MISSIONS = [
+  {icon:'💧',text:'Ус 500мл уусан checklistийг тэмдэглэх',xp:15,check:(s,di)=>{
+    const items = CHECKLISTS[di];
+    return items.some((it,ii)=>it[0].includes('Ус')&&s.checks[`d${di}_i${ii}`]);
+  }},
+  {icon:'🈶',text:'Хятад хэлний task биелүүлэх',xp:25,check:(s,di)=>{
+    const items = CHECKLISTS[di];
+    return items.some((it,ii)=>it[0].includes('хятад')&&s.checks[`d${di}_i${ii}`]);
+  }},
+  {icon:'🏃',text:'Дасгалын task тэмдэглэх',xp:20,check:(s,di)=>{
+    const items = CHECKLISTS[di];
+    return items.some((it,ii)=>(it[0].includes('дасгал')||it[0].includes('Full Body'))&&s.checks[`d${di}_i${ii}`]);
+  }},
+  {icon:'😴',text:'Унтах task тэмдэглэх',xp:10,check:(s,di)=>{
+    const items = CHECKLISTS[di];
+    return items.some((it,ii)=>it[0].includes('унтсан')&&s.checks[`d${di}_i${ii}`]);
+  }},
+];
+
+// ══════════ STATE ══════════
+function loadState() {
+  try { const r = localStorage.getItem('routineOS_dulguu'); if(r) return JSON.parse(r); } catch(e){}
+  return {checks:{},totalXp:0,streak:0,lastDate:null,bosses:{},bossCounters:{},achievements:{},maxCombo:0,pomoCount:0,history:{},freezeUsed:false,earlyCheck:false,langDays:0,fitCount:0};
+}
+function saveState() {
+  try { localStorage.setItem('routineOS_dulguu',JSON.stringify(state)); } catch(e){}
+}
+let state = loadState();
+let currentDay = 0;
+let currentTab = 0;
+let prevLevel = 1;
+let comboCount = 0;
+let comboTimer = null;
+
+function getTimeline(di) { return DEFAULT_TIMELINES[di]; }
+
+// ══════════ CALENDAR ══════════
+function buildCalStrip() {
+  const strip = document.getElementById('calStrip');
+  const today = new Date();
+  const dayNames = ['Ня','Да','Мя','Лх','Пү','Ба','Бя'];
+  let html = '';
+  for (let i = -10; i <= 20; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const dateStr = d.toDateString();
+    const dow = d.getDay();
+    const mn_dow = dow === 0 ? 6 : dow - 1;
+    const dayXp = state.history?.[dateStr]?.xp || 0;
+    const isPast = i < 0;
+    const isToday = i === 0;
+    let cls = 'cal-day';
+    if (isToday) cls += ' today';
+    if (isPast && dayXp > 50) cls += ' past-done';
+    else if (isPast && dayXp === 0) cls += ' past-miss';
+    html += `<div class="${cls}" onclick="calJump(${mn_dow},${i})">
+      <div class="cal-wd">${dayNames[dow]}</div>
+      <div class="cal-num">${d.getDate()}</div>
+      <div class="cal-dot"></div>
+    </div>`;
+  }
+  strip.innerHTML = html;
+  requestAnimationFrame(() => {
+    const todayEl = strip.querySelector('.cal-day.today');
+    if (todayEl) todayEl.scrollIntoView({block:'nearest',inline:'center',behavior:'instant'});
+  });
+}
+function calJump(mn_dow) { if (mn_dow >= 0 && mn_dow <= 6) showDay(mn_dow); }
+
+// ══════════ BUILD DAY PANELS ══════════
+function buildDayPanel(di) {
+  const panel = document.getElementById('dp'+di);
+  if (!panel) return;
+  const tl = getTimeline(di);
+  const day = DAYS[di];
+  const stats = [
+    {label:'Дасгал',val:tl.some(e=>e.cat==='c-train') ? (tl.find(e=>e.cat==='c-train')?.dur||'35мин') : '—'},
+    {label:'Унтах',val:'23:30'},
+    {label:'Хятад хэл',val:tl.filter(e=>e.cat==='c-lang').length > 0 ? tl.filter(e=>e.cat==='c-lang').reduce((s,e)=>s+(e.timerMins||0),0)+'мин' : '—'},
+    {label:'Max XP',val:'+'+day.xp+' XP'},
+  ];
+  let statsHtml = `<div class="stats">`+stats.map(s=>`<div class="stat"><div class="stat-label">${s.label}</div><div class="stat-val">${s.val}</div></div>`).join('')+`</div>`;
+  let tlHtml = `<div class="tl" id="tl${di}">`;
+  tl.forEach((ev,ei) => {
+    const hasDur = ev.dur ? `<span class="tl-dur">— ${ev.dur}</span>` : '';
+    const hasChips = ev.chips ? `<div class="tl-chips">${ev.chips.map(c=>`<span class="chip">${c}</span>`).join('')}</div>` : '';
+    const hasWhy = ev.why ? `<div class="why-box"><strong>Яагаад?</strong>${ev.why}</div>` : '';
+    const hasTimer = ev.timerMins ? `<div class="tl-timer-btn" onclick="startTimerFor(${ev.timerMins},'${ev.title}')">▶ ${ev.timerMins}мин таймер</div>` : '';
+    tlHtml += `<div class="tl-row ${ev.cat}">
+      <div class="tl-time">${ev.time||''}</div>
+      <div class="tl-axis"><div class="tl-node"></div><div class="tl-line"></div></div>
+      <div class="tl-body">
+        <div class="tl-cat">${ev.catName||''}</div>
+        <div class="tl-title">${ev.title||''} ${hasDur}</div>
+        <div class="tl-desc">${ev.desc||''}</div>
+        ${hasChips}${hasWhy}${hasTimer}
+      </div>
+    </div>`;
+  });
+  tlHtml += `</div>`;
+  const t0 = `<div class="tab-panel active" id="tp${di}-0">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <span style="font-size:28px">${day.emoji}</span>
+      <div>
+        <div style="font-size:16px;font-weight:800;color:var(--white);line-height:1">${day.name} — Дулгуун</div>
+        <div style="font-size:11px;color:var(--dim);margin-top:2px">${day.meta}</div>
+      </div>
+    </div>
+    ${statsHtml}${tlHtml}
+  </div>`;
+  const boss = BOSS_CHALLENGES[di];
+  const bossKey = `boss${di}`;
+  const bossCount = state.bossCounters?.[bossKey]||0;
+  const bossDone = state.bosses?.[bossKey];
+  let bossStepsHtml = '';
+  for (let s=0;s<boss.target;s++) bossStepsHtml += `<div class="boss-step${s<bossCount?' done':''}" onclick="tapBoss(${di},${s})"></div>`;
+  const bossHtml = `<div class="boss-card" id="boss${di}">
+    <div class="boss-glow"></div>
+    <div class="boss-header"><div class="boss-icon-wrap">${boss.icon}</div><div class="boss-badge">BOSS CHALLENGE</div><div class="boss-xp">+50 XP</div></div>
+    <div class="boss-title">${boss.title}</div>
+    <div class="boss-desc">${boss.desc}</div>
+    <div class="boss-counter"><div class="boss-steps" id="bossSteps${di}">${bossStepsHtml}</div><div class="boss-count-label${bossDone?' complete':''}" id="bossLabel${di}">${bossDone?'ДАРСАН!':bossCount+'/'+boss.target}</div></div>
+    <div class="boss-done-overlay${bossDone?' show':''}"><div class="boss-done-text">✓ BOSS ДАРСАН!</div></div>
+  </div>`;
+  const clHtml = `<div class="cl-wrap" id="cl${di}"></div>`;
+  const missionsHtml = `<div class="missions" id="missions${di}"></div>`;
+  const dcHtml = `<div class="day-complete" id="dc${di}"><div class="dc-icon">🎉</div><div><div class="dc-title">Өдөр дууссан!</div><div class="dc-sub">Бүх зорилт биелүүлсэн</div></div><div class="dc-xp">+${day.xp} XP</div></div>`;
+  const t1 = `<div class="tab-panel" id="tp${di}-1" style="display:none">
+    ${dcHtml}${missionsHtml}${bossHtml}${clHtml}
+  </div>`;
+  panel.innerHTML = t0 + t1;
+  buildChecklist(di);
+  buildMissions(di);
+  updateDayComplete(di);
+}
+
+function buildChecklist(di) {
+  const wrap = document.getElementById('cl'+di);
+  if (!wrap) return;
+  const items = CHECKLISTS[di];
+  const done = items.filter((_,ii)=>state.checks[`d${di}_i${ii}`]).length;
+  const total = items.length;
+  const pct = Math.round(done/total*100);
+  const sections = {};
+  items.forEach((item,ii) => {
+    const [label,xp,sec] = item;
+    if (!sections[sec]) sections[sec] = [];
+    sections[sec].push({label,xp,ii});
+  });
+  let html = `<div class="cl-header"><div class="cl-title">Өдрийн зорилтууд</div><div class="cl-prog-text">${done}/${total} · ${calcDayXp(di)} XP</div></div>
+  <div class="prog-wrap"><div class="prog-bar" id="pb${di}" style="width:${pct}%"></div></div>`;
+  Object.keys(sections).forEach(sec => {
+    html += `<div class="cl-section"><div class="cl-sec-label">${sec}</div>`;
+    sections[sec].forEach(({label,xp,ii}) => {
+      const key = `d${di}_i${ii}`;
+      const chk = state.checks[key] ? 'checked' : '';
+      html += `<div class="cl-item ${chk}" id="ci_${di}_${ii}" onclick="toggleCheck(${di},${ii},event)">
+        <div class="cl-box"><span class="cl-check-icon">✓</span></div>
+        <div class="cl-text"><div class="cl-label">${label}</div><div class="cl-xp">+${xp} XP</div></div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+function buildMissions(di) {
+  const wrap = document.getElementById('missions'+di);
+  if (!wrap) return;
+  let html = `<div class="missions-title">⚡ Өдрийн миссиуд</div>`;
+  DAILY_MISSIONS.forEach(m => {
+    const done = m.check(state, di);
+    html += `<div class="mission-item${done?' done':''}">
+      <span class="m-icon">${m.icon}</span>
+      <div style="flex:1"><div class="m-text">${m.text}</div><div class="m-mini-bar"><div class="m-mini-fill" style="width:${done?100:0}%"></div></div></div>
+      <span class="m-xp">+${m.xp}</span>
+      <span class="m-check">✓</span>
+    </div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+function calcDayXp(di) { return CHECKLISTS[di].reduce((s,item,ii)=>s+(state.checks[`d${di}_i${ii}`]?item[1]:0),0); }
+function calcDayMaxXp(di) { return CHECKLISTS[di].reduce((s,item)=>s+item[1],0); }
+
+function toggleCheck(di, ii, evt) {
+  if (evt) {
+    const rect = evt.currentTarget.getBoundingClientRect();
+    const r = document.createElement('div');
+    r.className = 'ripple';
+    const size = 60;
+    r.style.cssText = `width:${size}px;height:${size}px;left:${evt.clientX-rect.left-size/2}px;top:${evt.clientY-rect.top-size/2}px`;
+    evt.currentTarget.appendChild(r);
+    setTimeout(() => r.remove(), 500);
+  }
+  const key = `d${di}_i${ii}`;
+  const was = !!state.checks[key];
+  const baseXp = CHECKLISTS[di][ii][1];
+  if (!was) {
+    state.checks[key] = true;
+    if (new Date().getHours() <= 7) state.earlyCheck = true;
+    addCombo();
+    const bonus = getComboBonus(baseXp);
+    state.totalXp = (state.totalXp||0) + bonus;
+    showXpPopup(bonus);
+    checkLevelUp();
+    checkAchievements();
+    const todayStr = new Date().toDateString();
+    if (!state.history) state.history = {};
+    if (!state.history[todayStr]) state.history[todayStr] = {xp:0,done:0};
+    state.history[todayStr].xp += bonus;
+    state.history[todayStr].done++;
+    const label = CHECKLISTS[di][ii][0];
+    if (label.includes('хятад')||label.includes('Хятад')||label.includes('Anki')) state.langDays = (state.langDays||0)+1;
+    if (label.includes('дасгал')||label.includes('Full Body')||label.includes('Дасгал')) state.fitCount = (state.fitCount||0)+1;
+  } else {
+    delete state.checks[key];
+    state.totalXp = Math.max(0,(state.totalXp||0) - baseXp);
+  }
+  updateStreak();
+  saveState();
+  const el = document.getElementById(`ci_${di}_${ii}`);
+  if (el) el.classList.toggle('checked', !was);
+  updateDayProgress(di);
+  updateXpBar();
+  updateDayComplete(di);
+  updateNavDone(di);
+  updateWeekScore();
+  buildMissions(di);
+  buildCalStrip();
+}
+
+function updateDayProgress(di) {
+  const items = CHECKLISTS[di];
+  const done = items.filter((_,ii)=>state.checks[`d${di}_i${ii}`]).length;
+  const total = items.length;
+  const pct = Math.round(done/total*100);
+  const pb = document.getElementById('pb'+di);
+  if (pb) pb.style.width = pct+'%';
+  const cl = document.getElementById('cl'+di);
+  if (cl) {
+    const txt = cl.querySelector('.cl-prog-text');
+    if (txt) txt.textContent = `${done}/${total} · ${calcDayXp(di)} XP`;
+  }
+}
+
+function updateDayComplete(di) {
+  const items = CHECKLISTS[di];
+  const done = items.filter((_,ii)=>state.checks[`d${di}_i${ii}`]).length;
+  const el = document.getElementById('dc'+di);
+  if (el) el.classList.toggle('show', done === items.length);
+}
+
+function updateNavDone(di) {
+  const nav = document.getElementById('nav'+di);
+  if (!nav) return;
+  const items = CHECKLISTS[di];
+  const done = items.filter((_,ii)=>state.checks[`d${di}_i${ii}`]).length;
+  nav.classList.toggle('done', done === items.length && items.length > 0);
+  const mBtn = document.getElementById('mn'+di);
+  if (mBtn) mBtn.classList.toggle('done', done === items.length && items.length > 0);
+}
+
+// ══════════ BOSS ══════════
+function tapBoss(di, stepIdx) {
+  const key = `boss${di}`;
+  if (state.bosses?.[key]) return;
+  const count = (state.bossCounters?.[key]||0);
+  const newCount = count >= stepIdx ? count + 1 : stepIdx + 1;
+  if (!state.bossCounters) state.bossCounters = {};
+  state.bossCounters[key] = newCount;
+  const target = BOSS_CHALLENGES[di].target;
+  const stepsEl = document.getElementById('bossSteps'+di);
+  if (stepsEl) {
+    const steps = stepsEl.querySelectorAll('.boss-step');
+    steps.forEach((s,i) => s.classList.toggle('done', i < newCount));
+  }
+  const labelEl = document.getElementById('bossLabel'+di);
+  if (newCount >= target) {
+    if (!state.bosses) state.bosses = {};
+    state.bosses[key] = true;
+    state.totalXp = (state.totalXp||0) + 50;
+    showXpPopup(50);
+    if (labelEl) { labelEl.textContent = 'ДАРСАН!'; labelEl.classList.add('complete'); }
+    const card = document.getElementById('boss'+di);
+    if (card) { const ov = card.querySelector('.boss-done-overlay'); if (ov) ov.classList.add('show'); }
+    checkAchievements();
+    updateXpBar();
+  } else {
+    if (labelEl) labelEl.textContent = newCount+'/'+target;
+  }
+  saveState();
+}
+
+// ══════════ XP & LEVELS ══════════
+function getComboBonus(base) {
+  if (comboCount >= 10) return Math.round(base * 2);
+  if (comboCount >= 5) return Math.round(base * 1.5);
+  return base;
+}
+function addCombo() {
+  comboCount++;
+  if (comboCount > (state.maxCombo||0)) state.maxCombo = comboCount;
+  if (comboTimer) clearTimeout(comboTimer);
+  comboTimer = setTimeout(() => { comboCount = 0; updateComboDisplay(); }, 8000);
+  updateComboDisplay();
+}
+function updateComboDisplay() {
+  const w = document.getElementById('comboWrap');
+  const m = document.getElementById('comboMult');
+  if (!w||!m) return;
+  if (comboCount >= 3) {
+    w.classList.add('show');
+    m.textContent = comboCount >= 10 ? '×2' : comboCount >= 5 ? '×1.5' : '×'+comboCount;
+  } else {
+    w.classList.remove('show');
+  }
+}
+function showXpPopup(xp) {
+  const el = document.getElementById('xpPopup');
+  const inner = document.getElementById('xpPopupInner');
+  if (!el||!inner) return;
+  inner.textContent = '+'+xp+' XP';
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1500);
+}
+function updateXpBar() {
+  const xp = state.totalXp||0;
+  const lvl = LEVELS.find(l=>xp>=l.min&&xp<l.max)||LEVELS[LEVELS.length-1];
+  const pct = Math.min(100, Math.round((xp-lvl.min)/(lvl.max-lvl.min)*100));
+  const lbl = document.getElementById('lvlLabel');
+  const xpLbl = document.getElementById('xpLabel');
+  const bar = document.getElementById('xpBar');
+  const mLbl = document.getElementById('mLvlLabel');
+  const mBar = document.getElementById('mXpBar');
+  if (lbl) lbl.textContent = `LVL ${lvl.lvl} · ${lvl.name}`;
+  if (xpLbl) xpLbl.textContent = `${xp} / ${lvl.max} XP`;
+  if (bar) bar.style.width = pct+'%';
+  if (mLbl) mLbl.textContent = `LVL ${lvl.lvl}`;
+  if (mBar) mBar.style.width = pct+'%';
+}
+function checkLevelUp() {
+  const xp = state.totalXp||0;
+  const lvl = LEVELS.find(l=>xp>=l.min&&xp<l.max)||LEVELS[LEVELS.length-1];
+  if (lvl.lvl > prevLevel) {
+    prevLevel = lvl.lvl;
+    showLevelUp(lvl);
+  }
+}
+function showLevelUp(lvl) {
+  const ov = document.getElementById('lvlupOverlay');
+  const nm = document.getElementById('lvlupName');
+  if (!ov||!nm) return;
+  nm.textContent = lvl.emoji + ' ' + lvl.name;
+  spawnParticles();
+  ov.classList.add('show');
+}
+function closeLvlUp() { document.getElementById('lvlupOverlay')?.classList.remove('show'); }
+function spawnParticles() {
+  const w = document.getElementById('lvlupParticles');
+  if (!w) return;
+  w.innerHTML = '';
+  const colors = ['var(--gold)','var(--green)','var(--blue)','var(--red)','var(--purple)'];
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 4 + Math.random()*8;
+    p.style.cssText = `width:${size}px;height:${size}px;background:${colors[i%colors.length]};left:${50+Math.random()*20-10}%;top:${50+Math.random()*20-10}%;--tx:${(Math.random()-0.5)*400}px;--ty:${(Math.random()-1)*400}px;animation-delay:${Math.random()*0.4}s`;
+    w.appendChild(p);
+  }
+}
+
+// ══════════ STREAK ══════════
+function updateStreak() {
+  const today = new Date().toDateString();
+  if (state.lastDate !== today) {
+    const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+    const yStr = yesterday.toDateString();
+    if (state.lastDate === yStr || !state.lastDate) {
+      state.streak = (state.streak||0) + 1;
+    } else if (state.lastDate !== today) {
+      if (!state.freezeUsed || state.streak === 0) state.streak = 1;
+      state.freezeUsed = false;
+    }
+    state.lastDate = today;
+  }
+  const sn = document.getElementById('streakNum');
+  const msn = document.getElementById('mStreakNum');
+  if (sn) sn.textContent = state.streak||0;
+  if (msn) msn.textContent = state.streak||0;
+}
+function useStreakFreeze() {
+  if (state.freezeUsed) { alert('Streak Freeze энэ долоо хоногт ашигласан байна.'); return; }
+  if (confirm('Streak Freeze ашиглах уу? (7 хоногт 1 удаа)')) {
+    state.freezeUsed = true;
+    state.streak = Math.max(1, state.streak||1);
+    saveState();
+    const fb = document.getElementById('freezeBtn');
+    if (fb) { fb.textContent = '🧊 Ашигласан'; fb.style.opacity = '0.4'; }
+  }
+}
+function initFreeze() {
+  const fb = document.getElementById('freezeBtn');
+  if (fb && state.freezeUsed) { fb.textContent = '🧊 Ашигласан'; fb.style.opacity = '0.4'; }
+}
+
+// ══════════ WEEK SCORE ══════════
+function updateWeekScore() {
+  let weekXp = 0;
+  const today = new Date();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today); d.setDate(today.getDate() - i);
+    weekXp += state.history?.[d.toDateString()]?.xp || 0;
+  }
+  const ws = document.getElementById('weekScore');
+  if (ws) ws.textContent = `7н: ${weekXp} XP`;
+}
+
+// ══════════ ACHIEVEMENTS ══════════
+function checkAchievements() {
+  let newAch = false;
+  ACHIEVEMENTS.forEach(a => {
+    if (!state.achievements?.[a.id] && a.check(state)) {
+      if (!state.achievements) state.achievements = {};
+      state.achievements[a.id] = true;
+      state.totalXp = (state.totalXp||0) + a.xp;
+      showAchToast(a.icon, a.name);
+      newAch = true;
+    }
+  });
+  if (newAch) { saveState(); updateXpBar(); renderAchStrip(); }
+}
+function showAchToast(icon, name) {
+  const t = document.getElementById('achToast');
+  const ti = document.getElementById('achToastIcon');
+  const tt = document.getElementById('achToastText');
+  if (!t||!ti||!tt) return;
+  ti.textContent = icon;
+  tt.textContent = name + ' — амжилт нээгдлээ!';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+function renderAchStrip() {
+  const s = document.getElementById('achStrip');
+  if (!s) return;
+  s.innerHTML = ACHIEVEMENTS.map(a => `<span class="ach-pill${state.achievements?.[a.id]?' unlocked':''}" title="${a.name}">${a.icon}</span>`).join('');
+}
+
+// ══════════ STATS ══════════
+function renderStats() {
+  const totalXp = state.totalXp||0;
+  document.getElementById('statTotalXp').textContent = totalXp;
+  document.getElementById('statStreak').textContent = state.streak||0;
+  let weekDone = 0, weekTotal = 0;
+  const today = new Date();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today); d.setDate(today.getDate()-i);
+    const h = state.history?.[d.toDateString()];
+    if (h) { weekDone += h.done||0; weekTotal += 12; }
+  }
+  document.getElementById('statDone').textContent = weekTotal > 0 ? Math.round(weekDone/weekTotal*100)+'%' : '0%';
+  renderHeatmap();
+  renderXpChart();
+}
+
+function renderHeatmap() {
+  const g = document.getElementById('heatmapGrid');
+  if (!g) return;
+  let html = '';
+  for (let i = 89; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const xp = state.history?.[d.toDateString()]?.xp||0;
+    let cls = 'hm-cell';
+    if (xp>150) cls+=' l4'; else if (xp>100) cls+=' l3'; else if (xp>50) cls+=' l2'; else if (xp>0) cls+=' l1';
+    html += `<div class="${cls}" title="${d.toLocaleDateString('mn-MN')} · ${xp} XP"><div class="hm-tooltip">${d.toLocaleDateString('mn-MN')}: ${xp}XP</div></div>`;
+  }
+  g.innerHTML = html;
+}
+
+function renderXpChart() {
+  const canvas = document.getElementById('xpChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const today = new Date();
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today); d.setDate(today.getDate()-i);
+    days.push({label:['Ня','Да','Мя','Лх','Пү','Ба','Бя'][d.getDay()], xp: state.history?.[d.toDateString()]?.xp||0});
+  }
+  const max = Math.max(...days.map(d=>d.xp), 50);
+  const w = canvas.offsetWidth || 200;
+  const h = canvas.offsetHeight || 80;
+  canvas.width = w; canvas.height = h;
+  ctx.clearRect(0,0,w,h);
+  const barW = Math.floor(w / days.length * 0.6);
+  const gap = Math.floor(w / days.length);
+  days.forEach((d,i) => {
+    const barH = Math.round((d.xp/max)*(h-20));
+    const x = Math.round(i*gap + (gap-barW)/2);
+    const y = h-barH-16;
+    const grad = ctx.createLinearGradient(0,y,0,h-16);
+    grad.addColorStop(0,'rgba(91,143,255,0.8)'); grad.addColorStop(1,'rgba(62,207,142,0.6)');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.roundRect(x,y,barW,barH,3); ctx.fill();
+    ctx.fillStyle='rgba(110,110,154,0.8)'; ctx.font='9px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText(d.label, x+barW/2, h-4);
+    if (d.xp>0) { ctx.fillStyle='rgba(212,212,240,0.7)'; ctx.font='8px DM Mono,monospace'; ctx.fillText(d.xp, x+barW/2, y-3); }
+  });
+}
+
+let chartRange = 7;
+function setRange(r, el) {
+  chartRange = r;
+  document.querySelectorAll('.range-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderXpChart();
+}
+
+// ══════════ WEEK OVERVIEW ══════════
+function renderWeekOverview() {
+  const grid = document.getElementById('weekGrid');
+  if (!grid) return;
+  let html = '';
+  DAYS.forEach((day,di) => {
+    const items = CHECKLISTS[di];
+    const done = items.filter((_,ii)=>state.checks[`d${di}_i${ii}`]).length;
+    const pct = items.length > 0 ? Math.round(done/items.length*100) : 0;
+    const xp = calcDayXp(di);
+    html += `<div class="wk-cell${pct===100?' done':''}" onclick="showDay(${di})">
+      <div class="wk-day">${day.short}</div>
+      <div class="wk-pct">${pct}%</div>
+      <div class="wk-xp">+${xp} XP</div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+  const totalXp = DAYS.reduce((_,d,di)=>_+calcDayXp(di),0);
+  const doneDays = DAYS.filter((d,di)=>{const its=CHECKLISTS[di];return its.filter((_,ii)=>state.checks[`d${di}_i${ii}`]).length===its.length&&its.length>0;}).length;
+  const avgPct = Math.round(DAYS.reduce((_,d,di)=>{const its=CHECKLISTS[di];return _+(its.length>0?its.filter((__,ii)=>state.checks[`d${di}_i${ii}`]).length/its.length*100:0);},0)/7);
+  document.getElementById('totalXpVal').textContent = totalXp;
+  document.getElementById('totalDoneVal').textContent = doneDays+'/7';
+  document.getElementById('totalStreakVal').textContent = state.streak||0;
+  document.getElementById('totalAvgVal').textContent = avgPct+'%';
+  renderTips();
+}
+
+function renderTips() {
+  const grid = document.getElementById('improveTips');
+  if (!grid) return;
+  const tips = [
+    {icon:'🈶',title:'Хятад хэл тогтмол болгох',body:'Явах + буцах замаа хятад аудиод зориулаарай. 2-3 цаг нийт — маш их хуримтлал.'},
+    {icon:'🏃',title:'Дасгалын consistency',body:'Хэлбэр зөв байх нь жинг хөнгөлнө. Гэртээ эхлэж, 1 сарын дараа дасгалын газар оч.'},
+    {icon:'⚖️',title:'99 кг → зорилго',body:'Batch cook + batch cook хоол уураг ихтэй байлга. Хоолоо бэлдэж, импульс худалдан авалтаас зайлс.'},
+    {icon:'🎯',title:'Явах замаа дасгал болгох',body:'Автобус доторх 45 мин нь хятад хэл, podcast-д зориулбал жилд 270 цаг гаргана.'},
+  ];
+  grid.innerHTML = tips.map(t=>`<div class="tip-card"><div class="tip-icon">${t.icon}</div><div class="tip-title">${t.title}</div><div class="tip-body">${t.body}</div></div>`).join('');
+}
+
+function resetWeek() {
+  if (confirm('Долоо хоногийн дэвшлийг устгах уу?')) {
+    state.checks = {};
+    saveState();
+    for (let di=0;di<7;di++) { buildChecklist(di); updateDayProgress(di); updateDayComplete(di); updateNavDone(di); }
+    updateXpBar(); updateWeekScore(); renderWeekOverview();
+  }
+}
+
+// ══════════ POMODORO ══════════
+let pomoRunning = false, pomoInterval = null, pomoDuration = 25*60, pomoRemaining = 25*60, pomoSessions = 0, pomoTotalMins = 0, pomoCurrentMode = 'modeWork';
+function togglePomo() {
+  const panel = document.getElementById('pomoPanel');
+  const fab = document.getElementById('timerFab');
+  if (panel) panel.classList.toggle('open');
+  if (fab) fab.classList.toggle('active', panel?.classList.contains('open'));
+}
+function setPomoDuration(mins, label, modeId) {
+  pomoDuration = mins * 60; pomoRemaining = pomoDuration;
+  stopPomoTimer(); pomoCurrentMode = modeId;
+  document.querySelectorAll('.pomo-mode').forEach(m=>m.classList.toggle('active', m.id===modeId));
+  document.getElementById('pomoModeLabel').textContent = label;
+  updatePomoDisplay();
+}
+function togglePomoRun() {
+  if (pomoRunning) stopPomoTimer();
+  else startPomoTimer();
+}
+function startPomoTimer() {
+  if (pomoRemaining <= 0) pomoRemaining = pomoDuration;
+  pomoRunning = true;
+  const btn = document.getElementById('pomoPlayBtn');
+  if (btn) btn.textContent = '⏸';
+  const fab = document.getElementById('timerFab');
+  if (fab) fab.classList.add('active');
+  pomoInterval = setInterval(() => {
+    pomoRemaining--;
+    updatePomoDisplay();
+    if (pomoRemaining <= 0) {
+      stopPomoTimer();
+      pomoSessions++;
+      if (pomoCurrentMode === 'modeWork') { state.pomoCount = (state.pomoCount||0)+1; pomoTotalMins += Math.round(pomoDuration/60); saveState(); checkAchievements(); }
+      document.getElementById('pomoSession').textContent = `Сессий #${pomoSessions+1} · Нийт ${pomoTotalMins}мин`;
+    }
+  }, 1000);
+}
+function stopPomoTimer() {
+  pomoRunning = false;
+  if (pomoInterval) { clearInterval(pomoInterval); pomoInterval = null; }
+  const btn = document.getElementById('pomoPlayBtn');
+  if (btn) btn.textContent = '▶';
+}
+function resetPomo() { stopPomoTimer(); pomoRemaining = pomoDuration; updatePomoDisplay(); }
+function skipPomo() { stopPomoTimer(); pomoRemaining = 0; updatePomoDisplay(); }
+function updatePomoDisplay() {
+  const m = Math.floor(pomoRemaining/60), s = pomoRemaining%60;
+  const disp = document.getElementById('pomoDisplay');
+  if (disp) disp.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const prog = document.getElementById('pomoProg');
+  if (prog) { const pct = 1 - pomoRemaining/pomoDuration; prog.style.strokeDashoffset = 263.9 * (1 - pct); }
+}
+function startTimerFor(mins, title) {
+  setPomoDuration(mins, title, 'modeWork');
+  const panel = document.getElementById('pomoPanel');
+  if (panel) panel.classList.add('open');
+  startPomoTimer();
+}
+
+// ══════════ NAVIGATION ══════════
+function showDay(i) {
+  document.querySelectorAll('.day-panel').forEach((p,j)=>{ p.style.display=j===i?'block':'none'; });
+  document.querySelectorAll('.nav-item').forEach((n,j)=>n.classList.toggle('active',j===i));
+  document.querySelectorAll('.mob-nav-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  currentDay = i;
+  const tabBar = document.getElementById('tabBar');
+  if (i < 7) {
+    const day = DAYS[i];
+    document.getElementById('topTitle').innerHTML = `${day.name} <span>гараг</span>`;
+    document.getElementById('topMeta').textContent = day.meta;
+    document.getElementById('dayXpBadge').textContent = day.badge;
+    if (tabBar) tabBar.style.display = 'flex';
+  } else {
+    const titles = {7:'📊 Статистик',9:'📅 7н Тайлан'};
+    document.getElementById('topTitle').innerHTML = `${titles[i]||''} <span></span>`;
+    document.getElementById('topMeta').textContent = '';
+    document.getElementById('dayXpBadge').textContent = '';
+    if (tabBar) tabBar.style.display = 'none';
+  }
+  showTab(0);
+  const panel = document.getElementById('dp'+i);
+  if (panel) panel.querySelectorAll('.tl-row').forEach((r,k) => {
+    r.classList.remove('show');
+    setTimeout(() => r.classList.add('show'), k*35+50);
+  });
+  document.getElementById('mainScroll').scrollTop = 0;
+  if (i === 9) renderWeekOverview();
+  if (i === 7) renderStats();
+}
+function showTab(t) {
+  currentTab = t;
+  document.querySelectorAll('.tab').forEach((el,j)=>el.classList.toggle('active',j===t));
+  if (currentDay < 7) {
+    for (let ti=0;ti<2;ti++) {
+      const p = document.getElementById(`tp${currentDay}-${ti}`);
+      if (p) { p.classList.toggle('active',ti===t); p.style.display=ti===t?'block':'none'; }
+    }
+  }
+}
+
+// ══════════ MOBILE NAV ══════════
+function buildMobileNav() {
+  const scroll = document.getElementById('mnScroll');
+  if (!scroll) return;
+  const items = [
+    ...DAYS.map((d,i)=>({id:'mn'+i,icon:d.emoji,label:d.short,di:i})),
+    {id:'mn7',icon:'📊',label:'Стат',di:7},
+    {id:'mn9',icon:'📅',label:'7н',di:9},
+  ];
+  scroll.innerHTML = items.map(it=>`<div class="mob-nav-btn" id="${it.id}" onclick="showDay(${it.di})">
+    <div class="mn-icon">${it.icon}</div>
+    <div class="mn-label">${it.label}</div>
+  </div>`).join('');
+}
+function showMobAch() {
+  const list = document.getElementById('mobAchList');
+  if (list) list.innerHTML = ACHIEVEMENTS.map(a=>{
+    const u = state.achievements?.[a.id];
+    return `<div class="mob-ach-item${u?' unlocked':''}" style="margin-bottom:6px">
+      <span style="font-size:22px;${u?'':'filter:grayscale(1) opacity(.25)'}">${a.icon}</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:700;color:${u?'var(--gold)':'var(--dim)'}">${a.name}</div><div style="font-size:11px;color:var(--dim);margin-top:2px">${a.desc}</div></div>
+      <div style="font-family:var(--mono);font-size:10px;font-weight:700;color:${u?'var(--gold)':'var(--faint)'};text-align:right">+${a.xp} XP${u?'<br><span style="color:var(--green);font-size:8px">✓</span>':''}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('mobAchPanel').style.display = 'block';
+}
+function hideMobAch() { document.getElementById('mobAchPanel').style.display = 'none'; }
+
+// ══════════ QUOTES ══════════
+function showQuote() {
+  const day = DAYS[currentDay] || DAYS[0];
+  const el = document.getElementById('quoteToast');
+  const txt = document.getElementById('quoteToastText');
+  if (!el||!txt) return;
+  txt.textContent = day.quote;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 5000);
+}
+function closeQuote() { document.getElementById('quoteToast')?.classList.remove('show'); }
+
+// ══════════ INIT ══════════
+window.addEventListener('DOMContentLoaded', () => {
+  for (let di=0;di<7;di++) buildDayPanel(di);
+  buildMobileNav();
+  buildCalStrip();
+  for (let di=0;di<7;di++) updateNavDone(di);
+  updateXpBar();
+  updateWeekScore();
+  updateStreak();
+  renderAchStrip();
+  initFreeze();
+  const xp = state.totalXp||0;
+  const lvlData = LEVELS.find(l=>xp>=l.min&&xp<l.max)||LEVELS[LEVELS.length-1];
+  prevLevel = lvlData.lvl;
+  const todayDow = new Date().getDay();
+  const mn_dow = todayDow === 0 ? 6 : todayDow - 1;
+  showDay(Math.min(mn_dow, 6));
+  for (let di=0;di<7;di++) {
+    const p1 = document.getElementById(`tp${di}-1`);
+    if (p1) p1.style.display = 'none';
+  }
+  updatePomoDisplay();
+  setTimeout(showQuote, 2000);
+  let touchStartX = 0;
+  const ms = document.getElementById('mainScroll');
+  if (ms) {
+    ms.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;},{passive:true});
+    ms.addEventListener('touchend',e=>{
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff)>60&&currentDay<9) {
+        if (diff>0&&currentDay<6) showDay(currentDay+1);
+        else if (diff<0&&currentDay>0) showDay(currentDay-1);
+      }
+    },{passive:true});
+  }
+});
+</script>
+</body>
+</html>

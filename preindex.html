@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEAUTY — Product Research</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a; --bg2: #121212; --bg3: #1a1a1a;
+    --border: #222222; --border2: #333333;
+    --text: #f0f0f0; --muted: #777777; --muted2: #3a3a3a;
+    --accent: #c8ff00; --accent2: #ff6b35; --white: #ffffff;
+    --tik: #69c9d0; --ig: #e1306c; --fb: #5890ff; --amz: #ffaa44; --ali: #ff6b35;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; min-height:100vh; overflow-x:hidden; font-size:14px; }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    position:fixed; inset:0; background:var(--bg);
+    display:flex; align-items:center; justify-content:center; z-index:1000;
+  }
+  .login-box {
+    width:min(400px, 92vw); padding:40px 28px;
+    border:1px solid var(--border2); background:var(--bg2); position:relative;
+  }
+  .login-box::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); }
+  .login-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:28px; letter-spacing:.15em; color:var(--white); margin-bottom:8px; }
+  .login-logo span { color:var(--accent); }
+  .login-sub { font-size:12px; color:var(--muted); letter-spacing:.2em; text-transform:uppercase; margin-bottom:44px; }
+  .login-label { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; display:block; }
+  .login-input {
+    width:100%; background:var(--bg3); border:1px solid var(--border2);
+    color:var(--text); font-family:'DM Mono',monospace; font-size:16px;
+    padding:15px 18px; outline:none; transition:border-color .2s; letter-spacing:.1em;
+  }
+  .login-input:focus { border-color:var(--accent); }
+  .login-btn {
+    width:100%; margin-top:20px; padding:16px; background:var(--accent); color:#000;
+    border:none; font-family:'Syne',sans-serif; font-weight:700; font-size:13px;
+    letter-spacing:.2em; text-transform:uppercase; cursor:pointer; transition:opacity .2s;
+  }
+  .login-btn:hover { opacity:.85; }
+  .login-error { margin-top:14px; font-size:12px; color:var(--accent2); letter-spacing:.1em; display:none; text-align:center; }
+
+  /* ── APP ── */
+  #app { display:none; }
+
+  .header {
+    position:sticky; top:0; background:var(--bg); border-bottom:1px solid var(--border);
+    padding:0 44px; height:66px; display:flex; align-items:center; justify-content:space-between; z-index:100;
+  }
+  .header-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:18px; letter-spacing:.2em; color:var(--white); }
+  .header-logo span { color:var(--accent); }
+  .header-right { display:flex; align-items:center; gap:20px; }
+  .header-meta { font-size:12px; color:var(--muted); letter-spacing:.15em; text-transform:uppercase; }
+  .save-btn {
+    padding:10px 22px; background:var(--accent); color:#000; border:none;
+    font-family:'Syne',sans-serif; font-weight:700; font-size:11px;
+    letter-spacing:.15em; text-transform:uppercase; cursor:pointer; transition:opacity .2s;
+  }
+  .save-btn:hover { opacity:.8; }
+  .saved-msg { font-size:12px; color:var(--accent); letter-spacing:.15em; opacity:0; transition:opacity .4s; }
+
+  .stats-bar {
+    padding:22px 44px; border-bottom:1px solid var(--border);
+    display:flex; gap:48px; background:var(--bg2);
+  }
+  .stat { display:flex; flex-direction:column; gap:5px; }
+  .stat-val { font-family:'Syne',sans-serif; font-weight:700; font-size:26px; color:var(--white); }
+  .stat-val.accent { color:var(--accent); }
+  .stat-label { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+
+  /* ── TABLE ── */
+  .table-wrap { padding:0 44px 140px; }
+
+  table { width:100%; border-collapse:collapse; }
+  thead tr { border-bottom:2px solid var(--border2); position:sticky; top:66px; background:var(--bg); z-index:50; }
+  th {
+    font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted);
+    padding:18px 14px; text-align:left; font-weight:400; white-space:nowrap;
+  }
+  th:first-child { padding-left:0; }
+  tbody tr { border-bottom:1px solid var(--border); transition:background .12s; }
+  tbody tr:hover { background:var(--bg2); }
+  td { padding:16px 14px; font-size:13px; color:var(--text); vertical-align:top; }
+  td:first-child { padding-left:0; }
+
+  .td-num { color:var(--muted); font-size:12px; width:44px; padding-top:18px; }
+  .td-name { font-family:'Syne',sans-serif; font-weight:600; font-size:15px; color:var(--white); min-width:200px; padding-top:16px; line-height:1.4; }
+  .td-cat { font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--accent); background:rgba(200,255,0,.08); padding:5px 12px; display:inline-block; margin-top:10px; border:1px solid rgba(200,255,0,.15); }
+
+  /* Links */
+  .links-col { display:flex; flex-direction:column; gap:7px; min-width:170px; }
+  .link-row { display:flex; gap:6px; }
+
+  .link-wrap { position:relative; display:flex; align-items:stretch; gap:0; }
+  .link-btn {
+    display:inline-flex; align-items:center; gap:6px; padding:7px 12px;
+    font-size:11px; letter-spacing:.1em; text-transform:uppercase; text-decoration:none;
+    border:1px solid var(--border2); color:#999; background:transparent;
+    white-space:nowrap; transition:all .15s; font-family:'DM Mono',monospace; cursor:pointer;
+  }
+  .link-btn:hover { background:rgba(255,255,255,.04); }
+  .link-btn.ali:hover  { border-color:var(--ali); color:var(--ali); background:rgba(255,107,53,.06); }
+  .link-btn.tik:hover  { border-color:var(--tik); color:var(--tik); background:rgba(105,201,208,.06); }
+  .link-btn.ig:hover   { border-color:var(--ig);  color:var(--ig);  background:rgba(225,48,108,.06); }
+  .link-btn.fb:hover   { border-color:var(--fb);  color:var(--fb);  background:rgba(88,144,255,.06); }
+  .link-btn.amz:hover  { border-color:var(--amz); color:var(--amz); background:rgba(255,170,68,.06); }
+
+  .dot { width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+
+  /* platform colored dots */
+  .link-btn.ali .dot { background:var(--ali); }
+  .link-btn.tik .dot { background:var(--tik); }
+  .link-btn.ig  .dot { background:var(--ig); }
+  .link-btn.fb  .dot { background:var(--fb); }
+  .link-btn.amz .dot { background:var(--amz); }
+
+  .edit-btn {
+    padding:0 10px; border:1px solid var(--border2); border-left:0;
+    background:transparent; color:var(--muted); cursor:pointer; font-size:13px;
+    display:flex; align-items:center; justify-content:center; transition:all .12s;
+    flex-shrink:0;
+  }
+  .edit-btn:hover { background:var(--bg3); color:var(--accent); border-color:var(--accent); }
+
+  /* Edit modal */
+  .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.88);
+    display:none; align-items:center; justify-content:center; z-index:500;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    width:520px; background:var(--bg2); border:1px solid var(--border2);
+    padding:36px; position:relative;
+  }
+  .modal::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); }
+  .modal-title { font-family:'Syne',sans-serif; font-weight:700; font-size:16px; color:var(--white); margin-bottom:6px; }
+  .modal-sub { font-size:12px; color:var(--muted); letter-spacing:.15em; margin-bottom:28px; }
+  .modal-field { margin-bottom:18px; }
+  .modal-label { font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; display:block; }
+  .modal-input {
+    width:100%; background:var(--bg3); border:1px solid var(--border2);
+    color:var(--text); font-family:'DM Mono',monospace; font-size:12px;
+    padding:11px 14px; outline:none; transition:border-color .15s;
+  }
+  .modal-input:focus { border-color:var(--accent); }
+  .modal-actions { display:flex; gap:10px; margin-top:28px; }
+  .modal-save {
+    flex:1; padding:14px; background:var(--accent); color:#000; border:none;
+    font-family:'Syne',sans-serif; font-weight:700; font-size:12px;
+    letter-spacing:.15em; text-transform:uppercase; cursor:pointer;
+  }
+  .modal-cancel {
+    padding:14px 24px; background:transparent; border:1px solid var(--border2);
+    color:var(--muted); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer;
+  }
+  .modal-cancel:hover { border-color:var(--muted); color:var(--text); }
+
+  /* Ratings */
+  .ratings-col { display:flex; flex-direction:column; gap:7px; min-width:240px; }
+  .rating-row { display:flex; align-items:center; gap:10px; }
+  .rating-key { font-size:11px; color:#888; letter-spacing:.05em; width:96px; flex-shrink:0; }
+  .rating-select {
+    background:var(--bg3); border:1px solid var(--border2); color:#aaa;
+    font-family:'DM Mono',monospace; font-size:12px; padding:6px 10px;
+    outline:none; cursor:pointer; transition:all .12s; appearance:none;
+    -webkit-appearance:none; min-width:110px;
+  }
+  .rating-select:focus { border-color:var(--accent); }
+  .rating-select.val-good    { color:#c8ff00; border-color:rgba(200,255,0,.4); background:rgba(200,255,0,.05); }
+  .rating-select.val-wow     { color:#c8ff00; border-color:rgba(200,255,0,.4); background:rgba(200,255,0,.05); }
+  .rating-select.val-notbad  { color:#ffaa00; border-color:rgba(255,170,0,.4); background:rgba(255,170,0,.05); }
+  .rating-select.val-bad     { color:#ff5555; border-color:rgba(255,85,85,.4);  background:rgba(255,85,85,.05); }
+  .rating-select.val-yes     { color:#c8ff00; border-color:rgba(200,255,0,.4); background:rgba(200,255,0,.05); }
+  .rating-select.val-no      { color:#ff5555; border-color:rgba(255,85,85,.4);  background:rgba(255,85,85,.05); }
+  .rating-select.val-notyet  { color:#ffaa00; border-color:rgba(255,170,0,.4); background:rgba(255,170,0,.05); }
+  .rating-select.val-vgood   { color:#c8ff00; border-color:rgba(200,255,0,.4); background:rgba(200,255,0,.05); }
+  .rating-select.val-3x      { color:#ffaa00; border-color:rgba(255,170,0,.4); background:rgba(255,170,0,.05); }
+  .rating-select.val-5x      { color:#c8ff00; border-color:rgba(200,255,0,.4); background:rgba(200,255,0,.05); }
+
+  .notes-input {
+    background:var(--bg3); border:1px solid var(--border2); color:var(--text);
+    font-family:'DM Mono',monospace; font-size:12px; padding:8px 10px;
+    outline:none; width:100%; resize:none; transition:border-color .12s; height:46px;
+  }
+  .notes-input:focus { border-color:var(--accent); }
+  .notes-input::placeholder { color:#444; font-size:11px; }
+  .value-info-input { height:54px; border-color:rgba(200,255,0,.15); }
+  .value-info-input:focus { border-color:var(--accent); }
+  .value-info-wrap { margin-bottom:4px; }
+
+
+  .no-link { font-size:11px; color:var(--muted2); padding:7px 0; }
+  .add-link-btn {
+    display:inline-flex; align-items:center; padding:7px 10px;
+    font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+    border:1px dashed var(--border2); color:var(--muted); background:transparent;
+    cursor:pointer; font-family:'DM Mono',monospace; transition:all .15s; white-space:nowrap;
+  }
+  .add-link-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* ── PAYWALL ── */
+  .paywall-row td {
+    filter: blur(2px);
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.75;
+    transition: filter .3s;
+  }
+
+  /* Gradient fade overlay on table */
+  .table-fade {
+    position: relative;
+  }
+  .table-fade::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 320px;
+    background: linear-gradient(to bottom, transparent 0%, #0a0a0a 85%);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Banner */
+  .paywall-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    margin: 0;
+    width: 100%;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: #0f0f0f;
+    border-top: 1px solid #2a2a2a;
+    padding: 20px 44px;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.9), 0 0 0 1px rgba(200,255,0,0.08);
+  }
+  .paywall-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c8ff00, transparent);
+  }
+
+  .paywall-left { display: flex; flex-direction: column; gap: 6px; }
+
+  .paywall-eyebrow {
+    font-size: 10px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: #c8ff00;
+  }
+
+  .paywall-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: #fff;
+    letter-spacing: .02em;
+    line-height: 1.2;
+  }
+
+  .paywall-sub {
+    font-size: 12px;
+    color: #666;
+    letter-spacing: .05em;
+    margin-top: 2px;
+  }
+
+  .paywall-features {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+  }
+  .paywall-feat {
+    font-size: 10px;
+    color: #555;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .paywall-feat::before {
+    content: '✓';
+    color: #c8ff00;
+    font-size: 11px;
+  }
+
+  .paywall-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+
+  .paywall-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    background: #c8ff00;
+    color: #000;
+    text-decoration: none;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: all .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .paywall-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background .2s;
+  }
+  .paywall-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 30px rgba(200,255,0,0.3); }
+
+  .paywall-note {
+    font-size: 10px;
+    color: #444;
+    letter-spacing: .1em;
+    text-align: right;
+  }
+
+  /* ═══════════════════════════════
+     MOBILE RESPONSIVE
+  ═══════════════════════════════ */
+  @media (max-width: 768px) {
+
+    body { font-size: 13px; -webkit-text-size-adjust: 100%; }
+
+    /* Header */
+    .header { padding: 0 16px; height: 52px; }
+    .header-logo { font-size: 14px; }
+    .header-meta { display: none; }
+    .save-btn { padding: 8px 14px; font-size: 10px; }
+    .saved-msg { font-size: 10px; }
+
+    /* Stats */
+    .stats-bar { padding: 12px 16px; gap: 0; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .stats-bar::-webkit-scrollbar { display: none; }
+    .stat { min-width: 90px; padding-right: 20px; border-right: 1px solid var(--border); margin-right: 20px; flex-shrink: 0; }
+    .stat:last-child { border-right: none; }
+    .stat-val { font-size: 18px; }
+    .stat-label { font-size: 9px; }
+
+    /* Hide desktop table entirely */
+    .table-wrap table { display: none; }
+
+    /* Card layout for mobile */
+    .table-wrap { padding: 0 0 260px; }
+    .table-fade::after { height: 220px; }
+
+    #card-list { display: flex; flex-direction: column; gap: 1px; }
+
+    .product-card {
+      background: #111;
+      border-bottom: 1px solid #1e1e1e;
+      padding: 18px 16px;
+      transition: background .12s;
+    }
+    .product-card:active { background: #161616; }
+
+    .product-card.paywall-card {
+      filter: blur(2px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+    .card-left { display: flex; align-items: flex-start; gap: 10px; flex: 1; }
+    .card-num { font-size: 11px; color: #444; min-width: 28px; padding-top: 2px; }
+    .card-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .card-cat {
+      font-size: 9px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: #c8ff00;
+      background: rgba(200,255,0,.07);
+      border: 1px solid rgba(200,255,0,.15);
+      padding: 3px 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .card-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 12px;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid #2a2a2a;
+      color: #888;
+      background: transparent;
+      font-family: 'DM Mono', monospace;
+      transition: all .15s;
+    }
+    .card-link:active { background: #1a1a1a; }
+    .card-link .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .card-link.ali { color: #ff6b35; border-color: rgba(255,107,53,.25); }
+    .card-link.tik { color: #69c9d0; border-color: rgba(105,201,208,.25); }
+    .card-link.ig  { color: #e1306c; border-color: rgba(225,48,108,.25); }
+    .card-link.fb  { color: #5890ff; border-color: rgba(88,144,255,.25); }
+    .card-link.amz { color: #ffaa44; border-color: rgba(255,170,68,.25); }
+
+    .card-ratings {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 380px) {
+      .card-ratings { grid-template-columns: 1fr; }
+    }
+    .card-rating-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #161616;
+      padding: 8px 10px;
+      border: 1px solid #1e1e1e;
+      gap: 6px;
+    }
+    .card-rating-key { font-size: 10px; color: #555; letter-spacing: .03em; flex-shrink: 0; }
+    .card-rating-val {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .03em;
+      text-align: right;
+    }
+    .rv-good, .rv-wow, .rv-yes, .rv-vgood, .rv-5x { color: #c8ff00; }
+    .rv-notbad, .rv-notyet, .rv-3x { color: #ffaa00; }
+    .rv-bad, .rv-no { color: #ff5555; }
+    .rv-empty { color: #333; }
+
+    .card-notes {
+      font-size: 16px;
+      color: #555;
+      background: #0f0f0f;
+      border: 1px solid #1e1e1e;
+      padding: 10px;
+      resize: none;
+      width: 100%;
+      font-family: 'DM Mono', monospace;
+      outline: none;
+      height: 40px;
+    }
+    .card-notes:focus { border-color: #c8ff00; }
+
+    /* Edit button on card */
+    .card-edit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border: 1px solid #2a2a2a;
+      color: #555;
+      background: transparent;
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+      margin-bottom: 10px;
+    }
+
+    /* Paywall banner mobile */
+    .paywall-banner {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      padding: 16px 16px 20px;
+      margin: 0;
+      width: 100%;
+      text-align: center;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-top: 1px solid #2a2a2a;
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+    }
+    .paywall-left { align-items: center; }
+    .paywall-title { font-size: 17px; text-align: center; }
+    .paywall-sub { text-align: center; }
+    .paywall-features { flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .paywall-right { align-items: center; }
+    .paywall-btn { justify-content: center; width: 100%; padding: 16px 20px; font-size: 14px; }
+    .paywall-note { text-align: center; }
+
+    /* Modal mobile */
+    .modal { width: 95vw; padding: 24px 18px; max-height: 88vh; overflow-y: auto; }
+    .modal-input { font-size: 16px; padding: 12px; }
+    .modal-title { font-size: 15px; }
+    .modal-field { margin-bottom: 14px; }
+  }
+
+  /* Show card list only on mobile */
+  #card-list { display: none; }
+  @media (max-width: 768px) {
+    #card-list { display: flex; flex-direction: column; gap: 1px; }
+  }
+
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border2); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen" style="display:none">
+  <div class="login-box">
+    <div class="login-logo">BEAUTY<span>.</span></div>
+    <div class="login-sub">Product Research Database</div>
+    <label class="login-label">Access Password</label>
+    <input type="password" class="login-input" id="pwd-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPwd()">
+    <button class="login-btn" onclick="checkPwd()">Enter →</button>
+    <div class="login-error" id="pwd-error">Incorrect password</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:block">
+  <header class="header">
+    <div class="header-logo"><img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABAAEADASIAAhEBAxEB/8QAHAAAAgIDAQEAAAAAAAAAAAAAAAEEBgIFBwgD/8QAMxAAAQMEAgECAwMNAAAAAAAAAQIDBQAEBhEHITESE0FRcUKBsxQWFyI1NjdSYXWTsdL/xAAaAQEAAwEBAQAAAAAAAAAAAAAAAQIFBgME/8QAJBEAAgEDAwUAAwAAAAAAAAAAAQIAAxExBAUhEiJBQlFikaH/2gAMAwEAAhEDEQA/APGVMDdA7NZDqkRACnRTpEVIgVbMO46zfMLF2+xvHLyRtmV+2t1v0pSFa3oFRGz9PFbz9BnLO/3Kv/8AI1/3WfV3XQ0XKVK6KwyCwB/V4nNiNUqlSNncx9/cWF6ypm5tnVMvNq8oWkkKB18iDUYjVfeCGFxEaaf3UCipiFX7ijj/APOhVxOTt0qKxOMIMhfkdrPwZaH2nVdAAb1sfEgHScY4/b5VyBB47dPOMMSF62w442B6kpJ71v411mOy9cxz7iOHxlk3FYvAziLaxjWztJUhwpLzh+24ognZ8b+pODvOurU1ajp+GClmPxRfH5GxA8DJ8ApSOTOQLyal7eDi2LnGMZiFm2so1kqQtlIOlrdAO1Onsnfg9fMnveNyuOYhOQtliioxVxNz1pY290JdUg/dxxHqceUkqIYUpXpSRoeSNdbry7yL3yDkfn9rXX4yq6BxBjtnidja8t5m47aRtk8HIWyQQl+UuU9p9IPhtJ7Kqyd32zTNt9MAkC3CC562YXAPPcb8km/km2RUiULk3+JGTf3e7/GVVdPYqfkUkuZn5GXdbS05fXTtypCSSElaiogb+A3UGuu0yGnRRGyAB/JYQFZse0XkB4rDXqHrKACoJ33rfW9V8x4or2MT0fiWDccYI9i3J7vIUhcxRukvW6kwylJK0+WnChSvbWOxoj4HW65diORxEfzvaZTdXKkRLc8q8U8G1E+0XVKCvSO/BHXmlxLnbWNOXcDkNqZTEpcBuTsT2U/J5v8AlcT5BHnX0IubXC0bFzj+STk805xtbspvmZVlY9y+aUf1LdCR37pI9J+X39cYyroqtZdxqMxdelTYdy89qgKO8E45vwR5AjEn5Rx/x5cQcrym3nd85HPSDrtuw9ClIun1LK/ZbC1guDZ0T40Dvwa5DnWZT2aSjV/O3SHCwyli3ZabDbNu2kdIbQnpI+lbDlTOrrNplpaLZEdDWDf5PFRrXTdoyPAA+KjoEn4n+gFU6tfZ9vrUqa1NW3U/rfpugPrcAXP0/ccZCOilQa3JMQp1jTpEdT3ZmVdg2YNyQuVxjDyn2rUuEtocUACoJ+ZA/wB/M1r906qyK1ri9ohRRRVohSNBNKkT/9k=" style="width:32px;height:32px;vertical-align:middle;margin-right:8px;object-fit:contain;">BEAUTY<span>.</span></div>
+    <div class="header-right">
+      <div class="header-meta">200 Products</div>
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-val accent">200</div><div class="stat-label">Total Products</div></div>
+    <div class="stat"><div class="stat-val">Beauty</div><div class="stat-label">Category</div></div>
+    <div class="stat"><div class="stat-val" id="stat-rated">0</div><div class="stat-label">Rated</div></div>
+    <div class="stat"><div class="stat-val" id="stat-linked">0</div><div class="stat-label">Links Added</div></div>
+  </div>
+
+  <div class="table-wrap table-fade">
+    <table id="product-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Product</th>
+          <th>Cat</th>
+          <th>Supplier Links</th>
+          <th>Social Links</th>
+          <th>Competitors</th>
+          <th>Ratings & Notes</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+    <div id="card-list"></div>
+  </div>
+
+  <div class="paywall-banner">
+    <div class="paywall-left">
+      <span class="paywall-eyebrow">🔒 Нэвтрэх эрх хязгаарлагдсан</span>
+      <div class="paywall-title">197 winning product<br>нууцлагдсан байна</div>
+      <div class="paywall-sub">Supplier · Social Link · Ratings бүрэн харагдана</div>
+      <div class="paywall-features">
+        <span class="paywall-feat">5 category тус бүр 200 бараа</span>
+        <span class="paywall-feat">Alibaba supplier</span>
+        <span class="paywall-feat">AI үнэлгээ</span>
+        <span class="paywall-feat">Social Link</span>
+      </div>
+    </div>
+    <div class="paywall-right">
+      <button class="paywall-btn" onclick="openPricingModal()" style="cursor:pointer;border:none;text-decoration:none">
+        Winning Template — Авах
+      </button>
+      <span class="paywall-note">Slot хязгаарлагдмал · Өнөөдөр дуусна</span>
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+const AI_RATINGS = {
+  "LED Light Therapy Mask": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Anti-aging, acne treatment. High perceived value, viral TikTok product."},
+  "Ice Globes Face Massager": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Depuffs & soothes skin. Very visual, easy to demo on video."},
+  "Gua Sha Stone Set": {"value": "good", "wow": "good", "saturation": "yes", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Saturated but consistent demand. Bundle with facial oils."},
+  "Jade Roller Face Massager": {"value": "notbad", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Very saturated. Low differentiation unless premium packaging."},
+  "Microneedle Derma Roller": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Strong repeat purchase. Good for skincare bundles."},
+  "Electric Face Scrubber": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Solves cleansing problem clearly. Easy to advertise."},
+  "Ultrasonic Skin Scrubber": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Visible results on video. High wow factor for content creators."},
+  "Face Lifting Massager": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Anti-aging angle. Strong before/after content potential."},
+  "EMS Face Toning Device": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Facial gym concept trending. Tech-forward appeal."},
+  "RF Skin Tightening Device": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "High AOV product. Targets 35+ demographic effectively."},
+  "Blackhead Vacuum Remover": {"value": "good", "wow": "wow", "saturation": "yes", "easy": "vgood", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Saturated but still converts well. Gross-out factor = viral."},
+  "Facial Steamer": {"value": "notbad", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Commoditized. Needs strong branding to stand out."},
+  "Cryo Facial Ice Roller": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Ice facial trend growing. Very visual and satisfying."},
+  "Microcurrent Face Lift Device": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Premium feel. Positions as at-home spa treatment."},
+  "Oxygen Facial Spray": {"value": "notbad", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Niche but growing. Good add-on product."},
+  "Deep Cleansing Brush": {"value": "notbad", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Competitive space. Needs price advantage."},
+  "Silicone Face Cleansing Pad": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Low ticket, eco-friendly angle helps differentiate."},
+  "Anti-Aging Face Roller": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Evergreen anti-aging market. Bundle opportunity."},
+  "Vibrating Facial Massager": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Relaxation + beauty combo. Good gift product."},
+  "Nano Mist Sprayer": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Trending for setting makeup. Compact and giftable."},
+  "Vitamin C Serum": {"value": "good", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "High demand but very saturated. Needs strong branding."},
+  "Hyaluronic Acid Serum": {"value": "good", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Staple skincare. Bundle with toner or moisturizer."},
+  "Retinol Night Cream": {"value": "good", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Anti-aging staple. Strong repeat purchase."},
+  "Collagen Face Mask Sheet": {"value": "good", "wow": "good", "saturation": "yes", "easy": "vgood", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Bundle 10-pack strategy works well. Korean beauty angle."},
+  "Niacinamide Serum": {"value": "good", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Pore minimizing claim easy to market. Very popular ingredient."},
+  "Snail Mucin Essence": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "K-beauty hero ingredient. Weird factor = viral content."},
+  "Centella Asiatica Serum": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Sensitive skin niche. Less competition than vitamin C."},
+  "AHA BHA Exfoliant": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Chemical exfoliation trend. Easy before/after content."},
+  "Peptide Eye Cream": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Premium positioning. Targets 30+ anti-aging concern."},
+  "Ceramide Moisturizer": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Skin barrier repair trending. Dermatologist-approved angle."},
+  "Rose Water Toner": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Saturated. Packaging differentiation key."},
+  "Glycerin Serum": {"value": "notbad", "wow": "notyet", "saturation": "notyet", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Low interest product. Better as bundle item."},
+  "Bakuchiol Serum": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Natural retinol alternative. Strong appeal for clean beauty."},
+  "Mugwort Toner Pad": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "K-beauty niche. Calming for sensitive skin. Growing trend."},
+  "Green Tea Moisturizer": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Antioxidant angle. Needs premium look to compete."},
+  "Propolis Ampoule": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "K-beauty staple. Healing + hydration claims."},
+  "Rice Water Essence": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Trending ingredient. Hair + skin crossover appeal."},
+  "Tranexamic Acid Serum": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Hyperpigmentation focus. Less crowded than vitamin C."},
+  "Kojic Acid Soap": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Brightening soap. Multicultural market appeal."},
+  "Azelaic Acid Serum": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Rosacea + acne niche. Dermatologist-recommended."},
+  "Magnetic Eyelashes Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Glue-free solution. Very easy to demo on video."},
+  "Lash Glue Liner": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Solves messy glue problem. Strong problem-solving angle."},
+  "Eyebrow Stamp Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Perfect brows in seconds. Huge viral potential."},
+  "Lip Plumper Device": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Needle-free filler alternative. Strong before/after visual."},
+  "Contour Stick Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Easy contour for beginners. Tutorial content friendly."},
+  "Dewy Setting Spray": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Glass skin trend. Easy to include in makeup routines."},
+  "Cushion Foundation": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "K-beauty format. Travel-friendly and giftable."},
+  "Tinted Moisturizer SPF": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "No-makeup makeup trend. SPF angle adds health value."},
+  "Berry Lip Tint": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "no", "notes": "Trendy MLBB color. Easy impulse purchase."},
+  "Glitter Eye Topper": {"value": "notbad", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "3x", "unique": "no", "problem": "no", "notes": "Seasonal demand spikes. Festival/holiday angle."},
+  "Glossy Lip Oil": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Hydrating + glossy trend. TikTok staple product."},
+  "Color-Changing Lip Balm": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Wow factor in application. Demo content very engaging."},
+  "Press-On Nails Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Salon alternative. Massive TikTok community."},
+  "Nail Stamping Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Nail art made easy. Very shareable results."},
+  "Gel Nail Polish Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "At-home gel nails. Bundle with UV lamp."},
+  "Eyeshadow Palette 18 Color": {"value": "notbad", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "no", "notes": "Commoditized. Needs unique colorstory to compete."},
+  "Highlighter Powder Palette": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "no", "notes": "Glow trend ongoing. Easy tutorial content."},
+  "Bronzer Duo": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "no", "notes": "Sun-kissed look trend. Good summer product."},
+  "Blush Palette": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "no", "notes": "Blush renaissance on TikTok. Strong impulse buy."},
+  "Setting Powder Translucent": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Saturated. Low differentiation without brand."},
+  "Scalp Massager Brush": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Hair growth angle very popular. Affordable price point."},
+  "Ionic Hair Dryer Brush": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Blow-dry at home tool. Strong before/after visual."},
+  "Hair Growth Serum": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "High demand, emotional purchase. Before/after content works."},
+  "Keratin Hair Mask": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Smoothing treatment angle. Frizzy hair problem solver."},
+  "Silk Hair Bonnet": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Protective styling niche. Strong community demand."},
+  "Satin Pillowcase Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Hair + skin benefit double angle. Great gift product."},
+  "Hair Thickening Spray": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Volume + thinning hair concern. Emotional buyer."},
+  "Argan Oil Hair Treatment": {"value": "good", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Trusted ingredient but saturated. Bundle strategy needed."},
+  "Rice Water Shampoo": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Trending ingredient crossover from skincare."},
+  "Biotin Hair Supplement": {"value": "good", "wow": "good", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "High competition in supplements. Strong demand still."},
+  "Bamboo Hair Comb Set": {"value": "notbad", "wow": "notyet", "saturation": "notyet", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Eco-friendly angle. Low price point, good bundle item."},
+  "Detangling Hair Brush": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Solves clear pain point. Demo with wet hair very viral."},
+  "Hair Clips Claw Set": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "no", "notes": "Fashion accessory. Trend-dependent, seasonal."},
+  "Heatless Curl Rod Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "No heat damage solution. Overnight results very viral."},
+  "Braided Headband Kit": {"value": "notbad", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "3x", "unique": "yes", "problem": "no", "notes": "Styling shortcut. Tutorial content easy to create."},
+  "Invisible Hair Net Set": {"value": "notbad", "wow": "notyet", "saturation": "notyet", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Practical product. Low emotional appeal."},
+  "Scalp Exfoliating Scrub": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Scalp care trend growing. Satisfying texture demo content."},
+  "Hair Oil Serum": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Frizz + shine solution. Easy routine integration."},
+  "Curl Defining Cream": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Curly hair community strong. Niche loyalty."},
+  "Hair Perfume Mist": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Novelty product. Gift appeal high. Easy TikTok content."},
+  "Electric Eyelash Curler": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Heated curl lasts longer. Easy demo, strong upgrade appeal."},
+  "Lash Serum Growth": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "High demand, emotional. Before/after photos compelling."},
+  "False Lash Applicator Tool": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Solves difficult application problem. Demo content natural."},
+  "Under Eye Patches Gold": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Luxe feel, low cost. Very Instagrammable."},
+  "Eye Mask Sleep Silk": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Sleep + beauty combo. Gift potential high."},
+  "Eyebrow Lamination Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Salon-at-home trend. Dramatic transformation content."},
+  "Brow Tinting Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Bold brow trend. Before/after content highly shareable."},
+  "Volumizing Mascara Fiber": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Dramatic lash extension effect. Demo = instant wow."},
+  "Waterproof Eyeliner Pen": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Commodity product. Difficult to differentiate."},
+  "Eye Primer Base": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Supporting product. Better as bundle item."},
+  "Dry Body Brush": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Lymphatic drainage trend. Wellness angle strong."},
+  "Gua Sha Body Scraper": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Body sculpting claim. Satisfying demo content."},
+  "Coffee Scrub Body": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Cellulite angle works well. Texture = great content."},
+  "Stretch Mark Oil": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Emotional purchase, new moms market. High intent buyer."},
+  "Firming Body Lotion": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Anti-aging body care growing niche."},
+  "Cellulite Massager Cup": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Cupping trend. Visible skin change on video = viral."},
+  "Self Tanning Drops": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Add to any moisturizer concept. Very trendy 2024-25."},
+  "Body Shimmer Oil": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "no", "notes": "Summer/festival trend. Incredibly visual content."},
+  "After Shower Body Mist": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "no", "notes": "Fragrance + skincare hybrid. Impulse buy."},
+  "Exfoliating Body Gloves": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Satisfying skin-removing demo. Very viral content."},
+  "Makeup Brush Set 15pc": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Saturated. Needs premium packaging to compete."},
+  "Beauty Blender Sponge Set": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Brand dominated category. Hard to differentiate."},
+  "Brush Cleaner Spinner": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Satisfying clean in seconds. Content makes itself."},
+  "Makeup Organizer Box": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Organization trend. Shelfie content opportunity."},
+  "Vanity Mirror LED": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Content creator essential. Good AOV product."},
+  "Travel Makeup Bag": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Functional product. Needs unique design to stand out."},
+  "Cosmetic Bag Leather": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Premium feel at accessible price. Gift appeal high."},
+  "Makeup Brush Holder": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Low ticket bundle item. Vanity aesthetic angle."},
+  "Nail File Set Glass": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Reusable, eco angle. Satisfying nail filing content."},
+  "Cuticle Pusher Kit": {"value": "notbad", "wow": "notyet", "saturation": "notyet", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Nail care niche. Bundle with cuticle oil."},
+  "Teeth Whitening Kit LED": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Smile transformation. Before/after content powerful."},
+  "Charcoal Teeth Powder": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Black powder contrast = viral content. Dramatic visual."},
+  "Lip Scrub Sugar": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Smooth lips before lipstick. Easy routine product."},
+  "Overnight Lip Mask": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Sleep beauty trend. Hydration claim clear."},
+  "Plumping Lip Gloss": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Instant plump effect. Try-on content very popular."},
+  "Tongue Scraper": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Wellness trend. Satisfying gross content = viral."},
+  "Mouthwash Tablets": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Eco + travel friendly. Sustainable beauty angle."},
+  "Teeth Whitening Strips": {"value": "good", "wow": "good", "saturation": "yes", "easy": "vgood", "margin": "3x", "unique": "no", "problem": "yes", "notes": "High intent purchase. Saturated but strong demand."},
+  "Solid Perfume Compact": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Travel-friendly fragrance. Novelty + aesthetic appeal."},
+  "Roller Perfume Oil": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Clean fragrance trend. Skincare-perfume crossover."},
+  "Aura Glow Body Oil": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "no", "notes": "Glazed skin trend. Stunning visual content potential."},
+  "Crystal Deodorant Stick": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Natural deodorant growing market. Clean beauty angle."},
+  "Feminine Hygiene Wash": {"value": "good", "wow": "notyet", "saturation": "notyet", "easy": "notbad", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Growing intimate care market. Requires careful ad approach."},
+  "Probiotic Skin Spray": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Microbiome skin health trend. Science-backed positioning."},
+  "Wrinkle Patch Forehead": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Overnight anti-wrinkle. Before/after very convincing."},
+  "Pore Vacuum Mini": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Satisfying extraction content. Consistent viral performer."},
+  "Blue Light Glasses Beauty": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Functional but saturated. Needs fashion angle."},
+  "Facial Yoga Roller": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Wellness + anti-aging combo. Tutorial content rich."},
+  "Slugging Petroleum Jelly": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "TikTok slugging trend. Simple product, viral concept."},
+  "Barrier Repair Cream": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Skin barrier awareness growing. Dermatology-backed."},
+  "Tallow Balm Skin": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Ancestral beauty trend. Highly controversial = viral."},
+  "Frog Mouth Mask": {"value": "notbad", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "3x", "unique": "yes", "problem": "yes", "notes": "Novelty anti-aging mask. Funny = shareable content."},
+  "Zombie Mask Sheet": {"value": "notbad", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "3x", "unique": "yes", "problem": "no", "notes": "Halloween/novelty appeal. Seasonal spike potential."},
+  "Glow Serum Vitamin E": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Glow + nourish dual claim. Easy routine content."},
+  "Sunscreen SPF 50 Stick": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "SPF stick format trending. Easy application angle."},
+  "Mineral Sunscreen Tinted": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Clean SPF + subtle tint. No white cast claim = viral."},
+  "After Sun Lotion": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Summer seasonal peak. Soothing claim clear."},
+  "Spot Corrector Serum": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "High intent buyer. Acne community strong on TikTok."},
+  "Dark Circle Eye Serum": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Universal concern. Before/after content compelling."},
+  "Pore Minimizer Serum": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Clear problem, clear solution. Easy to advertise."},
+  "Sebum Control Toner": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Oily skin niche. K-beauty format appeal."},
+  "Brightening Serum Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Multi-serum bundle. Higher AOV opportunity."},
+  "Anti-Redness Serum": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Rosacea/sensitive skin niche. Underserved market."},
+  "Sensitive Skin Moisturizer": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Large sensitive skin market. Fragrance-free angle."},
+  "Hair Serum Frizz Control": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Humidity + frizz concern evergreen. Easy demo."},
+  "Overnight Hair Mask": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Sleep + repair angle. Morning transformation content."},
+  "Scalp Oil Treatment": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Scalp care trend. Dandruff + growth dual claim."},
+  "Hair Perfume Spray": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Fresh hair between washes. Novel product angle."},
+  "Heat Protectant Spray": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Essential for styling tools. Bundle opportunity."},
+  "Leave-In Conditioner Spray": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Detangling + hydration combo. Easy routine product."},
+  "Hair Growth Rosemary Oil": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Clinically-backed ingredient. TikTok proven winner."},
+  "Purple Toning Shampoo": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Blonde/bleached hair niche. Strong problem awareness."},
+  "Bond Repair Treatment": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Olaplex-inspired demand. At-home salon treatment."},
+  "Scalp Cooling Spray": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Post-workout + summer angle. Refreshing demo content."},
+  "Facial Cupping Set": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Spa-at-home. Suction = satisfying visual content."},
+  "Hot Stone Massager": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Luxury spa feel at home. Relaxation + beauty combo."},
+  "Eye Massager Heat": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Dark circle + eye strain solution. WFH demographic."},
+  "Neck Firming Device": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Tech neck concern growing. Anti-aging device."},
+  "Body Sculpting Massager": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Body contouring at home. Before/after content strong."},
+  "Heated Jade Roller": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Upgrade on classic jade roller. Better product story."},
+  "Sonic Cleansing Brush": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Deep clean claim easy to show. Foreo-inspired demand."},
+  "T-Sonic Face Massager": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Sonic technology angle. Premium positioning potential."},
+  "Glow Wand LED": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Targeted spot treatment. Futuristic look = content gold."},
+  "Cryotherapy Facial Tool": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Celebrity-backed trend. Premium positioning opportunity."},
+  "Nail Cuticle Oil Pen": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Precision application. Nail care routine essential."},
+  "French Tip Stickers": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Perfect french nails instantly. Demo = immediate wow."},
+  "Nail Dipping Powder Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Gel alternative, no lamp needed. Tutorial content rich."},
+  "Nail Lamp UV LED": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Essential for gel nails. Bundle with gel polish."},
+  "Builder Gel Nail Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "BIAB trend. Salon-quality at home appeal."},
+  "Nail Art Brush Set": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Nail art community huge on TikTok. Skill-based content."},
+  "Rhinestone Nail Kit": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "no", "notes": "3D nail art trend. Bling content = high engagement."},
+  "Acrylic Powder Nail Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "notbad", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Advanced nail market. Needs tutorial support."},
+  "Nail Strengthener Base": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Brittle nail concern. Easy problem-solution ad."},
+  "Chrome Nail Powder": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "no", "notes": "Mirror chrome effect = viral. Incredibly visual content."},
+  "Face Tape Lifting": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Instant face lift hack. Before/after super compelling."},
+  "Bra Tape Invisible": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Practical problem solver. Strong female audience."},
+  "Nipple Cover Silicone": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Fashion essential. Discreet + reusable angle."},
+  "Body Hair Removal Cream": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Pain-free alternative to waxing. Clear benefit."},
+  "Razor Dermaplaning Face": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Peach fuzz removal. Makeup application benefit clear."},
+  "Threading Tool Facial": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "DIY threading at home. Satisfying demo."},
+  "Wax Strip Kit Face": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "At-home hair removal. Pain reaction = engaging content."},
+  "Sugar Wax Kit": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Natural, less painful waxing. Clean beauty angle."},
+  "Epilator Mini": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Long-lasting removal. Travel-size appeal."},
+  "Shaving Foam Face": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Commodity product. Low differentiation."},
+  "Pore Strips Nose": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Gross satisfaction content. Classic viral product."},
+  "Snail Cream Eye Patch": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "K-beauty innovation. Snail + eye concern combo."},
+  "Gold Foil Face Mask": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Luxury feel, affordable price. Great content visual."},
+  "Turmeric Face Scrub": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Natural brightening claim. Clean beauty trend."},
+  "Aloe Vera Gel Pure": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Commodity. Bundle with sunscreen or face mask."},
+  "Vitamin E Oil Serum": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Antioxidant + healing claim. Scar fading angle."},
+  "Neem Face Wash": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Ayurvedic trend. Acne-fighting natural ingredient."},
+  "Papaya Enzyme Cleanser": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Enzymatic exfoliation angle. Tropical feel = aspirational."},
+  "Sea Buckthorn Oil": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Superfood skincare trend. Omega-rich claim."},
+  "Moringa Seed Oil": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Superfood beauty ingredient. Clean + sustainable angle."},
+  "Blue Tansy Facial Oil": {"value": "good", "wow": "wow", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Striking blue color = instant visual hook. Calming claim."},
+  "Marula Face Oil": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Luxury African botanical. Anti-aging dry oil."},
+  "Squalane Oil Face": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Lightweight, non-comedogenic. Skincare community favorite."},
+  "Tamanu Oil Skin": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "good", "margin": "5x", "unique": "yes", "problem": "yes", "notes": "Scar healing claim. Niche but loyal audience."},
+  "Rosehip Seed Oil": {"value": "good", "wow": "good", "saturation": "notyet", "easy": "vgood", "margin": "5x", "unique": "no", "problem": "yes", "notes": "Anti-aging oil. Vitamin C + retinoid natural alternative."},
+  "Facial Mist Rosewater": {"value": "notbad", "wow": "notyet", "saturation": "yes", "easy": "good", "margin": "3x", "unique": "no", "problem": "yes", "notes": "Saturated category. Premium packaging needed."}
+};
+
+const PASSWORD = "Drop2026";
+
+const PRODUCTS = [
+  "LED Light Therapy Mask","Ice Globes Face Massager","Gua Sha Stone Set",
+  "Jade Roller Face Massager","Microneedle Derma Roller","Electric Face Scrubber",
+  "Ultrasonic Skin Scrubber","Face Lifting Massager","EMS Face Toning Device",
+  "RF Skin Tightening Device","Blackhead Vacuum Remover","Facial Steamer",
+  "Cryo Facial Ice Roller","Microcurrent Face Lift Device","Oxygen Facial Spray",
+  "Deep Cleansing Brush","Silicone Face Cleansing Pad","Anti-Aging Face Roller",
+  "Vibrating Facial Massager","Nano Mist Sprayer",
+  "Vitamin C Serum","Hyaluronic Acid Serum","Retinol Night Cream",
+  "Collagen Face Mask Sheet","Niacinamide Serum","Snail Mucin Essence",
+  "Centella Asiatica Serum","AHA BHA Exfoliant","Peptide Eye Cream",
+  "Ceramide Moisturizer","Rose Water Toner","Glycerin Serum",
+  "Bakuchiol Serum","Mugwort Toner Pad","Green Tea Moisturizer",
+  "Propolis Ampoule","Rice Water Essence","Tranexamic Acid Serum",
+  "Kojic Acid Soap","Azelaic Acid Serum",
+  "Magnetic Eyelashes Kit","Lash Glue Liner","Eyebrow Stamp Kit",
+  "Lip Plumper Device","Contour Stick Set","Dewy Setting Spray",
+  "Cushion Foundation","Tinted Moisturizer SPF","Berry Lip Tint",
+  "Glitter Eye Topper","Glossy Lip Oil","Color-Changing Lip Balm",
+  "Press-On Nails Kit","Nail Stamping Kit","Gel Nail Polish Set",
+  "Eyeshadow Palette 18 Color","Highlighter Powder Palette","Bronzer Duo",
+  "Blush Palette","Setting Powder Translucent",
+  "Scalp Massager Brush","Ionic Hair Dryer Brush","Hair Growth Serum",
+  "Keratin Hair Mask","Silk Hair Bonnet","Satin Pillowcase Set",
+  "Hair Thickening Spray","Argan Oil Hair Treatment","Rice Water Shampoo",
+  "Biotin Hair Supplement","Bamboo Hair Comb Set","Detangling Hair Brush",
+  "Hair Clips Claw Set","Heatless Curl Rod Set","Braided Headband Kit",
+  "Invisible Hair Net Set","Scalp Exfoliating Scrub","Hair Oil Serum",
+  "Curl Defining Cream","Hair Perfume Mist",
+  "Electric Eyelash Curler","Lash Serum Growth","False Lash Applicator Tool",
+  "Under Eye Patches Gold","Eye Mask Sleep Silk","Eyebrow Lamination Kit",
+  "Brow Tinting Kit","Volumizing Mascara Fiber","Waterproof Eyeliner Pen",
+  "Eye Primer Base",
+  "Dry Body Brush","Gua Sha Body Scraper","Coffee Scrub Body",
+  "Stretch Mark Oil","Firming Body Lotion","Cellulite Massager Cup",
+  "Self Tanning Drops","Body Shimmer Oil","After Shower Body Mist",
+  "Exfoliating Body Gloves",
+  "Makeup Brush Set 15pc","Beauty Blender Sponge Set","Brush Cleaner Spinner",
+  "Makeup Organizer Box","Vanity Mirror LED","Travel Makeup Bag",
+  "Cosmetic Bag Leather","Makeup Brush Holder","Nail File Set Glass",
+  "Cuticle Pusher Kit",
+  "Teeth Whitening Kit LED","Charcoal Teeth Powder","Lip Scrub Sugar",
+  "Overnight Lip Mask","Plumping Lip Gloss","Tongue Scraper",
+  "Mouthwash Tablets","Teeth Whitening Strips",
+  "Solid Perfume Compact","Roller Perfume Oil","Aura Glow Body Oil",
+  "Crystal Deodorant Stick","Feminine Hygiene Wash","Probiotic Skin Spray",
+  "Wrinkle Patch Forehead","Pore Vacuum Mini","Blue Light Glasses Beauty",
+  "Facial Yoga Roller","Slugging Petroleum Jelly","Barrier Repair Cream",
+  "Tallow Balm Skin","Frog Mouth Mask","Zombie Mask Sheet","Glow Serum Vitamin E",
+  "Sunscreen SPF 50 Stick","Mineral Sunscreen Tinted","After Sun Lotion",
+  "Spot Corrector Serum","Dark Circle Eye Serum","Pore Minimizer Serum",
+  "Sebum Control Toner","Brightening Serum Set","Anti-Redness Serum",
+  "Sensitive Skin Moisturizer",
+  "Hair Serum Frizz Control","Overnight Hair Mask","Scalp Oil Treatment",
+  "Hair Perfume Spray","Heat Protectant Spray","Leave-In Conditioner Spray",
+  "Hair Growth Rosemary Oil","Purple Toning Shampoo","Bond Repair Treatment",
+  "Scalp Cooling Spray",
+  "Facial Cupping Set","Hot Stone Massager","Eye Massager Heat",
+  "Neck Firming Device","Body Sculpting Massager","Heated Jade Roller",
+  "Sonic Cleansing Brush","T-Sonic Face Massager","Glow Wand LED",
+  "Cryotherapy Facial Tool",
+  "Nail Cuticle Oil Pen","French Tip Stickers","Nail Dipping Powder Kit",
+  "Nail Lamp UV LED","Builder Gel Nail Kit","Nail Art Brush Set",
+  "Rhinestone Nail Kit","Acrylic Powder Nail Kit","Nail Strengthener Base",
+  "Chrome Nail Powder",
+  "Face Tape Lifting","Bra Tape Invisible","Nipple Cover Silicone",
+  "Body Hair Removal Cream","Razor Dermaplaning Face","Threading Tool Facial",
+  "Wax Strip Kit Face","Sugar Wax Kit","Epilator Mini","Shaving Foam Face",
+  "Pore Strips Nose","Snail Cream Eye Patch","Gold Foil Face Mask",
+  "Turmeric Face Scrub","Aloe Vera Gel Pure","Vitamin E Oil Serum",
+  "Neem Face Wash","Papaya Enzyme Cleanser","Sea Buckthorn Oil",
+  "Moringa Seed Oil","Blue Tansy Facial Oil","Marula Face Oil",
+  "Squalane Oil Face","Tamanu Oil Skin","Rosehip Seed Oil","Facial Mist Rosewater"
+];
+
+// State
+let data = {};
+let editingIdx = null;
+
+function defaultLinks(name) {
+  const p = name.replace(/ /g,'+'), q = encodeURIComponent(name);
+  return {
+    sup1:  `https://www.alibaba.com/trade/search?SearchText=${p}&IndexArea=product_en`,
+    sup2:  `https://www.alibaba.com/trade/search?SearchText=${p}+dropshipping&IndexArea=product_en`,
+    tik:   `https://www.tiktok.com/search?q=${q}`,
+    ig:    `https://www.instagram.com/explore/search/keyword/?q=${q}`,
+    fb:    `https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&q=${p}&search_type=keyword_unordered`,
+    comp1: `https://www.amazon.com/s?k=${p}`,
+    comp2: ``
+  };
+}
+
+function defaultRatings(name) {
+  const r = AI_RATINGS[name];
+  if (r) return { valueInfo:'', value:r.value||'', wow:r.wow||'', saturation:r.saturation||'', easy:r.easy||'', margin:r.margin||'', unique:r.unique||'', problem:r.problem||'', notes:'' };
+  return { valueInfo:'', value:'', wow:'', saturation:'', easy:'', margin:'', unique:'', problem:'', notes:'' };
+}
+
+function initData() {
+  const saved = localStorage.getItem('beauty_research_v3');
+  if (saved) { try { data = JSON.parse(saved); } catch(e) { data = {}; } }
+  // Clear all AI-generated notes (one-time cleanup)
+  if (!localStorage.getItem('notes_cleared_v1')) {
+    Object.keys(data).forEach(i => {
+      if (data[i] && data[i].ratings) data[i].ratings.notes = '';
+    });
+    localStorage.setItem('notes_cleared_v1', '1');
+  }
+  PRODUCTS.forEach((name, i) => {
+    if (!data[i]) data[i] = { links: defaultLinks(name), ratings: defaultRatings(name) };
+    if (!data[i].links) data[i].links = defaultLinks(name);
+    // Migrate: ensure comp1/comp2 exist
+    const L = data[i].links;
+    if (!('comp1' in L)) {
+      L.comp1 = L.amz || '';
+      L.comp2 = '';
+      delete L.amz;
+    }
+    if (!data[i].ratings) data[i].ratings = defaultRatings(name);
+    if (data[i].ratings.valueInfo === undefined) data[i].ratings.valueInfo = '';
+  });
+}
+
+function saveAll() {
+  localStorage.setItem('beauty_research_v3', JSON.stringify(data));
+  const msg = document.getElementById('saved-msg');
+  msg.style.opacity = '1';
+  setTimeout(() => msg.style.opacity = '0', 2000);
+  updateStats();
+}
+
+function updateStats() {
+  let rated = 0, linked = 0;
+  PRODUCTS.forEach((_, i) => {
+    const r = data[i].ratings;
+    if (r.value || r.wow || r.margin) rated++;
+    const L = data[i].links;
+    if (L.sup1 && !L.sup1.includes('alibaba.com/trade/search?SearchText=')) linked++;
+  });
+  document.getElementById('stat-rated').textContent = rated;
+  document.getElementById('stat-linked').textContent = linked;
+}
+
+// Rating options
+const RATING_OPTS = {
+  value:      [['','—'],['good','Good'],['notbad','Not Bad'],['bad','Bad']],
+  wow:        [['','—'],['wow','Wow'],['good','Good'],['notyet','Not Yet']],
+  saturation: [['','—'],['yes','Yes'],['no','No'],['notyet','Not Yet']],
+  easy:       [['','—'],['vgood','Very Good'],['good','Good'],['notbad','Not Bad']],
+  margin:     [['','—'],['3x','3x'],['5x','5x']],
+  unique:     [['','—'],['yes','Yes'],['no','No']],
+  problem:    [['','—'],['yes','Yes'],['no','No']],
+};
+
+const RATING_LABELS = {
+  value:'Value', wow:'Wow Factor', saturation:'Saturation',
+  easy:'Easy Mkt', margin:'Margin', unique:'Unique', problem:'Problem'
+};
+
+function valClass(key, val) {
+  if (!val) return '';
+  const map = { good:'val-good', wow:'val-wow', notbad:'val-notbad', bad:'val-bad',
+    yes:'val-yes', no:'val-no', notyet:'val-notyet', vgood:'val-vgood',
+    '3x':'val-3x', '5x':'val-5x' };
+  return map[val] || '';
+}
+
+
+function ratingClass(val) {
+  const m = {good:'rv-good',wow:'rv-wow',yes:'rv-yes',vgood:'rv-vgood','5x':'rv-5x',
+    notbad:'rv-notbad',notyet:'rv-notyet','3x':'rv-3x',bad:'rv-bad',no:'rv-no'};
+  return m[val] || 'rv-empty';
+}
+function ratingLabel(key, val) {
+  const m = {good:'Good',wow:'Wow',notbad:'Not Bad',bad:'Bad',yes:'Yes',no:'No',
+    notyet:'Not Yet',vgood:'Very Good','3x':'3x','5x':'5x'};
+  return m[val] || '—';
+}
+
+function renderCards() {
+  const list = document.getElementById('card-list');
+  if (!list) return;
+  const RATING_KEYS = [
+    ['value','Value'],['wow','Wow'],['saturation','Sat.'],['easy','Easy Mkt'],
+    ['margin','Margin'],['unique','Unique'],['problem','Problem']
+  ];
+  list.innerHTML = PRODUCTS.map((name, i) => {
+    const L = data[i].links;
+    const R = data[i].ratings;
+    const isPaywall = i >= 3;
+
+    const linkBtn = (cls, label, href) => href
+      ? `<a class="card-link ${cls}" href="${href}" onclick="openLink(event,this.href)"><span class="dot"></span>${label}</a>`
+      : '';
+
+    const ratingsHtml = RATING_KEYS.map(([key, label]) =>
+      `<div class="card-rating-item">
+        <span class="card-rating-key">${label}</span>
+        <span class="card-rating-val ${ratingClass(R[key])}">${ratingLabel(key, R[key])}</span>
+      </div>`
+    ).join('');
+
+    return `<div class="product-card ${isPaywall ? 'paywall-card' : ''}">
+      <div class="card-top">
+        <div class="card-left">
+          <span class="card-num">${String(i+1).padStart(3,'0')}</span>
+          <span class="card-name">${name}</span>
+        </div>
+        <span class="card-cat">Beauty</span>
+      </div>
+      <div class="card-links">
+        ${linkBtn('ali','ALI·1',L.sup1)}
+        ${linkBtn('ali','ALI·2',L.sup2)}
+        ${linkBtn('tik','TIK',L.tik)}
+        ${linkBtn('ig','IG',L.ig)}
+        ${linkBtn('fb','FB',L.fb)}
+        ${L.comp1 ? linkBtn('amz','COMP·1',L.comp1) : ''}
+        ${L.comp2 ? linkBtn('amz','COMP·2',L.comp2) : ''}
+      </div>
+      <div class="card-ratings">${ratingsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTable() {
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = PRODUCTS.map((name, i) => {
+    const L = data[i].links;
+    const R = data[i].ratings;
+
+    const linkBtn = (cls, label, href) =>
+      `<a class="link-btn ${cls}" href="${href}" onclick="openLink(event,this.href)"><span class="dot"></span>${label}</a>`;
+
+    const ratings = Object.keys(RATING_OPTS).map(key => {
+      const opts = RATING_OPTS[key].map(([v,l]) =>
+        `<option value="${v}" ${R[key]===v?'selected':''}>${l}</option>`).join('');
+      const cls = valClass(key, R[key]);
+      return `<div class="rating-row">
+        <span class="rating-key">${RATING_LABELS[key]}</span>
+        <select class="rating-select ${cls}" onchange="updateRating(${i},'${key}',this)" data-key="${key}">
+          ${opts}
+        </select>
+      </div>`;
+    }).join('');
+    const valueInfoHtml = `<div class="value-info-wrap">
+      <span class="rating-key" style="font-size:10px;color:#666;margin-bottom:5px;display:block;letter-spacing:.1em;text-transform:uppercase;">Value Info</span>
+      <textarea class="notes-input value-info-input" placeholder="Энэ хэсэгт та тухай барааг судлаад үнэ цэнийг нь тодорхойлж бичнэ..." onchange="updateValueInfo(${i},this)">${R.valueInfo||''}</textarea>
+    </div>`;
+
+    return `<tr id="row-${i}" class="${i >= 3 ? 'paywall-row' : ''}">
+      <td class="td-num">${String(i+1).padStart(3,'0')}</td>
+      <td class="td-name">${name}</td>
+      <td><span class="td-cat">Beauty</span></td>
+      <td>
+        <div class="links-col">
+          <div class="link-row">
+            <div class="link-wrap">
+              ${linkBtn('ali','ALI·1',L.sup1)}
+            </div>
+            ${linkBtn('ali','ALI·2',L.sup2)}
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="links-col">
+          <div class="link-row">
+            ${linkBtn('tik','TIK',L.tik)}
+            ${linkBtn('ig','IG',L.ig)}
+            ${linkBtn('fb','FB',L.fb)}
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="links-col">
+          <div class="link-row">
+            ${L.comp1 ? linkBtn('amz','COMP·1',L.comp1) : '<span class="no-link">—</span>'}
+            ${L.comp2 ? linkBtn('amz','COMP·2',L.comp2) : ''}
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="ratings-col">
+          ${valueInfoHtml}
+          ${ratings}
+          <textarea class="notes-input" placeholder="Notes..." onchange="updateNotes(${i},this)">${R.notes||''}</textarea>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+  updateStats();
+  renderCards();
+}
+
+function updateRating(idx, key, sel) {
+  const val = sel.value;
+  data[idx].ratings[key] = val;
+  sel.className = `rating-select ${valClass(key, val)}`;
+  saveAll();
+}
+
+function updateValueInfo(idx, el) {
+  data[idx].ratings.valueInfo = el.value;
+  saveAll();
+}
+
+function updateNotes(idx, el) {
+  data[idx].ratings.notes = el.value;
+  saveAll();
+}
+
+// Modal
+function openModal(idx) {
+  editingIdx = idx;
+  const L = data[idx].links;
+  document.getElementById('modal-title').textContent = `Edit Links — ${PRODUCTS[idx]}`;
+  document.getElementById('modal-sub').textContent = `#${String(idx+1).padStart(3,'0')} · Beauty`;
+  document.getElementById('m-sup1').value = L.sup1 || '';
+  document.getElementById('m-sup2').value = L.sup2 || '';
+  document.getElementById('m-tik').value  = L.tik  || '';
+  document.getElementById('m-ig').value   = L.ig   || '';
+  document.getElementById('m-fb').value   = L.fb   || '';
+  document.getElementById('m-comp1').value = L.comp1 || '';
+  document.getElementById('m-comp2').value = L.comp2 || '';
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  editingIdx = null;
+}
+
+function saveModal() {
+  if (editingIdx === null) return;
+  data[editingIdx].links = {
+    sup1: document.getElementById('m-sup1').value,
+    sup2: document.getElementById('m-sup2').value,
+    tik:  document.getElementById('m-tik').value,
+    ig:   document.getElementById('m-ig').value,
+    fb:   document.getElementById('m-fb').value,
+    comp1: document.getElementById('m-comp1').value,
+    comp2: document.getElementById('m-comp2').value,
+  };
+  saveAll();
+  // Re-render BEFORE closing (editingIdx must still be set)
+  const row = document.getElementById(`row-${editingIdx}`);
+  const tmp = document.createElement('tbody');
+  tmp.innerHTML = (() => {
+    const i = editingIdx, name = PRODUCTS[i];
+    const L = data[i].links, R = data[i].ratings;
+    const linkBtn = (cls,label,href) => `<a class="link-btn ${cls}" href="${href}" onclick="openLink(event,this.href)"><span class="dot"></span>${label}</a>`;
+    return `<tr id="row-${i}" class="${i >= 3 ? 'paywall-row' : ''}">
+      <td class="td-num">${String(i+1).padStart(3,'0')}</td>
+      <td class="td-name">${name}</td>
+      <td><span class="td-cat">Beauty</span></td>
+      <td><div class="links-col"><div class="link-row">
+        ${linkBtn('ali','ALI·1',L.sup1)}
+        ${linkBtn('ali','ALI·2',L.sup2)}</div></div></td>
+      <td><div class="links-col"><div class="link-row">
+        ${linkBtn('tik','TIK',L.tik)}${linkBtn('ig','IG',L.ig)}${linkBtn('fb','FB',L.fb)}
+        </div></div></td>
+      <td><div class="links-col"><div class="link-row">
+        ${L.comp1?linkBtn('amz','COMP·1',L.comp1):'<span class="no-link">—</span>'}
+        ${L.comp2?linkBtn('amz','COMP·2',L.comp2):''}
+        </div></div></td>
+      <td><div class="ratings-col">
+        <div class="value-info-wrap">
+          <span class="rating-key" style="font-size:10px;color:#666;margin-bottom:5px;display:block;letter-spacing:.1em;text-transform:uppercase;">Value Info</span>
+          <textarea class="notes-input value-info-input" placeholder="Энэ хэсэгт та тухай барааг судлаад үнэ цэнийг нь тодорхойлж бичнэ..." onchange="updateValueInfo(${i},this)">${R.valueInfo||''}</textarea>
+        </div>
+        ${Object.keys(RATING_OPTS).map(key => {
+          const opts = RATING_OPTS[key].map(([v,l]) => `<option value="${v}" ${R[key]===v?'selected':''}>${l}</option>`).join('');
+          return `<div class="rating-row"><span class="rating-key">${RATING_LABELS[key]}</span>
+            <select class="rating-select ${valClass(key,R[key])}" onchange="updateRating(${i},'${key}',this)">${opts}</select></div>`;
+        }).join('')}
+        <textarea class="notes-input" placeholder="Notes..." onchange="updateNotes(${i},this)">${R.notes||''}</textarea>
+      </div></td>
+    </tr>`;
+  })();
+  row.parentNode.replaceChild(tmp.firstChild, row);
+  closeModal();
+}
+
+// Password
+function checkPwd() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === PASSWORD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initData();
+    renderTable();
+  } else {
+    const err = document.getElementById('pwd-error');
+    err.style.display = 'block';
+    document.getElementById('pwd-input').style.borderColor = '#ff4444';
+    setTimeout(() => { err.style.display='none'; document.getElementById('pwd-input').style.borderColor=''; }, 2000);
+  }
+}
+document.getElementById('pwd-input').addEventListener('keydown', e => { if(e.key==='Enter') checkPwd(); });
+initData();
+renderTable();
+</script>
+
+<!-- PRICING CHOICE MODAL -->
+<div id="modal-pricing-choice" style="display:none;position:fixed;inset:0;background:rgba(4,4,8,0.97);z-index:1000;backdrop-filter:blur(20px);overflow-y:auto;-webkit-overflow-scrolling:touch">
+  <div style="min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:48px 20px 48px">
+
+    <!-- Close -->
+    <button onclick="document.getElementById('modal-pricing-choice').style.display='none';document.body.style.overflow=''" style="position:fixed;top:16px;right:16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);font-size:14px;cursor:pointer;padding:8px 14px;transition:all 0.2s;z-index:10;letter-spacing:1px" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">✕</button>
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:40px;max-width:500px">
+      <div style="display:inline-flex;align-items:center;gap:8px;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);background:rgba(200,255,0,0.07);border:1px solid rgba(200,255,0,0.15);padding:6px 16px;margin-bottom:18px">
+        <span style="width:5px;height:5px;background:var(--accent);border-radius:50%;display:inline-block;animation:blink 2s infinite"></span>
+        БАГЦ СОНГОХ
+      </div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(28px,5vw,48px);letter-spacing:-2px;line-height:1.05">Эхлэхэд <em style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--accent)">хялбар</em></div>
+      <div style="color:var(--muted);font-size:12px;margin-top:12px;letter-spacing:0.3px">Доорх гурван сонголтоос өөртөө тохирохыг нь сонго</div>
+    </div>
+
+    <!-- Cards -->
+    <div id="pmc-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:940px;width:100%">
+
+      <!-- STARTER -->
+      <div style="background:rgba(255,150,50,0.03);border:1px solid rgba(255,150,50,0.2);border-top:3px solid var(--orange);padding:28px 24px;display:flex;flex-direction:column;gap:12px;transition:border-color 0.2s;position:relative">
+        <div style="font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--orange)">Нэг Удаагийн Drop</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:38px;letter-spacing:-2px;color:var(--orange);line-height:1">₮29,900</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:0.5px">нэг удаа · Drop #01</div>
+        <div style="height:1px;background:rgba(255,150,50,0.15);margin:2px 0"></div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:9px;flex:1">
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--orange);font-size:13px;flex-shrink:0">↗</span>100 ширхэг бараа</li>
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--orange);font-size:13px;flex-shrink:0">↗</span>Wow Factor</li>
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--orange);font-size:13px;flex-shrink:0">↗</span>Amazon Competitors</li>
+          <li style="font-size:11.5px;color:rgba(255,255,255,0.2);display:flex;gap:10px;align-items:baseline"><span style="flex-shrink:0">×</span>Supplier холбоос</li>
+          <li style="font-size:11.5px;color:rgba(255,255,255,0.2);display:flex;gap:10px;align-items:baseline"><span style="flex-shrink:0">×</span>Viral ad жишээ</li>
+        </ul>
+        <div style="display:flex;flex-direction:column;gap:6px;padding:10px 0 4px;border-top:1px solid rgba(255,150,50,0.12)">
+          <div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:0.5px">
+            <span><span style="color:var(--orange);font-weight:700;font-size:13px">80</span><span style="color:var(--muted)"> slot үлдлээ</span></span>
+            <span style="color:rgba(255,255,255,0.25);font-size:9px">200-аас</span>
+          </div>
+          <div style="height:2px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="width:40%;height:100%;background:var(--orange)"></div></div>
+        </div>
+        <button onclick="document.getElementById('modal-pricing-choice').style.display='none';document.body.style.overflow='';openModal('modal-starter')" style="width:100%;padding:13px;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;background:rgba(255,150,50,0.08);border:1px solid rgba(255,150,50,0.5);color:var(--orange);transition:all 0.2s" onmouseover="this.style.background='rgba(255,150,50,0.18)'" onmouseout="this.style.background='rgba(255,150,50,0.08)'">Зөвхөн энэ удаад авах</button>
+      </div>
+
+      <!-- MONTHLY (featured) -->
+      <div style="background:rgba(200,255,0,0.03);border:1px solid rgba(200,255,0,0.25);border-top:3px solid var(--accent);padding:28px 24px;display:flex;flex-direction:column;gap:12px;position:relative;box-shadow:0 0 40px rgba(200,255,0,0.06)">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-family:'DM Mono',monospace;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;white-space:nowrap">★ Хамгийн их сонгогддог</div>
+        <div style="font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-top:8px">Сарын Subscription</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:38px;letter-spacing:-2px;color:var(--accent);line-height:1">₮49,900</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:0.5px">сар бүр · 600 шинэ бараа</div>
+        <div style="height:1px;background:rgba(200,255,0,0.12);margin:2px 0"></div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:9px;flex:1">
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--accent);font-size:13px;flex-shrink:0">↗</span>200 бараа · 10 хоног бүр</li>
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--accent);font-size:13px;flex-shrink:0">↗</span>2 supplier + 2 viral ad</li>
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--accent);font-size:13px;flex-shrink:0">↗</span>Wow · Saturation · Amazon</li>
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--accent);font-size:13px;flex-shrink:0">↗</span>Telegram channel</li>
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--accent);font-size:13px;flex-shrink:0">↗</span>Community Q&A</li>
+        </ul>
+        <div style="display:flex;flex-direction:column;gap:6px;padding:10px 0 4px;border-top:1px solid rgba(200,255,0,0.12)">
+          <div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:0.5px">
+            <span><span style="color:var(--accent);font-weight:700;font-size:13px">43</span><span style="color:var(--muted)"> slot үлдлээ</span></span>
+            <span style="color:rgba(255,255,255,0.25);font-size:9px">150-аас</span>
+          </div>
+          <div style="height:2px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="width:28.6%;height:100%;background:var(--accent)"></div></div>
+        </div>
+        <button onclick="document.getElementById('modal-pricing-choice').style.display='none';document.body.style.overflow='';openModal('modal-monthly')" style="width:100%;padding:13px;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;background:var(--accent);color:#000;border:1px solid var(--accent);transition:all 0.2s" onmouseover="this.style.background='#b5e800'" onmouseout="this.style.background='var(--accent)'">Одоо нэгдэх →</button>
+      </div>
+
+      <!-- PREMIUM -->
+      <div style="background:rgba(167,139,250,0.03);border:1px solid rgba(167,139,250,0.2);border-top:3px solid var(--purple);padding:28px 24px;display:flex;flex-direction:column;gap:12px;position:relative">
+        <div style="position:absolute;top:-12px;left:20px;background:linear-gradient(90deg,#a78bfa,#7c3aed);color:#fff;font-family:'DM Mono',monospace;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 12px">PREMIUM</div>
+        <div style="font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--purple);margin-top:8px">Premium Limited Drop</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:38px;letter-spacing:-2px;color:var(--purple);line-height:1">₮99,000</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:0.5px">сар бүр · бүх зүйл нэг дор</div>
+        <div style="height:1px;background:rgba(167,139,250,0.15);margin:2px 0"></div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:9px;flex:1">
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--purple);font-size:13px;flex-shrink:0">↗</span>Сарын захиалгын бүх агуулга</li>
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--purple);font-size:13px;flex-shrink:0">↗</span>30 бэлэн Reels Template</li>
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--purple);font-size:13px;flex-shrink:0">↗</span>AI Product Photo Generate</li>
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--purple);font-size:13px;flex-shrink:0">↗</span>Full Workflow Хичээл</li>
+          <li style="font-size:11.5px;color:var(--text);display:flex;gap:10px;align-items:baseline"><span style="color:var(--purple);font-size:13px;flex-shrink:0">↗</span>Viral Content аргачлал</li>
+        </ul>
+        <div style="display:flex;flex-direction:column;gap:6px;padding:10px 0 4px;border-top:1px solid rgba(167,139,250,0.12)">
+          <div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:0.5px">
+            <span><span style="color:#ff6b6b;font-weight:700;font-size:13px">10</span><span style="color:var(--muted)"> slot үлдлээ</span></span>
+            <span style="color:#ff6b6b;font-size:9px">⚠ Дүүрэх дөхлөө · 30-аас</span>
+          </div>
+          <div style="height:2px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="width:33.3%;height:100%;background:var(--purple)"></div></div>
+        </div>
+        <button onclick="document.getElementById('modal-pricing-choice').style.display='none';document.body.style.overflow='';openModal('modal-premium')" style="width:100%;padding:13px;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.5);color:var(--purple);transition:all 0.2s" onmouseover="this.style.background='rgba(167,139,250,0.18)'" onmouseout="this.style.background='rgba(167,139,250,0.08)'">Premium авах →</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+@media(max-width:700px){
+  #pmc-cards{grid-template-columns:1fr!important;gap:20px!important}
+}
+</style>
+
+<!-- PAYMENT MODALS -->
+<div id="modal-backdrop" onclick="closeModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;backdrop-filter:blur(6px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch"></div>
+
+<!-- MODAL: Нэг Удаагийн Drop (orange) -->
+<div id="modal-starter" class="pay-modal" style="display:none">
+  <button class="modal-close" onclick="closeModal()">✕</button>
+  <div class="modal-icon">💳</div>
+  <div class="modal-title">Төлбөр шилжүүлэх</div>
+  <div class="modal-sub">Хаанбанк · Шилжүүлэг</div>
+  <div class="modal-card" style="border-color:rgba(255,150,50,0.3);background:rgba(255,150,50,0.04)">
+    <div class="modal-row"><span class="modal-label">ДАНСНЫ ДУГААР</span><span class="modal-value"><span style="color:var(--orange);font-size:18px;letter-spacing:1.5px;font-weight:800">5018953118</span> <button class="copy-btn" onclick="copyAccount(event,'5018953118')">⧉</button></span></div>
+    <div class="modal-row"><span class="modal-label">ХҮЛЭЭН АВАГЧ</span><span class="modal-value">Ганбаяр Цэвэгмид</span></div>
+    <div class="modal-row" style="border:none"><span class="modal-label">ГҮЙЛГЭЭНИЙ УТГА</span><span class="modal-value">Нэр + Утасны дугаар</span></div>
+  </div>
+  <div class="modal-amount-row"><span style="color:var(--muted);font-size:12px">Төлбөрийн дүн</span><span class="modal-amount" style="color:var(--orange)">29,900₮</span></div>
+  <div class="modal-delivery" style="border-color:rgba(255,150,50,0.2);background:rgba(255,150,50,0.05)">
+    <div class="modal-delivery-title" style="color:var(--orange)">⏱ ХҮРГЭЛТИЙН ХУГАЦАА</div>
+    <div class="modal-delivery-text">Та төлбөрөө шилжүүлээд <strong>2–3 минутын дотор</strong> таны утасны дугаар руу Drop-ийн линк очих болно. Гүйлгээний утганд <strong>Нэр болон Утасны дугаараа</strong> заавал бичнэ үү.</div>
+  </div>
+  <div class="modal-urgency" style="border-color:rgba(255,150,50,0.2)">
+    <div class="modal-urgency-dot" style="background:var(--orange)"></div>
+    <span><strong style="color:var(--orange)">80</strong> slot үлдлээ · нийт 200-аас · Дүүрвэл хүлээлгийн жагсаалт</span>
+  </div>
+  <button class="modal-copy-btn" style="border-color:var(--orange);color:var(--orange)" onclick="copyAccount(event,'5018953118')">⧉ ДАНСНЫ ДУГААР ХУУЛАХ</button>
+</div>
+
+<!-- MODAL: Сарын Subscription (green) -->
+<div id="modal-monthly" class="pay-modal" style="display:none">
+  <button class="modal-close" onclick="closeModal()">✕</button>
+  <div class="modal-icon">💳</div>
+  <div class="modal-title">Төлбөр шилжүүлэх</div>
+  <div class="modal-sub">Хаанбанк · Шилжүүлэг</div>
+  <div class="modal-card" style="border-color:rgba(200,255,0,0.2);background:rgba(200,255,0,0.03)">
+    <div class="modal-row"><span class="modal-label">ДАНСНЫ ДУГААР</span><span class="modal-value"><span style="color:var(--accent);font-size:18px;letter-spacing:1.5px;font-weight:800">5018953118</span> <button class="copy-btn" onclick="copyAccount(event,'5018953118')">⧉</button></span></div>
+    <div class="modal-row"><span class="modal-label">ХҮЛЭЭН АВАГЧ</span><span class="modal-value">Ганбаяр Цэвэгмид</span></div>
+    <div class="modal-row" style="border:none"><span class="modal-label">ГҮЙЛГЭЭНИЙ УТГА</span><span class="modal-value" style="font-size:11px;text-align:right;line-height:1.5">Нэр + Утасны дугаар + Таны сонгох Category (Goods, Health, Beauty, Home, Kids)</span></div>
+  </div>
+  <div class="modal-amount-row"><span style="color:var(--muted);font-size:12px">Төлбөрийн дүн</span><span class="modal-amount" style="color:var(--accent)">49,900₮</span></div>
+  <div class="modal-delivery" style="border-color:rgba(200,255,0,0.15);background:rgba(200,255,0,0.03)">
+    <div class="modal-delivery-title" style="color:var(--accent)">⏱ ХҮРГЭЛТИЙН ХУГАЦАА</div>
+    <div class="modal-delivery-text">Та төлбөрөө шилжүүлээд <strong>2–3 минутын дотор</strong> таны утасны дугаар руу Drop-ийн линк очих болно. Гүйлгээний утганд <strong>Нэр болон Утасны дугаараа</strong> заавал бичнэ үү.</div>
+  </div>
+  <div class="modal-urgency" style="border-color:rgba(200,255,0,0.15)">
+    <div class="modal-urgency-dot" style="background:var(--accent)"></div>
+    <span><strong style="color:var(--accent)">43</strong> slot үлдлээ · нийт 150-аас · Дүүрвэл хүлээлгийн жагсаалт</span>
+  </div>
+  <button class="modal-copy-btn" style="border-color:var(--accent);color:var(--accent)" onclick="copyAccount(event,'5018953118')">⧉ ДАНСНЫ ДУГААР ХУУЛАХ</button>
+</div>
+
+<!-- MODAL: Premium (purple) - SOLD OUT -->
+<div id="modal-premium" class="pay-modal" style="display:none">
+  <button class="modal-close" onclick="closeModal()">✕</button>
+  <div style="text-align:center;padding:20px 0 4px">
+    <div style="font-size:36px;margin-bottom:14px">🔒</div>
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:24px;letter-spacing:-0.5px;line-height:1;margin-bottom:8px">Premium Дууссан</div>
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a78bfa">Drop #01 · 0 / 30 slot</div>
+  </div>
+  <div style="border:1px solid rgba(167,139,250,0.2);background:rgba(167,139,250,0.04);padding:18px;display:flex;flex-direction:column;gap:8px;text-align:center">
+    <div style="font-size:12px;color:var(--muted);line-height:1.8">Premium Drop #01-ийн бүх <strong style="color:var(--text)">30 slot</strong> дүүрсэн байна.</div>
+    <div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:4px 0"><div style="width:100%;height:100%;background:linear-gradient(90deg,#a78bfa,#7c3aed)"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:10px"><span style="color:var(--muted)">Дүүрсэн · 30 / 30</span><span style="color:#a78bfa">✓ Sold Out</span></div>
+  </div>
+  <div style="font-size:11px;color:var(--muted);text-align:center;line-height:1.8">Drop #02 гарахад буцаж ирнэ.<br><span style="color:#a78bfa">Мэдэгдэл авахыг хүсвэл Telegram-д нэгдэнэ үү.</span></div>
+  <button class="modal-copy-btn" style="border-color:rgba(167,139,250,0.3);color:#a78bfa" onclick="closeModal();openTelegram()">→ Telegram-д Мэдэгдэл Авах</button>
+</div>
+
+
+<style>
+.pay-modal{position:fixed;top:0;left:0;right:0;bottom:0;z-index:1001;background:#0f0f16;border:1px solid var(--border2);width:min(460px,96vw);max-height:min(92vh,780px);margin:auto;overflow-y:auto;overflow-x:hidden;padding:40px 28px 28px;display:flex;flex-direction:column;gap:14px;-webkit-overflow-scrolling:touch}
+.modal-close{position:absolute;top:12px;right:14px;background:var(--surface);border:1px solid var(--border2);color:var(--muted);font-size:16px;cursor:pointer;line-height:1;padding:6px 10px;transition:color 0.2s;z-index:2}
+.modal-close:hover{color:var(--text)}
+.modal-icon{font-size:28px;text-align:center;line-height:1}
+.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:-0.5px;text-align:center;line-height:1.2}
+.modal-sub{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:center}
+.modal-card{border:1px solid var(--border2);overflow:hidden;border-radius:2px}
+.modal-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);gap:8px;flex-wrap:wrap}
+.modal-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);flex-shrink:0;min-width:90px}
+.modal-value{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px;text-align:right;-webkit-font-smoothing:antialiased;letter-spacing:0.5px}
+.copy-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:2px 6px;transition:color 0.2s;line-height:1}
+.copy-btn:hover{color:var(--text)}
+.modal-amount-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--surface2);border-radius:2px}
+.modal-amount{font-family:'Syne',sans-serif;font-weight:800;font-size:32px;letter-spacing:-1px;-webkit-font-smoothing:antialiased}
+.modal-delivery{border:1px solid var(--border2);border-radius:2px;padding:14px}
+.modal-delivery-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.modal-delivery-text{font-size:11.5px;color:var(--muted);line-height:1.8}
+.modal-delivery-text strong{color:var(--text)}
+.modal-urgency{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border2);border-radius:2px;font-size:11px;color:var(--muted);line-height:1.5}
+.modal-urgency-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.modal-copy-btn{width:100%;padding:14px;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;background:none;border:1px solid;border-radius:1px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.modal-copy-btn:hover{opacity:0.75}
+@media(max-width:480px){
+  .pay-modal{width:100%;max-height:100%;height:100%;max-height:none;position:fixed;top:0;left:0;right:0;bottom:0;margin:0;border:none;border-radius:0;padding:52px 16px 24px;gap:12px}
+  .modal-title{font-size:17px}
+  .modal-amount{font-size:22px}
+  .modal-row{padding:10px 12px}
+  .modal-label{font-size:8px;min-width:80px}
+  .modal-value{font-size:12px}
+  .modal-delivery-text{font-size:11px}
+  .modal-copy-btn{padding:15px;font-size:9px}
+}
+</style>
+<script>
+var TELEGRAM_LINK="https://t.me/+vZwC-3aRHj8wNmM1";
+function openLink(e,url){
+  if(e)e.preventDefault();
+  if(!url)return;
+  // In-app browser (TikTok, Instagram, FB)-д target="_blank" ажилладаггүй тул
+  // window.location.href ашиглан шилжүүлнэ
+  try{
+    var w=window.open(url,'_blank');
+    if(!w||w.closed||typeof w.closed==='undefined'){
+      window.location.href=url;
+    }
+  }catch(err){
+    window.location.href=url;
+  }
+}
+function openTelegram(){openLink(null,TELEGRAM_LINK)}
+function openPricingModal(){
+  var m=document.getElementById('modal-pricing-choice');
+  m.style.display='block';
+  document.body.style.overflow='hidden';
+}
+function openModal(id){
+  var bd=document.getElementById('modal-backdrop');
+  var m=document.getElementById(id);
+  bd.style.display='flex';
+  bd.style.alignItems='flex-start';
+  bd.style.justifyContent='center';
+  bd.style.padding='20px 0';
+  m.style.display='flex';
+  m.style.position='relative';
+  m.style.top='auto';
+  m.style.left='auto';
+  m.style.right='auto';
+  m.style.bottom='auto';
+  m.style.margin='auto';
+  bd.appendChild(m);
+  if(window.innerWidth<=480){
+    bd.style.padding='0';
+    bd.style.alignItems='stretch';
+    m.style.width='100%';
+    m.style.maxHeight='100vh';
+    m.style.height='100vh';
+    m.style.margin='0';
+    m.style.border='none';
+    m.style.borderRadius='0';
+  }
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  var bd=document.getElementById('modal-backdrop');
+  bd.style.display='none';
+  ['modal-starter','modal-monthly','modal-premium'].forEach(id=>{
+    var m=document.getElementById(id);
+    m.style.display='none';
+  });
+  document.body.style.overflow='';
+}
+function copyAccount(e,num){
+  e.stopPropagation();
+  navigator.clipboard.writeText(num).then(()=>{
+    const btn=e.target;
+    const orig=btn.textContent;
+    btn.textContent='✓ Хуулагдлаа';
+    btn.style.color='#c8ff00';
+    setTimeout(()=>{btn.textContent=orig;btn.style.color='';},2000);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=num;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    const btn=e.target;const orig=btn.textContent;
+    btn.textContent='✓ Хуулагдлаа';btn.style.color='#c8ff00';
+    setTimeout(()=>{btn.textContent=orig;btn.style.color='';},2000);
+  });
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+</script>
+
+</body>
+</html>

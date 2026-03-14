@@ -89,7 +89,7 @@ h1 em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;col
 .wow-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
 .wow-score{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:var(--accent);letter-spacing:-1px}
 .blur-zone{position:relative}
-.blur-items{filter:blur(6px);pointer-events:none;user-select:none;opacity:0.5}
+.blur-items{filter:blur(2px);pointer-events:none;user-select:none;opacity:0.75}
 .blur-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(to bottom,transparent,rgba(6,6,10,0.7) 40%,rgba(6,6,10,0.95));z-index:2}
 .lock-icon{font-size:28px;filter:grayscale(1);opacity:0.6}
 .blur-cta-text{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;text-align:center}
@@ -138,7 +138,7 @@ h2 em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;col
 .tp-name{color:var(--text);font-weight:500}
 .tp-cell{color:var(--muted);text-align:center}
 .tp-blur-overlay{position:relative}
-.tp-blurred{filter:blur(5px);user-select:none;pointer-events:none;opacity:0.4}
+.tp-blurred{filter:blur(2px);user-select:none;pointer-events:none;opacity:0.7}
 .tp-blur-cover{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 0%,rgba(13,13,18,0.92) 50%,rgba(13,13,18,0.99));display:flex;align-items:flex-end;justify-content:center;padding-bottom:28px}
 .tp-unlock{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
 .tp-unlock-text{font-family:'Syne',sans-serif;font-weight:700;font-size:16px}
@@ -668,9 +668,17 @@ function openTelegram(){window.open(TELEGRAM_LINK,"_blank")}
         <button class="pc-btn primary" onclick="openModal('modal-monthly')">Одоо нэгдэх →</button>
       </div>
 
-      <!-- PREMIUM - PURPLE -->
-      <div class="pc" style="background:var(--surface2);border-top:2px solid var(--purple)">
+      <!-- PREMIUM - PURPLE - SOLD OUT -->
+      <div class="pc" style="background:var(--surface2);border-top:2px solid var(--purple);opacity:0.72;position:relative">
         <div class="pc-badge" style="background:linear-gradient(90deg,#a78bfa,#7c3aed);color:#fff">Premium</div>
+        <!-- SOLD OUT OVERLAY -->
+        <div style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(13,13,18,0.72);backdrop-filter:blur(2px)">
+          <div style="border:1.5px solid rgba(167,139,250,0.4);padding:14px 28px;text-align:center;display:flex;flex-direction:column;gap:6px">
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;letter-spacing:-0.5px;color:#fff">ДУУССАН</div>
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--purple)">0 / 30 slot</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">Drop #02-д буцаж ирнэ</div>
+          </div>
+        </div>
         <div class="pc-name" style="color:var(--purple)">Premium Limited Drop</div>
         <div class="pc-price" style="color:var(--purple);font-size:38px">₮99,000</div>
         <div class="pc-period">сар бүр · бүх зүйл нэг дор</div>
@@ -683,12 +691,12 @@ function openTelegram(){window.open(TELEGRAM_LINK,"_blank")}
         </ul>
         <div class="pc-slots" style="--slot-color:var(--purple)">
           <div class="pc-slots-top">
-            <span class="pc-slots-left"><span style="color:var(--purple);font-weight:700">10</span> slot үлдлээ</span>
-            <span class="pc-slots-total" style="color:#ff6b6b">⚠ Дүүрэх дөхлөө · 30-аас</span>
+            <span class="pc-slots-left"><span style="color:#ff6b6b;font-weight:700">0</span> slot үлдлээ</span>
+            <span class="pc-slots-total" style="color:#ff6b6b">✓ Дүүрсэн · 30-аас</span>
           </div>
-          <div class="pc-slots-bar-wrap"><div class="pc-slots-bar" style="width:33.3%;background:var(--purple)"></div></div>
+          <div class="pc-slots-bar-wrap"><div class="pc-slots-bar" style="width:100%;background:linear-gradient(90deg,#a78bfa,#7c3aed)"></div></div>
         </div>
-        <button class="pc-btn" style="border-color:var(--purple);color:var(--purple)" onclick="openModal('modal-premium')">Premium авах →</button>
+        <button disabled class="pc-btn" style="border-color:rgba(167,139,250,0.2);color:rgba(167,139,250,0.3);cursor:not-allowed;background:rgba(167,139,250,0.04)">— Дууссан —</button>
       </div>
     </div>
 
@@ -918,8 +926,16 @@ function openTelegram(){window.open(TELEGRAM_LINK,"_blank")}
       </div>
 
       <!-- PREMIUM -->
-      <div style="background:var(--surface2);padding:28px 22px;border-top:2px solid var(--purple);display:flex;flex-direction:column;gap:10px;position:relative">
+      <div style="background:var(--surface2);padding:28px 22px;border-top:2px solid var(--purple);display:flex;flex-direction:column;gap:10px;position:relative;opacity:0.7">
         <div style="position:absolute;top:-1px;left:20px;background:linear-gradient(90deg,#a78bfa,#7c3aed);color:#fff;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px">Premium</div>
+        <!-- SOLD OUT OVERLAY -->
+        <div style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(13,13,18,0.72);backdrop-filter:blur(2px)">
+          <div style="border:1.5px solid rgba(167,139,250,0.4);padding:14px 28px;text-align:center;display:flex;flex-direction:column;gap:6px">
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:-0.5px;color:#fff">ДУУССАН</div>
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--purple)">0 / 30 slot</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">Drop #02-д буцаж ирнэ</div>
+          </div>
+        </div>
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--purple);margin-top:16px">Premium Limited Drop</div>
         <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:34px;letter-spacing:-2px;color:var(--purple);line-height:1">₮99,000</div>
         <div style="font-size:10px;color:var(--muted)">сар бүр · бүх зүйл нэг дор</div>
@@ -931,10 +947,10 @@ function openTelegram(){window.open(TELEGRAM_LINK,"_blank")}
           <li style="font-size:11px;color:var(--text);display:flex;gap:8px"><span style="color:var(--purple)">↗</span>Viral Content аргачлал</li>
         </ul>
         <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:4px">
-          <div style="display:flex;justify-content:space-between;font-size:10px"><span style="color:var(--muted)"><span style="color:#ff6b6b;font-weight:700">10</span> slot үлдлээ</span><span style="color:#ff6b6b;font-size:9px">⚠ Дүүрэх дөхлөө · 30-аас</span></div>
-          <div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:33.3%;height:100%;background:var(--purple);border-radius:2px"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:10px"><span style="color:var(--muted)"><span style="color:#ff6b6b;font-weight:700">0</span> slot үлдлээ</span><span style="color:#ff6b6b;font-size:9px">✓ Дүүрсэн · 30-аас</span></div>
+          <div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:100%;height:100%;background:linear-gradient(90deg,#a78bfa,#7c3aed);border-radius:2px"></div></div>
         </div>
-        <button onclick="document.getElementById('modal-pricing-choice').style.display='none';document.body.style.overflow='';openModal('modal-premium')" style="width:100%;padding:12px;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;background:none;border:1px solid var(--purple);color:var(--purple);transition:all 0.2s" onmouseover="this.style.background='rgba(167,139,250,0.1)'" onmouseout="this.style.background='none'">Premium авах →</button>
+        <button disabled style="width:100%;padding:12px;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:not-allowed;background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.2);color:rgba(167,139,250,0.35)">— Дууссан —</button>
       </div>
 
     </div>
@@ -992,27 +1008,26 @@ function openTelegram(){window.open(TELEGRAM_LINK,"_blank")}
   <button class="modal-copy-btn" style="border-color:var(--accent);color:var(--accent)" onclick="copyAccount(event,'5018953118')">⧉ ДАНСНЫ ДУГААР ХУУЛАХ</button>
 </div>
 
-<!-- MODAL: Premium (purple) -->
+<!-- MODAL: Premium (purple) - SOLD OUT -->
 <div id="modal-premium" class="pay-modal" style="display:none">
   <button class="modal-close" onclick="closeModal()">✕</button>
-  <div class="modal-icon">💳</div>
-  <div class="modal-title">Төлбөр шилжүүлэх</div>
-  <div class="modal-sub">Хаанбанк · Шилжүүлэг</div>
-  <div class="modal-card" style="border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.04)">
-    <div class="modal-row"><span class="modal-label">ДАНСНЫ ДУГААР</span><span class="modal-value"><span style="color:var(--purple);font-size:18px;letter-spacing:1.5px;font-weight:800">5018953118</span> <button class="copy-btn" onclick="copyAccount(event,'5018953118')">⧉</button></span></div>
-    <div class="modal-row"><span class="modal-label">ХҮЛЭЭН АВАГЧ</span><span class="modal-value">Ганбаяр Цэвэгмид</span></div>
-    <div class="modal-row" style="border:none"><span class="modal-label">ГҮЙЛГЭЭНИЙ УТГА</span><span class="modal-value">Нэр + Утасны дугаар + Таны сонгох Category (Goods, Health, Beauty, Home, Kids)</span></div>
+  <div style="text-align:center;padding:24px 0 8px">
+    <div style="font-size:40px;margin-bottom:12px">🔒</div>
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:26px;letter-spacing:-1px;line-height:1;margin-bottom:8px">Premium Дууссан</div>
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--purple)">0 / 30 slot · Drop #01</div>
   </div>
-  <div class="modal-amount-row"><span style="color:var(--muted);font-size:12px">Төлбөрийн дүн</span><span class="modal-amount" style="color:var(--purple)">99,000₮</span></div>
-  <div class="modal-delivery" style="border-color:rgba(167,139,250,0.2);background:rgba(167,139,250,0.04)">
-    <div class="modal-delivery-title" style="color:var(--purple)">⏱ ХҮРГЭЛТИЙН ХУГАЦАА</div>
-    <div class="modal-delivery-text">Та төлбөрөө шилжүүлээд <strong>2–3 минутын дотор</strong> таны утасны дугаар руу Drop-ийн линк очих болно. Гүйлгээний утганд <strong>Нэр болон Утасны дугаараа</strong> заавал бичнэ үү.</div>
+  <div style="border:1px solid rgba(167,139,250,0.2);background:rgba(167,139,250,0.04);padding:20px;text-align:center;display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:12px;color:var(--muted);line-height:1.8">Premium Drop #01-ийн бүх <strong style="color:var(--text)">30 slot</strong> дүүрсэн байна.<br>Drop #02 гарахад буцаж ирнэ.</div>
+    <div style="font-size:10px;color:var(--purple);letter-spacing:1px">Дараагийн Drop-ийн мэдэгдэл авахыг хүсвэл Telegram-д нэгдэнэ үү.</div>
   </div>
-  <div class="modal-urgency" style="border-color:rgba(167,139,250,0.2)">
-    <div class="modal-urgency-dot" style="background:#ff6b6b;animation:blink 1s infinite"></div>
-    <span><strong style="color:#ff6b6b">10</strong> slot үлдлээ · нийт 30-аас · <strong style="color:#ff6b6b">⚠ Дүүрэх дөхлөө!</strong></span>
+  <div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden">
+    <div style="width:100%;height:100%;background:linear-gradient(90deg,#a78bfa,#7c3aed);border-radius:2px"></div>
   </div>
-  <button class="modal-copy-btn" style="border-color:var(--purple);color:var(--purple)" onclick="copyAccount(event,'5018953118')">⧉ ДАНСНЫ ДУГААР ХУУЛАХ</button>
+  <div style="display:flex;justify-content:space-between;font-size:10px;padding:0 2px">
+    <span style="color:var(--muted)">Дүүрсэн · 30 / 30</span>
+    <span style="color:var(--purple)">✓ Sold Out</span>
+  </div>
+  <button class="modal-copy-btn" style="border-color:rgba(167,139,250,0.3);color:var(--purple);background:rgba(167,139,250,0.08)" onclick="closeModal();openTelegram()">→ Telegram-д Мэдэгдэл Авах</button>
 </div>
 
 <style>

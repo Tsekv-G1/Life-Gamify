@@ -6,6 +6,7 @@
 <title>Routine OS v3 — Гүнжилмаа</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -585,7 +586,9 @@ input,select,textarea{color-scheme:dark}
       <div class="tab-panel active" style="display:block">
         <div class="stats-section">
           <div class="stats-section-title">📊 Урт хугацааны дэвшил<div class="range-btns"><div class="range-btn active" onclick="setRange(7,this)">7 хон</div><div class="range-btn" onclick="setRange(30,this)">30 хон</div><div class="range-btn" onclick="setRange(90,this)">90 хон</div></div></div>
-          <canvas id="xpChart" class="chart-canvas"></canvas>
+          <div style="position:relative;height:150px;width:100%;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:10px;">
+            <canvas id="xpChart"></canvas>
+          </div>
         </div>
         <div class="stats-section">
           <div class="stats-section-title">🔥 Идэвхийн хэлхээ</div>
@@ -1411,6 +1414,62 @@ function renderStats() {
   set('statDone', avg+'%');
   const weekXp = CHECKLISTS.reduce((s,_,di)=>s+calcDayXp(di),0);
   set('statXpTrend', `↑ ${weekXp} энэ 7хон`);
+
+  // XP Chart
+  const canvas = document.getElementById('xpChart');
+  if (canvas && typeof Chart !== 'undefined') {
+    // Destroy previous instance if exists
+    if (canvas._chartInstance) { canvas._chartInstance.destroy(); }
+    const labels = [];
+    const data = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const dayNames = ['Ня','Да','Мя','Лх','Пү','Ба','Бя'];
+      labels.push(dayNames[d.getDay()]);
+      data.push(state.history?.[d.toDateString()]?.xp || 0);
+    }
+    const ctx = canvas.getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 140);
+    gradient.addColorStop(0, 'rgba(255,107,157,0.35)');
+    gradient.addColorStop(1, 'rgba(255,107,157,0.02)');
+    canvas._chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'XP',
+          data,
+          borderColor: '#ff6b9d',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#ff6b9d',
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: true,
+          backgroundColor: gradient,
+          tension: 0.4,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: {
+          backgroundColor: '#0f0f1a',
+          borderColor: '#282840',
+          borderWidth: 1,
+          titleColor: '#d4d4f0',
+          bodyColor: '#ff6b9d',
+          titleFont: { family: 'DM Mono', size: 10 },
+          bodyFont: { family: 'DM Mono', size: 12, weight: 'bold' },
+          callbacks: { label: ctx => `+${ctx.parsed.y} XP` }
+        }},
+        scales: {
+          x: { grid: { color: '#1e1e30' }, ticks: { color: '#6e6e9a', font: { family: 'DM Mono', size: 10 } } },
+          y: { grid: { color: '#1e1e30' }, ticks: { color: '#6e6e9a', font: { family: 'DM Mono', size: 10 } }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
   // Heatmap
   const hm = document.getElementById('heatmapGrid');
   if (hm) {

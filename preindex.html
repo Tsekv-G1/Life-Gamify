@@ -1422,18 +1422,8 @@ renderTable();
 <script>
 var TELEGRAM_LINK="https://t.me/+vZwC-3aRHj8wNmM1";
 
-/* ─── In-app browser detection ─── */
-function detectIAB(){
-  var ua=navigator.userAgent||'';
-  if(/Instagram/i.test(ua))return'ig';
-  if(/FBAN|FBAV|FB4A|FBIOS/i.test(ua))return'fb';
-  if(/BytedanceWebview|musical_ly|TikTok/i.test(ua))return'tt';
-  return null;
-}
-var _IAB=detectIAB();
-
-/* ─── Copy to clipboard ─── */
-function _copy(text){
+/* ── clipboard ── */
+function _copyText(text){
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(text).catch(function(){_copyFallback(text);});
   } else { _copyFallback(text); }
@@ -1446,71 +1436,121 @@ function _copyFallback(text){
   document.body.removeChild(t);
 }
 
-/* ─── Bottom toast ─── */
-function _toast(url){
-  var old=document.getElementById('_lnk_toast');
-  if(old)old.remove();
-  var d=document.createElement('div');
-  d.id='_lnk_toast';
-  var disp=url.length>46?url.slice(0,46)+'…':url;
-  d.innerHTML=
-    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'+
-      '<span style="font-size:18px">📋</span>'+
-      '<div>'+
-        '<div style="color:#c8ff00;font-size:13px;font-weight:700">Safari-д нээх хэрэгтэй</div>'+
-        '<div style="color:#888;font-size:11px;margin-top:2px">URL автоматаар хуулагдлаа</div>'+
-      '</div>'+
-    '</div>'+
-    '<div style="background:#111;border:1px solid #2a2a2a;padding:8px 10px;font-size:10px;color:#555;word-break:break-all;border-radius:2px;margin-bottom:10px">'+disp+'</div>'+
-    '<div style="display:flex;gap:8px">'+
-      '<button id="_toast_copy" style="flex:1;padding:11px;background:rgba(200,255,0,0.08);border:1px solid rgba(200,255,0,0.3);color:#c8ff00;font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer">⧉ Дахин хуулах</button>'+
-      '<button onclick="document.getElementById(\'_lnk_toast\').remove()" style="padding:11px 16px;background:transparent;border:1px solid #2a2a2a;color:#555;font-family:\'DM Mono\',monospace;font-size:10px;cursor:pointer">✕</button>'+
-    '</div>'+
-    '<div style="margin-top:10px;font-size:10px;color:#444;text-align:center">Safari нээгээд address bar-т буулгана уу</div>';
-  d.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#0d0d0d;border-top:2px solid #c8ff00;padding:16px 16px 24px;font-family:\'DM Mono\',monospace;box-shadow:0 -12px 40px rgba(0,0,0,0.95);animation:slideUp .2s ease';
-  document.body.appendChild(d);
-  document.getElementById('_toast_copy').onclick=function(){
-    _copy(url);
-    this.textContent='✓ Хуулагдлаа';
-    this.style.background='rgba(200,255,0,0.15)';
-  };
-  // Add animation
-  if(!document.getElementById('_toast_style')){
-    var s=document.createElement('style');
-    s.id='_toast_style';
-    s.textContent='@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}';
-    document.head.appendChild(s);
-  }
-  setTimeout(function(){var t=document.getElementById('_lnk_toast');if(t)t.remove();},15000);
+/* ── keyword extract ── */
+function _getKeyword(url){
+  var m=url.match(/[?&](?:q|keyword|SearchText|k)=([^&]+)/i);
+  return m ? decodeURIComponent(m[1].replace(/\+/g,' ')) : null;
 }
 
-/* ─── Main openLink ─── */
+/* ── platform detect ── */
+function _getPlatform(url){
+  if(url.indexOf('tiktok.com')!==-1) return 'tiktok';
+  if(url.indexOf('instagram.com')!==-1) return 'instagram';
+  if(url.indexOf('facebook.com')!==-1) return 'facebook';
+  if(url.indexOf('alibaba.com')!==-1) return 'alibaba';
+  if(url.indexOf('amazon.com')!==-1) return 'amazon';
+  return 'other';
+}
+
+/* ── modal style inject (once) ── */
+function _injectModalStyle(){
+  if(document.getElementById('_kw_style'))return;
+  var s=document.createElement('style');
+  s.id='_kw_style';
+  s.textContent=
+    '#_kw_overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99999;display:flex;align-items:flex-end;justify-content:center}'+
+    '#_kw_box{background:#0d0d0d;border-top:3px solid var(--accent);width:100%;max-width:480px;padding:24px 20px 36px;font-family:\'DM Mono\',monospace;animation:kwUp .22s cubic-bezier(.22,1,.36,1)}'+
+    '@keyframes kwUp{from{transform:translateY(100%)}to{transform:translateY(0)}}'+
+    '#_kw_word{font-family:\'Syne\',sans-serif;font-weight:800;font-size:22px;color:#fff;text-align:center;letter-spacing:.02em;padding:18px 12px;background:#111;border:1px solid #2a2a2a;border-radius:2px;margin:14px 0 10px;line-height:1.3}'+
+    '#_kw_copybtn{width:100%;padding:15px;background:var(--accent);color:#000;border:none;font-family:\'Syne\',sans-serif;font-weight:800;font-size:13px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;margin-bottom:8px;border-radius:2px}'+
+    '#_kw_cancelbtn{width:100%;padding:12px;background:transparent;border:1px solid #2a2a2a;color:#555;font-family:\'DM Mono\',monospace;font-size:11px;cursor:pointer;border-radius:2px}';
+  document.head.appendChild(s);
+}
+
+/* ── main keyword modal ── */
+function _showKeywordModal(keyword, platform, appUrl, webUrl){
+  _injectModalStyle();
+  var old=document.getElementById('_kw_overlay');
+  if(old)old.remove();
+
+  var icons={tiktok:'🎵',instagram:'📸',facebook:'👥',alibaba:'🛒',amazon:'📦',other:'🔗'};
+  var labels={tiktok:'TikTok',instagram:'Instagram',facebook:'Facebook',alibaba:'Alibaba',amazon:'Amazon',other:''};
+  var icon=icons[platform]||'🔗';
+  var label=labels[platform]||'';
+
+  var ov=document.createElement('div');
+  ov.id='_kw_overlay';
+  ov.innerHTML=
+    '<div id="_kw_box">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'+
+        '<div style="display:flex;align-items:center;gap:8px">'+
+          '<span style="font-size:20px">'+icon+'</span>'+
+          '<span style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#888">'+label+' дээр хайх</span>'+
+        '</div>'+
+        '<button onclick="document.getElementById(\'_kw_overlay\').remove();document.body.style.overflow=\'\'" style="background:none;border:none;color:#444;font-size:18px;cursor:pointer;padding:4px 8px">✕</button>'+
+      '</div>'+
+      '<div style="font-size:10px;color:#555;letter-spacing:.1em;margin-bottom:2px;text-align:center">ХАЙХ ҮГ</div>'+
+      '<div id="_kw_word">'+keyword+'</div>'+
+      '<div style="font-size:11px;color:#666;text-align:center;margin-bottom:16px;line-height:1.7">'+
+        '① Доорх товч дарж хайх үгийг <strong style="color:#c8ff00">хуулна</strong><br>'+
+        '② '+label+' апп нээгдэнэ — Search хайрцагт <strong style="color:#c8ff00">буулга</strong>'+
+      '</div>'+
+      '<button id="_kw_copybtn" onclick="_doOpenAndCopy(\''+keyword.replace(/'/g,"\\'")+ '\',\''+appUrl.replace(/'/g,"\\'")+'\',\''+webUrl.replace(/'/g,"\\'")+'\',this)">⧉ Хуулаад '+label+' нээх</button>'+
+      '<button id="_kw_cancelbtn" onclick="document.getElementById(\'_kw_overlay\').remove();document.body.style.overflow=\'\'">Болих</button>'+
+    '</div>';
+  document.body.appendChild(ov);
+  document.body.style.overflow='hidden';
+  ov.addEventListener('click',function(e){if(e.target===ov){ov.remove();document.body.style.overflow='';}});
+}
+
+function _doOpenAndCopy(keyword,appUrl,webUrl,btn){
+  /* 1. copy keyword */
+  _copyText(keyword);
+  btn.textContent='✓ Хуулагдлаа! Апп нээж байна...';
+  btn.style.opacity='.7';
+
+  /* 2. try app deep link, fallback to web */
+  setTimeout(function(){
+    var hidden=false;
+    function onHide(){hidden=true;}
+    document.addEventListener('visibilitychange',onHide);
+    window.location.href=appUrl;
+    setTimeout(function(){
+      document.removeEventListener('visibilitychange',onHide);
+      if(!hidden){window.location.href=webUrl;}
+      var ov=document.getElementById('_kw_overlay');
+      if(ov){ov.remove();document.body.style.overflow='';}
+    },1500);
+  },300);
+}
+
+/* ── main openLink ── */
 function openLink(e,url){
   if(e)e.preventDefault();
   if(!url)return;
 
-  if(_IAB){
-    // Step 1: try x-safari-https:// — iOS will intercept and open Safari directly
-    var safariScheme=url.replace(/^https?:\/\//,'');
-    window.location.href='x-safari-https://'+safariScheme;
+  var platform=_getPlatform(url);
+  var keyword=_getKeyword(url);
 
-    // Step 2: fallback after 800ms — copy URL + show toast
-    setTimeout(function(){
-      _copy(url);
-      _toast(url);
-    },800);
+  /* TikTok search */
+  if(platform==='tiktok'&&keyword){
+    var appUrl='snssdk1233://search?keyword='+encodeURIComponent(keyword);
+    _showKeywordModal(keyword,'tiktok',appUrl,url);
     return;
   }
 
-  // Normal browser
+  /* Instagram search */
+  if(platform==='instagram'&&keyword){
+    var appUrl2='instagram://explore/search/?q='+encodeURIComponent(keyword);
+    _showKeywordModal(keyword,'instagram',appUrl2,url);
+    return;
+  }
+
+  /* все остальные — открыть напрямую */
   try{
     var w=window.open(url,'_blank');
-    if(!w||w.closed||typeof w.closed==='undefined'){
-      window.location.href=url;
-    }
-  }catch(err){
-    window.location.href=url;
-  }
+    if(!w||w.closed||typeof w.closed==='undefined'){window.location.href=url;}
+  }catch(err){window.location.href=url;}
 }
 
 function openTelegram(){openLink(null,TELEGRAM_LINK)}

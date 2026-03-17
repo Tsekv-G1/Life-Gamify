@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Productdrop × Routine OS — Sync</title>
+<title>Productdrop × Routine — Sync v2</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -14,12 +14,10 @@
   --border-h: #2a2a30;
   --text: #e4e2dc;
   --muted: #6b6978;
-  --dim: #3d3b45;
+  --dim: #2e2c35;
   --accent: #c8ff00;
-  --accent-dim: rgba(200,255,0,.08);
+  --accent-dim: rgba(200,255,0,.07);
   --accent-mid: rgba(200,255,0,.18);
-  --red: #ff4d4f;
-  --orange: #ff9f43;
   --blue: #5b9aff;
   --blue-dim: rgba(91,154,255,.1);
   --green: #4cd9a0;
@@ -27,649 +25,780 @@
   --purple: #a78bfa;
   --purple-dim: rgba(167,139,250,.1);
   --yellow: #ffd166;
-  --yellow-dim: rgba(255,209,102,.1);
-  --pink: #ff6b9d;
-  --pink-dim: rgba(255,107,157,.1);
+  --yellow-dim: rgba(255,209,102,.08);
+  --orange: #ff9f43;
+  --orange-dim: rgba(255,159,67,.09);
+  --red: #ff6b6b;
+  --red-dim: rgba(255,107,107,.1);
   --mono: 'JetBrains Mono', monospace;
   --sans: 'Inter', -apple-system, sans-serif;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior: smooth; }
 body {
   font-family: var(--sans);
   background: var(--bg);
   color: var(--text);
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-.container { max-width: 900px; margin: 0 auto; padding: 40px 20px 100px; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 120px; }
 
-/* HEADER */
-.header {
-  text-align: center;
-  padding: 60px 0 50px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 48px;
+/* ─── HEADER ─── */
+.hdr { text-align:center; padding: 56px 0 48px; border-bottom:1px solid var(--border); margin-bottom:48px; }
+.hdr-tag {
+  display:inline-flex; align-items:center; gap:7px;
+  background:var(--accent-dim); border:1px solid var(--accent-mid);
+  border-radius:20px; padding:5px 14px;
+  font-family:var(--mono); font-size:10px; color:var(--accent);
+  letter-spacing:.08em; text-transform:uppercase; margin-bottom:18px;
 }
-.header-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--accent-dim); border: 1px solid var(--accent-mid);
-  border-radius: 20px; padding: 6px 16px;
-  font-family: var(--mono); font-size: 11px; color: var(--accent);
-  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px;
-}
-.header h1 {
-  font-size: clamp(26px, 5vw, 38px); font-weight: 800;
-  line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 12px;
-}
-.header h1 span { color: var(--accent); }
-.header p { color: var(--muted); font-size: 15px; max-width: 520px; margin: 0 auto; }
+.hdr h1 { font-size:clamp(24px,5vw,36px); font-weight:800; letter-spacing:-.02em; margin-bottom:10px; line-height:1.2; }
+.hdr h1 span { color:var(--accent); }
+.hdr p { color:var(--muted); font-size:14px; max-width:480px; margin:0 auto; }
 
-/* LEGEND */
-.legend {
-  display: flex; flex-wrap: wrap; gap: 8px;
-  margin-bottom: 36px; padding: 16px 20px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+/* ─── PRINCIPLE BOX ─── */
+.principle {
+  display:flex; gap:16px; align-items:flex-start;
+  background:var(--accent-dim); border:1px solid var(--accent-mid);
+  border-radius:12px; padding:18px 22px; margin-bottom:40px;
 }
-.legend-item {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 12px; color: var(--muted);
-}
-.legend-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-}
-.legend-title {
-  font-family: var(--mono); font-size: 11px; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 0.06em; margin-right: 8px; align-self: center;
-}
+.principle-icon { font-size:20px; flex-shrink:0; margin-top:2px; }
+.principle h3 { font-size:13px; font-weight:700; color:var(--accent); margin-bottom:5px; }
+.principle p { font-size:12.5px; color:rgba(200,255,0,.65); line-height:1.6; }
 
-/* KEY INSIGHT */
-.insight-box {
-  background: var(--accent-dim); border: 1px solid var(--accent-mid);
-  border-radius: 12px; padding: 20px 24px; margin-bottom: 36px;
-  display: flex; gap: 16px; align-items: flex-start;
+/* ─── WEEK STRIP ─── */
+.week-strip { display:grid; grid-template-columns:repeat(7,1fr); gap:7px; margin-bottom:48px; }
+.wc {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:10px; padding:12px 8px; text-align:center;
 }
-.insight-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
-.insight-content h3 { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
-.insight-content p { font-size: 13px; color: rgba(200,255,0,0.7); line-height: 1.6; }
+.wc.batch { border-color:var(--accent-mid); background:var(--accent-dim); }
+.wc.review { border-color: rgba(76,217,160,.3); background:var(--green-dim); }
+.wc-name { font-size:9px; color:var(--muted); font-family:var(--mono); margin-bottom:5px; text-transform:uppercase; }
+.wc-main { font-size:11px; font-weight:700; margin-bottom:4px; }
+.wc.batch .wc-main { color:var(--accent); }
+.wc.review .wc-main { color:var(--green); }
+.wc-sub { font-size:9px; color:var(--muted); line-height:1.4; }
+.wc-gym { font-size:9px; margin-top:5px; color:var(--orange); }
 
-/* SECTION */
-.section { margin-bottom: 48px; }
-.section-header {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 20px;
+/* ─── SECTION ─── */
+.sec { margin-bottom:52px; }
+.sec-hdr { display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+.sec-num {
+  font-family:var(--mono); font-size:10px; color:var(--accent);
+  background:var(--accent-dim); border:1px solid var(--accent-mid);
+  padding:3px 8px; border-radius:6px;
 }
-.section-num {
-  font-family: var(--mono); font-size: 11px; color: var(--accent);
-  background: var(--accent-dim); border: 1px solid var(--accent-mid);
-  padding: 3px 8px; border-radius: 6px;
-}
-.section-title { font-size: 18px; font-weight: 700; }
+.sec-title { font-size:17px; font-weight:700; }
 
-/* DAY CARD */
-.day-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 14px; margin-bottom: 12px; overflow: hidden;
-  transition: border-color 0.2s;
-}
-.day-card:hover { border-color: var(--border-h); }
+/* ─── DAY CARD ─── */
+.day { background:var(--card); border:1px solid var(--border); border-radius:14px; margin-bottom:10px; overflow:hidden; }
+.day.is-batch { border-color:var(--accent-mid); }
+.day.is-review { border-color:rgba(76,217,160,.3); }
 
-.day-header {
-  display: flex; align-items: center; gap: 12px;
-  padding: 14px 18px; background: var(--surface);
-  border-bottom: 1px solid var(--border);
+.day-top {
+  display:flex; align-items:center; gap:12px;
+  padding:13px 18px; background:var(--surface); border-bottom:1px solid var(--border);
 }
-.day-emoji { font-size: 18px; }
-.day-name { font-weight: 700; font-size: 15px; }
-.day-meta { font-size: 11px; color: var(--muted); font-family: var(--mono); }
-.day-tag {
-  margin-left: auto; font-family: var(--mono); font-size: 10px;
-  padding: 3px 8px; border-radius: 6px; font-weight: 600; letter-spacing: 0.04em;
+.day-emoji { font-size:17px; }
+.day-name { font-weight:700; font-size:14px; }
+.day-meta { font-size:11px; color:var(--muted); }
+.day-pill {
+  margin-left:auto; font-family:var(--mono); font-size:9px; font-weight:700;
+  padding:3px 9px; border-radius:6px; letter-spacing:.03em;
 }
-.tag-big { background: rgba(200,255,0,0.15); color: var(--accent); }
-.tag-medium { background: var(--blue-dim); color: var(--blue); }
-.tag-short { background: var(--purple-dim); color: var(--purple); }
-.tag-review { background: var(--green-dim); color: var(--green); }
+.pill-light { background:var(--blue-dim); color:var(--blue); }
+.pill-batch { background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-mid); }
+.pill-review { background:var(--green-dim); color:var(--green); }
 
-/* TIME BLOCKS */
-.time-blocks { padding: 0 18px 14px; }
+/* ─── TIMELINE ─── */
+.timeline { padding:16px 18px 14px; display:flex; flex-direction:column; gap:6px; }
 
-.time-block {
-  display: flex; gap: 0;
-  margin-top: 10px;
+.trow { display:flex; gap:14px; }
+.trow-time {
+  width:68px; flex-shrink:0;
+  font-family:var(--mono); font-size:10px; color:var(--dim);
+  padding-top:9px; text-align:right;
 }
-.time-col {
-  width: 72px; flex-shrink: 0;
-  display: flex; flex-direction: column; align-items: flex-start;
-  padding-top: 3px;
-}
-.time-label {
-  font-family: var(--mono); font-size: 11px; color: var(--dim);
-  white-space: nowrap;
-}
-.block-line {
-  width: 2px; background: var(--border); margin: 6px 0 0 18px; flex: 1; min-height: 20px;
-  border-radius: 1px;
-}
+.trow-line { display:flex; flex-direction:column; align-items:center; padding-top:12px; }
+.trow-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; margin-top:1px; }
+.trow-rail { width:1px; background:var(--border); flex:1; margin-top:3px; min-height:8px; }
+.trow-body { flex:1; padding-bottom:2px; }
 
-.block-body { flex: 1; }
+/* Block styles */
+.blk {
+  border-radius:9px; padding:9px 13px;
+  border-left:3px solid transparent;
+}
+.blk-title { font-size:12.5px; font-weight:600; margin-bottom:3px; }
+.blk-desc { font-size:11.5px; color:var(--muted); line-height:1.5; }
 
-/* Block types */
-.block {
-  border-radius: 10px; padding: 10px 14px; margin-bottom: 4px;
-  border-left: 3px solid transparent;
-}
-.block-main-job {
-  background: rgba(107,105,120,0.12); border-left-color: var(--dim);
-}
-.block-productdrop {
-  background: var(--accent-dim); border-left-color: var(--accent);
-}
-.block-productdrop-big {
-  background: rgba(200,255,0,0.06); border-left-color: var(--accent);
-  border: 1px solid var(--accent-mid); border-left-width: 3px;
-}
-.block-transit { background: var(--blue-dim); border-left-color: var(--blue); }
-.block-food { background: var(--yellow-dim); border-left-color: var(--yellow); }
-.block-rest { background: var(--purple-dim); border-left-color: var(--purple); }
-.block-sleep { background: var(--pink-dim); border-left-color: var(--pink); }
-.block-train { background: var(--green-dim); border-left-color: var(--green); }
-.block-batch-cook { background: rgba(255,159,67,0.1); border-left-color: var(--orange); }
+.bg-life   { background:rgba(255,255,255,.03); border-left-color:var(--dim); }
+.bg-work   { background:rgba(107,105,120,.08); border-left-color:#3a3845; }
+.bg-pd     { background:var(--accent-dim); border-left-color:var(--accent); }
+.bg-pd-big { background:rgba(200,255,0,.05); border-left-color:var(--accent); border:1px solid var(--accent-mid); border-left-width:3px; }
+.bg-food   { background:var(--yellow-dim); border-left-color:var(--yellow); }
+.bg-transit{ background:var(--blue-dim); border-left-color:var(--blue); }
+.bg-gym    { background:var(--orange-dim); border-left-color:var(--orange); }
+.bg-cook   { background:var(--orange-dim); border-left-color:var(--orange); }
+.bg-rest   { background:var(--purple-dim); border-left-color:var(--purple); }
+.bg-review { background:var(--green-dim); border-left-color:var(--green); }
 
-.block-time {
-  font-family: var(--mono); font-size: 10px; color: var(--muted);
-  margin-bottom: 3px;
-}
-.block-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-.block-title.accent { color: var(--accent); }
-.block-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.dot-life   { background:var(--dim); }
+.dot-work   { background:#3a3845; }
+.dot-pd     { background:var(--accent); }
+.dot-food   { background:var(--yellow); }
+.dot-transit{ background:var(--blue); }
+.dot-gym    { background:var(--orange); }
+.dot-rest   { background:var(--purple); }
+.dot-review { background:var(--green); }
 
-/* Productdrop tasks inside block */
-.pd-tasks { margin-top: 8px; }
-.pd-task {
-  display: flex; align-items: flex-start; gap: 8px;
-  padding: 7px 10px; border-radius: 7px; margin-bottom: 4px;
-  background: rgba(255,255,255,0.04);
+/* Tasks inside PD block */
+.tasks { margin-top:9px; display:flex; flex-direction:column; gap:5px; }
+.task {
+  display:flex; align-items:flex-start; gap:8px;
+  background:rgba(255,255,255,.04); border-radius:7px; padding:8px 10px;
 }
-.pd-task:last-child { margin-bottom: 0; }
-.pd-task-badge {
-  font-family: var(--mono); font-size: 9px; font-weight: 700;
-  padding: 2px 6px; border-radius: 4px; flex-shrink: 0; margin-top: 1px;
-  letter-spacing: 0.04em;
+.task-badge {
+  font-family:var(--mono); font-size:8.5px; font-weight:700;
+  padding:2px 6px; border-radius:4px; flex-shrink:0; margin-top:2px;
+  letter-spacing:.04em; white-space:nowrap;
 }
-.badge-tofu { background: rgba(91,154,255,0.2); color: var(--blue); }
-.badge-mofu { background: var(--purple-dim); color: var(--purple); }
-.badge-bofu { background: rgba(255,77,79,0.15); color: var(--red); }
-.badge-tg { background: rgba(200,255,0,0.12); color: var(--accent); }
-.badge-plan { background: var(--green-dim); color: var(--green); }
-.badge-batch { background: rgba(255,159,67,0.15); color: var(--orange); }
+.b-post  { background:var(--blue-dim); color:var(--blue); }
+.b-tg    { background:var(--accent-dim); color:var(--accent); border:1px solid rgba(200,255,0,.2); }
+.b-dm    { background:var(--red-dim); color:var(--red); }
+.b-batch { background:rgba(255,159,67,.15); color:var(--orange); }
+.b-plan  { background:var(--green-dim); color:var(--green); }
+.b-drop  { background:var(--purple-dim); color:var(--purple); }
 
-.pd-task-content { flex: 1; }
-.pd-task-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-.pd-task-desc { font-size: 11px; color: var(--muted); }
+.task-title { font-size:12px; font-weight:600; margin-bottom:2px; }
+.task-desc  { font-size:11px; color:var(--muted); line-height:1.5; }
 
-/* WEEKLY SUMMARY */
-.weekly-grid {
-  display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;
-  margin-bottom: 8px;
-}
-.week-cell {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 10px; text-align: center;
-}
-.week-cell.highlight { border-color: var(--accent); background: var(--accent-dim); }
-.week-cell-day { font-size: 10px; color: var(--muted); font-family: var(--mono); margin-bottom: 4px; }
-.week-cell-hours { font-size: 20px; font-weight: 800; color: var(--accent); line-height: 1; }
-.week-cell-label { font-size: 9px; color: var(--muted); margin-top: 3px; }
-.week-cell-note { font-size: 9px; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+/* ─── RULES ─── */
+.rules { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+.rule { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+.rule-accent { border-color:var(--accent-mid); background:var(--accent-dim); }
+.rule h4 { font-size:12px; font-weight:700; margin-bottom:5px; }
+.rule-accent h4 { color:var(--accent); }
+.rule p { font-size:11.5px; color:var(--muted); line-height:1.55; }
 
-/* RULES */
-.rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.rule-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 10px; padding: 14px 16px;
-}
-.rule-card h4 { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
-.rule-card p { font-size: 12px; color: var(--muted); line-height: 1.5; }
-.rule-card.accent-rule { border-color: var(--accent-mid); background: var(--accent-dim); }
-.rule-card.accent-rule h4 { color: var(--accent); }
-
-@media (max-width: 600px) {
-  .weekly-grid { grid-template-columns: repeat(4, 1fr); }
-  .rules-grid { grid-template-columns: 1fr; }
-  .day-tag { display: none; }
+@media(max-width:600px){
+  .week-strip{grid-template-columns:repeat(4,1fr);}
+  .rules{grid-template-columns:1fr;}
+  .day-pill{display:none;}
+  .trow-time{width:50px; font-size:9px;}
 }
 </style>
 </head>
 <body>
-<div class="container">
+<div class="wrap">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-badge">🔄 Productdrop × Routine OS — Sync v1</div>
-    <h1>Амьдралын хэв маягтай<br><span>sync хийсэн</span> Productdrop план</h1>
-    <p>GogoShop = main job. Productdrop = side hustle.<br>Өдрийн яг аль цагт, яг юу хийхийг тодорхойлсон.</p>
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-tag">⚡ Sync v2 — Бямба Batch систем</div>
+  <h1>Productdrop × Routine OS<br><span>цэвэрхэн sync</span></h1>
+  <p>Ажлын өдрүүд = зөвхөн нийтлэх (15–30 мин)<br>Бямба = бүх зүйлийг нэгэн зэрэг бэлдэх өдөр</p>
+</div>
+
+<!-- PRINCIPLE -->
+<div class="principle">
+  <div class="principle-icon">🔑</div>
+  <div>
+    <h3>Гол зарчим</h3>
+    <p>Ажлын өдрүүдэд <strong>бичих, бодох, бэлдэх юм байхгүй</strong> — Бямба тэр бүгдийг хийчихсэн байна. 20:00-д зөвхөн нийтлэж, Telegram пост тавьж, Баасан бол client-тэй яриад дуусна. Орой тайван.</p>
   </div>
+</div>
 
-  <!-- INSIGHT -->
-  <div class="insight-box">
-    <div class="insight-icon">⚡</div>
-    <div class="insight-content">
-      <h3>Гол ойлголт</h3>
-      <p>Ажлын өдрүүдэд Productdrop-д зориулах цаг: <strong>зөвхөн 20:00–22:00</strong> (2 цаг эсвэл 90 мин). Бямба = хамгийн том batch day (8+ цаг). Энэ хязгаарлагдмал цагийг МАШ сайн ашиглахын тулд Бямба batch → Ажлын өдрүүдэд гүйцэтгэх систем хэрэгтэй.</p>
-    </div>
+<!-- WEEK STRIP -->
+<div class="week-strip">
+  <div class="wc">
+    <div class="wc-name">Да</div>
+    <div class="wc-main">Нийтлэх</div>
+    <div class="wc-sub">20:00<br>~20 мин</div>
   </div>
-
-  <!-- WEEKLY HOURS SUMMARY -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">00</span>
-      <span class="section-title">7 хоногийн Productdrop цаг</span>
-    </div>
-    <div class="weekly-grid">
-      <div class="week-cell"><div class="week-cell-day">ДА</div><div class="week-cell-hours">2ц</div><div class="week-cell-label">20:00–22:00</div><div class="week-cell-note">Контент + Telegram</div></div>
-      <div class="week-cell"><div class="week-cell-day">МЯ</div><div class="week-cell-hours">2ц</div><div class="week-cell-label">20:00–22:00</div><div class="week-cell-note">Контент + Telegram</div></div>
-      <div class="week-cell"><div class="week-cell-day">ЛХ</div><div class="week-cell-hours">2ц</div><div class="week-cell-label">20:00–22:00</div><div class="week-cell-note">Контент + Telegram</div></div>
-      <div class="week-cell"><div class="week-cell-day">ПҮ</div><div class="week-cell-hours">1.5ц</div><div class="week-cell-label">20:00–21:30</div><div class="week-cell-note">Дасгалтай өдөр</div></div>
-      <div class="week-cell"><div class="week-cell-day">БА</div><div class="week-cell-hours">1.5ц</div><div class="week-cell-label">20:00–21:30</div><div class="week-cell-note">Client DM + контент</div></div>
-      <div class="week-cell highlight"><div class="week-cell-day">БЯ</div><div class="week-cell-hours">8ц</div><div class="week-cell-label">BATCH DAY</div><div class="week-cell-note">Бүх долоо хоногийн бэлтгэл</div></div>
-      <div class="week-cell"><div class="week-cell-day">НЯ</div><div class="week-cell-hours">3ц</div><div class="week-cell-label">07:30–10:30</div><div class="week-cell-note">Weekly review</div></div>
-    </div>
-    <div class="insight-box" style="margin-bottom:0; margin-top:10px;">
-      <div class="insight-icon">📊</div>
-      <div class="insight-content">
-        <h3>Нийт ~20 цаг / долоо хоног</h3>
-        <p>Ажлын өдрүүдэд 9 цаг + Бямба 8 цаг + Ням 3 цаг. <strong>Гол зарчим:</strong> Бямба болгон дараагийн долоо хоногийн бүх 14 постыг batch record → ажлын өдрүүдэд зөвхөн нийтлэж, client-тэй ажиллана.</p>
-      </div>
-    </div>
+  <div class="wc">
+    <div class="wc-name">Мя</div>
+    <div class="wc-main">Нийтлэх</div>
+    <div class="wc-sub">20:00<br>~20 мин</div>
   </div>
-
-  <!-- DAILY BREAKDOWN -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">01</span>
-      <span class="section-title">Өдөр бүрийн sync хуваарь</span>
-    </div>
-
-    <!-- ДАВАА -->
-    <div class="day-card">
-      <div class="day-header">
-        <span class="day-emoji">💼</span>
-        <div>
-          <div class="day-name">Даваа — Deep Work Focus</div>
-          <div class="day-meta">ОӨ #1 · Mon</div>
-        </div>
-        <div class="day-tag tag-medium">2 цаг Productdrop</div>
-      </div>
-      <div class="time-blocks">
-        <div class="block block-sleep"><div class="block-time">06:00 – 07:00</div><div class="block-title">Өглөөний бэлтгэл</div><div class="block-desc">Ус → сунгалт → цай → өглөөний нэг зорилт бичих</div></div>
-        <div class="block block-main-job"><div class="block-time">07:00 – 07:50</div><div class="block-title">🧠 Өглөөний фокус (50 мин)</div><div class="block-desc">Хамгийн чухал ажлаа — GogoShop эсвэл Productdrop-ийн нэг тодорхой ажил (жишээ: script бичих)</div></div>
-        <div class="block block-main-job"><div class="block-time">08:00 – 17:00</div><div class="block-title" style="color:var(--muted)">GogoShop (main job)</div><div class="block-desc">—</div></div>
-        <div class="block block-transit"><div class="block-time">17:00 – 18:30</div><div class="block-title">Transit → гэртээ</div><div class="block-desc">E-Commerce podcast / audiobook</div></div>
-        <div class="block block-food"><div class="block-time">19:00 – 20:00</div><div class="block-title">Оройн хоол (утасгүй)</div><div class="block-desc">Тайван цаг — тархийг амраана</div></div>
-        <div class="block block-productdrop">
-          <div class="block-time">20:00 – 22:00 ← PRODUCTDROP (2 цаг)</div>
-          <div class="block-title accent">🎯 Даваагийн Productdrop блок</div>
-          <div class="pd-tasks">
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tofu">TOFU</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">"Энэ барааг Монголд зарвал?" Split screen</div>
-                <div class="pd-task-desc">Бараа видео дээр, доор нь чи ярина. Supplier үнэ → зарах үнэ → ашиг. 15-20 сек.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tofu">TOFU</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">"ChatGPT/AI-р онлайн бизнесээ хурдасгах арга"</div>
-                <div class="pd-task-desc">Product description, ad copy, бараа шинжилгээ — AI-р хийх арга. Trending сэдэв → reach өндөр.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tg">TELEGRAM</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">📦 Winning бараа бүтэн задаргаа</div>
-                <div class="pd-task-desc">1 бараа: яагаад winning → хэнд зарах → үнэ → ямар ad → аль supplier. Зүгээр тоо биш — зарах бүтэн plan.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="block block-rest"><div class="block-time">22:00 – 22:30</div><div class="block-title">Wind-down</div><div class="block-desc">Дэлгэц зогсоох → ном → маргаашийн 1 зорилт</div></div>
-      </div>
-    </div>
-
-    <!-- МЯГМАР -->
-    <div class="day-card">
-      <div class="day-header">
-        <span class="day-emoji">🏋️</span>
-        <div>
-          <div class="day-name">Мягмар — Нуруу & Гар дасгал</div>
-          <div class="day-meta">ОӨ #2 · Tue</div>
-        </div>
-        <div class="day-tag tag-medium">2 цаг Productdrop</div>
-      </div>
-      <div class="time-blocks">
-        <div class="block block-main-job"><div class="block-time">08:00 – 17:00</div><div class="block-title" style="color:var(--muted)">GogoShop</div><div class="block-desc">—</div></div>
-        <div class="block block-transit"><div class="block-time">17:00 – 18:30</div><div class="block-title">Transit</div><div class="block-desc">E-Commerce podcast</div></div>
-        <div class="block block-food"><div class="block-time">19:00 – 20:00</div><div class="block-title">Оройн хоол</div><div class="block-desc">—</div></div>
-        <div class="block block-productdrop">
-          <div class="block-time">20:00 – 22:00 ← PRODUCTDROP (2 цаг)</div>
-          <div class="block-title accent">🎯 Мягмарын Productdrop блок</div>
-          <div class="pd-tasks">
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tofu">TOFU</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">"Хүн онлайн зараад сард $X олж байна"</div>
-                <div class="pd-task-desc">Гадаадын бодит кейс. Motivation = хамгийн өргөн reach. Бүгд хадгална, найздаа илгээнэ.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-mofu">MOFU</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">Winning product олох 3 шалгуур</div>
-                <div class="pd-task-desc">Framework: Wow Factor + Saturation + Margin. Арга зааж байна, бараа өгөхгүй. "Авахын тулд drop хэрэгтэй" гэдгийг ойлгуулна.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tg">TELEGRAM</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">🎥 Видео зааварчилгаа (screen record + voice)</div>
-                <div class="pd-task-desc">3–7 мин. W1: бараа сонгох | W2: supplier | W3: ad | W4: хүргэлт — 4 долоо хоногоор эргэлднэ.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="block block-rest"><div class="block-time">22:00 – 22:30</div><div class="block-title">Wind-down</div><div class="block-desc">—</div></div>
-      </div>
-    </div>
-
-    <!-- ЛХАГВА -->
-    <div class="day-card">
-      <div class="day-header">
-        <span class="day-emoji">🍳</span>
-        <div>
-          <div class="day-name">Лхагва — Batch Cook #2</div>
-          <div class="day-meta">ОӨ #3 · Wed</div>
-        </div>
-        <div class="day-tag tag-medium">2 цаг Productdrop</div>
-      </div>
-      <div class="time-blocks">
-        <div class="block block-main-job"><div class="block-time">08:00 – 17:00</div><div class="block-title" style="color:var(--muted)">GogoShop</div><div class="block-desc">—</div></div>
-        <div class="block block-batch-cook"><div class="block-time">18:30 – 20:00</div><div class="block-title">🍳 Batch Cook #2 (90 мин)</div><div class="block-desc">Пүрэв–Бямбагийн хоол бэлдэж хөлдөөх. Podcast сонс.</div></div>
-        <div class="block block-productdrop">
-          <div class="block-time">20:00 – 22:00 ← PRODUCTDROP (2 цаг)</div>
-          <div class="block-title accent">🎯 Лхагвагийн Productdrop блок</div>
-          <div class="pd-tasks">
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tofu">TOFU</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">"₮X-д авч ₮Y-д зардаг" — Margin reveal</div>
-                <div class="pd-task-desc">Бараа → supplier үнэ → зарах үнэ → ашиг. 15-20 сек, визуал хүчтэй. Тоо = share.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tofu">TOFU</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">"FB ad ₮50K бюджетээр яаж эхлэх"</div>
-                <div class="pd-task-desc">Хэдэн ₮ хэрэгтэй, юу тохируулах, юу болихгүй байх. Save маш өндөр.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tg">TELEGRAM</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">🛠 Tool/Template Drop</div>
-                <div class="pd-task-desc">Canva ad template / бараа checklist / supplier мессеж / AI prompt pack — долоо хоног бүр 1 шинэ.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="block block-rest"><div class="block-time">22:00</div><div class="block-title">Wind-down</div><div class="block-desc">Batch cook өдөр тул биеийг сайн амраана</div></div>
-      </div>
-    </div>
-
-    <!-- ПҮРЭВ -->
-    <div class="day-card">
-      <div class="day-header">
-        <span class="day-emoji">🦵</span>
-        <div>
-          <div class="day-name">Пүрэв — Хөл & Гөлөм дасгал</div>
-          <div class="day-meta">ОӨ #4 · Thu</div>
-        </div>
-        <div class="day-tag tag-short">90 мин Productdrop</div>
-      </div>
-      <div class="time-blocks">
-        <div class="block block-main-job"><div class="block-time">08:00 – 17:00</div><div class="block-title" style="color:var(--muted)">GogoShop</div><div class="block-desc">—</div></div>
-        <div class="block block-train"><div class="block-time">19:00 – 20:00</div><div class="block-title">🦵 Хөл & Гөлөм дасгал (55 мин)</div><div class="block-desc">Squat, deadlift, leg press. Дасгалын дараа тархи refresh болно.</div></div>
-        <div class="block block-productdrop">
-          <div class="block-time">20:00 – 21:30 ← PRODUCTDROP (90 мин)</div>
-          <div class="block-title accent">🎯 Пүрэвийн Productdrop блок</div>
-          <div class="pd-tasks">
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tofu">TOFU</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">"Энэ долоо хоногийн trending бараа"</div>
-                <div class="pd-task-desc">3-5 бараа хурдан харуулна. Weekly series → хүмүүс дахин ирнэ. Watch time + Save.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-mofu">MOFU</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">Live бараа шинжилгээ</div>
-                <div class="pd-task-desc">1 бараа авч 3 шалгуураар (Wow Factor + Saturation + Margin) бодит цагаар шинжлэх. Behind the scenes.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tg">TELEGRAM</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">🔥 Trend alert + Voice message</div>
-                <div class="pd-task-desc">"Энэ долоо хоногт TikTok-д энэ бараа trending" — текст + voice. Voice = хувийн зөвлөгч мэдрэмж.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="block block-rest"><div class="block-time">21:30 – 22:30</div><div class="block-title">Хөл сунгалт + Wind-down</div><div class="block-desc">Хөл сунгах → ус уух → ном</div></div>
-      </div>
-    </div>
-
-    <!-- БААСАН -->
-    <div class="day-card">
-      <div class="day-header">
-        <span class="day-emoji">✨</span>
-        <div>
-          <div class="day-name">Баасан — Selfcare</div>
-          <div class="day-meta">ОӨ #5 · Fri</div>
-        </div>
-        <div class="day-tag tag-short">90 мин Productdrop</div>
-      </div>
-      <div class="time-blocks">
-        <div class="block block-main-job"><div class="block-time">08:00 – 17:00</div><div class="block-title" style="color:var(--muted)">GogoShop</div><div class="block-desc">—</div></div>
-        <div class="block block-food"><div class="block-time">19:00 – 20:00</div><div class="block-title">Оройн хоол</div><div class="block-desc">—</div></div>
-        <div class="block block-productdrop">
-          <div class="block-time">20:00 – 21:30 ← PRODUCTDROP (90 мин)</div>
-          <div class="block-title accent">🎯 Баасангийн Productdrop блок</div>
-          <div class="pd-tasks">
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tofu">TOFU</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">"Онлайн зарахад хийдэг хамгийн том 5 алдаа"</div>
-                <div class="pd-task-desc">Алдаа задаргаа = бүгд сонирхоно. Бараа, ad, pricing, хүргэлт — бүх талын алдаа. Share өндөр.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-bofu">BOFU</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">"₮49,900-д яг юу авах вэ" Walkthrough</div>
-                <div class="pd-task-desc">Notion database screen record → бараа scroll хийж харуулна. Blur + reveal техник.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-tg">TELEGRAM</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">💬 3 client DM follow-up — МАШ ЧУХАЛ</div>
-                <div class="pd-task-desc">"Энэ долоо хоногт юу хийсэн? Хаана гацсан?" Voice message-ээр хариул. Retention-ы хамгийн чухал ажил.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="block block-rest"><div class="block-time">21:30 – 22:30</div><div class="block-title">✨ Selfcare</div><div class="block-desc">Усанд орох, ном унших — биеийг амраана</div></div>
-      </div>
-    </div>
-
-    <!-- БЯМБА -->
-    <div class="day-card" style="border-color: var(--accent-mid);">
-      <div class="day-header" style="background: var(--accent-dim);">
-        <span class="day-emoji">💪</span>
-        <div>
-          <div class="day-name" style="color:var(--accent)">Бямба — BATCH DAY ⭐</div>
-          <div class="day-meta">АӨ #1 · Sat · Хамгийн чухал өдөр</div>
-        </div>
-        <div class="day-tag tag-big">~8 цаг Productdrop</div>
-      </div>
-      <div class="time-blocks">
-        <div class="block block-sleep"><div class="block-time">08:00 – 08:30</div><div class="block-title">Тайван эхлэл</div><div class="block-desc">Урт сунгалт → ус → цай</div></div>
-        <div class="block block-productdrop-big">
-          <div class="block-time">08:30 – 12:00 ← PRODUCTDROP Batch #1 (3.5 цаг)</div>
-          <div class="block-title accent">📝 Долоо хоногийн бүх контент бичих</div>
-          <div class="pd-tasks">
-            <div class="pd-task">
-              <span class="pd-task-badge badge-batch">08:30–10:00</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">14 постын caption + hook бичих</div>
-                <div class="pd-task-desc">Дараагийн 7 хоногийн бүх постын текстийг нэгэн зэрэг бичнэ. TOFU 10 + MOFU 3 + BOFU 1.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-batch">10:00–12:00</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">Видео контент бичлэг хийх</div>
-                <div class="pd-task-desc">Split screen, margin reveal, trending бараа — нэгэн зэрэг бичнэ. CapCut-д засварлана.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="block block-food"><div class="block-time">12:00 – 13:00</div><div class="block-title">Хоол + Power nap (20 мин)</div><div class="block-desc">—</div></div>
-        <div class="block block-productdrop-big">
-          <div class="block-time">13:00 – 16:00 ← PRODUCTDROP Batch #2 (3 цаг)</div>
-          <div class="block-title accent">⚙️ Telegram + Drop бэлтгэл</div>
-          <div class="pd-tasks">
-            <div class="pd-task">
-              <span class="pd-task-badge badge-batch">13:00–14:30</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">Telegram-ийн 5 постын бэлтгэл</div>
-                <div class="pd-task-desc">Winning бараа задаргаа, tool template, trend research, видео зааварчилгааны script.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-batch">14:30–16:00</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">Drop бэлтгэл + database шинэчлэл</div>
-                <div class="pd-task-desc">200 шинэ winning бараа судлах, Notion database шинэчлэх, Drop-ийн BOFU контент бэлдэх.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="block block-rest"><div class="block-time">16:00 – 17:00</div><div class="block-title">60 мин алхалт (гадаа)</div><div class="block-desc">Толгой цэвэрлэнэ. Podcast.</div></div>
-        <div class="block block-food"><div class="block-time">17:00 – 18:00</div><div class="block-title">Хоол</div><div class="block-desc">—</div></div>
-        <div class="block block-train"><div class="block-time">18:00 – 19:00</div><div class="block-title">💪 Full Body дасгал (55 мин)</div><div class="block-desc">—</div></div>
-        <div class="block block-productdrop">
-          <div class="block-time">19:00 – 21:00 ← PRODUCTDROP Sprint (2 цаг)</div>
-          <div class="block-title accent">🚀 Оройн sprint + нийтлэх</div>
-          <div class="pd-tasks">
-            <div class="pd-task">
-              <span class="pd-task-badge badge-plan">19:00–20:00</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">Бямба + Нямын контентыг нийтлэх</div>
-                <div class="pd-task-desc">TOFU "₮50K/₮100K бол юу зарах" + MOFU пост schedule хийх.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-plan">20:00–21:00</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">Хийгдээгүй зүйл дуусгах + Нямын review бэлтгэл</div>
-                <div class="pd-task-desc">KPI дүн бэлдэх, Нямын weekly analysis-д зориулсан data цуглуулах.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="block block-rest"><div class="block-time">21:00 – 23:00</div><div class="block-title">Гэр бүлтэй цаг (утасгүй)</div><div class="block-desc">—</div></div>
-      </div>
-    </div>
-
-    <!-- НЯМ -->
-    <div class="day-card">
-      <div class="day-header">
-        <span class="day-emoji">🌟</span>
-        <div>
-          <div class="day-name">Ням — Reload & Weekly Review</div>
-          <div class="day-meta">АӨ #2 · Sun</div>
-        </div>
-        <div class="day-tag tag-review">3 цаг Review</div>
-      </div>
-      <div class="time-blocks">
-        <div class="block block-productdrop">
-          <div class="block-time">07:30 – 10:30 ← PRODUCTDROP Weekly Review (3 цаг)</div>
-          <div class="block-title accent">📊 Weekly Review + Дараагийн долоо хоногийн бэлтгэл</div>
-          <div class="pd-tasks">
-            <div class="pd-task">
-              <span class="pd-task-badge badge-plan">07:30–08:30</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">KPI шалгах</div>
-                <div class="pd-task-desc">Subscriber тоо → зорилт 30 | Retention % → зорилт 50%+ | Нийт контент → зорилт 14/долоо хоног | 3 client статус.</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-plan">08:30–09:30</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">Дараагийн долоо хоногийн контент calendar батлах</div>
-                <div class="pd-task-desc">Roadmap-ын week-д тохируулан шилжилтийн хувийг тохируулна (W1: 50/50, W2: 70/30, W3: 100%).</div>
-              </div>
-            </div>
-            <div class="pd-task">
-              <span class="pd-task-badge badge-plan">09:30–10:30</span>
-              <div class="pd-task-content">
-                <div class="pd-task-title">Drop бэлтгэл + BOFU контент</div>
-                <div class="pd-task-desc">Дараагийн drop 7 хоносоос доош бол urgency контент эхлүүлнэ. "Drop хаагдана" мессеж бэлдэх.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="block block-rest"><div class="block-time">11:30 – 13:00</div><div class="block-title">Гэр бүлтэй цаг</div><div class="block-desc">Утасгүй. Бүрэн анхаарал.</div></div>
-        <div class="block block-food"><div class="block-time">13:00 – 16:30</div><div class="block-title">🍳 Дэлгүүр + Batch Cook #1</div><div class="block-desc">Да–Мя–Лх-ийн хоол. Podcast сонс.</div></div>
-        <div class="block block-train"><div class="block-time">16:30 – 17:30</div><div class="block-title">Нямын дасгал (45 мин)</div><div class="block-desc">Хөнгөн full body</div></div>
-        <div class="block block-rest"><div class="block-time">20:00 – 20:30</div><div class="block-title">📅 Маргаашийн бэлтгэл</div><div class="block-desc">Даваагийн нэг зорилт батлан бичих</div></div>
-      </div>
-    </div>
-
+  <div class="wc">
+    <div class="wc-name">Лх</div>
+    <div class="wc-main">Нийтлэх</div>
+    <div class="wc-sub">20:00<br>~20 мин</div>
   </div>
+  <div class="wc">
+    <div class="wc-name">Пү</div>
+    <div class="wc-main">Нийтлэх</div>
+    <div class="wc-sub">20:00<br>~20 мин</div>
+  </div>
+  <div class="wc">
+    <div class="wc-name">Ба</div>
+    <div class="wc-main">Нийтлэх<br>+ Client</div>
+    <div class="wc-sub">20:00<br>~35 мин</div>
+  </div>
+  <div class="wc batch">
+    <div class="wc-name">Бя ⭐</div>
+    <div class="wc-main">BATCH</div>
+    <div class="wc-sub">08:30–16:00<br>~7 цаг</div>
+    <div class="wc-gym">💪 дасгал</div>
+  </div>
+  <div class="wc review">
+    <div class="wc-name">Ня</div>
+    <div class="wc-main">Review</div>
+    <div class="wc-sub">07:30<br>~1.5 цаг</div>
+    <div class="wc-gym">💪 дасгал</div>
+  </div>
+</div>
 
-  <!-- ЗАРЧМУУД -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">02</span>
-      <span class="section-title">Side hustle-ийн 4 дүрэм</span>
+<!-- WEEKDAYS -->
+<div class="sec">
+  <div class="sec-hdr">
+    <span class="sec-num">01</span>
+    <span class="sec-title">Ажлын өдрүүд — Да–Ба</span>
+  </div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:18px;">Бүх 5 ажлын өдөр ижил бүтэц. 20:00-д нийтлэж дуусна — тэгэхэд хийх зүйл байхгүй.</p>
+
+  <!-- ДАВАА -->
+  <div class="day">
+    <div class="day-top">
+      <span class="day-emoji">💼</span>
+      <div>
+        <div class="day-name">Даваа</div>
+        <div class="day-meta">Mon · Deep Work Focus</div>
+      </div>
+      <div class="day-pill pill-light">~20 мин Productdrop</div>
     </div>
-    <div class="rules-grid">
-      <div class="rule-card accent-rule">
-        <h4>⭐ Бямба = Productdrop-ийн гол өдөр</h4>
-        <p>Долоо хоногийн 14 пост, 5 Telegram пост, Drop бэлтгэл — бүгдийг Бямба нэгэн зэрэг batch хийнэ. Ажлын өдрүүдэд зөвхөн нийтлэж, client-тэй ажиллана.</p>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">06:00</div>
+        <div class="trow-line"><div class="trow-dot dot-life"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-life"><div class="blk-title">Өглөөний бэлтгэл</div><div class="blk-desc">Ус → сунгалт → цай → өдрийн нэг зорилт бичих · 60 мин</div></div></div>
       </div>
-      <div class="rule-card">
-        <h4>🚫 "Dropshipping" гэж хэлэхгүй</h4>
-        <p>"Онлайн зарах", "онлайн бизнес", "e-commerce" — энэ 3-ыг ашигла. TOFU-д үнэ оруулахгүй.</p>
+      <div class="trow">
+        <div class="trow-time">07:00</div>
+        <div class="trow-line"><div class="trow-dot dot-work"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-work"><div class="blk-title">🧠 Өглөөний фокус · 50 мин</div><div class="blk-desc">Утас нисгэлтэн горим. GogoShop-ийн хамгийн чухал ажил.</div></div></div>
       </div>
-      <div class="rule-card">
-        <h4>💬 Voice message = retention</h4>
-        <p>Client-тэй Telegram-д voice message-ээр харилцана. "Найз зөвлөж байна" гэсэн мэдрэмж = subscription сунгах #1 шалтгаан.</p>
+      <div class="trow">
+        <div class="trow-time">08:00</div>
+        <div class="trow-line"><div class="trow-dot dot-work"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-work"><div class="blk-title" style="color:var(--muted)">GogoShop · 08:00–17:00</div><div class="blk-desc" style="color:#3a3845">—</div></div></div>
       </div>
-      <div class="rule-card">
-        <h4>📊 Баасан = Client day</h4>
-        <p>3 client-тэй долоо хоног бүр DM ярилцлага хийнэ. "Хаана гацсан?" гэдгийг мэдэж, тэднийг бараа зарж эхлэхэд нь тусална.</p>
+      <div class="trow">
+        <div class="trow-time">17:00</div>
+        <div class="trow-line"><div class="trow-dot dot-transit"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-transit"><div class="blk-title">Гэртээ явах · 17:00–18:30</div><div class="blk-desc">Podcast / audiobook — e-commerce сэдэв сонс</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">19:00</div>
+        <div class="trow-line"><div class="trow-dot dot-food"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-food"><div class="blk-title">Оройн хоол · 60 мин</div><div class="blk-desc">Утасгүй, тайван</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">20:00</div>
+        <div class="trow-line"><div class="trow-dot dot-pd"></div><div class="trow-rail"></div></div>
+        <div class="trow-body">
+          <div class="blk bg-pd">
+            <div class="blk-title" style="color:var(--accent)">📲 Productdrop · ~20 мин</div>
+            <div class="blk-desc">Бямба бэлдсэнийг нийтлэх л хэрэгтэй.</div>
+            <div class="tasks">
+              <div class="task">
+                <span class="task-badge b-post">НИЙТЛЭХ</span>
+                <div>
+                  <div class="task-title">"Монголд зарвал?" split screen</div>
+                  <div class="task-desc">Бямба бичиж, бичлэг хийсэн пост. Нээгаад Post дар. 5 мин.</div>
+                </div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-post">НИЙТЛЭХ</span>
+                <div>
+                  <div class="task-title">"AI-р ad copy бичүүлэх арга"</div>
+                  <div class="task-desc">Нээгаад Post дар. 5 мин.</div>
+                </div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-tg">TELEGRAM</span>
+                <div>
+                  <div class="task-title">📦 Winning бараа задаргаа нийтлэх</div>
+                  <div class="task-desc">Бямба бэлдсэн постоо channel-д нийтлэнэ. 5–10 мин.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">20:20</div>
+        <div class="trow-line"><div class="trow-dot dot-rest"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-rest"><div class="blk-title">Чөлөөт орой</div><div class="blk-desc">Ном, кино, гэр бүл — Productdrop дууссан</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">22:30</div>
+        <div class="trow-line"><div class="trow-dot dot-life"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-life"><div class="blk-title">Унтах · 7.5 цаг</div><div class="blk-desc">—</div></div></div>
       </div>
     </div>
   </div>
+
+  <!-- МЯГМАР -->
+  <div class="day">
+    <div class="day-top">
+      <span class="day-emoji">📱</span>
+      <div>
+        <div class="day-name">Мягмар</div>
+        <div class="day-meta">Tue</div>
+      </div>
+      <div class="day-pill pill-light">~20 мин Productdrop</div>
+    </div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">08:00</div>
+        <div class="trow-line"><div class="trow-dot dot-work"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-work"><div class="blk-title" style="color:var(--muted)">GogoShop · 08:00–17:00</div><div class="blk-desc" style="color:#3a3845">—</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">17:00</div>
+        <div class="trow-line"><div class="trow-dot dot-transit"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-transit"><div class="blk-title">Гэртээ явах</div><div class="blk-desc">Podcast сонс</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">19:00</div>
+        <div class="trow-line"><div class="trow-dot dot-food"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-food"><div class="blk-title">Оройн хоол</div><div class="blk-desc">Утасгүй</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">20:00</div>
+        <div class="trow-line"><div class="trow-dot dot-pd"></div><div class="trow-rail"></div></div>
+        <div class="trow-body">
+          <div class="blk bg-pd">
+            <div class="blk-title" style="color:var(--accent)">📲 Productdrop · ~20 мин</div>
+            <div class="tasks">
+              <div class="task">
+                <span class="task-badge b-post">НИЙТЛЭХ</span>
+                <div><div class="task-title">"Хүн $X олж байна" motivation</div><div class="task-desc">Post дар. 5 мин.</div></div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-post">НИЙТЛЭХ</span>
+                <div><div class="task-title">MOFU — Winning product 3 шалгуур</div><div class="task-desc">Post дар. 5 мин.</div></div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-tg">TELEGRAM</span>
+                <div><div class="task-title">🎥 Видео зааварчилгаа нийтлэх</div><div class="task-desc">Бямба бэлдсэн screen record видеог channel-д нийтлэнэ.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">20:20</div>
+        <div class="trow-line"><div class="trow-dot dot-rest"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-rest"><div class="blk-title">Чөлөөт орой</div><div class="blk-desc">—</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЛХАГВА -->
+  <div class="day">
+    <div class="day-top">
+      <span class="day-emoji">🍳</span>
+      <div>
+        <div class="day-name">Лхагва — Batch Cook</div>
+        <div class="day-meta">Wed</div>
+      </div>
+      <div class="day-pill pill-light">~20 мин Productdrop</div>
+    </div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">08:00</div>
+        <div class="trow-line"><div class="trow-dot dot-work"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-work"><div class="blk-title" style="color:var(--muted)">GogoShop</div><div class="blk-desc" style="color:#3a3845">—</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">18:30</div>
+        <div class="trow-line"><div class="trow-dot dot-food"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-cook"><div class="blk-title">🍳 Batch Cook #2 · 90 мин</div><div class="blk-desc">Пүрэв–Бямбагийн хоол бэлдэж хөлдөөх. Podcast сонс.</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">20:00</div>
+        <div class="trow-line"><div class="trow-dot dot-pd"></div><div class="trow-rail"></div></div>
+        <div class="trow-body">
+          <div class="blk bg-pd">
+            <div class="blk-title" style="color:var(--accent)">📲 Productdrop · ~20 мин</div>
+            <div class="tasks">
+              <div class="task">
+                <span class="task-badge b-post">НИЙТЛЭХ</span>
+                <div><div class="task-title">"₮X-д авч ₮Y-д зардаг" margin reveal</div><div class="task-desc">Post дар. 5 мин.</div></div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-post">НИЙТЛЭХ</span>
+                <div><div class="task-title">"FB ad ₮50K-р яаж эхлэх"</div><div class="task-desc">Post дар. 5 мин.</div></div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-tg">TELEGRAM</span>
+                <div><div class="task-title">🛠 Tool/Template нийтлэх</div><div class="task-desc">Canva template / AI prompt / checklist — Бямба бэлдсэнийг нийтлэнэ.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">20:20</div>
+        <div class="trow-line"><div class="trow-dot dot-rest"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-rest"><div class="blk-title">Чөлөөт орой</div><div class="blk-desc">Batch cook өдөр — биеийг амраана</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ПҮРЭВ -->
+  <div class="day">
+    <div class="day-top">
+      <span class="day-emoji">📱</span>
+      <div>
+        <div class="day-name">Пүрэв</div>
+        <div class="day-meta">Thu</div>
+      </div>
+      <div class="day-pill pill-light">~20 мин Productdrop</div>
+    </div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">08:00</div>
+        <div class="trow-line"><div class="trow-dot dot-work"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-work"><div class="blk-title" style="color:var(--muted)">GogoShop</div><div class="blk-desc" style="color:#3a3845">—</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">19:00</div>
+        <div class="trow-line"><div class="trow-dot dot-food"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-food"><div class="blk-title">Оройн хоол</div><div class="blk-desc">—</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">20:00</div>
+        <div class="trow-line"><div class="trow-dot dot-pd"></div><div class="trow-rail"></div></div>
+        <div class="trow-body">
+          <div class="blk bg-pd">
+            <div class="blk-title" style="color:var(--accent)">📲 Productdrop · ~20 мин</div>
+            <div class="tasks">
+              <div class="task">
+                <span class="task-badge b-post">НИЙТЛЭХ</span>
+                <div><div class="task-title">"Энэ 7 хоногийн trending бараа"</div><div class="task-desc">Post дар. 5 мин.</div></div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-post">НИЙТЛЭХ</span>
+                <div><div class="task-title">MOFU — Live бараа шинжилгээ</div><div class="task-desc">Post дар. 5 мин.</div></div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-tg">TELEGRAM</span>
+                <div><div class="task-title">🔥 Trend alert нийтлэх</div><div class="task-desc">Бямба бэлдсэн trend + voice message-г нийтлэнэ.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">20:20</div>
+        <div class="trow-line"><div class="trow-dot dot-rest"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-rest"><div class="blk-title">Чөлөөт орой</div><div class="blk-desc">—</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- БААСАН -->
+  <div class="day">
+    <div class="day-top">
+      <span class="day-emoji">✨</span>
+      <div>
+        <div class="day-name">Баасан — Client day</div>
+        <div class="day-meta">Fri · Selfcare</div>
+      </div>
+      <div class="day-pill pill-light">~35 мин Productdrop</div>
+    </div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">08:00</div>
+        <div class="trow-line"><div class="trow-dot dot-work"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-work"><div class="blk-title" style="color:var(--muted)">GogoShop</div><div class="blk-desc" style="color:#3a3845">—</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">19:00</div>
+        <div class="trow-line"><div class="trow-dot dot-food"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-food"><div class="blk-title">Оройн хоол</div><div class="blk-desc">—</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">20:00</div>
+        <div class="trow-line"><div class="trow-dot dot-pd"></div><div class="trow-rail"></div></div>
+        <div class="trow-body">
+          <div class="blk bg-pd">
+            <div class="blk-title" style="color:var(--accent)">📲 Productdrop · ~35 мин</div>
+            <div class="tasks">
+              <div class="task">
+                <span class="task-badge b-post">НИЙТЛЭХ</span>
+                <div><div class="task-title">"Онлайн зарахын 5 том алдаа"</div><div class="task-desc">Post дар. 5 мин.</div></div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-post">НИЙТЛЭХ</span>
+                <div><div class="task-title">BOFU — "₮49,900-д яг юу авах вэ"</div><div class="task-desc">Post дар. 5 мин.</div></div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-tg">TELEGRAM</span>
+                <div><div class="task-title">Баасны Telegram пост нийтлэх</div><div class="task-desc">5 мин.</div></div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-dm">3 CLIENT DM</span>
+                <div><div class="task-title">💬 Voice message илгээх — 3 хүн</div><div class="task-desc">"Энэ долоо хоногт юу хийсэн? Хаана гацсан?" — тус бүрт 3–4 мин. Нийт 15 мин. Retention-ы хамгийн чухал ажил.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">20:35</div>
+        <div class="trow-line"><div class="trow-dot dot-rest"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-rest"><div class="blk-title">✨ Selfcare</div><div class="blk-desc">Усанд орох, ном унших — долоо хоногийг хаана</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- БЯМБА BATCH DAY -->
+<div class="sec">
+  <div class="sec-hdr">
+    <span class="sec-num">02</span>
+    <span class="sec-title">Бямба — Batch Day ⭐</span>
+  </div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:18px;">Ажлын 5 өдрийн бүх зүйлийг энд бэлддэг. Энд ажиллаж байгаа чинь чиний орой чөлөөтэй болдог.</p>
+
+  <div class="day is-batch">
+    <div class="day-top" style="background:var(--accent-dim);">
+      <span class="day-emoji">💪</span>
+      <div>
+        <div class="day-name" style="color:var(--accent)">Бямба — BATCH DAY</div>
+        <div class="day-meta">Sat · Full Body дасгал</div>
+      </div>
+      <div class="day-pill pill-batch">~7 цаг Productdrop</div>
+    </div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">08:00</div>
+        <div class="trow-line"><div class="trow-dot dot-life"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-life"><div class="blk-title">Тайван эхлэл · 30 мин</div><div class="blk-desc">Сунгалт → ус → цай. Яарахгүй.</div></div></div>
+      </div>
+
+      <!-- BATCH BLOCK 1 -->
+      <div class="trow">
+        <div class="trow-time">08:30</div>
+        <div class="trow-line"><div class="trow-dot dot-pd"></div><div class="trow-rail"></div></div>
+        <div class="trow-body">
+          <div class="blk bg-pd-big">
+            <div class="blk-title" style="color:var(--accent)">✍️ Batch #1 — Бүх контент бичих · 08:30–10:30 (2 цаг)</div>
+            <div class="tasks">
+              <div class="task">
+                <span class="task-badge b-batch">08:30–09:30</span>
+                <div>
+                  <div class="task-title">7 хоногийн 14 постын caption + hook бичих</div>
+                  <div class="task-desc">TOFU 10 + MOFU 3 + BOFU 1. Хуваарийн дагуу: Да–Мя–Лх–Пү–Ба–Бя–Ня. Нэг постод 4 мин.</div>
+                </div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-batch">09:30–10:30</span>
+                <div>
+                  <div class="task-title">Telegram-ийн 5 постын бичвэр бэлдэх</div>
+                  <div class="task-desc">Да: бараа задаргаа | Мя: видео script | Лх: tool template | Пү: trend мэдээлэл | Ба: client DM template. Тус бүрт 12 мин.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BATCH BLOCK 2 -->
+      <div class="trow">
+        <div class="trow-time">10:30</div>
+        <div class="trow-line"><div class="trow-dot dot-pd"></div><div class="trow-rail"></div></div>
+        <div class="trow-body">
+          <div class="blk bg-pd-big">
+            <div class="blk-title" style="color:var(--accent)">🎥 Batch #2 — Видео бичлэг · 10:30–12:00 (1.5 цаг)</div>
+            <div class="tasks">
+              <div class="task">
+                <span class="task-badge b-batch">10:30–11:30</span>
+                <div>
+                  <div class="task-title">Split screen + margin reveal видео бичлэг</div>
+                  <div class="task-desc">Да + Лх-ийн видеог нэгэн зэрэг бичнэ. CapCut-д засна. Нэг видео 15-20 сек.</div>
+                </div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-batch">11:30–12:00</span>
+                <div>
+                  <div class="task-title">Telegram voice message бичлэг</div>
+                  <div class="task-desc">Пүрэвийн trend alert + Мягмарын видео зааварчилгааны voice нэгэн зэрэг бичнэ.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trow">
+        <div class="trow-time">12:00</div>
+        <div class="trow-line"><div class="trow-dot dot-food"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-food"><div class="blk-title">Хоол + Power nap · 60 мин</div><div class="blk-desc">20 мин power nap → тархи refresh</div></div></div>
+      </div>
+
+      <!-- BATCH BLOCK 3 -->
+      <div class="trow">
+        <div class="trow-time">13:00</div>
+        <div class="trow-line"><div class="trow-dot dot-pd"></div><div class="trow-rail"></div></div>
+        <div class="trow-body">
+          <div class="blk bg-pd-big">
+            <div class="blk-title" style="color:var(--accent)">📦 Batch #3 — Drop + Database · 13:00–16:00 (3 цаг)</div>
+            <div class="tasks">
+              <div class="task">
+                <span class="task-badge b-drop">13:00–14:30</span>
+                <div>
+                  <div class="task-title">200 шинэ winning бараа судлах + Notion шинэчлэх</div>
+                  <div class="task-desc">1688, Aliexpress, TikTok — бараа хайж, Wow Factor + Margin шалгаж, database-д оруулна. Drop-ийн гол ажил.</div>
+                </div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-drop">14:30–15:30</span>
+                <div>
+                  <div class="task-title">Drop-ийн BOFU контент бэлдэх</div>
+                  <div class="task-desc">Drop 7 хоносоос доош бол urgency контент: "маргааш хаагдана", "Drop sold out" FOMO постууд бичнэ.</div>
+                </div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-plan">15:30–16:00</span>
+                <div>
+                  <div class="task-title">Бямба + Нямын постыг нийтлэх эсвэл schedule хийх</div>
+                  <div class="task-desc">Тэр өдрийн 2 постоо нийтлэнэ. Нямын постыг schedule хийвэл илүү сайн.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trow">
+        <div class="trow-time">16:00</div>
+        <div class="trow-line"><div class="trow-dot dot-life"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-life"><div class="blk-title">60 мин алхалт (гадаа)</div><div class="blk-desc">Толгой цэвэрлэнэ. Podcast.</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">17:00</div>
+        <div class="trow-line"><div class="trow-dot dot-food"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-food"><div class="blk-title">Хоол · 60 мин</div><div class="blk-desc">—</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">18:00</div>
+        <div class="trow-line"><div class="trow-dot dot-gym"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-gym"><div class="blk-title">💪 Full Body дасгал · 55 мин</div><div class="blk-desc">Bench press + Pull-up + Squat. Batch ажлын дараах дасгал — сэтгэл зүй сайн байна.</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">19:00</div>
+        <div class="trow-line"><div class="trow-dot dot-rest"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-rest"><div class="blk-title">Гэр бүлтэй цаг · 2 цаг</div><div class="blk-desc">Утасгүй. Productdrop дууссан — тайван.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- НЯМ -->
+<div class="sec">
+  <div class="sec-hdr">
+    <span class="sec-num">03</span>
+    <span class="sec-title">Ням — Weekly Review</span>
+  </div>
+
+  <div class="day is-review">
+    <div class="day-top" style="background:rgba(76,217,160,.06);">
+      <span class="day-emoji">🌟</span>
+      <div>
+        <div class="day-name" style="color:var(--green)">Ням — Reload</div>
+        <div class="day-meta">Sun · Дасгал + Review</div>
+      </div>
+      <div class="day-pill pill-review">1.5 цаг Review</div>
+    </div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">07:30</div>
+        <div class="trow-line"><div class="trow-dot dot-review"></div><div class="trow-rail"></div></div>
+        <div class="trow-body">
+          <div class="blk bg-review">
+            <div class="blk-title" style="color:var(--green)">📊 Weekly Review · 07:30–09:00 (1.5 цаг)</div>
+            <div class="tasks">
+              <div class="task">
+                <span class="task-badge b-plan">07:30–08:15</span>
+                <div>
+                  <div class="task-title">KPI шалгах</div>
+                  <div class="task-desc">Subscriber → зорилт 30 | Retention → зорилт 50%+ | 14 контент нийтлэгдсэн үү | 3 client-ийн статус | Drop-ийн орлого.</div>
+                </div>
+              </div>
+              <div class="task">
+                <span class="task-badge b-plan">08:15–09:00</span>
+                <div>
+                  <div class="task-title">Дараагийн долоо хоногийн calendar баталгаажуулах</div>
+                  <div class="task-desc">Roadmap week шалгах (W1: 50/50 | W2: 70/30 | W3: 100%). Drop хэдэн хоносоос доош? Urgency контент хэрэгтэй юу?</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">09:00</div>
+        <div class="trow-line"><div class="trow-dot dot-rest"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-rest"><div class="blk-title">Гэр бүлтэй цаг · 2 цаг</div><div class="blk-desc">Утасгүй. Бүрэн анхаарал.</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">13:00</div>
+        <div class="trow-line"><div class="trow-dot dot-food"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-food"><div class="blk-title">🛒 Дэлгүүр + 🍳 Batch Cook #1 · ~3 цаг</div><div class="blk-desc">Да–Мя–Лх-ийн хоол. Podcast сонс.</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">16:30</div>
+        <div class="trow-line"><div class="trow-dot dot-gym"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-gym"><div class="blk-title">💪 Нямын дасгал · 45 мин</div><div class="blk-desc">Хөнгөн full body. 2 дахь дасгалын өдөр.</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">17:30</div>
+        <div class="trow-line"><div class="trow-dot dot-rest"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-rest"><div class="blk-title">Selfcare · 60 мин</div><div class="blk-desc">Усанд орох, ном — долоо хоногт бэлдэнэ.</div></div></div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">20:00</div>
+        <div class="trow-line"><div class="trow-dot dot-life"></div><div class="trow-rail"></div></div>
+        <div class="trow-body"><div class="blk bg-life"><div class="blk-title">📅 Маргаашийн 1 зорилт бичих</div><div class="blk-desc">Даваагийн гол ажлаа батлан бичнэ. 5 мин.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RULES -->
+<div class="sec">
+  <div class="sec-hdr">
+    <span class="sec-num">04</span>
+    <span class="sec-title">Цөөн дүрэм</span>
+  </div>
+  <div class="rules">
+    <div class="rule rule-accent">
+      <h4>⭐ Бямба = бүх зүйл</h4>
+      <p>Ажлын өдрүүдэд бичих, бодох, бэлдэх юм байхгүй. Бямба бэлдсэнийг нийтлэхэд 20 мин л хангалттай. Энэ нь ажлын орой тайван байна гэсэн үг.</p>
+    </div>
+    <div class="rule">
+      <h4>💬 Баасан = client</h4>
+      <p>7 хоног бүр 3 client-д voice message. Тус бүрт 3 мин. Retention-ы хамгийн хүчтэй арга — мэдрэмжийн холбоо.</p>
+    </div>
+    <div class="rule">
+      <h4>🚫 "Dropshipping" гэж хэлэхгүй</h4>
+      <p>"Онлайн зарах", "онлайн бизнес" — тэгэж хэлнэ. TOFU-д үнэ, CTA байхгүй.</p>
+    </div>
+    <div class="rule">
+      <h4>📊 Ням = шалгах өдөр</h4>
+      <p>KPI харж, дараа долоо хоногийн calendar батлаад л дуусна. 1.5 цаг. Бусад цаг гэр бүл, дасгал, амралт.</p>
+    </div>
+  </div>
+</div>
 
 </div>
 </body>

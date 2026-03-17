@@ -3,487 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DROP TRACKER — Сар бүрийн бараа</title>
+<title>DROP TRACKER</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0a;
-  --bg2: #111;
-  --bg3: #181818;
-  --bg4: #1f1f1f;
-  --border: #222;
-  --border2: #2e2e2e;
-  --text: #f0f0f0;
-  --muted: #666;
-  --muted2: #444;
-  --accent: #c6f135;
-  --accent2: #ff6eb4;
-  --accent3: #69c9d0;
-  --danger: #ff4444;
-  --warn: #ffaa44;
+  --bg:#0a0a0a; --bg2:#111; --bg3:#181818; --bg4:#1f1f1f;
+  --border:#222; --border2:#2e2e2e;
+  --text:#f0f0f0; --muted:#666; --muted2:#3a3a3a;
+  --accent:#c6f135; --accent2:#ff6eb4; --accent3:#69c9d0;
+  --danger:#ff4444; --warn:#ffaa44;
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;min-height:100vh;}
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  min-height: 100vh;
-}
+.header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--border);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;z-index:100;}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;letter-spacing:.25em;color:#fff;text-transform:uppercase;}
+.logo span{color:var(--accent);}
+.header-right{display:flex;gap:12px;align-items:center;}
+#sync-status{font-size:10px;letter-spacing:.15em;color:var(--muted);}
+.month-badge{font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;border:1px solid var(--border2);padding:4px 10px;}
 
-/* HEADER */
-.header {
-  position: sticky; top: 0;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  padding: 0 20px;
-  height: 54px;
-  display: flex; align-items: center; justify-content: space-between;
-  z-index: 100;
-}
-.logo {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 15px;
-  letter-spacing: .25em;
-  color: #fff;
-  text-transform: uppercase;
-}
-.logo span { color: var(--accent); }
-.header-right {
-  display: flex; gap: 12px; align-items: center;
-}
-.month-badge {
-  font-size: 10px;
-  letter-spacing: .2em;
-  color: var(--muted);
-  text-transform: uppercase;
-  border: 1px solid var(--border2);
-  padding: 4px 10px;
-}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px;}
+.section-title{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
 
-/* MAIN LAYOUT */
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px 20px;
-}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:28px;}
+.stat-box{background:var(--bg2);padding:16px 18px;}
+.stat-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px;}
+.stat-val.accent{color:var(--accent);}
+.stat-val.warn{color:var(--warn);}
+.stat-val.pink{color:var(--accent2);}
+.stat-lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
 
-/* DROP ZONE */
-.drop-section {
-  margin-bottom: 28px;
-}
-.section-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .3em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
+.drop-section{margin-bottom:28px;}
+.month-controls{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+.month-label{font-size:10px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;}
+.month-input{background:var(--bg2);border:1px solid var(--border2);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:8px 12px;outline:none;width:160px;transition:border-color .2s;}
+.month-input:focus{border-color:var(--accent);}
 
-.drop-zone {
-  border: 2px dashed var(--border2);
-  background: var(--bg2);
-  border-radius: 2px;
-  padding: 40px 24px;
-  text-align: center;
-  cursor: pointer;
-  transition: all .2s;
-  position: relative;
-}
-.drop-zone.dragover {
-  border-color: var(--accent);
-  background: rgba(198, 241, 53, 0.04);
-}
-.drop-zone.has-file {
-  border-color: var(--accent);
-  border-style: solid;
-  padding: 20px 24px;
-}
-.drop-icon {
-  font-size: 28px;
-  margin-bottom: 10px;
-  opacity: .4;
-}
-.drop-text {
-  font-size: 12px;
-  color: var(--muted);
-  letter-spacing: .1em;
-}
-.drop-text strong {
-  color: var(--accent);
-  font-weight: 500;
-}
-.drop-hint {
-  font-size: 10px;
-  color: var(--muted2);
-  margin-top: 6px;
-  letter-spacing: .1em;
-}
-.drop-zone input[type=file] {
-  position: absolute; inset: 0;
-  opacity: 0; cursor: pointer;
-  width: 100%; height: 100%;
-}
+.drop-zone{border:2px dashed var(--border2);background:var(--bg2);padding:36px 24px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.drop-zone.dragover{border-color:var(--accent);background:rgba(198,241,53,.04);}
+.drop-zone.has-file{border-color:var(--accent);border-style:solid;padding:18px 24px;}
+.drop-icon{font-size:26px;margin-bottom:10px;opacity:.4;}
+.drop-text{font-size:12px;color:var(--muted);letter-spacing:.1em;}
+.drop-text strong{color:var(--accent);font-weight:500;}
+.drop-hint{font-size:10px;color:var(--muted2);margin-top:6px;letter-spacing:.1em;}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.file-result{display:none;align-items:center;gap:16px;}
+.file-result.show{display:flex;}
+.file-icon{width:32px;height:32px;background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.file-name{font-size:12px;color:var(--text);letter-spacing:.05em;}
+.file-count{font-size:10px;color:var(--accent);letter-spacing:.15em;}
 
-/* FILE RESULT */
-.file-result {
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-.file-result.show { display: flex; }
-.file-info {
-  display: flex; align-items: center; gap: 10px;
-}
-.file-icon {
-  width: 32px; height: 32px;
-  background: var(--bg4);
-  border: 1px solid var(--border2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
-  flex-shrink: 0;
-}
-.file-name {
-  font-size: 12px; color: var(--text);
-  letter-spacing: .05em;
-}
-.file-count {
-  font-size: 10px; color: var(--accent);
-  letter-spacing: .15em;
-}
-.file-actions {
-  display: flex; gap: 8px;
-}
+.btn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;border:1px solid var(--border2);background:transparent;color:var(--text);padding:9px 16px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn:hover{border-color:var(--accent);color:var(--accent);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn.primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+.btn.primary:hover{opacity:.85;color:#000;}
 
-/* BUTTONS */
-.btn {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: .15em;
-  text-transform: uppercase;
-  border: 1px solid var(--border2);
-  background: transparent;
-  color: var(--text);
-  padding: 9px 16px;
-  cursor: pointer;
-  transition: all .2s;
-  white-space: nowrap;
-}
-.btn:hover { border-color: var(--accent); color: var(--accent); }
-.btn.primary {
-  background: var(--accent);
-  color: #000;
-  border-color: var(--accent);
-  font-weight: 700;
-}
-.btn.primary:hover { opacity: .85; color: #000; }
-.btn.danger { border-color: var(--danger); color: var(--danger); }
-.btn.danger:hover { background: var(--danger); color: #000; }
+.parse-preview{display:none;background:var(--bg2);border:1px solid var(--border2);padding:16px;margin-top:12px;}
+.parse-preview.show{display:block;}
+.preview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.preview-count{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);}
+.preview-count span{font-size:11px;color:var(--muted);margin-left:4px;font-family:'DM Mono',monospace;}
+.preview-tags{display:flex;flex-wrap:wrap;gap:5px;max-height:140px;overflow-y:auto;}
+.preview-tags::-webkit-scrollbar{width:3px;}
+.preview-tags::-webkit-scrollbar-thumb{background:var(--border2);}
 
-/* MONTH SELECTOR */
-.month-controls {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-.month-input-group {
-  display: flex; gap: 8px; align-items: center;
-}
-.month-label {
-  font-size: 10px; color: var(--muted);
-  letter-spacing: .15em; text-transform: uppercase;
-}
-.month-input {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  padding: 8px 12px;
-  outline: none;
-  width: 160px;
-  transition: border-color .2s;
-}
-.month-input:focus { border-color: var(--accent); }
+.tag{font-size:10px;letter-spacing:.05em;padding:3px 8px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);}
+.tag.new{border-color:var(--accent);color:var(--accent);background:rgba(198,241,53,.06);}
+.tag.dup{border-color:var(--accent2);color:var(--accent2);background:rgba(255,110,180,.06);}
+.tag.saved{border-color:var(--muted2);color:var(--muted);background:transparent;}
 
-/* PARSE PREVIEW */
-.parse-preview {
-  display: none;
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  padding: 16px;
-  margin-top: 12px;
-}
-.parse-preview.show { display: block; }
-.preview-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 12px;
-}
-.preview-count {
-  font-family: 'Syne', sans-serif;
-  font-size: 22px; font-weight: 800;
-  color: var(--accent);
-}
-.preview-count span { font-size: 11px; color: var(--muted); margin-left: 4px; font-family: 'DM Mono', monospace; }
-.preview-tags {
-  display: flex; flex-wrap: wrap; gap: 5px;
-  max-height: 120px; overflow-y: auto;
-}
-.preview-tags::-webkit-scrollbar { width: 3px; }
-.preview-tags::-webkit-scrollbar-track { background: transparent; }
-.preview-tags::-webkit-scrollbar-thumb { background: var(--border2); }
-.tag {
-  font-size: 10px;
-  letter-spacing: .05em;
-  padding: 3px 8px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  color: var(--muted);
-}
-.tag.new { border-color: var(--accent); color: var(--accent); background: rgba(198,241,53,.06); }
-.tag.dup { border-color: var(--accent2); color: var(--accent2); background: rgba(255,110,180,.06); }
-.tag.saved { border-color: var(--muted2); color: var(--muted); background: transparent; }
+.legend{display:flex;gap:16px;align-items:center;margin-bottom:10px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
+.legend-dot{width:8px;height:8px;flex-shrink:0;}
+.legend-dot.new{background:var(--accent);}
+.legend-dot.dup{background:var(--accent2);}
+.legend-dot.saved{background:var(--muted2);}
 
-/* STATS ROW */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  margin-bottom: 28px;
-}
-.stat-box {
-  background: var(--bg2);
-  padding: 16px 18px;
-}
-.stat-val {
-  font-family: 'Syne', sans-serif;
-  font-size: 26px; font-weight: 800;
-  color: #fff;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-.stat-val.accent { color: var(--accent); }
-.stat-val.warn { color: var(--warn); }
-.stat-val.pink { color: var(--accent2); }
-.stat-lbl {
-  font-size: 9px; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--muted);
-}
+.dup-alert{display:none;margin-top:12px;border:1px solid var(--accent2);background:rgba(255,110,180,.04);}
+.dup-alert.show{display:block;}
+.dup-alert-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,110,180,.2);}
+.dup-alert-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent2);}
+.dup-alert-body{padding:10px 16px;max-height:200px;overflow-y:auto;}
+.dup-item{display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);}
+.dup-item:last-child{border-bottom:none;}
+.dup-name{flex:1;font-size:12px;color:var(--text);}
+.dup-months{display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;}
+.dup-month-tag{font-size:9px;letter-spacing:.08em;padding:2px 7px;border:1px solid rgba(255,110,180,.3);color:var(--accent2);background:rgba(255,110,180,.06);}
+.dup-alert-actions{display:flex;gap:8px;padding:10px 16px;border-top:1px solid rgba(255,110,180,.2);}
+.copy-btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;border:1px solid rgba(255,110,180,.4);background:transparent;color:var(--accent2);padding:7px 14px;cursor:pointer;transition:all .15s;}
+.copy-btn:hover,.copy-btn.copied{background:var(--accent2);color:#000;}
 
-/* HISTORY TABLE */
-.history-section { margin-bottom: 28px; }
-.history-table { width: 100%; border-collapse: collapse; }
-.history-table th {
-  font-size: 9px; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--muted);
-  text-align: left; padding: 8px 12px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg2);
-  font-weight: 400;
-}
-.history-table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
-  vertical-align: top;
-}
-.history-table tr:hover td { background: var(--bg2); }
-.month-col {
-  font-family: 'Syne', sans-serif;
-  font-weight: 700; font-size: 13px;
-  color: var(--accent);
-  white-space: nowrap;
-}
-.count-col {
-  font-family: 'Syne', sans-serif;
-  font-weight: 700; font-size: 18px;
-  color: #fff;
-}
-.dup-col {
-  font-size: 12px; color: var(--accent2);
-}
-.actions-col {
-  display: flex; gap: 6px; flex-wrap: wrap;
-}
-.btn-sm {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px; letter-spacing: .15em;
-  text-transform: uppercase;
-  border: 1px solid var(--border2);
-  background: transparent; color: var(--muted);
-  padding: 5px 10px; cursor: pointer;
-  transition: all .15s;
-}
-.btn-sm:hover { border-color: var(--accent2); color: var(--accent2); }
-.btn-sm.view-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+.search-section{margin-bottom:28px;}
+.search-input{width:100%;background:var(--bg2);border:1px solid var(--border2);border-bottom:2px solid var(--accent);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:12px 16px;outline:none;letter-spacing:.05em;}
+.search-input::placeholder{color:var(--muted2);}
+.search-results{margin-top:8px;display:none;}
+.search-results.show{display:block;}
+.search-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border);}
+.search-item:hover{background:var(--bg2);}
+.si-name{flex:1;font-size:12px;}
+.si-file{font-size:9px;color:var(--muted);flex-shrink:0;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.si-month{font-size:10px;color:var(--accent);background:rgba(198,241,53,.08);border:1px solid rgba(198,241,53,.2);padding:2px 7px;flex-shrink:0;}
 
-/* EXPANDED PRODUCTS */
-.expanded-products {
-  display: none;
-  padding: 12px;
-  background: var(--bg3);
-  border-top: 1px solid var(--border);
-}
-.expanded-products.show { display: block; }
-.exp-tags {
-  display: flex; flex-wrap: wrap; gap: 4px;
-}
+.history-section{margin-bottom:28px;}
+.history-table{width:100%;border-collapse:collapse;}
+.history-table th{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);background:var(--bg2);font-weight:400;}
+.history-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.history-table tr.data-row:hover td{background:var(--bg2);}
+.month-col{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--accent);white-space:nowrap;}
+.file-col{font-size:11px;color:var(--text);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.count-col{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:#fff;}
+.dup-col{font-size:12px;color:var(--accent2);}
+.actions-col{display:flex;gap:5px;flex-wrap:wrap;}
 
-/* ALL PRODUCTS SEARCH */
-.search-section { margin-bottom: 28px; }
-.search-input {
-  width: 100%;
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-bottom: 2px solid var(--accent);
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  padding: 12px 16px;
-  outline: none;
-  letter-spacing: .05em;
-}
-.search-input::placeholder { color: var(--muted2); }
-.search-input:focus { border-color: var(--accent); }
-.search-results {
-  margin-top: 12px;
-  display: none;
-}
-.search-results.show { display: block; }
-.search-item {
-  display: flex; align-items: center;
-  gap: 10px; padding: 8px 12px;
-  border-bottom: 1px solid var(--border);
-}
-.search-item:hover { background: var(--bg2); }
-.si-name { flex: 1; font-size: 12px; }
-.si-month {
-  font-size: 10px; letter-spacing: .1em;
-  color: var(--accent);
-  background: rgba(198,241,53,.08);
-  border: 1px solid rgba(198,241,53,.2);
-  padding: 2px 7px;
-  flex-shrink: 0;
-}
+.btn-sm{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--border2);background:transparent;color:var(--muted);padding:5px 10px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent);}
+.btn-sm.copy{border-color:rgba(105,201,208,.4);color:var(--accent3);}
+.btn-sm.copy:hover,.btn-sm.copy.copied{background:var(--accent3);color:#000;}
+.btn-sm.del:hover{border-color:var(--danger);color:var(--danger);}
 
-/* EMPTY STATE */
-.empty-state {
-  text-align: center;
-  padding: 48px 20px;
-  color: var(--muted);
-}
-.empty-icon { font-size: 32px; margin-bottom: 12px; opacity: .3; }
-.empty-text { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; }
+.expanded-row{display:none;}
+.expanded-row.show{display:table-row;}
+.expanded-cell{padding:0!important;border-bottom:2px solid var(--border2);}
+.expanded-inner{padding:14px 16px;background:var(--bg3);}
+.exp-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;max-height:180px;overflow-y:auto;}
+.exp-actions{display:flex;gap:8px;}
 
-/* TOAST */
-.toast {
-  position: fixed; bottom: 24px; right: 24px;
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-left: 3px solid var(--accent);
-  padding: 12px 18px;
-  font-size: 11px; letter-spacing: .1em;
-  color: var(--text);
-  z-index: 999;
-  transform: translateX(120%);
-  transition: transform .25s;
-}
-.toast.show { transform: translateX(0); }
-.toast.error { border-left-color: var(--danger); }
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-icon{font-size:32px;margin-bottom:12px;opacity:.3;}
+.empty-text{font-size:11px;letter-spacing:.15em;text-transform:uppercase;}
 
-/* LEGEND */
-.legend {
-  display: flex; gap: 16px; align-items: center;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-.legend-item {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 9px; letter-spacing: .15em;
-  text-transform: uppercase; color: var(--muted);
-}
-.legend-dot {
-  width: 8px; height: 8px;
-  border-radius: 0;
-  flex-shrink: 0;
-}
-.legend-dot.new { background: var(--accent); }
-.legend-dot.dup { background: var(--accent2); }
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--accent);padding:12px 18px;font-size:11px;letter-spacing:.1em;color:var(--text);z-index:999;transform:translateX(120%);transition:transform .25s;max-width:320px;}
+.toast.show{transform:translateX(0);}
+.toast.error{border-left-color:var(--danger);}
 
-/* DUP ALERT PANEL */
-.dup-alert {
-  display: none;
-  margin-top: 12px;
-  border: 1px solid var(--accent2);
-  background: rgba(255,110,180,.04);
-}
-.dup-alert.show { display: block; }
-.dup-alert-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(255,110,180,.2);
-}
-.dup-alert-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 12px; font-weight: 700;
-  letter-spacing: .15em; text-transform: uppercase;
-  color: var(--accent2);
-}
-.dup-alert-body {
-  padding: 14px 16px;
-}
-.dup-item {
-  display: flex; align-items: flex-start;
-  gap: 10px; padding: 7px 0;
-  border-bottom: 1px solid var(--border);
-}
-.dup-item:last-child { border-bottom: none; }
-.dup-name { flex: 1; font-size: 12px; color: var(--text); }
-.dup-months {
-  display: flex; gap: 4px; flex-wrap: wrap; flex-shrink: 0;
-}
-.dup-month-tag {
-  font-size: 9px; letter-spacing: .1em;
-  padding: 2px 7px;
-  border: 1px solid rgba(255,110,180,.3);
-  color: var(--accent2);
-  background: rgba(255,110,180,.06);
-}
-.dup-alert-actions {
-  display: flex; gap: 8px;
-  padding: 10px 16px;
-  border-top: 1px solid rgba(255,110,180,.2);
-}
-.copy-btn {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px; letter-spacing: .15em;
-  text-transform: uppercase;
-  border: 1px solid rgba(255,110,180,.4);
-  background: transparent; color: var(--accent2);
-  padding: 7px 14px; cursor: pointer;
-  transition: all .15s;
-}
-.copy-btn:hover { background: var(--accent2); color: #000; }
-.copy-btn.copied { background: var(--accent2); color: #000; }
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);}
 
-
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); }
-
-/* RESPONSIVE */
-@media (max-width: 640px) {
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .month-controls { flex-direction: column; align-items: flex-start; }
-  .month-input { width: 100%; }
+@media(max-width:640px){
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .month-controls{flex-direction:column;align-items:flex-start;}
+  .month-input{width:100%;}
+  .file-col{max-width:100px;}
 }
 </style>
 </head>
@@ -492,87 +155,62 @@ body {
 <div class="header">
   <div class="logo">DROP<span>TRACK</span></div>
   <div class="header-right">
-    <div id="sync-status" style="font-size:10px;letter-spacing:.15em;color:var(--muted)">● Холбогдож байна...</div>
+    <div id="sync-status">● Холбогдож байна...</div>
     <div class="month-badge" id="cur-month-badge">—</div>
   </div>
 </div>
 
 <div class="container">
 
-  <!-- STATS -->
-  <div class="stats-row" id="stats-row">
-    <div class="stat-box">
-      <div class="stat-val accent" id="stat-total">0</div>
-      <div class="stat-lbl">Нийт бараа (ever)</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-val" id="stat-months">0</div>
-      <div class="stat-lbl">Нийт сар</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-val warn" id="stat-dups">0</div>
-      <div class="stat-lbl">Давхцсан (нийт)</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-val pink" id="stat-last">0</div>
-      <div class="stat-lbl">Сүүлийн drop</div>
-    </div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-val accent" id="stat-total">0</div><div class="stat-lbl">Нийт уникал бараа</div></div>
+    <div class="stat-box"><div class="stat-val" id="stat-uploads">0</div><div class="stat-lbl">Нийт upload</div></div>
+    <div class="stat-box"><div class="stat-val warn" id="stat-dups">0</div><div class="stat-lbl">Давхцсан бараа</div></div>
+    <div class="stat-box"><div class="stat-val pink" id="stat-last">0</div><div class="stat-lbl">Сүүлийн upload</div></div>
   </div>
 
-  <!-- DROP SECTION -->
   <div class="drop-section">
     <div class="section-title">Шинэ drop — HTML файл оруулах</div>
-
     <div class="month-controls">
-      <div class="month-input-group">
-        <span class="month-label">Сар:</span>
-        <input type="month" class="month-input" id="month-picker">
-      </div>
-      <button class="btn primary" id="btn-save" style="display:none" onclick="saveCurrentDrop()">
-        ✓ Хадгалах
-      </button>
-      <button class="btn" id="btn-clear-file" style="display:none" onclick="clearFile()">
-        Цэвэрлэх
-      </button>
+      <span class="month-label">Сар:</span>
+      <input type="month" class="month-input" id="month-picker">
+      <button class="btn primary" id="btn-save" style="display:none" onclick="saveCurrentDrop()">✓ Хадгалах</button>
+      <button class="btn" id="btn-clear" style="display:none" onclick="clearFile()">Цэвэрлэх</button>
     </div>
 
     <div class="drop-zone" id="drop-zone">
       <div class="file-result" id="file-result">
-        <div class="file-info">
-          <div class="file-icon">📄</div>
-          <div>
-            <div class="file-name" id="file-name-text">—</div>
-            <div class="file-count" id="file-count-text">— бараа</div>
-          </div>
+        <div class="file-icon">📄</div>
+        <div>
+          <div class="file-name" id="file-name-text">—</div>
+          <div class="file-count" id="file-count-text">—</div>
         </div>
       </div>
       <div id="drop-placeholder">
         <div class="drop-icon">⬇</div>
         <div class="drop-text"><strong>Drag & Drop</strong> эсвэл дарж HTML файл сонгох</div>
-        <div class="drop-hint">index.html · PRODUCTS array-г автоматаар унших</div>
+        <div class="drop-hint">PRODUCTS array → бүх бараа автоматаар унших</div>
       </div>
       <input type="file" id="file-input" accept=".html,.htm">
     </div>
 
-    <!-- PARSE PREVIEW -->
     <div class="parse-preview" id="parse-preview">
       <div class="preview-header">
-        <div>
-          <div class="preview-count" id="prev-count">0 <span>бараа</span></div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:10px;color:var(--accent);letter-spacing:.1em" id="prev-new-count"></div>
-          <div style="font-size:10px;color:var(--accent2);letter-spacing:.1em;margin-top:3px" id="prev-dup-count"></div>
+        <div class="preview-count" id="prev-count">0 <span>бараа</span></div>
+        <div style="text-align:right;line-height:1.8">
+          <div style="font-size:10px;color:var(--accent);letter-spacing:.1em" id="prev-new"></div>
+          <div style="font-size:10px;color:var(--accent2);letter-spacing:.1em" id="prev-dup"></div>
+          <div style="font-size:10px;color:var(--muted);letter-spacing:.1em" id="prev-saved"></div>
         </div>
       </div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot new"></div> Шинэ</div>
-        <div class="legend-item"><div class="legend-dot dup"></div> Давхцсан</div>
+        <div class="legend-item"><div class="legend-dot new"></div>Шинэ</div>
+        <div class="legend-item"><div class="legend-dot dup"></div>Давхцсан</div>
+        <div class="legend-item"><div class="legend-dot saved"></div>Аль хэдийн байгаа</div>
       </div>
       <div class="preview-tags" id="preview-tags"></div>
     </div>
 
-    <!-- DUP ALERT -->
     <div class="dup-alert" id="dup-alert">
       <div class="dup-alert-header">
         <div class="dup-alert-title">⚠ Давхцсан бараа</div>
@@ -581,22 +219,20 @@ body {
       <div class="dup-alert-body" id="dup-alert-body"></div>
       <div class="dup-alert-actions">
         <button class="copy-btn" id="copy-names-btn" onclick="copyDupNames()">📋 Нэрийг copy</button>
-        <button class="copy-btn" onclick="copyDupList()">📋 Дэлгэрэнгүй copy</button>
+        <button class="copy-btn" onclick="copyDupDetail()">📋 Дэлгэрэнгүй copy</button>
       </div>
     </div>
   </div>
 
-  <!-- SEARCH -->
   <div class="search-section">
     <div class="section-title">Бараа хайх</div>
     <input type="text" class="search-input" id="search-input"
-      placeholder="Бараандын нэр хайх... (бүх саруудаас)" oninput="doSearch(this.value)">
+      placeholder="Бараандын нэр хайх... (бүх upload-аас)" oninput="doSearch(this.value)">
     <div class="search-results" id="search-results"></div>
   </div>
 
-  <!-- HISTORY -->
   <div class="history-section">
-    <div class="section-title">Сар бүрийн түүх</div>
+    <div class="section-title">Upload түүх</div>
     <div id="history-container"></div>
   </div>
 
@@ -605,408 +241,363 @@ body {
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── SUPABASE CONFIG ───────────────────────────────────────
 const SB_URL  = 'https://iepvbbcldztvuheaidli.supabase.co';
 const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImllcHZiYmNsZHp0dnVoZWFpZGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMDc2MzQsImV4cCI6MjA4ODg4MzYzNH0.tkqBxerDxTgtH7CgnOotuvhRhD6qfciYakcBxdZgLn0';
-const HEADERS = { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` };
+const H = { 'Content-Type':'application/json','apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}` };
 
-async function sbFetch(path, opts = {}) {
-  const res = await fetch(`${SB_URL}/rest/v1/${path}`, { headers: HEADERS, ...opts });
-  if (!res.ok) { const e = await res.text(); throw new Error(e); }
-  const text = await res.text();
-  if (!text || text.trim() === '') return null;
-  try { return JSON.parse(text); } catch { return null; }
+async function sb(path, opts={}) {
+  const res = await fetch(`${SB_URL}/rest/v1/${path}`, { headers: H, ...opts });
+  if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
+  const t = await res.text();
+  if (!t || !t.trim()) return null;
+  try { return JSON.parse(t); } catch { return null; }
 }
 
-// ─── STATE ─────────────────────────────────────────────────
-// db: { "2025-04": Set(["ProductA", ...]), ... }
-let db = {};
+// STATE
+// uploads: [ { month, source_file, products: Set<string> } ]
+let uploads = [];
 let parsed = [];
 let parsedFile = '';
 let currentDups = [];
 let currentDupMap = {};
-let syncing = false;
 
-// ─── SYNC STATUS UI ────────────────────────────────────────
-function setSyncStatus(state, msg) {
-  // state: 'idle' | 'loading' | 'ok' | 'err'
+function setSS(state, msg) {
   const el = document.getElementById('sync-status');
-  const colors = { idle: 'var(--muted)', loading: 'var(--warn)', ok: 'var(--accent)', err: 'var(--danger)' };
-  const icons  = { idle: '●', loading: '↻', ok: '●', err: '●' };
-  el.style.color = colors[state];
-  el.textContent = `${icons[state]} ${msg}`;
+  el.style.color = {loading:'var(--warn)',ok:'var(--accent)',err:'var(--danger)'}[state]||'var(--muted)';
+  el.textContent = (state==='loading'?'↻':'●') + ' ' + msg;
 }
 
-// ─── LOAD FROM SUPABASE ────────────────────────────────────
-async function loadFromSupabase() {
-  setSyncStatus('loading', 'Уншиж байна...');
+// LOAD
+async function loadFromSB() {
+  setSS('loading','Уншиж байна...');
   try {
-    const rows = await sbFetch('drop_tracker?select=month,product_name&order=month.asc');
-    db = {};
-    for (const row of rows) {
-      if (!db[row.month]) db[row.month] = new Set();
-      db[row.month].add(row.product_name);
+    const rows = await sb('drop_tracker?select=month,source_file,product_name&order=added_at.asc');
+    const map = {};
+    for (const r of rows) {
+      const k = `${r.month}||${r.source_file}`;
+      if (!map[k]) map[k] = { month:r.month, source_file:r.source_file, products:new Set() };
+      map[k].products.add(r.product_name);
     }
-    setSyncStatus('ok', `Sync — ${rows.length} бараа`);
-    renderStats();
-    renderHistory();
-  } catch (e) {
-    setSyncStatus('err', 'Холболт алдаатай');
-    showToast('Supabase холболт амжилтгүй', true);
+    uploads = Object.values(map);
+    setSS('ok', `${rows.length} бараа`);
+    renderStats(); renderHistory();
+  } catch(e) {
+    setSS('err','Холболт алдаатай');
+    showToast('Холболт амжилтгүй: '+e.message, true);
     console.error(e);
   }
 }
 
-async function saveCurrentDrop() {
-  const month = document.getElementById('month-picker').value;
-  if (!month) { showToast('Сар сонгоно уу', true); return; }
-  if (!parsed.length) { showToast('Файл оруулаагүй', true); return; }
-
-  setSyncStatus('loading', 'Хадгалж байна...');
-  const btn = document.getElementById('btn-save');
-  btn.disabled = true;
-
-  try {
-    const rows = parsed.map(name => ({ month, product_name: name }));
-
-    for (let i = 0; i < rows.length; i += 200) {
-      const batch = rows.slice(i, i + 200);
-      const res = await fetch(`${SB_URL}/rest/v1/drop_tracker?on_conflict=month,product_name`, {
-        method: 'POST',
-        headers: { ...HEADERS, 'Prefer': 'resolution=ignore-duplicates,return=minimal' },
-        body: JSON.stringify(batch)
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        console.error('Supabase error:', res.status, errText);
-        throw new Error(`${res.status}: ${errText}`);
-      }
-    }
-
-    if (!db[month]) db[month] = new Set();
-    parsed.forEach(n => db[month].add(n));
-
-    const total = db[month].size;
-    setSyncStatus('ok', `Хадгалагдлаа — ${total} бараа`);
-    showToast(`✓ ${month} — ${parsed.length} бараа нэмэгдлээ (нийт ${total})`);
-    clearFile();
-    renderStats();
-    renderHistory();
-  } catch (e) {
-    console.error('saveCurrentDrop error:', e);
-    setSyncStatus('err', 'Хадгалах алдаа: ' + e.message.slice(0, 60));
-    showToast('Алдаа: ' + e.message.slice(0, 80), true);
-  } finally {
-    btn.disabled = false;
-  }
-}
-
-async function deleteDrop(month) {
-  if (!confirm(`${month}-н БҮГД барааг устгах уу?`)) return;
-  setSyncStatus('loading', 'Устгаж байна...');
-  try {
-    await sbFetch(`drop_tracker?month=eq.${month}`, { method: 'DELETE' });
-    delete db[month];
-    setSyncStatus('ok', 'Устгагдлаа');
-    showToast(`${month} устгагдлаа`);
-    renderStats();
-    renderHistory();
-  } catch (e) {
-    setSyncStatus('err', 'Устгах алдаа');
-    showToast('Устгах үед алдаа', true);
-  }
-}
-
-// ─── INIT ──────────────────────────────────────────────────
+// INIT
 function init() {
   const now = new Date();
-  const mm = String(now.getMonth()+1).padStart(2,'0');
-  document.getElementById('month-picker').value = `${now.getFullYear()}-${mm}`;
-  updateMonthBadge();
-  loadFromSupabase();
+  document.getElementById('month-picker').value =
+    `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  updateBadge();
+  loadFromSB();
 }
-
-function updateMonthBadge() {
-  const val = document.getElementById('month-picker').value;
-  document.getElementById('cur-month-badge').textContent = val || '—';
+function updateBadge() {
+  document.getElementById('cur-month-badge').textContent =
+    document.getElementById('month-picker').value || '—';
 }
 document.getElementById('month-picker').addEventListener('change', () => {
-  updateMonthBadge();
-  if (parsed.length) analyzeAndPreview();
+  updateBadge();
+  if (parsed.length) analyze();
 });
 
-// ─── FILE HANDLING ─────────────────────────────────────────
-const dropZone = document.getElementById('drop-zone');
-const fileInput = document.getElementById('file-input');
-
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault(); dropZone.classList.remove('dragover');
-  const f = e.dataTransfer.files[0]; if (f) handleFile(f);
-});
-fileInput.addEventListener('change', e => { const f = e.target.files[0]; if (f) handleFile(f); });
+// FILE
+const dz = document.getElementById('drop-zone');
+const fi = document.getElementById('file-input');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragover'); const f=e.dataTransfer.files[0]; if(f) handleFile(f); });
+fi.addEventListener('change', e => { const f=e.target.files[0]; if(f) handleFile(f); });
 
 function handleFile(file) {
-  if (!file.name.endsWith('.html') && !file.name.endsWith('.htm')) {
-    showToast('HTML файл оруулна уу', true); return;
-  }
-  const reader = new FileReader();
-  reader.onload = e => {
+  if (!file.name.match(/\.html?$/i)) { showToast('HTML файл оруулна уу', true); return; }
+  const r = new FileReader();
+  r.onload = e => {
     parsedFile = file.name;
-    parsed = extractProducts(e.target.result);
+    parsed = extract(e.target.result);
     if (!parsed.length) { showToast('PRODUCTS array олдсонгүй', true); return; }
-    showFileResult(file.name, parsed.length);
-    analyzeAndPreview();
+    document.getElementById('drop-placeholder').style.display = 'none';
+    document.getElementById('file-result').classList.add('show');
+    document.getElementById('file-name-text').textContent = file.name;
+    document.getElementById('file-count-text').textContent = `${parsed.length} бараа олдлоо`;
+    dz.classList.add('has-file');
+    document.getElementById('btn-save').style.display = '';
+    document.getElementById('btn-clear').style.display = '';
+    analyze();
   };
-  reader.readAsText(file);
+  r.readAsText(file);
 }
 
-function extractProducts(html) {
-  const match = html.match(/const\s+PRODUCTS\s*=\s*\[([\s\S]*?)\];/);
-  if (!match) return [];
-  const products = [];
-  const re = /"([^"]+)"|'([^']+)'/g;
-  let m;
-  while ((m = re.exec(match[1])) !== null) {
-    const name = (m[1] || m[2]).trim();
-    if (name) products.push(name);
-  }
-  return products;
-}
-
-function showFileResult(name, count) {
-  document.getElementById('drop-placeholder').style.display = 'none';
-  document.getElementById('file-result').classList.add('show');
-  document.getElementById('file-name-text').textContent = name;
-  document.getElementById('file-count-text').textContent = `${count} бараа олдлоо`;
-  dropZone.classList.add('has-file');
-  document.getElementById('btn-save').style.display = '';
-  document.getElementById('btn-clear-file').style.display = '';
+function extract(html) {
+  const m = html.match(/const\s+PRODUCTS\s*=\s*\[([\s\S]*?)\];/);
+  if (!m) return [];
+  const out = []; const re = /"([^"]+)"|'([^']+)'/g; let x;
+  while ((x = re.exec(m[1])) !== null) { const n=(x[1]||x[2]).trim(); if(n) out.push(n); }
+  return out;
 }
 
 function clearFile() {
   parsed = []; parsedFile = '';
   document.getElementById('drop-placeholder').style.display = '';
   document.getElementById('file-result').classList.remove('show');
-  dropZone.classList.remove('has-file');
+  dz.classList.remove('has-file');
   document.getElementById('parse-preview').classList.remove('show');
   document.getElementById('dup-alert').classList.remove('show');
   document.getElementById('btn-save').style.display = 'none';
-  document.getElementById('btn-clear-file').style.display = 'none';
-  fileInput.value = '';
+  document.getElementById('btn-clear').style.display = 'none';
+  fi.value = '';
 }
 
-// ─── ANALYZE ───────────────────────────────────────────────
-// db[month] нь Set — тухайн сарын одоогийн бараануудыг оруулсан байгаа
-// Шинэ upload хийхэд тэр санд байхгүй байвал "шинэ", өөр сард байвал "давхцсан"
-function getDupMonthMap(excludeMonth) {
+// ANALYZE
+function buildDupMap(excludeKey) {
   const map = {};
-  for (const [mon, nameSet] of Object.entries(db)) {
-    if (mon === excludeMonth) continue;
-    nameSet.forEach(n => {
+  for (const u of uploads) {
+    if (`${u.month}||${u.source_file}` === excludeKey) continue;
+    u.products.forEach(n => {
       if (!map[n]) map[n] = [];
-      map[n].push(mon);
+      map[n].push(`${u.month} · ${u.source_file}`);
     });
   }
   return map;
 }
 
-function analyzeAndPreview() {
-  const month = document.getElementById('month-picker').value;
-  if (!month) { showToast('Сар сонгоно уу', true); return; }
-
-  // Тухайн сарт аль хэдийн хадгалагдсан бараанууд
-  const existingThisMonth = db[month] ? db[month] : new Set();
-  // Бусад саруудад байгаа бараанууд
-  const dupMap = getDupMonthMap(month);
-
-  // Тухайн сард аль хэдийн байгаа → already saved (харагдахгүй байж болно)
-  const alreadySaved = parsed.filter(p => existingThisMonth.has(p));
-  // Өөр сард давхцсан
-  const dups = parsed.filter(p => !existingThisMonth.has(p) && dupMap[p]);
-  // Бүрэн шинэ
-  const newOnes = parsed.filter(p => !existingThisMonth.has(p) && !dupMap[p]);
-
-  document.getElementById('prev-count').innerHTML = `${parsed.length} <span>бараа</span>`;
-  document.getElementById('prev-new-count').textContent = `✦ ${newOnes.length} шинэ`;
-  document.getElementById('prev-dup-count').textContent =
-    (dups.length ? `⚠ ${dups.length} давхцсан` : '') +
-    (alreadySaved.length ? `  ✓ ${alreadySaved.length} аль хэдийн хадгалагдсан` : '');
-
-  document.getElementById('preview-tags').innerHTML = parsed.map(p => {
-    if (existingThisMonth.has(p)) return `<span class="tag saved" title="Энэ сарт аль хэдийн байгаа">${p}</span>`;
-    if (dupMap[p]) return `<span class="tag dup" title="Давхцсан: ${dupMap[p].join(', ')}">${p}</span>`;
-    return `<span class="tag new" title="Шинэ">${p}</span>`;
-  }).join('');
-
-  document.getElementById('parse-preview').classList.add('show');
-  renderDupAlert(dups, dupMap, month);
+function getSaved(month, file) {
+  const s = new Set();
+  for (const u of uploads)
+    if (u.month===month && u.source_file===file) u.products.forEach(n => s.add(n));
+  return s;
 }
 
-// ─── DUP ALERT ─────────────────────────────────────────────
-function renderDupAlert(dups, dupMap, month) {
-  currentDups = dups;
-  currentDupMap = dupMap;
-  const panel = document.getElementById('dup-alert');
-  if (!dups.length) { panel.classList.remove('show'); return; }
+function analyze() {
+  const month = document.getElementById('month-picker').value;
+  if (!month) return;
+  const key   = `${month}||${parsedFile}`;
+  const saved = getSaved(month, parsedFile);
+  const dupMap = buildDupMap(key);
 
-  document.getElementById('dup-alert-meta').textContent = `${dups.length} бараа · ${month}`;
-  document.getElementById('dup-alert-body').innerHTML = dups.map(name => {
-    const months = dupMap[name] || [];
-    return `<div class="dup-item">
-      <span class="dup-name">${name}</span>
-      <div class="dup-months">${months.map(m => `<span class="dup-month-tag">${m}</span>`).join('')}</div>
-    </div>`;
+  const newArr   = parsed.filter(p => !saved.has(p) && !dupMap[p]);
+  const dupArr   = parsed.filter(p => !saved.has(p) &&  dupMap[p]);
+  const savedArr = parsed.filter(p =>  saved.has(p));
+
+  document.getElementById('prev-count').innerHTML = `${parsed.length} <span>бараа</span>`;
+  document.getElementById('prev-new').textContent   = `✦ ${newArr.length} шинэ`;
+  document.getElementById('prev-dup').textContent   = dupArr.length   ? `⚠ ${dupArr.length} давхцсан` : '';
+  document.getElementById('prev-saved').textContent = savedArr.length ? `✓ ${savedArr.length} аль хэдийн байгаа` : '';
+
+  document.getElementById('preview-tags').innerHTML = parsed.map(p => {
+    if (saved.has(p))  return `<span class="tag saved" title="Аль хэдийн хадгалагдсан">${p}</span>`;
+    if (dupMap[p])     return `<span class="tag dup" title="${dupMap[p].join(' | ')}">${p}</span>`;
+    return `<span class="tag new">${p}</span>`;
   }).join('');
+  document.getElementById('parse-preview').classList.add('show');
+
+  currentDups = dupArr; currentDupMap = dupMap;
+  const panel = document.getElementById('dup-alert');
+  if (!dupArr.length) { panel.classList.remove('show'); return; }
+  document.getElementById('dup-alert-meta').textContent = `${dupArr.length} бараа`;
+  document.getElementById('dup-alert-body').innerHTML = dupArr.map(n =>
+    `<div class="dup-item">
+      <span class="dup-name">${n}</span>
+      <div class="dup-months">${(dupMap[n]||[]).map(m=>`<span class="dup-month-tag">${m}</span>`).join('')}</div>
+    </div>`).join('');
   panel.classList.add('show');
 }
 
-function copyText(text, successMsg) {
+// COPY UTIL
+function cp(text, msg) {
   if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text).then(() => showToast(successMsg));
+    navigator.clipboard.writeText(text).then(() => showToast(msg));
   } else {
-    // Fallback: textarea trick
     const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
-    document.body.appendChild(ta);
-    ta.focus(); ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast(successMsg);
+    ta.value = text; ta.style.cssText = 'position:fixed;left:-9999px;opacity:0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast(msg);
   }
 }
-
 function copyDupNames() {
   if (!currentDups.length) return;
-  const btn = document.getElementById('copy-names-btn');
-  copyText(currentDups.join('\n'), `${currentDups.length} бараа copied`);
-  btn.textContent = '✓ Copied!'; btn.classList.add('copied');
-  setTimeout(() => { btn.textContent = '📋 Нэрийг copy'; btn.classList.remove('copied'); }, 1800);
+  cp(currentDups.join('\n'), `${currentDups.length} бараа copied`);
+  const b = document.getElementById('copy-names-btn');
+  b.textContent='✓ Copied!'; b.classList.add('copied');
+  setTimeout(()=>{ b.textContent='📋 Нэрийг copy'; b.classList.remove('copied'); },1800);
 }
-
-function copyDupList() {
+function copyDupDetail() {
   if (!currentDups.length) return;
-  const text = currentDups.map(n => `${n} → ${(currentDupMap[n]||[]).join(', ')}`).join('\n');
-  copyText(text, `Дэлгэрэнгүй ${currentDups.length} мөр copied`);
+  cp(currentDups.map(n=>`${n} → ${(currentDupMap[n]||[]).join(' | ')}`).join('\n'), `${currentDups.length} мөр copied`);
 }
 
-// ─── STATS ─────────────────────────────────────────────────
+// SAVE
+async function saveCurrentDrop() {
+  const month = document.getElementById('month-picker').value;
+  if (!month || !parsed.length) return;
+  const saved = getSaved(month, parsedFile);
+  const toIns = parsed.filter(p => !saved.has(p));
+  if (!toIns.length) { showToast('Бүх бараа аль хэдийн байна'); return; }
+
+  setSS('loading','Хадгалж байна...');
+  document.getElementById('btn-save').disabled = true;
+  try {
+    const rows = toIns.map(n => ({ month, source_file: parsedFile, product_name: n }));
+    for (let i=0; i<rows.length; i+=200) {
+      const res = await fetch(
+        `${SB_URL}/rest/v1/drop_tracker?on_conflict=month,source_file,product_name`, {
+        method:'POST',
+        headers:{...H,'Prefer':'resolution=ignore-duplicates,return=minimal'},
+        body: JSON.stringify(rows.slice(i,i+200))
+      });
+      if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
+    }
+    let u = uploads.find(u=>u.month===month&&u.source_file===parsedFile);
+    if (!u) { u={month,source_file:parsedFile,products:new Set()}; uploads.push(u); }
+    toIns.forEach(n=>u.products.add(n));
+    setSS('ok',`${u.products.size} бараа`);
+    showToast(`✓ ${parsedFile} · ${toIns.length} бараа хадгалагдлаа`);
+    clearFile(); renderStats(); renderHistory();
+  } catch(e) {
+    setSS('err','Алдаа');
+    showToast('Алдаа: '+e.message.slice(0,120), true);
+    console.error(e);
+  } finally { document.getElementById('btn-save').disabled=false; }
+}
+
+async function deleteUpload(month, file) {
+  if (!confirm(`"${file}" (${month}) устгах уу?`)) return;
+  setSS('loading','Устгаж байна...');
+  try {
+    await sb(`drop_tracker?month=eq.${month}&source_file=eq.${encodeURIComponent(file)}`,{method:'DELETE'});
+    uploads = uploads.filter(u=>!(u.month===month&&u.source_file===file));
+    setSS('ok','Устгагдлаа'); showToast(`${file} устгагдлаа`);
+    renderStats(); renderHistory();
+  } catch(e) { setSS('err','Устгах алдаа'); showToast('Устгах алдаа: '+e.message,true); }
+}
+
+// STATS
 function renderStats() {
-  // db values are Sets
-  const allProducts = new Set();
-  const productMonths = {};
-  for (const [mon, nameSet] of Object.entries(db)) {
-    nameSet.forEach(n => {
-      allProducts.add(n);
-      if (!productMonths[n]) productMonths[n] = [];
-      productMonths[n].push(mon);
-    });
-  }
-  const totalDups = Object.values(productMonths).filter(m => m.length > 1).length;
-  const months = Object.keys(db);
-  const lastMonth = months.sort().at(-1);
-  const lastCount = lastMonth ? db[lastMonth].size : 0;
-
-  document.getElementById('stat-total').textContent = allProducts.size;
-  document.getElementById('stat-months').textContent = months.length;
-  document.getElementById('stat-dups').textContent = totalDups;
-  document.getElementById('stat-last').textContent = lastCount || '—';
+  const all = new Set();
+  const cnt = {};
+  for (const u of uploads) u.products.forEach(n=>{all.add(n);cnt[n]=(cnt[n]||0)+1;});
+  const dups = Object.values(cnt).filter(c=>c>1).length;
+  const last = uploads.at(-1);
+  document.getElementById('stat-total').textContent   = all.size;
+  document.getElementById('stat-uploads').textContent = uploads.length;
+  document.getElementById('stat-dups').textContent    = dups;
+  document.getElementById('stat-last').textContent    = last ? last.products.size : '—';
 }
 
-// ─── HISTORY ───────────────────────────────────────────────
+// HISTORY
 function renderHistory() {
-  const container = document.getElementById('history-container');
-  const months = Object.keys(db).sort().reverse();
-
-  if (!months.length) {
-    container.innerHTML = `<div class="empty-state">
-      <div class="empty-icon">📭</div>
-      <div class="empty-text">Одоохондоо хоосон — эхний drop-оо оруул</div>
-    </div>`;
+  const con = document.getElementById('history-container');
+  if (!uploads.length) {
+    con.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">Одоохондоо хоосон — эхний drop-оо оруул</div></div>`;
     return;
   }
+  // product → list of "month|file" keys
+  const pkm = {};
+  for (const u of uploads) u.products.forEach(n=>{
+    if(!pkm[n]) pkm[n]=[];
+    pkm[n].push(`${u.month}|${u.source_file}`);
+  });
 
-  const productMonthMap = {};
-  for (const [mon, nameSet] of Object.entries(db)) {
-    nameSet.forEach(n => {
-      if (!productMonthMap[n]) productMonthMap[n] = [];
-      productMonthMap[n].push(mon);
-    });
-  }
+  const sorted = [...uploads].sort((a,b)=>
+    b.month!==a.month ? b.month.localeCompare(a.month) : b.source_file.localeCompare(a.source_file));
 
   let html = `<table class="history-table"><thead><tr>
-    <th>Сар</th><th>Бараа</th><th>Шинэ</th><th>Давхцсан</th><th>Үйлдэл</th>
+    <th>Сар</th><th>Файл</th><th>Бараа</th><th>Шинэ</th><th>Давхцсан</th><th>Үйлдэл</th>
   </tr></thead><tbody>`;
 
-  for (const mon of months) {
-    const names = [...db[mon]];
-    const dups    = names.filter(n => productMonthMap[n].length > 1);
-    const newOnes = names.filter(n => productMonthMap[n].length === 1);
-    const safeId  = mon.replace('-','_');
+  sorted.forEach((u,i)=>{
+    const names = [...u.products].sort();
+    const myKey = `${u.month}|${u.source_file}`;
+    const dups  = names.filter(n=>pkm[n].length>1);
+    const news  = names.filter(n=>pkm[n].length===1);
+    const eid   = `exp${i}`;
+    const sf    = u.source_file.replace(/'/g,"\\'");
 
-    html += `<tr>
-      <td class="month-col">${mon}</td>
+    html += `<tr class="data-row">
+      <td class="month-col">${u.month}</td>
+      <td class="file-col" title="${u.source_file}">${u.source_file}</td>
       <td class="count-col">${names.length}</td>
-      <td><span style="color:var(--accent);font-size:12px">${newOnes.length}</span></td>
-      <td class="dup-col">${dups.length ? `<span title="${dups.join(', ')}">${dups.length} бараа ↗</span>` : '—'}</td>
+      <td><span style="color:var(--accent);font-size:12px">${news.length}</span></td>
+      <td class="dup-col">${dups.length?dups.length+' ↗':'—'}</td>
       <td class="actions-col">
-        <button class="btn-sm view-btn" onclick="toggleExpand('exp-${safeId}')">Харах</button>
-        <button class="btn-sm" onclick="deleteDrop('${mon}')">Устгах</button>
+        <button class="btn-sm" onclick="toggleExp('${eid}')">Харах</button>
+        <button class="btn-sm copy" id="cb${i}" onclick="copyNames(${i})">📋 Copy</button>
+        <button class="btn-sm del" onclick="deleteUpload('${u.month}','${sf}')">Устгах</button>
       </td>
     </tr>
-    <tr><td colspan="5" style="padding:0">
-      <div class="expanded-products" id="exp-${safeId}">
-        <div class="exp-tags">${names.map(n => {
-          const isDup = productMonthMap[n].length > 1;
-          const others = productMonthMap[n].filter(m => m !== mon);
-          return `<span class="tag ${isDup?'dup':'new'}" title="${isDup?'Давхцсан: '+others.join(', '):'Шинэ'}">${n}</span>`;
-        }).join('')}</div>
-      </div>
-    </td></tr>`;
-  }
+    <tr class="expanded-row" id="${eid}">
+      <td colspan="6" class="expanded-cell">
+        <div class="expanded-inner">
+          <div class="exp-tags">${names.map(n=>{
+            const d=pkm[n].length>1;
+            const o=pkm[n].filter(k=>k!==myKey);
+            return `<span class="tag ${d?'dup':'new'}" title="${d?'Давхцсан: '+o.join(' | '):'Шинэ'}">${n}</span>`;
+          }).join('')}</div>
+          <div class="exp-actions">
+            <button class="btn-sm copy" id="cb2${i}" onclick="copyNames(${i})">📋 Бүгдийг copy</button>
+            <button class="btn-sm copy" onclick="copyDups(${i})">📋 Давхцсаныг copy</button>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  });
 
-  html += `</tbody></table>`;
-  container.innerHTML = html;
+  html += '</tbody></table>';
+  con.innerHTML = html;
+  window._su = sorted;
+  window._pkm = pkm;
 }
 
-function toggleExpand(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.toggle('show');
+function toggleExp(id) { const e=document.getElementById(id); if(e) e.classList.toggle('show'); }
+
+function copyNames(i) {
+  const u=window._su[i]; if(!u) return;
+  cp([...u.products].sort().join('\n'), `${u.products.size} бараа copied`);
+  [`cb${i}`,`cb2${i}`].forEach(id=>{
+    const b=document.getElementById(id);
+    if(!b) return;
+    const orig=b.textContent;
+    b.textContent='✓ Copied!'; b.classList.add('copied');
+    setTimeout(()=>{b.textContent=orig;b.classList.remove('copied');},1800);
+  });
 }
 
-// ─── SEARCH ────────────────────────────────────────────────
+function copyDups(i) {
+  const u=window._su[i]; const pkm=window._pkm; if(!u||!pkm) return;
+  const d=[...u.products].filter(n=>pkm[n].length>1).sort();
+  if(!d.length){showToast('Давхцсан бараа байхгүй');return;}
+  cp(d.join('\n'), `${d.length} давхцсан бараа copied`);
+}
+
+// SEARCH
 function doSearch(q) {
-  const container = document.getElementById('search-results');
-  if (!q.trim()) { container.classList.remove('show'); return; }
-  const results = [];
-  const lower = q.toLowerCase();
-  for (const [mon, nameSet] of Object.entries(db)) {
-    nameSet.forEach(n => {
-      if (n.toLowerCase().includes(lower)) results.push({ name: n, month: mon });
-    });
+  const con=document.getElementById('search-results');
+  if(!q.trim()){con.classList.remove('show');return;}
+  const lo=q.toLowerCase(), res=[];
+  for(const u of uploads) u.products.forEach(n=>{if(n.toLowerCase().includes(lo)) res.push({name:n,month:u.month,file:u.source_file});});
+  if(!res.length){
+    con.innerHTML=`<div style="padding:12px;font-size:11px;color:var(--muted);letter-spacing:.1em">Олдсонгүй</div>`;
+    con.classList.add('show');return;
   }
-  if (!results.length) {
-    container.innerHTML = `<div style="padding:12px;font-size:11px;color:var(--muted);letter-spacing:.1em">Олдсонгүй</div>`;
-    container.classList.add('show'); return;
-  }
-  results.sort((a,b) => b.month.localeCompare(a.month));
-  container.innerHTML = results.map(r =>
-    `<div class="search-item">
-      <span class="si-name">${r.name}</span>
-      <span class="si-month">${r.month}</span>
-    </div>`).join('');
-  container.classList.add('show');
+  res.sort((a,b)=>b.month.localeCompare(a.month));
+  con.innerHTML=res.map(r=>`<div class="search-item">
+    <span class="si-name">${r.name}</span>
+    <span class="si-file">${r.file}</span>
+    <span class="si-month">${r.month}</span>
+  </div>`).join('');
+  con.classList.add('show');
 }
 
-// ─── TOAST ─────────────────────────────────────────────────
-function showToast(msg, err = false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (err ? ' error' : '');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+// TOAST
+function showToast(msg,err=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast'+(err?' error':'');
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000);
 }
 
 init();

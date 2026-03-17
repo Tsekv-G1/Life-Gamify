@@ -444,10 +444,9 @@ async function saveCurrentDrop() {
   try {
     const rows = toIns.map(n => ({ month, source_file: parsedFile, product_name: n }));
     for (let i=0; i<rows.length; i+=200) {
-      const res = await fetch(
-        `${SB_URL}/rest/v1/drop_tracker?on_conflict=month,source_file,product_name`, {
+      const res = await fetch(`${SB_URL}/rest/v1/drop_tracker`, {
         method:'POST',
-        headers:{...H,'Prefer':'resolution=ignore-duplicates,return=minimal'},
+        headers:{...H,'Prefer':'return=minimal'},
         body: JSON.stringify(rows.slice(i,i+200))
       });
       if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);

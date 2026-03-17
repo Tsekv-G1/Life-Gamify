@@ -689,7 +689,13 @@ function renderHistory() {
     html+=`<tr class="data-row">
       <td class="month-col">${u.month}</td>
       <td class="file-col" title="${u.source_file}">${u.source_file}</td>
-      <td><span class="cat-badge cat-${u.category}">${u.category}</span></td>
+      <td>
+        <select class="cat-select" style="font-size:10px;padding:4px 8px;border-color:var(--border2)"
+          onchange="updateCategory('${u.month}','${u.source_file.replace(/'/g,"\\'")}',this.value,this)">
+          ${['Beauty','Home','Health','Goods','Kids','Uncategorized'].map(c=>
+            `<option value="${c}" ${c===u.category?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </td>
       <td class="count-col">${names.length}</td>
       <td><span style="color:var(--accent);font-size:12px">${news.length}</span></td>
       <td class="dup-col">${dups.length?dups.length+' ↗':'—'}</td>
@@ -738,6 +744,29 @@ function copyUploadDups(i) {
   const d=[...u.products].filter(n=>pkm[n].length>1).sort();
   if(!d.length){showToast('Давхцсан бараа байхгүй');return;}
   cp(d.join('\n'),`${d.length} давхцсан бараа copied`);
+}
+
+async function updateCategory(month, file, newCat, selectEl) {
+  setSS('loading','Хадгалж байна...');
+  try {
+    await sb(`drop_tracker?month=eq.${month}&source_file=eq.${encodeURIComponent(file)}`, {
+      method: 'PATCH',
+      headers: {...H, 'Prefer': 'return=minimal'},
+      body: JSON.stringify({ category: newCat })
+    });
+    // Update local state
+    const u = uploads.find(u=>u.month===month&&u.source_file===file);
+    if (u) u.category = newCat;
+    setSS('ok','Хадгалагдлаа');
+    showToast(`${file} → ${newCat}`);
+    renderStats(); renderReport(); renderCatExport();
+  } catch(e) {
+    setSS('err','Алдаа');
+    showToast('Category өөрчлөх алдаа: '+e.message, true);
+    // Revert select
+    const u = uploads.find(u=>u.month===month&&u.source_file===file);
+    if (u && selectEl) selectEl.value = u.category;
+  }
 }
 
 async function deleteUpload(month,file) {

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CONTENT. — Script Planner · V1</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#181818;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#e8e8e8;--muted:#555;--accent:#c084fc;--ar:192;--ag:132;--ab:252;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;font-size:14px;}
+
+/* LOGIN */
+#login-screen{display:none;}
+
+/* SETUP SCREEN */
+#setup-screen{position:fixed;inset:0;background:var(--bg);display:none;z-index:998;overflow-y:auto;padding:40px 20px;}
+.setup-box{max-width:560px;margin:0 auto;}
+.setup-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:8px;}
+.setup-sub{color:var(--muted);font-size:13px;margin-bottom:28px;line-height:1.6;}
+.setup-step{background:var(--bg2);border:1px solid var(--border2);border-radius:5px;padding:20px;margin-bottom:14px;}
+.setup-step-num{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.setup-step-text{font-size:13px;color:#ccc;line-height:1.6;margin-bottom:12px;}
+.sql-block{background:#0d0d0d;border:1px solid var(--border);border-radius:3px;padding:14px;font-size:11px;color:#aaa;line-height:1.7;white-space:pre;overflow-x:auto;font-family:'Courier New',monospace;}
+.copy-btn{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:7px 14px;font-size:11px;cursor:pointer;border-radius:2px;margin-top:10px;}
+.copy-btn:active{background:rgba(var(--ar),var(--ag),var(--ab),.1);color:var(--accent);}
+.setup-done-btn{width:100%;background:var(--accent);color:#000;border:none;padding:14px;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer;border-radius:3px;text-transform:uppercase;margin-top:10px;}
+.setup-link{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(var(--ar),var(--ag),var(--ab),.3);}
+
+/* LOADING */
+#loading-overlay{position:fixed;inset:0;background:rgba(10,10,10,.85);display:none;align-items:center;justify-content:center;z-index:500;flex-direction:column;gap:12px;}
+#loading-overlay.show{display:flex;}
+.loading-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.2s ease-in-out infinite;}
+.loading-dot:nth-child(2){animation-delay:.2s;}
+.loading-dot:nth-child(3){animation-delay:.4s;}
+.loading-dots{display:flex;gap:6px;}
+.loading-text{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+@keyframes pulse{0%,80%,100%{transform:scale(.6);opacity:.4;}40%{transform:scale(1);opacity:1;}}
+
+/* TOAST */
+#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:10px 20px;border-radius:4px;font-size:12px;opacity:0;transition:all .25s;z-index:600;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.err{border-color:rgba(239,68,68,.4);color:#ef4444;}
+
+/* APP */
+#app{display:none;padding-bottom:90px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:100;}
+.header-logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-1px;color:#fff;}
+.header-logo span{color:var(--accent);}
+.header-meta{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+
+/* STATS */
+.stats-bar{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.stats-bar::-webkit-scrollbar{display:none;}
+.stat-item{flex:1;min-width:80px;padding:14px 18px;border-right:1px solid var(--border);}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--accent);line-height:1;}
+.stat-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+
+/* TOOLBAR */
+.toolbar{padding:12px 14px 8px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:9px;position:sticky;top:53px;background:var(--bg);z-index:99;}
+.search-input{width:100%;background:#0d0d0d;border:1px solid var(--border2);color:var(--text);padding:9px 13px;font-size:13px;border-radius:3px;outline:none;font-family:inherit;}
+.search-input:focus{border-color:rgba(var(--ar),var(--ag),var(--ab),.4);}
+.filter-row{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;}
+.filter-row::-webkit-scrollbar{display:none;}
+.fbtn{flex-shrink:0;padding:6px 14px;background:transparent;border:1px solid var(--border2);color:var(--muted);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-radius:2px;font-family:inherit;}
+.fbtn.active{background:rgba(var(--ar),var(--ag),var(--ab),.1);border-color:rgba(var(--ar),var(--ag),var(--ab),.4);color:var(--accent);}
+
+/* CARDS */
+.script-list{padding:14px;}
+.date-group{margin-bottom:22px;}
+.dg-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:9px;padding-left:2px;display:flex;align-items:center;gap:8px;}
+.dg-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;margin-bottom:9px;cursor:pointer;transition:border-color .15s;}
+.card:hover{border-color:rgba(var(--ar),var(--ag),var(--ab),.28);}
+.card-top{padding:12px 12px 7px;display:flex;align-items:flex-start;gap:8px;}
+.card-badges{display:flex;gap:5px;flex:1;flex-wrap:wrap;}
+.tbadge{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:2px;font-weight:600;}
+.bt{background:rgba(79,195,247,.1);color:#4fc3f7;border:1px solid rgba(79,195,247,.2);}
+.bm{background:rgba(249,115,22,.1);color:#f97316;border:1px solid rgba(249,115,22,.2);}
+.bb{background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.2);}
+.sd{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--border);}
+.ss{background:rgba(192,132,252,.08);color:#c084fc;border:1px solid rgba(192,132,252,.18);}
+.sr{background:rgba(245,158,11,.08);color:#f59e0b;border:1px solid rgba(245,158,11,.18);}
+.sp{background:rgba(16,185,129,.08);color:#10b981;border:1px solid rgba(16,185,129,.18);}
+.card-date{font-size:10px;color:var(--muted);white-space:nowrap;padding-top:2px;}
+.card-date.ct{color:#4fc3f7;}.card-date.tm{color:#f59e0b;}.card-date.ps{color:#333;}
+.card-title{padding:0 12px 6px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.3;}
+.card-plat{padding:0 12px 5px;font-size:10px;color:var(--muted);}
+.card-prev{padding:0 12px 12px;font-size:12px;color:#777;line-height:1.6;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+
+/* FAB */
+.fab{position:fixed;bottom:26px;right:18px;width:52px;height:52px;background:var(--accent);border:none;border-radius:50%;color:#000;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(192,132,252,.32);z-index:200;line-height:1;}
+
+/* PANELS */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:300;display:none;backdrop-filter:blur(2px);}
+.ov.open{display:block;}
+.panel{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border2);border-radius:14px 14px 0 0;z-index:400;transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);max-height:94vh;display:flex;flex-direction:column;}
+.panel.open{transform:translateY(0);}
+.ph{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:11px auto 0;flex-shrink:0;}
+.phead{padding:13px 18px 11px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.phead-badges{display:flex;gap:5px;flex:1;flex-wrap:wrap;}
+.phead-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;flex:1;}
+.pclose{background:transparent;border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pbody{overflow-y:auto;padding:16px 18px 8px;flex:1;}
+.pbody::-webkit-scrollbar{width:3px;}
+.pbody::-webkit-scrollbar-thumb{background:var(--border2);}
+.pfooter{padding:12px 18px 28px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
+
+/* FIELDS */
+.fblock{margin-bottom:16px;}
+.flabel{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.finput{width:100%;background:#0d0d0d;border:1px solid var(--border2);color:var(--text);padding:10px 12px;font-size:13px;border-radius:3px;outline:none;font-family:inherit;}
+.finput:focus{border-color:rgba(var(--ar),var(--ag),var(--ab),.4);}
+.ftarea{width:100%;background:#0d0d0d;border:1px solid var(--border2);color:var(--text);padding:12px;font-size:13px;line-height:1.75;border-radius:3px;outline:none;resize:vertical;min-height:80px;font-family:inherit;}
+.ftarea:focus{border-color:rgba(var(--ar),var(--ag),var(--ab),.4);}
+.ftarea.tall{min-height:150px;}
+.fsel{width:100%;background:#0d0d0d;border:1px solid var(--border2);color:var(--text);padding:10px 12px;font-size:12px;border-radius:3px;outline:none;appearance:none;cursor:pointer;font-family:inherit;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* BTNS */
+.bsave{flex:1;background:var(--accent);color:#000;border:none;padding:13px;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;border-radius:3px;text-transform:uppercase;}
+.bdel{background:transparent;border:1px solid rgba(239,68,68,.3);color:#ef4444;padding:13px 14px;font-size:11px;cursor:pointer;border-radius:3px;font-family:inherit;}
+.bcancel{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:13px 14px;font-size:11px;cursor:pointer;border-radius:3px;font-family:inherit;}
+
+@media(min-width:600px){
+  .panel{left:auto;right:0;width:460px;max-width:100%;height:100vh;max-height:100vh;border-radius:0;border-left:1px solid var(--border2);border-top:none;top:0;bottom:0;transform:translateX(100%);}
+  .panel.open{transform:translateX(0);}
+  .ph{display:none;}
+}
+</style>
+</head>
+<body onload="initApp()">
+
+<!-- LOGIN (removed) -->
+
+<!-- SETUP SCREEN -->
+<div id="setup-screen">
+  <div class="setup-box">
+    <div class="setup-title">Supabase Setup</div>
+    <div class="setup-sub">Нэг удаа л хийх хэрэгтэй. Supabase Dashboard дээр table үүсгэнэ.</div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">Алхам 1</div>
+      <div class="setup-step-text">
+        <a class="setup-link" href="https://supabase.com/dashboard/project/xpxotgpqxrupkgcppzmn/sql/new" target="_blank">
+          Supabase SQL Editor нээх →
+        </a>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">Алхам 2 — SQL хуулж ажиллуул</div>
+      <div class="sql-block" id="sql-block">create table scripts (
+  id bigserial primary key,
+  title text default '',
+  type text default 'tofu',
+  platform text default 'Instagram/Facebook',
+  post_date text default '',
+  status text default 'draft',
+  hooks text default '',
+  script text default '',
+  caption text default '',
+  dm1 text default '',
+  dm2 text default '',
+  notes text default '',
+  created_at timestamptz default now()
+);
+
+alter table scripts enable row level security;
+
+create policy "allow_anon_all" on scripts
+  for all to anon
+  using (true)
+  with check (true);</div>
+      <button class="copy-btn" onclick="copySQL()">SQL хуулах</button>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">Алхам 3</div>
+      <div class="setup-step-text">SQL ажиллуулсны дараа доорх товчийг дар.</div>
+      <button class="setup-done-btn" onclick="initApp()">Бэлэн болсон →</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loading-overlay">
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+  <div class="loading-text">Уншиж байна</div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- APP -->
+<div id="app">
+  <div class="header">
+    <div class="header-logo">CONTENT<span>.</span></div>
+    <div class="header-meta">Script Planner · V1</div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num" id="st-total">—</div><div class="stat-label">Total</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-today">—</div><div class="stat-label">Today</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-week">—</div><div class="stat-label">This Week</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-pub">—</div><div class="stat-label">Published</div></div>
+  </div>
+  <div class="toolbar">
+    <input type="text" class="search-input" id="search" placeholder="Script хайх..." oninput="renderList()">
+    <div class="filter-row">
+      <button class="fbtn active" data-t="all" onclick="setFilter(this,'all')">All</button>
+      <button class="fbtn" data-t="tofu" onclick="setFilter(this,'tofu')">TOFU</button>
+      <button class="fbtn" data-t="mofu" onclick="setFilter(this,'mofu')">MOFU</button>
+      <button class="fbtn" data-t="bofu" onclick="setFilter(this,'bofu')">BOFU</button>
+    </div>
+  </div>
+  <div class="script-list" id="list"></div>
+</div>
+
+<button class="fab" onclick="openAdd()">+</button>
+<div class="ov" id="ov" onclick="closeAll()"></div>
+
+<!-- EDIT PANEL -->
+<div class="panel" id="ep">
+  <div class="ph"></div>
+  <div class="phead">
+    <div class="phead-badges" id="ep-badges"></div>
+    <button class="pclose" onclick="closeAll()">✕</button>
+  </div>
+  <div class="pbody">
+    <div class="fblock"><div class="flabel">✏️ Гарчиг</div><input class="finput" id="e-title" placeholder="Script нэр..."></div>
+    <div class="frow" style="margin-bottom:16px">
+      <div><div class="flabel">Нийтлэх өдөр</div><input type="date" class="finput" id="e-date"></div>
+      <div><div class="flabel">Статус</div>
+        <select class="fsel" id="e-status" onchange="refreshEP()">
+          <option value="draft">Draft</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="recording">Recording</option>
+          <option value="published">Published</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow" style="margin-bottom:16px">
+      <div><div class="flabel">Төрөл</div>
+        <select class="fsel" id="e-type" onchange="refreshEP()">
+          <option value="tofu">TOFU</option>
+          <option value="mofu">MOFU</option>
+          <option value="bofu">BOFU</option>
+        </select>
+      </div>
+      <div><div class="flabel">Platform</div>
+        <select class="fsel" id="e-platform">
+          <option value="Instagram/Facebook">IG / FB</option>
+          <option value="Telegram">Telegram</option>
+          <option value="TikTok">TikTok</option>
+          <option value="Instagram DM">IG DM</option>
+          <option value="All">All</option>
+        </select>
+      </div>
+    </div>
+    <div class="fblock"><div class="flabel">💡 Hook сонголтууд</div><textarea class="ftarea" id="e-hooks" placeholder="Hook 1: ...&#10;Hook 2: ..."></textarea></div>
+    <div class="fblock"><div class="flabel">🎬 Script</div><textarea class="ftarea tall" id="e-script" placeholder="Reel script агуулга..."></textarea></div>
+    <div class="fblock"><div class="flabel">📝 Caption</div><textarea class="ftarea" id="e-caption" placeholder="Caption + #hashtag..."></textarea></div>
+    <div class="fblock"><div class="flabel">💬 DM 1</div><textarea class="ftarea" id="e-dm1" placeholder="DM 1 — Шууд хариу..."></textarea></div>
+    <div class="fblock"><div class="flabel">💬 DM 2</div><textarea class="ftarea" id="e-dm2" placeholder="DM 2 — Follow-up..."></textarea></div>
+    <div class="fblock"><div class="flabel">📌 Тэмдэглэл</div><textarea class="ftarea" id="e-notes" placeholder="Тэмдэглэл..." style="min-height:60px"></textarea></div>
+  </div>
+  <div class="pfooter">
+    <button class="bsave" onclick="saveEdit()">Хадгалах</button>
+    <button class="bdel" onclick="doDelete()">Устгах</button>
+    <button class="bcancel" onclick="closeAll()">Болих</button>
+  </div>
+</div>
+
+<!-- ADD PANEL -->
+<div class="panel" id="ap">
+  <div class="ph"></div>
+  <div class="phead"><div class="phead-title">Шинэ Script</div><button class="pclose" onclick="closeAll()">✕</button></div>
+  <div class="pbody">
+    <div class="fblock"><div class="flabel">✏️ Гарчиг</div><input class="finput" id="a-title" placeholder="Script нэр..."></div>
+    <div class="frow" style="margin-bottom:16px">
+      <div><div class="flabel">Нийтлэх өдөр</div><input type="date" class="finput" id="a-date"></div>
+      <div><div class="flabel">Төрөл</div>
+        <select class="fsel" id="a-type">
+          <option value="tofu">TOFU</option>
+          <option value="mofu">MOFU</option>
+          <option value="bofu">BOFU</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow" style="margin-bottom:16px">
+      <div><div class="flabel">Platform</div>
+        <select class="fsel" id="a-platform">
+          <option value="Instagram/Facebook">IG / FB</option>
+          <option value="Telegram">Telegram</option>
+          <option value="TikTok">TikTok</option>
+          <option value="Instagram DM">IG DM</option>
+          <option value="All">All</option>
+        </select>
+      </div>
+      <div><div class="flabel">Статус</div>
+        <select class="fsel" id="a-status">
+          <option value="draft">Draft</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="recording">Recording</option>
+        </select>
+      </div>
+    </div>
+    <div class="fblock"><div class="flabel">💡 Hook сонголтууд</div><textarea class="ftarea" id="a-hooks" placeholder="Hook 1: ...&#10;Hook 2: ..."></textarea></div>
+    <div class="fblock"><div class="flabel">🎬 Script</div><textarea class="ftarea tall" id="a-script" placeholder="Reel script..."></textarea></div>
+    <div class="fblock"><div class="flabel">📝 Caption</div><textarea class="ftarea" id="a-caption" placeholder="Caption + #hashtag..."></textarea></div>
+    <div class="fblock"><div class="flabel">💬 DM 1</div><textarea class="ftarea" id="a-dm1" placeholder="DM 1 — Шууд..."></textarea></div>
+    <div class="fblock"><div class="flabel">💬 DM 2</div><textarea class="ftarea" id="a-dm2" placeholder="DM 2 — Follow-up..."></textarea></div>
+    <div class="fblock"><div class="flabel">📌 Тэмдэглэл</div><textarea class="ftarea" id="a-notes" placeholder="Тэмдэглэл..." style="min-height:55px"></textarea></div>
+  </div>
+  <div class="pfooter">
+    <button class="bsave" onclick="doAdd()">Нэмэх</button>
+    <button class="bcancel" onclick="closeAll()">Болих</button>
+  </div>
+</div>
+
+<script>
+const SB = "https://xpxotgpqxrupkgcppzmn.supabase.co";
+const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhweG90Z3BxeHJ1cGtnY3Bwem1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyOTk4NTUsImV4cCI6MjA4ODg3NTg1NX0.7wtm3YXDj2lWL61y4pfZFud4LL2BkchAjGkTJMvhLqo";
+const H = {"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json","Prefer":"return=representation"};
+const TABLE = `${SB}/rest/v1/scripts`;
+
+const DEFAULT_DATA = [
+  {title:"Drop #02 — Funnel Content",type:"tofu",platform:"Instagram/Facebook",post_date:"2026-03-22",status:"draft",
+   hooks:"1. Монголд хэн ч зараагүй, margin нь 5x бараа харж байна уу?\n2. Онлайн бизнес эхлүүлэхийн тулд ямар бараа зарах вэ гэж хайдаг уу?\n3. Энэ бараа Монголд хэн ч зараагүй — гэтэл margin нь 5x байна",
+   script:"[HOOK — 0-4с]\nМонголд хэн ч зараагүй, margin нь 5x бараа харж байна уу?\n\n[АСУУДАЛ — 4-15с]\nОнлайн бизнес эхлүүлэхэд хамгийн хэцүү зүйл юу вэ?\nБараа хайх. Supplier хайх. Тест хийх.\nОлон хүн энэ үе шатандаа л орлогогүй болж байдаг.\n\n[БОЛОМЖ — 15-40с]\nБид 5 категорийн 200 барааг шалгаад нэг файлд гаргасан.\nHome. Beauty. Health. Goods. Kids.\nТус бүрт нь — Wow Factor, Margin, Market Saturation, Supplier холбоос бэлэн.\nЧи зөвхөн сонгоод, тест хийж эхлэхэд л хангалттай.\n\n[SOCIAL PROOF — 40-50с]\nDrop #01-ийн хүмүүс аль хэдийн ашиглаж байна.\nDrop #02 — 5 үнийн түвшин. Хамгийн жижигээс нь эхлэх боломжтой.\n\n[KEYWORD CTA — 50-60с]\nНээлтийн мэдээлэл авахыг хүсвэл доор 2 гэж бич.\n3 сарын 20-нд нээнэ.",
+   caption:"Бараа хайхад цаг зарцуулж байна уу?\n\nHome · Beauty · Health · Goods · Kids —\n5 категори. Тус бүр 200 бараа. Margin, supplier, wow factor бүгд бэлэн.\n\nDrop #02 — 3/20-нд нээнэ.\n\n👇 Мэдэхийг хүсвэл 2 гэж бич\n\n#монголбизнес #онлайнбизнес #бизнессанаа #productdrop",
+   dm1:"Сайн байна уу! 👋\nDrop #02-ийн мэдээлэл авсанд баярлалаа.\n\n3/20-нд нээгдэнэ — та автоматаар мэдэгдэл авах болно.\n\nDrop #02-д юу байна:\n✅ 5 категори — Home · Beauty · Health · Goods · Kids\n✅ Тус бүр 200 шалгагдсан бараа\n✅ Supplier холбоос + Margin тооцоо\n✅ 5 үнийн түвшин — өөрт тохирсоноо сонгоно\n\nАсуух зүйл байвал энд бич 👇",
+   dm2:"Drop #02 нээгдлээ! 🚀\n\n→ [линк]\n\n5 категори бэлэн. Хязгаарлагдмал slot.\nХурдан шалгаарай 👆",
+   notes:"Дээр: LED Neon Sign бараа. Доор: чи ярьж байна. Бямба бичнэ."},
+  {title:"Drop #02 — Telegram Teaser",type:"tofu",platform:"Telegram",post_date:"2026-03-19",status:"draft",
+   hooks:"",script:"🗂️ 3/20 — Drop #02 нээнэ.\n\nHome · Beauty · Health · Goods · Kids\n\n5 category. 5 файл. Тус бүр 200 бараа.\n\nӨмнөхөөсөө илүү хялбар, бараанууд нь ч сайжирсан 📦\n\n⏳ Маргааш.",
+   caption:"",dm1:"",dm2:"",notes:"3/19 орой нийтэл"}
+];
+
+let scripts=[], currentFilter="all", editId=null;
+
+// ── HELPERS ──
+const $ = id => document.getElementById(id);
+function loading(on){$('loading-overlay').classList[on?'add':'remove']('show');}
+function toast(msg,err=false){const t=$('toast');t.textContent=msg;t.className='show'+(err?' err':'');setTimeout(()=>t.className='',2200);}
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function tomorrowStr(){const d=new Date();d.setDate(d.getDate()+1);return d.toISOString().split('T')[0];}
+function weekEndStr(){const d=new Date();d.setDate(d.getDate()+7);return d.toISOString().split('T')[0];}
+function fmtDate(s){if(!s)return'—';const[y,m,d]=s.split('-');const D=['Ня','Да','Мя','Лх','Пү','Ба','Бя'];const dt=new Date(+y,+m-1,+d);return`${+m}/${+d} ${D[dt.getDay()]}`;}
+function dCls(s){if(!s)return'';if(s===todayStr())return'ct';if(s===tomorrowStr())return'tm';if(s<todayStr())return'ps';return'';}
+function gLabel(s){if(!s)return'📌 Огноогүй';if(s===todayStr())return'🔵 Өнөөдөр';if(s===tomorrowStr())return'🟡 Маргааш';if(s<todayStr())return'⬜ Өнгөрсөн';return'🗓 '+fmtDate(s);}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function typeBadge(t){const m={tofu:'bt',mofu:'bm',bofu:'bb'};return`<span class="tbadge ${m[t]||'bt'}">${(t||'tofu').toUpperCase()}</span>`;}
+function statusBadge(s){const m={draft:'sd',scheduled:'ss',recording:'sr',published:'sp'};const l={draft:'Draft',scheduled:'Scheduled',recording:'Recording',published:'Published'};return`<span class="tbadge ${m[s]||'sd'}">${l[s]||'Draft'}</span>`;}
+
+// ── SUPABASE API ──
+async function sbGet(){
+  const r=await fetch(`${TABLE}?order=post_date.asc,id.asc`,{headers:H});
+  if(!r.ok){if(r.status===404||r.status===400)return null;throw new Error(r.status);}
+  return r.json();
+}
+async function sbInsert(row){
+  const r=await fetch(TABLE,{method:'POST',headers:H,body:JSON.stringify(row)});
+  if(!r.ok)throw new Error(await r.text());
+  return r.json();
+}
+async function sbUpdate(id,row){
+  const r=await fetch(`${TABLE}?id=eq.${id}`,{method:'PATCH',headers:H,body:JSON.stringify(row)});
+  if(!r.ok)throw new Error(await r.text());
+  return r.json();
+}
+async function sbDelete(id){
+  const r=await fetch(`${TABLE}?id=eq.${id}`,{method:'DELETE',headers:{...H,Prefer:''}});
+  if(!r.ok)throw new Error(await r.text());
+}
+
+function rowToScript(r){return{id:r.id,title:r.title||'',type:r.type||'tofu',platform:r.platform||'Instagram/Facebook',postDate:r.post_date||'',status:r.status||'draft',hooks:r.hooks||'',script:r.script||'',caption:r.caption||'',dm1:r.dm1||'',dm2:r.dm2||'',notes:r.notes||''};}
+function scriptToRow(s){return{title:s.title,type:s.type,platform:s.platform,post_date:s.postDate,status:s.status,hooks:s.hooks,script:s.script,caption:s.caption,dm1:s.dm1,dm2:s.dm2,notes:s.notes};}
+
+// ── INIT ──
+async function initApp(){
+  loading(true);
+  try{
+    const data = await sbGet();
+    if(data===null){
+      // Table doesn't exist — show setup
+      loading(false);
+      $('setup-screen').style.display='block';
+      return;
+    }
+    $('setup-screen').style.display='none';
+    $('app').style.display='block';
+    scripts=data.map(rowToScript);
+    if(scripts.length===0){
+      // Seed defaults
+      for(const d of DEFAULT_DATA){await sbInsert(d);}
+      const fresh=await sbGet();
+      scripts=(fresh||[]).map(rowToScript);
+    }
+    renderList();updateStats();
+  }catch(e){
+    loading(false);
+    $('setup-screen').style.display='block';
+  }
+  loading(false);
+}
+
+async function reload(){
+  loading(true);
+  try{const d=await sbGet();scripts=(d||[]).map(rowToScript);renderList();updateStats();}
+  catch(e){toast('Алдаа: '+e.message,true);}
+  loading(false);
+}
+
+// ── RENDER ──
+function setFilter(btn,t){document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentFilter=t;renderList();}
+
+function renderList(){
+  const q=$('search').value.toLowerCase();
+  let list=scripts.filter(s=>{
+    const mt=currentFilter==='all'||s.type===currentFilter;
+    const mq=!q||s.title.toLowerCase().includes(q)||(s.hooks||'').toLowerCase().includes(q)||(s.script||'').toLowerCase().includes(q);
+    return mt&&mq;
+  });
+  list.sort((a,b)=>!a.postDate?1:!b.postDate?-1:a.postDate.localeCompare(b.postDate));
+  const el=$('list');
+  if(!list.length){el.innerHTML='<div class="empty-state">✍️<br><br>Script олдсонгүй</div>';return;}
+  const groups={};
+  list.forEach(s=>{const k=s.postDate||'__no';if(!groups[k])groups[k]=[];groups[k].push(s);});
+  let html='';
+  Object.keys(groups).sort((a,b)=>a==='__no'?1:b==='__no'?-1:a.localeCompare(b)).forEach(dk=>{
+    html+=`<div class="date-group"><div class="dg-label">${dk==='__no'?'📌 Огноогүй':gLabel(dk)}</div>`;
+    groups[dk].forEach(s=>{
+      const prev=(s.hooks||s.script||'').trim().split('\n').filter(l=>l.trim())[0]||'';
+      html+=`<div class="card" onclick="openEdit(${s.id})">
+        <div class="card-top"><div class="card-badges">${typeBadge(s.type)}${statusBadge(s.status)}</div>
+        <div class="card-date ${dCls(s.postDate)}">${fmtDate(s.postDate)}</div></div>
+        <div class="card-title">${esc(s.title)}</div>
+        <div class="card-plat">${s.platform||''}</div>
+        ${prev?`<div class="card-prev">${esc(prev)}</div>`:''}
+      </div>`;
+    });
+    html+='</div>';
+  });
+  el.innerHTML=html;
+}
+
+function updateStats(){
+  const t=todayStr(),we=weekEndStr();
+  $('st-total').textContent=scripts.length;
+  $('st-today').textContent=scripts.filter(s=>s.postDate===t).length;
+  $('st-week').textContent=scripts.filter(s=>s.postDate>=t&&s.postDate<=we).length;
+  $('st-pub').textContent=scripts.filter(s=>s.status==='published').length;
+}
+
+// ── EDIT PANEL ──
+function refreshEP(){
+  $('ep-badges').innerHTML=typeBadge($('e-type').value)+statusBadge($('e-status').value);
+}
+function openEdit(id){
+  const s=scripts.find(x=>x.id===id);if(!s)return;
+  editId=id;
+  $('e-title').value=s.title;$('e-date').value=s.postDate;$('e-status').value=s.status;
+  $('e-type').value=s.type;$('e-platform').value=s.platform;
+  $('e-hooks').value=s.hooks;$('e-script').value=s.script;$('e-caption').value=s.caption;
+  $('e-dm1').value=s.dm1;$('e-dm2').value=s.dm2;$('e-notes').value=s.notes;
+  refreshEP();
+  $('ov').classList.add('open');$('ep').classList.add('open');
+}
+async function saveEdit(){
+  if(editId===null)return;
+  const row={title:$('e-title').value||'Untitled',type:$('e-type').value,platform:$('e-platform').value,
+    post_date:$('e-date').value,status:$('e-status').value,hooks:$('e-hooks').value,
+    script:$('e-script').value,caption:$('e-caption').value,dm1:$('e-dm1').value,dm2:$('e-dm2').value,notes:$('e-notes').value};
+  loading(true);
+  try{await sbUpdate(editId,row);toast('Хадгалагдлаа ✓');await reload();closeAll();}
+  catch(e){toast('Алдаа: '+e.message,true);}
+  loading(false);
+}
+async function doDelete(){
+  if(editId===null)return;
+  if(!confirm('Устгах уу?'))return;
+  loading(true);
+  try{await sbDelete(editId);toast('Устгагдлаа');await reload();closeAll();}
+  catch(e){toast('Алдаа: '+e.message,true);}
+  loading(false);
+}
+
+// ── ADD PANEL ──
+function openAdd(){
+  editId=null;
+  ['a-title','a-hooks','a-script','a-caption','a-dm1','a-dm2','a-notes'].forEach(id=>$(id).value='');
+  $('a-date').value=todayStr();$('a-type').value='tofu';
+  $('a-platform').value='Instagram/Facebook';$('a-status').value='draft';
+  $('ov').classList.add('open');$('ap').classList.add('open');
+}
+async function doAdd(){
+  const row={title:$('a-title').value||'Untitled',type:$('a-type').value,platform:$('a-platform').value,
+    post_date:$('a-date').value,status:$('a-status').value,hooks:$('a-hooks').value,
+    script:$('a-script').value,caption:$('a-caption').value,dm1:$('a-dm1').value,dm2:$('a-dm2').value,notes:$('a-notes').value};
+  loading(true);
+  try{await sbInsert(row);toast('Нэмэгдлээ ✓');await reload();closeAll();}
+  catch(e){toast('Алдаа: '+e.message,true);}
+  loading(false);
+}
+
+function closeAll(){
+  $('ov').classList.remove('open');$('ep').classList.remove('open');$('ap').classList.remove('open');
+  editId=null;
+}
+
+// ── SETUP ──
+function copySQL(){
+  const sql=$('sql-block').textContent;
+  navigator.clipboard.writeText(sql).then(()=>toast('SQL хуулагдлаа ✓')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=sql;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('SQL хуулагдлаа ✓');
+  });
+}
+</script>
+</body>
+</html>

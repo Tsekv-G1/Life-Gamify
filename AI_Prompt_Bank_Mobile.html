@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Product Photo — Хичээл 03: Prompt Bank</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04040a;--card:#0b0b14;--card2:#0e0e1a;
+  --border:rgba(255,255,255,.055);--border2:rgba(255,255,255,.09);
+  --gold:#f0b429;--cyan:#06d6f5;--green:#2ecc8a;
+  --purple:#9d6ff7;--red:#ff4d6d;--orange:#ff7c2a;
+  --text:#ddddf0;--text2:#9999b8;--text3:#5a5a7a;--white:#f0f0ff;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;line-height:1.6;}
+#cur{position:fixed;width:8px;height:8px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .15s;}
+#cur2{position:fixed;width:32px;height:32px;border:1px solid rgba(6,214,245,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .1s;}
+@media(hover:none),(pointer:coarse){#cur,#cur2{display:none;}}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:2000;opacity:.022;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden;padding:80px 20px 100px;}
+@media(max-width:480px){.hero{padding:70px 16px 90px;}}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
+.orb1{width:700px;height:400px;background:radial-gradient(ellipse,rgba(6,214,245,.1) 0%,transparent 70%);top:-10%;left:50%;transform:translateX(-50%);}
+.orb2{width:500px;height:400px;background:radial-gradient(ellipse,rgba(157,111,247,.06) 0%,transparent 70%);bottom:5%;left:-15%;}
+.orb3{width:350px;height:350px;background:radial-gradient(ellipse,rgba(46,204,138,.05) 0%,transparent 70%);top:15%;right:-8%;}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:52px 52px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%);}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.35em;color:var(--cyan);background:rgba(6,214,245,.07);border:1px solid rgba(6,214,245,.2);padding:7px 18px;border-radius:2px;margin-bottom:40px;opacity:0;animation:up .7s .1s forwards;}
+.eyebrow::before{content:'';width:6px;height:6px;background:var(--cyan);border-radius:50%;animation:blink 2s infinite;}
+.hero-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,13vw,140px);line-height:.88;letter-spacing:.01em;opacity:0;animation:up .8s .25s forwards;}
+.h1-cyan{display:block;background:linear-gradient(135deg,var(--cyan),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.h1-white{display:block;color:var(--white);}
+.h1-outline{display:block;color:transparent;-webkit-text-stroke:2px rgba(6,214,245,.6);}
+.hero-desc{max-width:560px;margin:24px auto 0;font-size:15px;color:var(--text2);line-height:1.8;opacity:0;animation:up .8s .4s forwards;}
+@media(max-width:480px){.hero-desc{font-size:14px;}}
+.hero-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:28px;opacity:0;animation:up .8s .55s forwards;}
+.pill{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:40px;font-size:12px;font-weight:500;letter-spacing:.03em;border:1px solid;cursor:pointer;transition:all .25s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+@media(hover:hover){.pill:hover{transform:translateY(-2px);}}
+.pill-cyan{border-color:rgba(6,214,245,.3);color:var(--cyan);background:rgba(6,214,245,.06);}
+.pill-cyan:hover{background:rgba(6,214,245,.14);}
+.pill-gold{border-color:rgba(240,180,41,.3);color:var(--gold);background:rgba(240,180,41,.06);}
+.pill-gold:hover{background:rgba(240,180,41,.14);}
+.pill-green{border-color:rgba(46,204,138,.3);color:var(--green);background:rgba(46,204,138,.06);}
+.pill-green:hover{background:rgba(46,204,138,.14);}
+.stat-row{display:flex;gap:0;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:32px;width:100%;max-width:480px;}
+.stat-item{padding:16px 12px;text-align:center;border-right:1px solid var(--border);flex:1;}
+.stat-item:last-child{border-right:none;}
+.stat-n{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,8vw,40px);letter-spacing:.02em;}
+.stat-l{font-size:9px;color:var(--text3);letter-spacing:.12em;margin-top:4px;}
+.hero-scroll{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;animation:up .8s 1s forwards;}
+.hero-scroll span{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--text3);}
+.scroll-bar{width:1px;height:52px;background:linear-gradient(var(--cyan),transparent);animation:scroll-anim 2.5s infinite;}
+
+.nav{position:sticky;top:0;z-index:500;background:rgba(4,4,10,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.nav::-webkit-scrollbar{display:none;}
+.nav-logo{padding:0 18px;font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--cyan);letter-spacing:.08em;flex-shrink:0;border-right:1px solid var(--border);}
+.nav-link{padding:16px 16px;font-size:11px;letter-spacing:.08em;color:var(--text3);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;font-weight:500;-webkit-tap-highlight-color:transparent;}
+.nav-link:hover,.nav-link.on{color:var(--text);border-bottom-color:var(--cyan);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-right:6px;}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px;}
+.sec{padding:60px 0;border-bottom:1px solid var(--border);opacity:0;transform:translateY(40px);transition:opacity .7s,transform .7s;}
+@media(max-width:480px){.sec{padding:44px 0;}}
+.sec.vis{opacity:1;transform:none;}
+.sec-label{display:flex;flex-direction:column;gap:8px;margin-bottom:32px;}
+.sec-label-row{display:flex;align-items:center;gap:14px;}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.1em;}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,9vw,90px);line-height:.9;letter-spacing:.02em;}
+.sec-line{flex:1;height:1px;background:var(--border);}
+.callout{border-radius:14px;padding:16px 18px;margin:14px 0;border-left:3px solid;font-size:13px;line-height:1.75;}
+@media(max-width:480px){.callout{font-size:12px;padding:14px 14px;}}
+
+/* FILTER */
+.filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.f-btn{padding:9px 16px;border-radius:30px;font-size:11px;font-weight:600;letter-spacing:.06em;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .2s;font-family:'JetBrains Mono',monospace;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.f-btn:active{transform:scale(.96);}
+.f-btn.act{background:rgba(6,214,245,.1);border-color:rgba(6,214,245,.4);color:var(--cyan);}
+
+/* PROMPT GRID */
+.p-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+@media(max-width:680px){.p-grid{grid-template-columns:1fr;gap:8px;}}
+.p-card{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .2s;position:relative;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+@media(hover:hover){.p-card:hover{border-color:var(--border2);background:rgba(255,255,255,.03);}}
+.p-card:active{transform:scale(.98);background:rgba(255,255,255,.03);}
+.p-card.copied{background:rgba(46,204,138,.06);}
+.p-cat-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.p-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.p-cat-name{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.2em;}
+.p-text{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px;}
+@media(max-width:480px){.p-text{font-size:12px;}}
+.p-text strong{color:var(--text);}
+.p-footer{display:flex;justify-content:space-between;align-items:center;}
+.p-idx{font-family:'Bebas Neue',sans-serif;font-size:22px;color:rgba(255,255,255,.05);}
+.p-copy{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);padding:5px 12px;border:1px solid var(--border);border-radius:4px;transition:all .2s;}
+@media(hover:hover){.p-card:hover .p-copy{border-color:var(--cyan);color:var(--cyan);}}
+.p-card:active .p-copy,.p-card.copied .p-copy{border-color:var(--green);color:var(--green);}
+
+
+/* COUNT BADGE */
+.count-badge{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.1em;margin-left:auto;padding-right:4px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:max(80px,env(safe-area-inset-bottom,0px) + 24px);left:50%;transform:translateX(-50%) translateY(16px);background:rgba(46,204,138,.15);border:1px solid rgba(46,204,138,.4);color:var(--green);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.15em;padding:12px 28px;border-radius:6px;z-index:8000;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.blockquote{padding:80px 40px;text-align:center;background:linear-gradient(180deg,transparent,rgba(255,255,255,.012),transparent);}
+.blockquote q{font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,4vw,48px);letter-spacing:.02em;line-height:1.2;color:var(--white);display:block;max-width:800px;margin:0 auto;quotes:none;}
+.blockquote cite{display:block;margin-top:20px;font-size:12px;color:var(--text3);font-style:normal;font-family:'JetBrains Mono',monospace;letter-spacing:.15em;}
+footer{padding:40px 20px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;max-width:1240px;margin:0 auto;}
+@media(max-width:480px){footer{flex-direction:column;text-align:center;gap:12px;}footer>div{text-align:center!important;}}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--cyan);letter-spacing:.08em;}
+.footer-copy{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:.1em;}
+@keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes scroll-anim{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="cur2"></div>
+<div id="toast">✓ PROMPT ХУУЛАГДЛАА</div>
+
+<section class="hero">
+  <div class="grid-bg"></div>
+  <div class="hero-orb orb1"></div><div class="hero-orb orb2"></div><div class="hero-orb orb3"></div>
+  <div style="position:relative;z-index:5;width:100%;display:flex;flex-direction:column;align-items:center;">
+    <div class="eyebrow">AI PRODUCT PHOTO &nbsp;·&nbsp; ХИЧЭЭЛ 03</div>
+    <h1 class="hero-h1">
+      <span class="h1-white">PROMPT</span>
+      <span class="h1-outline">BANK</span>
+      <span class="h1-cyan">50+</span>
+    </h1>
+    <p class="hero-desc"><strong>Nano Banana Pro AI-д</strong> тохирсон prompt-ууд. Дарахад хуулагдана — <strong>[PRODUCT]</strong> гэсэн хэсгийг барааны нэрээр солиод ашигла.</p>
+    <div class="hero-pills">
+      <span class="pill pill-gold" onclick="filterP('косметик',null)">💄 Косметик</span>
+      <span class="pill pill-cyan" onclick="filterP('tech',null)">📱 Tech</span>
+      <span class="pill pill-green" onclick="filterP('хоол',null)">🍵 Хоол</span>
+    </div>
+    <div class="stat-row" style="opacity:0;animation:up .8s .75s forwards;">
+      <div class="stat-item"><div class="stat-n" style="color:var(--cyan);">54</div><div class="stat-l">PROMPT</div></div>
+      <div class="stat-item"><div class="stat-n" style="color:var(--gold);">7</div><div class="stat-l">АНГИЛАЛ</div></div>
+      <div class="stat-item"><div class="stat-n" style="color:var(--green);">1</div><div class="stat-l">ТОВЧ — ХУУЛАХ</div></div>
+    </div>
+  </div>
+  <div class="hero-scroll"><span>SCROLL</span><div class="scroll-bar"></div></div>
+</section>
+
+<nav class="nav">
+  <div class="nav-logo">ХИЧЭЭЛ 03</div>
+  <div class="nav-link on" onclick="filterP('all',this);goTo('s1')"><span class="nav-num">✦</span>БҮГД</div>
+  <div class="nav-link" onclick="filterP('косметик',this)"><span class="nav-num">💄</span>КОСМЕТИК</div>
+  <div class="nav-link" onclick="filterP('tech',this)"><span class="nav-num">📱</span>TECH</div>
+  <div class="nav-link" onclick="filterP('хувцас',this)"><span class="nav-num">👗</span>ХУВЦАС</div>
+  <div class="nav-link" onclick="filterP('хоол',this)"><span class="nav-num">🍵</span>ХООЛ</div>
+  <div class="nav-link" onclick="filterP('гэр',this)"><span class="nav-num">🏠</span>ГЭР</div>
+  <div class="nav-link" onclick="filterP('lifestyle',this)"><span class="nav-num">✨</span>LIFESTYLE</div>
+  <div class="nav-link" onclick="filterP('фон',this)"><span class="nav-num">🎨</span>ФОН</div>
+</nav>
+
+<div class="wrap">
+<section class="sec" id="s1">
+  <div class="sec-label">
+    <div class="sec-label-row">
+      <span class="sec-num">03 /</span>
+      <div class="sec-line"></div>
+      <span class="count-badge" id="count-badge">54 PROMPT</span>
+    </div>
+    <h2 class="sec-title" style="color:var(--cyan)">NANO BANANA PRO<br>PROMPT BANK</h2>
+  </div>
+
+  <div class="callout" style="border-color:var(--cyan);background:rgba(6,214,245,.04);margin-bottom:24px;">
+    💡 <strong style="color:var(--cyan);">Хэрхэн ашиглах:</strong>
+    <span style="color:var(--text2);"> Prompt дарахад автоматаар хуулагдана.
+    <strong>[PRODUCT]</strong> гэсэн хэсгийг барааны нэрээр солих — жишээ нь "moisturizer cream jar" эсвэл "leather handbag" гэж бичнэ.
+    Nano Banana Pro-ийн prompt хайрцагт paste хийнэ.</span>
+  </div>
+
+  <div class="filter-bar" id="filter-bar">
+    <button class="f-btn act" onclick="filterP('all',this)">🔥 БҮГД</button>
+    <button class="f-btn" onclick="filterP('косметик',this)">💄 КОСМЕТИК</button>
+    <button class="f-btn" onclick="filterP('tech',this)">📱 TECH</button>
+    <button class="f-btn" onclick="filterP('хувцас',this)">👗 ХУВЦАС</button>
+    <button class="f-btn" onclick="filterP('хоол',this)">🍵 ХООЛ/УНДАА</button>
+    <button class="f-btn" onclick="filterP('гэр',this)">🏠 ГЭР</button>
+    <button class="f-btn" onclick="filterP('lifestyle',this)">✨ LIFESTYLE</button>
+    <button class="f-btn" onclick="filterP('фон',this)">🎨 ФОНЫ СТИЛЬ</button>
+  </div>
+
+  <div class="p-grid" id="pGrid"></div>
+</section>
+</div>
+
+<div class="blockquote">
+  <q>Prompt бол AI-тай харилцах хэл — сурвал чадна.</q>
+  <cite>— PRODUCTDROP PREMIUM · AI PRODUCT PHOTO · ХИЧЭЭЛ 03</cite>
+</div>
+
+<footer>
+  <div class="footer-logo">ХИЧЭЭЛ 03</div>
+  <div style="display:flex;flex-direction:column;gap:4px;text-align:right;">
+    <div class="footer-copy">PROMPT BANK — 54 NANO BANANA PRO PROMPT</div>
+    <div class="footer-copy" style="opacity:.5;">PRODUCTDROP PREMIUM · 2026</div>
+  </div>
+</footer>
+
+<script>
+const isTouch = window.matchMedia('(hover:none),(pointer:coarse)').matches;
+if(!isTouch){
+  const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;cur2.style.left=rx+'px';cur2.style.top=ry+'px';requestAnimationFrame(loop);})();
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis');}),{threshold:.06});
+document.querySelectorAll('.sec').forEach(s=>io.observe(s));
+function goTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'});}
+
+const PROMPTS = [
+  // ── КОСМЕТИК (8) ──
+  {c:'косметик',cl:'#f0b429',e:'💄',t:'[PRODUCT] cream jar, pure white marble background, soft diffused side lighting, luxury beauty brand, water droplets on glass surface, minimal clean aesthetic, sharp focus, 8K'},
+  {c:'косметик',cl:'#f0b429',e:'💄',t:'[PRODUCT] serum bottle, transparent glass texture visible, pure black background, warm golden rim light, premium skincare editorial, ultra sharp detail, 8K'},
+  {c:'косметик',cl:'#f0b429',e:'💄',t:'[PRODUCT] lip color tube, pastel pink gradient background, macro close-up glossy shine, beauty product commercial photo, sparkle highlight, 8K'},
+  {c:'косметик',cl:'#f0b429',e:'💄',t:'[PRODUCT] perfume bottle, dark luxury background, purple neon rim lighting, glass refraction bokeh effect, high fashion fragrance advertisement, 8K'},
+  {c:'косметик',cl:'#f0b429',e:'💄',t:'[PRODUCT] eye cream tube, soft white cotton linen surface, natural window daylight, clean Scandinavian minimal aesthetic, fresh and dewy feel, 8K'},
+  {c:'косметик',cl:'#f0b429',e:'💄',t:'[PRODUCT] face mask pouch, dried flower petals arranged around, soft pastel pink background, flat lay composition, natural beauty brand, gentle top light, 8K'},
+  {c:'косметик',cl:'#f0b429',e:'💄',t:'[PRODUCT] toner bottle, sage green background, morning light aesthetic, clean skincare shelf photo, minimal and fresh, 8K'},
+  {c:'косметик',cl:'#f0b429',e:'💄',t:'[PRODUCT] sunscreen stick, bright white background, clean clinical lighting, summer skincare brand, fresh and protective feeling, sharp product shot, 8K'},
+  // ── TECH (8) ──
+  {c:'tech',cl:'#06d6f5',e:'📱',t:'[PRODUCT] wireless earbuds, pure black background, cyan neon rim light from left, glossy surface reflection below, floating in air, premium tech commercial, 8K'},
+  {c:'tech',cl:'#06d6f5',e:'📱',t:'[PRODUCT] phone case, pure white background, soft studio top lighting, subtle drop shadow, e-commerce product listing quality, clean and clear, 8K'},
+  {c:'tech',cl:'#06d6f5',e:'📱',t:'[PRODUCT] smartwatch, dark matte black background, gold accent side rim light, dial texture detail visible, luxury tech editorial, ultra sharp, 8K'},
+  {c:'tech',cl:'#06d6f5',e:'📱',t:'[PRODUCT] portable power bank, dark background, electric blue gradient glow from side, product on glossy reflective surface, modern tech commercial, 8K'},
+  {c:'tech',cl:'#06d6f5',e:'📱',t:'[PRODUCT] USB cable, minimal white background, coiled clean arrangement, top-down flat lay, tech accessory product photo, simple and crisp, 8K'},
+  {c:'tech',cl:'#06d6f5',e:'📱',t:'[PRODUCT] phone stand, clean white desk surface, natural window light from side, minimal home office aesthetic, lifestyle product shot, 8K'},
+  {c:'tech',cl:'#06d6f5',e:'📱',t:'[PRODUCT] wireless charger, dark background, soft white light glow from top, minimalist tech aesthetic, premium product commercial, 8K'},
+  {c:'tech',cl:'#06d6f5',e:'📱',t:'[PRODUCT] Bluetooth speaker, pure black background, dramatic white spotlight from above, deep shadows on side, premium audio product photo, 8K'},
+  // ── ХУВЦАС (7) ──
+  {c:'хувцас',cl:'#9d6ff7',e:'👗',t:'[PRODUCT] leather handbag, dark moody background, warm golden side lighting, leather grain texture clearly visible, soft shadow on surface, high-end fashion editorial, 8K'},
+  {c:'хувцас',cl:'#9d6ff7',e:'👗',t:'[PRODUCT] sneakers, clean white background, side view angle, soft studio lighting, slight drop shadow below, e-commerce footwear product shot, sharp detail, 8K'},
+  {c:'хувцас',cl:'#9d6ff7',e:'👗',t:'[PRODUCT] wristwatch, black marble surface, single dramatic spotlight, luxury timepiece advertisement, dial reflection in marble, ultra detailed, 8K'},
+  {c:'хувцас',cl:'#9d6ff7',e:'👗',t:'[PRODUCT] silk scarf, draped on white marble surface, soft natural diffused light, flowing fabric texture, minimal elegant fashion photography, 8K'},
+  {c:'хувцас',cl:'#9d6ff7',e:'👗',t:'[PRODUCT] leather wallet, dark wood surface, warm side light, leather grain texture close-up, premium men accessories editorial style, 8K'},
+  {c:'хувцас',cl:'#9d6ff7',e:'👗',t:'[PRODUCT] sunglasses, white background, overhead hard light, dramatic lens reflection and shine, luxury eyewear commercial, ultra sharp, 8K'},
+  {c:'хувцас',cl:'#9d6ff7',e:'👗',t:'[PRODUCT] cap or hat, clean white background, studio three-point lighting, all angles visible, clean e-commerce apparel product photo, 8K'},
+  // ── ХООЛ/УНДАА (8) ──
+  {c:'хоол',cl:'#2ecc8a',e:'🍵',t:'[PRODUCT] tea box packaging, dark wooden surface, warm soft backlight, cozy morning aesthetic, dried herbs scattered around, artisan natural brand style, 8K'},
+  {c:'хоол',cl:'#2ecc8a',e:'🍵',t:'[PRODUCT] coffee bag packaging, roasted coffee beans scattered, dark moody cafe background, warm side light, artisan specialty coffee brand, 8K'},
+  {c:'хоол',cl:'#2ecc8a',e:'🍵',t:'[PRODUCT] honey jar, golden backlight shining through glass, white background, warm sun glow inside jar, natural organic artisan food photography, 8K'},
+  {c:'хоол',cl:'#2ecc8a',e:'🍵',t:'[PRODUCT] juice or drink bottle, fresh fruits arranged around, bright natural daylight, white marble surface, healthy lifestyle food brand, 8K'},
+  {c:'хоол',cl:'#2ecc8a',e:'🍵',t:'[PRODUCT] supplement or vitamin bottle, clean white clinical background, soft professional lighting, health and wellness product photo, trust-inspiring feel, 8K'},
+  {c:'хоол',cl:'#2ecc8a',e:'🍵',t:'[PRODUCT] chocolate or candy packaging, dark indulgent background, warm soft side light, cocoa or ingredient elements around, premium confectionery, 8K'},
+  {c:'хоол',cl:'#2ecc8a',e:'🍵',t:'[PRODUCT] protein powder or sports supplement, gym-inspired dark background, dramatic hard lighting, fitness lifestyle product photo, energetic composition, 8K'},
+  {c:'хоол',cl:'#2ecc8a',e:'🍵',t:'[PRODUCT] snack packaging, vibrant colorful gradient background, bold cheerful composition, energetic fun food brand commercial photography, 8K'},
+  // ── ГЭР (7) ──
+  {c:'гэр',cl:'#ff7c2a',e:'🏠',t:'[PRODUCT] kitchen gadget or tool, bright Scandinavian kitchen counter, natural window daylight from left, white marble surface, minimal lifestyle product photography, 8K'},
+  {c:'гэр',cl:'#ff7c2a',e:'🏠',t:'[PRODUCT] home decor item, bright airy interior, natural light from window, white walls background, Scandinavian minimalist home photography, lifestyle context, 8K'},
+  {c:'гэр',cl:'#ff7c2a',e:'🏠',t:'[PRODUCT] scented candle, dark moody atmosphere, warm flame glow reflected on surface, cozy home ambiance, dark wood table, luxury lifestyle photography, 8K'},
+  {c:'гэр',cl:'#ff7c2a',e:'🏠',t:'[PRODUCT] storage organizer or box, white background, top-down flat lay view, clean minimalist Japanese aesthetic, perfectly arranged contents, 8K'},
+  {c:'гэр',cl:'#ff7c2a',e:'🏠',t:'[PRODUCT] cleaning product or tool, bright white background, fresh clean aesthetic, professional e-commerce product photo, simple and trustworthy, 8K'},
+  {c:'гэр',cl:'#ff7c2a',e:'🏠',t:'[PRODUCT] desk organizer or stationery, modern minimalist desk surface, natural side light, work from home aesthetic, clean professional setting, 8K'},
+  {c:'гэр',cl:'#ff7c2a',e:'🏠',t:'[PRODUCT] plant pot or vase, bright bohemian interior setting, golden hour warm light, terracotta and green tones, lifestyle home photography, 8K'},
+  // ── LIFESTYLE (5) ──
+  {c:'lifestyle',cl:'#ff4d6d',e:'✨',t:'[PRODUCT] in natural lifestyle setting, hands holding product (no face shown), warm outdoor light, authentic candid photography, real-life context, film grain effect, 8K'},
+  {c:'lifestyle',cl:'#ff4d6d',e:'✨',t:'[PRODUCT] on cafe table, morning coffee setup nearby, warm golden bokeh background, lifestyle blog aesthetic, cozy and authentic feel, 35mm film style, 8K'},
+  {c:'lifestyle',cl:'#ff4d6d',e:'✨',t:'[PRODUCT] flat lay with lifestyle props, pastel color palette, curated Instagram composition, soft natural top light, aspirational aesthetic, 8K'},
+  {c:'lifestyle',cl:'#ff4d6d',e:'✨',t:'[PRODUCT] outdoor setting, golden hour natural light, soft nature background blur, active or relaxed lifestyle brand photo, warm tones, 8K'},
+  {c:'lifestyle',cl:'#ff4d6d',e:'✨',t:'[PRODUCT] unboxing moment, kraft paper texture, hands opening package, warm studio light, premium brand unboxing experience photography, 8K'},
+  // ── ФОН СТИЛЬ (11) ──
+  {c:'фон',cl:'#ddddf0',e:'🎨',t:'[PRODUCT], pure white studio background, professional e-commerce product photo, clean soft shadow below only, Amazon or Shopify listing quality, 8K'},
+  {c:'фон',cl:'#ddddf0',e:'🎨',t:'[PRODUCT], pure black background, single dramatic rim light from one side, luxury premium advertisement look, high contrast, commercial ad quality, 8K'},
+  {c:'фон',cl:'#ddddf0',e:'🎨',t:'[PRODUCT], white Carrara marble background, veined marble texture, soft top natural light, luxury beauty or fashion brand aesthetic, 8K'},
+  {c:'фон',cl:'#ddddf0',e:'🎨',t:'[PRODUCT], pastel pink to soft lavender gradient background, diffused light, beauty and wellness brand, clean and minimal aesthetic, 8K'},
+  {c:'фон',cl:'#ddddf0',e:'🎨',t:'[PRODUCT], dark concrete texture background, moody industrial aesthetic, fashion brand editorial, dramatic side light, strong shadows, 8K'},
+  {c:'фон',cl:'#ddddf0',e:'🎨',t:'[PRODUCT] floating mid-air, pure white background, soft shadow directly below, levitation product photography, clean e-commerce hero shot, 8K'},
+  {c:'фон',cl:'#ddddf0',e:'🎨',t:'[PRODUCT], surrounded by fresh green botanical leaves and flowers, flat lay, natural soft light, organic lifestyle brand, 8K'},
+  {c:'фон',cl:'#ddddf0',e:'🎨',t:'[PRODUCT], rustic aged wooden surface, warm natural side light, handmade artisan brand feel, earth tone palette, 8K'},
+  {c:'фон',cl:'#ddddf0',e:'🎨',t:'[PRODUCT], neon blue to purple gradient background, modern tech-inspired aesthetic, vibrant commercial photography, dramatic lighting, 8K'},
+  {c:'фон',cl:'#ddddf0',e:'🎨',t:'[PRODUCT], soft beige linen or canvas texture background, minimal Japandi style, neutral calm tones, clean serene product photography, 8K'},
+  {c:'фон',cl:'#ddddf0',e:'🎨',t:'[PRODUCT], dark forest green background, natural earthy aesthetic, warm golden accent light, premium organic or eco brand product photo, 8K'},
+];
+
+let curF = 'all';
+
+function renderP(filter) {
+  const list = filter==='all' ? PROMPTS : PROMPTS.filter(p=>p.c===filter);
+  document.getElementById('count-badge').textContent = list.length+' PROMPT';
+  document.getElementById('pGrid').innerHTML = list.map((p,i)=>{
+    const gi = PROMPTS.indexOf(p);
+    return `
+      <div class="p-card" onclick="copyP(this,${gi})" style="border-color:${p.cl}18;">
+        <div class="p-cat-row">
+          <div class="p-dot" style="background:${p.cl};box-shadow:0 0 5px ${p.cl};"></div>
+          <span class="p-cat-name" style="color:${p.cl};">${p.e} ${p.c.toUpperCase()}</span>
+        </div>
+        <div class="p-text">${p.t.replace(/\[PRODUCT\]/g,'<strong>[PRODUCT]</strong>')}</div>
+        <div class="p-footer">
+          <span class="p-idx">${String(gi+1).padStart(2,'0')}</span>
+          <span class="p-copy">⎘ ХУУЛАХ</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterP(cat, btn) {
+  curF = cat;
+  if(btn){
+    document.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('act'));
+    btn.classList.add('act');
+  } else {
+    document.querySelectorAll('.f-btn').forEach(b=>{
+      b.classList.toggle('act', b.textContent.toLowerCase().includes(cat) || (cat==='all' && b.textContent.includes('БҮГД')));
+    });
+  }
+  renderP(cat);
+  goTo('s1');
+}
+
+function copyP(el, idx) {
+  const text = PROMPTS[idx].t;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).catch(()=>fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+  el.classList.add('copied');
+  const t=document.getElementById('toast');t.classList.add('show');
+  setTimeout(()=>{el.classList.remove('copied');t.classList.remove('show');},2000);
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;ta.style.cssText='position:fixed;top:0;left:0;opacity:0;';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+}
+
+renderP('all');
+</script>
+</body>
+</html>

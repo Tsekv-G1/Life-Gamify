@@ -114,7 +114,7 @@ td.pw{color:var(--a);font-family:'Syne',sans-serif;font-weight:700;}
 const ADMIN_PASS = 'PD-ADMIN-2026';
 const ADMIN_SESS = 'pd_admin_sess';
 // ↓ Google Apps Script deploy URL — доор тайлбар байна
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwetuyrxFbRjg_Wnt4OJWTS-9Te0Okgz3hcJiNtuXBUuxErG9DVEJQ1lGo6kyD0hyxF/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzCeNjWemvoAzAdhtb9_rAu1b5jF5R4bJUkAqGxci1ohQdk-tWkdGVqo0zuEa2oBEqz/exec';
 
 function adminLogin() {
   var v = document.getElementById('admin-pwd').value.trim();
@@ -169,10 +169,7 @@ function genPW() {
   status.className = 'sync-status';
   status.textContent = '⏳ Google Sheets-т хадгалж байна...';
 
-  fetch(GAS_URL, {
-    method: 'POST',
-    body: JSON.stringify({action:'add', name, uid, plan, pw, expiry})
-  })
+  fetch(GAS_URL + '?action=add&name='+encodeURIComponent(name)+'&uid='+encodeURIComponent(uid)+'&plan='+plan+'&pw='+encodeURIComponent(pw)+'&expiry='+expiry)
   .then(function(r){return r.json();})
   .then(function(){
     status.className = 'sync-status ok';
@@ -226,10 +223,7 @@ function renderList() {
 
 function delPW(pw) {
   if(!confirm('Устгах уу?')) return;
-  fetch(GAS_URL, {
-    method: 'POST',
-    body: JSON.stringify({action:'delete', pw})
-  }).then(function(){renderList();});
+  fetch(GAS_URL + '?action=delete&pw='+encodeURIComponent(pw)).then(function(){renderList();});
 }
 </script>
 </body>
